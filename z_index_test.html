@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z-Index Conflict Test</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #app {
+            position: relative;
+            border: 2px solid #333;
+            padding: 20px;
+            height: 300px;
+        }
+        .song-item {
+            position: relative;
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            z-index: 1; /* Song item has a z-index */
+        }
+        .add-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            z-index: 2; /* Button is on top of its parent */
+        }
+        
+        /* THE PROBLEM: An invisible overlay covering everything */
+        .invisible-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 165, 0, 0.2); /* Semi-transparent orange for visibility */
+            z-index: 5; /* Higher z-index than the button */
+        }
+
+        #instructions {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Z-Index Conflict Simulation</h1>
+    <p>The "Add" button below is unclickable because a transparent overlay is on top of it.</p>
+
+    <div id="app">
+        <div class="invisible-overlay"></div>
+
+        <div class="song-item">
+            <strong>A Great Song</strong> by A Cool Artist
+            <button class="add-button" data-song-id="123">Add</button>
+        </div>
+    </div>
+    
+    <div id="instructions">
+        <h3>How to Debug This:</h3>
+        <ol>
+            <li><strong>Right-click the 'Add' button</strong> and choose 'Inspect'.</li>
+            <li>Notice that the inspector might highlight the <code><div class="invisible-overlay"></code> instead of the button. This is your first clue.</li>
+            <li><strong>Hover your mouse over the button</strong> in the browser. Watch which element is highlighted in the Elements panel. It will be the overlay.</li>
+            <li><strong>To confirm, select the overlay in the Elements panel</strong>, right-click it, and choose 'Hide element' or press the 'H' key.</li>
+            <li>Now, try clicking the button. It should work, and you'll see a message in the console.</li>
+        </ol>
+    </div>
+
+    <script>
+        document.body.addEventListener('click', function(event) {
+            if (event.target && event.target.classList.contains('add-button')) {
+                const songId = event.target.dataset.songId;
+                console.log(`SUCCESS: Add button clicked for Song ID: ${songId}`);
+            }
+        });
+    </script>
+
+</body>
+</html>

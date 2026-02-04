@@ -1,0 +1,134 @@
+# .clinerules — Master Coding Rules (Roocode) — Joseph Nguyen
+# Default stacks: Flask + Postgres; Node; Next.js
+# Goals: correctness, small diffs, maintainability, secure-by-default.
+
+## 0) Prime directive
+- Deliver the requested outcome with the smallest safe change.
+- Preserve existing behavior unless explicitly asked to change it.
+- Prefer simple, readable solutions over cleverness.
+
+## 1) Working style (Roocode agent behavior)
+- If NOT blocked: proceed without questions.
+- If blocked: ask at most ONE clarifying question, then wait.
+- When proceeding without clarification, state assumptions in 1–3 bullets.
+- Provide a short plan (3–7 bullets) before edits.
+- Keep diffs tight: avoid drive-by refactors, mass formatting, or renames.
+- Don’t claim you ran commands/tests unless you actually did; instead say what to run.
+
+## 2) Output format
+- For code changes: use unified diffs or clearly separated file sections.
+- Include ONLY relevant files/snippets (no large unrelated pastes).
+- End with:
+  - Summary
+  - Files touched
+  - How to test (exact commands) + expected result
+
+## 3) Repo hygiene
+- Prefer editing existing files over creating new ones.
+- Don’t change directory structure unless required.
+- Keep naming/style consistent with the repo.
+- Don’t add dependencies unless necessary; justify additions and pin versions when relevant.
+
+## 4) Correctness & error handling
+- Validate inputs at system boundaries (HTTP handlers, form parsing, file uploads).
+- Handle errors explicitly; avoid silent failures.
+- Errors should be actionable: what failed, why, and what to do next.
+- Ensure deterministic behavior (no hidden randomness unless requested).
+
+## 5) Security & privacy (non-negotiable)
+- Never hardcode or log secrets (keys, tokens, passwords, connection strings).
+- Treat all external input as untrusted.
+- Use secure defaults:
+  - least privilege
+  - sane CORS
+  - CSRF protection where relevant
+  - secure cookies when used
+- File handling:
+  - enforce type/size limits
+  - prevent path traversal
+  - store uploads outside web root when applicable
+
+## 6) Performance & scalability
+- Avoid O(n) scans in request paths when n can grow.
+- Paginate large result sets; stream large downloads.
+- Cache only when safe and with clear invalidation.
+- Prefer indexes and query optimization over app-layer loops for DB work.
+
+## 7) Testing & verification
+- If behavior changes, update/add tests.
+- Cover: happy path, invalid input, edge cases (empty/missing/large).
+- If tests can’t be run here, provide commands + expected outcomes.
+
+## 8) Documentation
+- Update docs when changing:
+  - setup steps
+  - env vars
+  - endpoints/contracts
+  - user-visible behavior
+- Comments: only where intent is non-obvious (avoid narrating obvious code).
+
+## 9) Python / Flask defaults
+- PEP8; type hints where they improve safety/clarity.
+- Keep routes/controllers thin; put logic in services/modules.
+- Prefer application factory pattern if repo already uses it; otherwise don’t force it.
+- Consistent API responses (when building JSON APIs):
+  - success: { "ok": true, "data": ... }
+  - error:   { "ok": false, "error": { "code": "...", "message": "..." } }
+- Don’t block request thread for long tasks; suggest background jobs if needed.
+
+### Flask security defaults
+- Use `flask-talisman` / strict headers ONLY if repo already has it; otherwise propose as an option.
+- Sessions/cookies:
+  - `SESSION_COOKIE_HTTPONLY = True`
+  - `SESSION_COOKIE_SAMESITE = "Lax"` (or "Strict" if compatible)
+  - `SESSION_COOKIE_SECURE = True` in production
+
+## 10) Postgres defaults
+- Prefer migrations (Alembic/Flask-Migrate/Prisma/Knex depending on stack). Don’t hand-edit prod schemas.
+- Use parameterized queries always.
+- Add indexes when queries justify them; include rationale.
+- For data changes: avoid destructive migrations without a rollback plan.
+- Use transactions for multi-step writes; be explicit about isolation/locking only when needed.
+
+## 11) Node.js defaults
+- Prefer built-in platform features; add deps only when justified.
+- Validate inputs (zod/joi/etc.) only if already in repo; otherwise implement light validation.
+- Use async/await; handle promise rejections explicitly.
+- Centralize config in env vars; provide `.env.example` updates when needed.
+
+## 12) Next.js defaults
+- Respect the existing router:
+  - App Router (`app/`) vs Pages Router (`pages/`) — do not mix unless requested.
+- Prefer Server Components by default in App Router; use `"use client"` only when needed.
+- Data fetching:
+  - server-side when possible
+  - client-side only for interactivity
+- Avoid leaking secrets to the client: anything prefixed `NEXT_PUBLIC_` is public.
+- Use `next/image` and `next/link` when appropriate, but don’t refactor broadly.
+
+### Next.js API / Server actions
+- Validate inputs at entrypoints (route handlers/server actions).
+- Return consistent error shapes; avoid throwing raw errors to clients.
+- Be mindful of caching/revalidation semantics; document any caching decisions.
+
+## 13) Monorepo / shared conventions (if applicable)
+- Keep shared types/schemas in a single place (e.g., `shared/` or `packages/`), but do not introduce new structure unless asked.
+- Prefer contract-first thinking: shared DTO types or OpenAPI only if repo already uses it.
+
+## 14) Git/commit conventions (if requested)
+- Conventional commits: feat:, fix:, refactor:, docs:, test:, chore:
+- Format: type(scope): concise summary
+
+## 15) Must-ask triggers (ask ONE question before changing)
+- Anything that risks data loss (migrations, deletes, truncations)
+- Auth/security model changes (sessions/JWT/roles)
+- Breaking API contracts/response shapes
+- Major dependency/framework introduction
+- Large architectural rewrites or folder reorganizations
+
+## 16) Roocode-specific execution rules
+- Prefer incremental, reviewable patches.
+- If there are multiple viable approaches, present 2 options with tradeoffs and recommend one.
+- Avoid speculative changes outside the described task.
+
+# End of .clinerules

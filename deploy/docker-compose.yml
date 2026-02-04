@@ -1,0 +1,28 @@
+services:
+  lyric_cover_prod:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: lyric_cover:latest
+    container_name: lyric_cover_prod
+    env_file:
+      - /etc/lyric_cover.env
+    ports:
+      - "127.0.0.1:8000:8000"
+    restart: unless-stopped
+    volumes:
+      - ../static/uploads:/app/static/uploads
+
+  lyric_cover_staging:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: lyric_cover:latest
+    container_name: lyric_cover_staging
+    env_file:
+      - /etc/lyric_cover_staging.env
+    ports:
+      - "127.0.0.1:8001:8000"
+    restart: unless-stopped
+    volumes:
+      - ../static/uploads:/app/static/uploads

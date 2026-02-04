@@ -1,0 +1,27 @@
+{
+    email admin@joefoxing.com
+}
+
+joefoxing.com {
+    encode gzip
+
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+
+    reverse_proxy 127.0.0.1:8000
+}
+
+staging.joefoxing.com {
+    encode gzip
+
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+
+    reverse_proxy 127.0.0.1:8001
+}

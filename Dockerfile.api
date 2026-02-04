@@ -1,0 +1,92 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# PRODUCTION DOCKERFILE - API (Python/FastAPI/Flask)
+# Multi-stage build for minimal, secure runtime image
+# ─────────────────────────────────────────────────────────────────────────────
+
+# STAGE 1: Builder (compiles dependencies, heavy tools not needed at runtime)
+# ─────────────────────────────────────────────────────────────────────────────
+FROM python:3.11-slim-bookworm AS builder
+
+# Pin pip/setuptools/wheel for reproducible builds
+RUN pip install --no-cache-dir --upgrade pip==24.0 setuptools==69.0.3 wheel==0.42.0
+
+# Install build dependencies (removed after compile)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create virtual environment (isolated from system Python)
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Install Python dependencies
+# Copy only requirements first for layer caching
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt gunicorn uvicorn[standard]
+
+# STAGE 2: Production runtime (minimal, no build tools)
+# ─────────────────────────────────────────────────────────────────────────────
+FROM python:3.11-slim-bookworm AS production
+
+# Security: Run as non-root user
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+
+# Install runtime dependencies only
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Copy virtual environment from builder
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Set working directory
+WORKDIR /app
+
+# Copy application code
+COPY --chown=appuser:appgroup . .
+
+# Create directories for potential file uploads (if using local storage)
+RUN mkdir -p /app/uploads /app/static && \
+    chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
+
+# Environment defaults (override via docker-compose or env file)
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONFAULTHANDLER=1 \
+    APP_ENV=production \
+    PORT=8000 \
+    WORKERS=4 \
+    LOG_LEVEL=INFO \
+    LOG_FORMAT=json
+
+# Health check endpoint (customize path to your app)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:8000/ || exit 1
+
+# Expose port
+EXPOSE 8000
+
+# Default: Run the Flask API server
+# wsgi.py exports 'app' from create_app()
+CMD ["gunicorn", "wsgi:app", "-w", "4", "-b", "0.0.0.0:8000", "--access-logfile", "-", "--error-logfile", "-"]
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STAGE 3: Development (optional, includes dev dependencies)
+# ─────────────────────────────────────────────────────────────────────────────
+FROM builder AS development
+
+# Install dev dependencies (if file exists)
+COPY requirements*.txt .
+RUN if [ -f requirements-dev.txt ]; then pip install --no-cache-dir -r requirements-dev.txt; fi
+
+WORKDIR /app
+COPY . .
+
+CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]

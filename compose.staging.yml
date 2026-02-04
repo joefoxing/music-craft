@@ -1,0 +1,101 @@
+# Staging Docker Compose Configuration
+# 
+# Usage:
+#   docker compose -p app-staging -f docker-compose.prod.yml -f compose.staging.yml --env-file .env.staging up -d
+#   docker compose -p app-staging -f docker-compose.prod.yml -f compose.staging.yml --env-file .env.staging pull
+#
+# Migration (one-off):
+#   docker compose -p app-staging -f docker-compose.prod.yml -f compose.staging.yml --env-file .env.staging run --rm migrate
+
+# Override the project name to isolate staging containers
+name: app-staging
+
+services:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # REVERSE PROXY (Caddy) - Staging overrides
+  # ─────────────────────────────────────────────────────────────────────────────
+  proxy:
+    container_name: app-staging-proxy
+    ports:
+      - "8080:80"       # Different host ports to avoid conflicts
+      - "8443:443"
+      - "8443:443/udp"
+    volumes:
+      - ./Caddyfile.staging:/etc/caddy/Caddyfile:ro
+      - caddy_staging_data:/data
+      - caddy_staging_config:/config
+      - static_staging_volume:/srv/static:ro
+    environment:
+      - DOMAIN=${DOMAIN:?DOMAIN is required}
+      - BASIC_AUTH_USER=${BASIC_AUTH_USER:-}
+      - BASIC_AUTH_PASSWORD=${BASIC_AUTH_PASSWORD:-}
+    logging:
+      options:
+        env: "APP_ENV,DOMAIN"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # API BACKEND - Staging overrides
+  # ─────────────────────────────────────────────────────────────────────────────
+  api:
+    container_name: app-staging-api
+    environment:
+      - APP_ENV=staging
+      - LOG_LEVEL=${LOG_LEVEL:-DEBUG}
+      - ENABLE_DEBUG_ENDPOINTS=${ENABLE_DEBUG_ENDPOINTS:-true}
+      - ENABLE_EXPERIMENTAL_FEATURES=${ENABLE_EXPERIMENTAL_FEATURES:-false}
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'       # Lower resource limits for staging
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # FRONTEND - Staging overrides
+  # ─────────────────────────────────────────────────────────────────────────────
+  web:
+    container_name: app-staging-web
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-/api}
+      - NEXT_PUBLIC_APP_NAME=${NEXT_PUBLIC_APP_NAME:-YourApp (Staging)}
+      - PORT=3000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'      # Lower resource limits for staging
+          memory: 128M
+        reservations:
+          cpus: '0.05'
+          memory: 32M
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # DATABASE MIGRATIONS - Staging overrides
+  # ─────────────────────────────────────────────────────────────────────────────
+  migrate:
+    container_name: app-staging-migrate
+    environment:
+      - APP_ENV=staging
+
+# ─────────────────────────────────────────────────────────────────────────────
+# VOLUMES - Separate volumes for staging
+# ─────────────────────────────────────────────────────────────────────────────
+volumes:
+  caddy_staging_data:
+    driver: local
+  caddy_staging_config:
+    driver: local
+  static_staging_volume:
+    driver: local
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NETWORKS - Separate network for staging
+# ─────────────────────────────────────────────────────────────────────────────
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16  # Different subnet from production

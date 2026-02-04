@@ -1,0 +1,17 @@
+[Unit]
+Description=Lyric Cover (Flask via Gunicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/lyric_cover
+EnvironmentFile=/etc/lyric_cover.env
+
+ExecStart=/opt/lyric_cover/.venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 wsgi:app
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

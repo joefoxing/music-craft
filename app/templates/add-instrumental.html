@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Instrumental - AudioCraft</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f20df2",
+                        "primary-dark": "#c20ac2",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#181118",
+                        "surface-dark": "#271b27",
+                        "border-dark": "#392839",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+    <div class="flex h-screen w-full">
+        {% include "partials/_sidebar.html" %}
+        
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark relative overflow-hidden">
+            <!-- Header -->
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+                <div class="flex items-center gap-4 text-white md:hidden">
+                    <button class="text-slate-400 hover:text-white" id="mobileMenuBtn">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <h2 class="text-lg font-bold">Create</h2>
+                </div>
+                
+                <div class="hidden md:block">
+                    <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Add Instrumental</h2>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center bg-surface-dark rounded-full px-3 py-1.5 border border-border-dark">
+                        <span class="material-symbols-outlined text-primary text-sm mr-2">bolt</span>
+                        <span class="text-white text-xs font-bold font-mono">
+                            {% if current_user.is_authenticated %}
+                            500 CREDITS
+                            {% else %}
+                            0 CREDITS
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.profile') }}" class="p-2 text-slate-400 hover:text-white relative" title="Profile">
+                        <span class="material-symbols-outlined">account_circle</span>
+                    </a>
+                    {% endif %}
+                    
+                    <button class="p-2 text-slate-400 hover:text-white relative" id="themeToggle">
+                        <span class="material-symbols-outlined">dark_mode</span>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar p-6 pb-32">
+                <div class="max-w-5xl mx-auto space-y-8">
+                    <!-- Add Instrumental Section -->
+                    <section class="flex flex-col gap-6">
+                        <div class="flex flex-col gap-2">
+                            <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Add Instrumental</h2>
+                            <p class="text-slate-500 dark:text-slate-400">Upload and configure an instrumental track for AI music generation.</p>
+                        </div>
+                        
+                        <!-- Instrumental Form Card -->
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">library_add</span>
+                                Instrumental Configuration
+                            </h3>
+                            
+                            <form id="addInstrumentalForm" class="space-y-6">
+                                <!-- Audio Source Section -->
+                                <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 p-5">
+                                    <h4 class="text-lg font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-primary">music_note</span>
+                                        Audio Source
+                                    </h4>
+                                    
+                                    <!-- Source Selection Tabs -->
+                                    <div class="source-tabs mb-6">
+                                        <button type="button" class="source-tab active" id="uploadTab">
+                                            <span class="material-symbols-outlined">upload</span>
+                                            Upload File
+                                        </button>
+                                        <button type="button" class="source-tab" id="urlTab">
+                                            <span class="material-symbols-outlined">link</span>
+                                            Use URL
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- File Upload Section -->
+                                    <div id="uploadSection" class="source-section">
+                                        <div class="upload-area" id="uploadArea">
+                                            <span class="material-symbols-outlined text-primary text-5xl mb-4">file_upload</span>
+                                            <p class="text-lg font-medium mb-2">Drag & drop your audio file here</p>
+                                            <p class="text-slate-500 dark:text-slate-400 mb-4">or click to browse</p>
+                                            <p class="file-types text-sm text-slate-500">Supported: MP3, WAV, OGG, M4A, FLAC (max 100MB)</p>
+                                            <input type="file" id="audioFile" accept=".mp3,.wav,.ogg,.m4a,.flac" hidden>
+                                            <button type="button" class="mt-4 px-6 py-2 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors" id="browseButton">
+                                                <span class="material-symbols-outlined mr-2">folder_open</span>
+                                                Browse Files
+                                            </button>
+                                        </div>
+                                        
+                                        <div id="fileInfo" class="file-info hidden mt-6 p-4 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                                            <p class="font-medium"><strong>Selected file:</strong> <span id="fileName"></span></p>
+                                            <p class="font-medium mt-2"><strong>Status:</strong> <span id="uploadStatus">Ready to upload</span></p>
+                                            
+                                            <div class="progress-container hidden mt-4" id="progressContainer">
+                                                <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
+                                                    <div class="progress-bar bg-primary h-2.5 rounded-full" id="progressBar" style="width: 0%"></div>
+                                                </div>
+                                                <div class="flex justify-between mt-1">
+                                                    <span class="text-sm text-slate-500">Uploading...</span>
+                                                    <span id="progressText" class="text-sm font-medium">0%</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <button type="button" class="mt-4 px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors flex items-center" id="uploadBtn">
+                                                <span class="material-symbols-outlined mr-2">cloud_upload</span>
+                                                Upload File
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- URL Input Section -->
+                                    <div id="urlSection" class="source-section hidden">
+                                        <div class="mb-4">
+                                            <label for="uploadUrl" class="block text-sm font-medium mb-2 flex items-center gap-2">
+                                                <span class="material-symbols-outlined text-primary">link</span>
+                                                Audio URL <span class="text-red-500">*</span>
+                                            </label>
+                                            <input type="url" id="uploadUrl" name="uploadUrl" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                   placeholder="https://example.com/music.mp3" required>
+                                            
+                                            <div class="mt-3 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                                                <p class="text-sm font-medium mb-2">For Google Drive:</p>
+                                                <ol class="text-sm text-slate-600 dark:text-slate-400 space-y-1 ml-4 list-decimal">
+                                                    <li>Upload file to Google Drive</li>
+                                                    <li>Right-click → "Get link" → Set to "Anyone with the link"</li>
+                                                    <li>Copy the file ID from the URL</li>
+                                                    <li>Use format: <code class="bg-slate-200 dark:bg-slate-800 px-1 rounded">https://drive.google.com/uc?export=download&id=FILE_ID</code></li>
+                                                </ol>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-center gap-4">
+                                            <button type="button" class="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors flex items-center" id="urlTestBtn">
+                                                <span class="material-symbols-outlined mr-2">play_arrow</span>
+                                                Test URL
+                                            </button>
+                                            
+                                            <span id="urlTestResult" class="test-result hidden px-3 py-1 rounded text-sm font-medium"></span>
+                                        </div>
+                                        
+                                        <button type="button" class="mt-4 px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors flex items-center" id="useUrlBtn">
+                                            <span class="material-symbols-outlined mr-2">check</span>
+                                            Use This URL
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Source Info Display -->
+                                    <div id="audioSourceInfo" class="source-info hidden mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                                        <h4 class="font-bold text-green-700 dark:text-green-400 flex items-center gap-2">
+                                            <span class="material-symbols-outlined">check_circle</span>
+                                            Audio Source Ready
+                                        </h4>
+                                        
+                                        <div class="mt-2 space-y-2">
+                                            <p><strong>Source:</strong> <span id="sourceType" class="font-medium">-</span></p>
+                                            <p><strong>URL:</strong> <code id="sourceUrl" class="bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded text-sm break-all">-</code></p>
+                                        </div>
+                                        
+                                        <button type="button" class="mt-4 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors flex items-center" onclick="clearAudioSource()">
+                                            <span class="material-symbols-outlined mr-2">close</span>
+                                            Change Source
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Hidden input for form submission -->
+                                    <input type="hidden" id="finalUploadUrl" name="uploadUrl" value="" required>
+                                </div>
+                                
+                                <!-- Title -->
+                                <div>
+                                    <label for="title" class="block text-sm font-medium mb-2">Title <span class="text-red-500">*</span></label>
+                                    <input type="text" id="title" name="title" class="form-control" placeholder="Relaxing Piano" required maxlength="100">
+                                    <div class="char-counter">
+                                        <span id="titleChars">0</span>/<span id="titleMax">100</span> characters
+                                    </div>
+                                </div>
+                                
+                                <!-- Tags -->
+                                <div>
+                                    <label for="tags" class="block text-sm font-medium mb-2">Tags</label>
+                                    <input type="text" id="tags" name="tags" class="form-control" placeholder="relaxing, piano, soothing">
+                                    <p class="text-xs text-slate-500 mt-1">Comma-separated tags describing the instrumental style.</p>
+                                </div>
+                                
+                                <!-- Negative Tags -->
+                                <div>
+                                    <label for="negativeTags" class="block text-sm font-medium mb-2">Negative Tags</label>
+                                    <input type="text" id="negativeTags" name="negativeTags" class="form-control" placeholder="heavy metal, fast drums">
+                                    <p class="text-xs text-slate-500 mt-1">Comma-separated tags to avoid in the generation.</p>
+                                </div>
+                                
+                                <!-- Model Selection -->
+                                <div>
+                                    <label for="model" class="block text-sm font-medium mb-2">Model Version <span class="text-red-500">*</span></label>
+                                    <select id="model" name="model" class="form-control" required>
+                                        <option value="V5" selected>V5 - Superior musical expression, faster generation</option>
+                                        <option value="V4_5PLUS">V4.5+ - Richer sound, new ways to create, max 8 min</option>
+                                        <option value="V4_5">V4.5 - Smarter prompts, faster generations, max 8 min</option>
+                                        <option value="V4_5ALL">V4.5ALL - Smarter prompts, faster generations, max 8 min</option>
+                                        <option value="V4">V4 - Improved vocal quality, max 4 min</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Vocal Gender -->
+                                <div>
+                                    <label for="vocalGender" class="block text-sm font-medium mb-2">Vocal Gender</label>
+                                    <select id="vocalGender" name="vocalGender" class="form-control">
+                                        <option value="">Auto (Based on prompt)</option>
+                                        <option value="female">Female</option>
+                                        <option value="male" selected>Male</option>
+                                        <option value="mixed">Mixed</option>
+                                    </select>
+                                    <p class="text-xs text-slate-500 mt-1">Gender of vocals to use with the instrumental (if applicable).</p>
+                                </div>
+                                
+                                <!-- Advanced Parameters Section -->
+                                <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
+                                    <h4 class="text-lg font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-primary">tune</span>
+                                        Advanced Parameters
+                                    </h4>
+                                    
+                                    <!-- Style Weight -->
+                                    <div>
+                                        <label for="styleWeight" class="block text-sm font-medium mb-2">Style Weight</label>
+                                        <div class="flex items-center gap-4">
+                                            <input type="range" id="styleWeight" name="styleWeight" min="0" max="1" step="0.01" value="0.61" class="flex-1">
+                                            <span class="text-sm font-mono w-16 text-right" id="styleWeightValue">0.61</span>
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-1">How strongly to adhere to the specified style (0.0 to 1.0).</p>
+                                    </div>
+                                    
+                                    <!-- Weirdness Constraint -->
+                                    <div class="mt-4">
+                                        <label for="weirdnessConstraint" class="block text-sm font-medium mb-2">Weirdness Constraint</label>
+                                        <div class="flex items-center gap-4">
+                                            <input type="range" id="weirdnessConstraint" name="weirdnessConstraint" min="0" max="1" step="0.01" value="0.72" class="flex-1">
+                                            <span class="text-sm font-mono w-16 text-right" id="weirdnessConstraintValue">0.72</span>
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-1">Controls how unconventional the generation can be (0.0 to 1.0).</p>
+                                    </div>
+                                    
+                                    <!-- Audio Weight -->
+                                    <div class="mt-4">
+                                        <label for="audioWeight" class="block text-sm font-medium mb-2">Audio Weight</label>
+                                        <div class="flex items-center gap-4">
+                                            <input type="range" id="audioWeight" name="audioWeight" min="0" max="1" step="0.01" value="0.65" class="flex-1">
+                                            <span class="text-sm font-mono w-16 text-right" id="audioWeightValue">0.65</span>
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-1">Weight given to audio quality vs. other factors (0.0 to 1.0).</p>
+                                    </div>
+                                    
+                                    <!-- Callback URL -->
+                                    <div class="mt-4">
+                                        <label for="callBackUrl" class="block text-sm font-medium mb-2">Callback URL</label>
+                                        <input type="url" id="callBackUrl" name="callBackUrl" class="form-control" placeholder="https://example.com/callback">
+                                        <p class="text-xs text-slate-500 mt-1">Optional URL to receive generation status updates. If empty, system default will be used.</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Submit Button -->
+                                <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h4 class="text-lg font-bold dark:text-white text-slate-900 mb-2">Ready to Add</h4>
+                                            <p class="text-slate-500 dark:text-slate-400 text-sm">Submit the form to add the instrumental to the system.</p>
+                                        </div>
+                                        <button type="submit" id="submitBtn" class="btn-primary flex items-center">
+                                            <span class="material-symbols-outlined mr-2">library_add</span>
+                                            Add Instrumental
+                                        </button>
+                                    </div>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-4">
+                                        <span class="material-symbols-outlined text-xs align-text-bottom mr-1">info</span>
+                                        The instrumental will be processed and added to your library for future use.
+                                    </p>
+                                </div>
+                            </form>
+                            
+                            <!-- Status Display -->
+                            <div id="statusContainer" class="hidden mt-6">
+                                <div class="rounded-lg p-4 border border-primary/30 bg-primary/5">
+                                    <div class="flex items-center gap-3">
+                                        <span class="material-symbols-outlined text-primary animate-spin" id="statusIcon">sync</span>
+                                        <div class="flex-1">
+                                            <h5 class="font-bold text-slate-900 dark:text-white" id="statusTitle">Processing</h5>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400" id="statusMessage">Adding instrumental to the system...</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-xs font-mono text-slate-500" id="statusTaskId"></span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <progress id="statusProgress" value="0" max="100" class="w-full h-2 rounded-full"></progress>
+                                        <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                            <span id="statusProgressText">0%</span>
+                                            <span id="statusTime">Just started</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Success Display -->
+                            <div id="successContainer" class="hidden mt-6">
+                                <div class="rounded-lg p-4 border border-green-500/30 bg-green-500/5">
+                                    <div class="flex items-center gap-3">
+                                        <span class="material-symbols-outlined text-green-500">check_circle</span>
+                                        <div class="flex-1">
+                                            <h5 class="font-bold text-slate-900 dark:text-white">Instrumental Added Successfully!</h5>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400" id="successMessage">Your instrumental has been added to the system and is ready for use.</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium mb-1">Task ID</label>
+                                            <code class="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-sm" id="successTaskId">-</code>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium mb-1">Status</label>
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">Complete</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 flex gap-3">
+                                        <button id="viewInLibraryBtn" class="btn-secondary flex items-center">
+                                            <span class="material-symbols-outlined mr-2">explore</span>
+                                            View in Library
+                                        </button>
+                                        <button id="addAnotherBtn" class="btn-secondary flex items-center">
+                                            <span class="material-symbols-outlined mr-2">add</span>
+                                            Add Another
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Error Display -->
+                            <div id="errorContainer" class="hidden mt-6">
+                                <div class="rounded-lg p-4 border border-red-500/30 bg-red-500/5">
+                                    <div class="flex items-center gap-3">
+                                        <span class="material-symbols-outlined text-red-500">error</span>
+                                        <div class="flex-1">
+                                            <h5 class="font-bold text-slate-900 dark:text-white">Failed to Add Instrumental</h5>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400" id="errorMessage">An error occurred while processing your request.</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <button id="retryBtn" class="btn-primary flex items-center">
+                                            <span class="material-symbols-outlined mr-2">refresh</span>
+                                            Try Again
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- JavaScript Includes -->
+    <script src="{{ url_for('static', filename='js/utils/fileHandler.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/notification.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/taskManager.js') }}"></script>
+    
+    <!-- Add Instrumental JavaScript -->
+    <script>
+        // Fetch CSRF token for upload requests
+        fetch('/auth/csrf-token')
+            .then(response => response.json())
+            .then(data => {
+                window.csrfToken = data.csrf_token;
+                console.log('CSRF token loaded for Add Instrumental page');
+            })
+            .catch(error => console.error('Failed to load CSRF token:', error));
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pre-fill Callback URL with project's public URL
+            const callBackUrlInput = document.getElementById('callBackUrl');
+            const publicBaseUrl = "{{ public_base_url }}";
+            
+            if (callBackUrlInput && publicBaseUrl && publicBaseUrl !== 'None' && !callBackUrlInput.value) {
+                callBackUrlInput.value = publicBaseUrl + '/callback';
+            }
+
+            // Initialize audio source functionality
+            // First, ensure the global handleFileSelect function is available
+            window.handleFileSelect = function(event) {
+                const input = event.target;
+                if (input.files && input.files.length > 0) {
+                    const file = input.files[0];
+                    const fileName = document.getElementById('fileName');
+                    const fileInfo = document.getElementById('fileInfo');
+                    const uploadStatus = document.getElementById('uploadStatus');
+                    const progressContainer = document.getElementById('progressContainer');
+                    
+                    if (fileName) fileName.textContent = file.name;
+                    if (fileInfo) fileInfo.classList.remove('hidden');
+                    if (uploadStatus) uploadStatus.textContent = 'Ready to upload';
+                    if (progressContainer) progressContainer.classList.add('hidden');
+                }
+            };
+            
+            // Set up file upload functionality directly
+            const audioFileInput = document.getElementById('audioFile');
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const uploadStatus = document.getElementById('uploadStatus');
+            
+            if (audioFileInput && uploadArea) {
+                // Drag and drop
+                uploadArea.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    uploadArea.classList.add('dragover');
+                });
+                
+                uploadArea.addEventListener('dragleave', function() {
+                    uploadArea.classList.remove('dragover');
+                });
+                
+                uploadArea.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    uploadArea.classList.remove('dragover');
+                    if (e.dataTransfer.files.length > 0) {
+                        audioFileInput.files = e.dataTransfer.files;
+                        // Trigger change event
+                        const event = new Event('change');
+                        audioFileInput.dispatchEvent(event);
+                    }
+                });
+                
+                // Click to browse - upload area
+                uploadArea.addEventListener('click', function() {
+                    audioFileInput.click();
+                });
+                
+                // Browse button click
+                const browseButton = document.getElementById('browseButton');
+                if (browseButton) {
+                    browseButton.addEventListener('click', function(e) {
+                        e.stopPropagation(); // Prevent event bubbling to uploadArea
+                        audioFileInput.click();
+                    });
+                }
+                
+                // File input change - use the global function
+                audioFileInput.addEventListener('change', window.handleFileSelect);
+            }
+            
+            // Upload button click
+            if (uploadBtn) {
+                uploadBtn.addEventListener('click', async function() {
+                    if (!audioFileInput.files.length) return;
+                    
+                    const file = audioFileInput.files[0];
+                    uploadStatus.textContent = 'Uploading...';
+                    progressContainer.classList.remove('hidden');
+                    uploadBtn.disabled = true;
+                    
+                    try {
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        
+                        // Get CSRF token if available
+                        const csrfToken = window.csrfToken;
+                        if (csrfToken) {
+                            formData.append('csrf_token', csrfToken);
+                        }
+                        
+                        const response = await fetch('/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok && result.success) {
+                            // Update UI with uploaded file URL
+                            const fileUrl = result.data?.file_url;
+                            if (fileUrl) {
+                                setAudioSource('file', fileUrl);
+                                uploadStatus.textContent = 'Upload complete';
+                                if (progressBar) progressBar.style.width = '100%';
+                                if (progressText) progressText.textContent = '100%';
+                            } else {
+                                uploadStatus.textContent = 'Upload failed: Server did not return file URL';
+                            }
+                        } else {
+                            uploadStatus.textContent = 'Upload failed: ' + (result.error || result.data?.error || 'Unknown error');
+                        }
+                    } catch (error) {
+                        console.error('Upload error:', error);
+                        uploadStatus.textContent = 'Upload failed: ' + error.message;
+                    } finally {
+                        uploadBtn.disabled = false;
+                    }
+                });
+            }
+            
+            // Set up tab switching
+            const uploadTab = document.getElementById('uploadTab');
+            const urlTab = document.getElementById('urlTab');
+            const uploadSection = document.getElementById('uploadSection');
+            const urlSection = document.getElementById('urlSection');
+            
+            if (uploadTab && urlTab && uploadSection && urlSection) {
+                uploadTab.addEventListener('click', function() {
+                    uploadTab.classList.add('active');
+                    urlTab.classList.remove('active');
+                    uploadSection.classList.remove('hidden');
+                    urlSection.classList.add('hidden');
+                });
+                
+                urlTab.addEventListener('click', function() {
+                    urlTab.classList.add('active');
+                    uploadTab.classList.remove('active');
+                    urlSection.classList.remove('hidden');
+                    uploadSection.classList.add('hidden');
+                });
+            }
+            
+            // URL functionality
+            const urlTestBtn = document.getElementById('urlTestBtn');
+            const urlTestResult = document.getElementById('urlTestResult');
+            const useUrlBtn = document.getElementById('useUrlBtn');
+            const uploadUrlInput = document.getElementById('uploadUrl');
+            
+            if (urlTestBtn && urlTestResult && useUrlBtn && uploadUrlInput) {
+                urlTestBtn.addEventListener('click', async function() {
+                    const url = uploadUrlInput.value.trim();
+                    if (!url) return;
+                    
+                    urlTestBtn.disabled = true;
+                    urlTestResult.textContent = 'Testing...';
+                    urlTestResult.className = 'test-result hidden px-3 py-1 rounded text-sm font-medium bg-yellow-100 text-yellow-800';
+                    urlTestResult.classList.remove('hidden');
+                    
+                    try {
+                        const response = await fetch('/api/test-url', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ url: url })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok && result.valid) {
+                            urlTestResult.textContent = '✓ URL is accessible';
+                            urlTestResult.className = 'test-result px-3 py-1 rounded text-sm font-medium bg-green-100 text-green-800';
+                        } else {
+                            urlTestResult.textContent = '✗ URL not accessible: ' + (result.error || 'Unknown error');
+                            urlTestResult.className = 'test-result px-3 py-1 rounded text-sm font-medium bg-red-100 text-red-800';
+                        }
+                    } catch (error) {
+                        console.error('URL test error:', error);
+                        urlTestResult.textContent = '✗ Test failed: ' + error.message;
+                        urlTestResult.className = 'test-result px-3 py-1 rounded text-sm font-medium bg-red-100 text-red-800';
+                    } finally {
+                        urlTestBtn.disabled = false;
+                    }
+                });
+                
+                useUrlBtn.addEventListener('click', function() {
+                    const url = uploadUrlInput.value.trim();
+                    if (!url) return;
+                    
+                    setAudioSource('url', url);
+                });
+            }
+            
+            // Set audio source function
+            function setAudioSource(type, url) {
+                const sourceInfo = document.getElementById('audioSourceInfo');
+                const sourceType = document.getElementById('sourceType');
+                const sourceUrl = document.getElementById('sourceUrl');
+                const finalUploadUrl = document.getElementById('finalUploadUrl');
+                
+                if (sourceInfo && sourceType && sourceUrl && finalUploadUrl) {
+                    sourceType.textContent = type === 'file' ? 'File Upload' : 'URL';
+                    sourceUrl.textContent = url;
+                    finalUploadUrl.value = url;
+                    
+                    // Show source info, hide upload/url sections
+                    sourceInfo.classList.remove('hidden');
+                    if (uploadSection) uploadSection.classList.add('hidden');
+                    if (urlSection) urlSection.classList.add('hidden');
+                    
+                    // Update form validation
+                    finalUploadUrl.setAttribute('data-valid', 'true');
+                }
+            }
+            
+            // Clear audio source function (global for onclick)
+            window.clearAudioSource = function() {
+                const sourceInfo = document.getElementById('audioSourceInfo');
+                const uploadSection = document.getElementById('uploadSection');
+                const urlSection = document.getElementById('urlSection');
+                const finalUploadUrl = document.getElementById('finalUploadUrl');
+                const fileInfo = document.getElementById('fileInfo');
+                const audioFileInput = document.getElementById('audioFile');
+                
+                if (sourceInfo) sourceInfo.classList.add('hidden');
+                if (uploadSection) uploadSection.classList.remove('hidden');
+                if (finalUploadUrl) {
+                    finalUploadUrl.value = '';
+                    finalUploadUrl.removeAttribute('data-valid');
+                }
+                if (fileInfo) fileInfo.classList.add('hidden');
+                if (audioFileInput) audioFileInput.value = '';
+                
+                // Reset to upload tab
+                const uploadTab = document.getElementById('uploadTab');
+                const urlTab = document.getElementById('urlTab');
+                if (uploadTab && urlTab) {
+                    uploadTab.classList.add('active');
+                    urlTab.classList.remove('active');
+                }
+            };
+            
+            console.log('Audio source functionality initialized for Add Instrumental page');
+            
+            // Character counters
+            const titleInput = document.getElementById('title');
+            const titleChars = document.getElementById('titleChars');
+            const titleMax = document.getElementById('titleMax');
+            
+            if (titleInput && titleChars) {
+                titleInput.addEventListener('input', function() {
+                    titleChars.textContent = this.value.length;
+                });
+                // Initialize count
+                titleChars.textContent = titleInput.value.length;
+            }
+            
+            // Range sliders with value display
+            const styleWeight = document.getElementById('styleWeight');
+            const styleWeightValue = document.getElementById('styleWeightValue');
+            const weirdnessConstraint = document.getElementById('weirdnessConstraint');
+            const weirdnessConstraintValue = document.getElementById('weirdnessConstraintValue');
+            const audioWeight = document.getElementById('audioWeight');
+            const audioWeightValue = document.getElementById('audioWeightValue');
+            
+            function updateSliderValue(slider, display) {
+                if (slider && display) {
+                    display.textContent = parseFloat(slider.value).toFixed(2);
+                    slider.addEventListener('input', function() {
+                        display.textContent = parseFloat(this.value).toFixed(2);
+                    });
+                }
+            }
+            
+            updateSliderValue(styleWeight, styleWeightValue);
+            updateSliderValue(weirdnessConstraint, weirdnessConstraintValue);
+            updateSliderValue(audioWeight, audioWeightValue);
+            
+            // Form submission
+            const form = document.getElementById('addInstrumentalForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const statusContainer = document.getElementById('statusContainer');
+            const successContainer = document.getElementById('successContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            
+            if (form) {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    // Validate form
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
+                    
+                    // Check if audio source has been selected
+                    const finalUploadUrl = document.getElementById('finalUploadUrl');
+                    if (!finalUploadUrl || !finalUploadUrl.value) {
+                        alert('Please select an audio source by uploading a file or entering a URL.');
+                        return;
+                    }
+                    
+                    // Show loading state
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="material-symbols-outlined mr-2 animate-spin">sync</span>Adding...';
+                    
+                    // Hide other containers
+                    successContainer.classList.add('hidden');
+                    errorContainer.classList.add('hidden');
+                    statusContainer.classList.remove('hidden');
+                    
+                    // Get form data
+                    const formData = new FormData(form);
+                    const data = Object.fromEntries(formData.entries());
+                    
+                    // Convert numeric values
+                    data.styleWeight = parseFloat(data.styleWeight);
+                    data.weirdnessConstraint = parseFloat(data.weirdnessConstraint);
+                    data.audioWeight = parseFloat(data.audioWeight);
+                    
+                    // Add default callback URL if not provided
+                    if (!data.callBackUrl) {
+                        // Use system default callback
+                        data.callBackUrl = window.location.origin + '/callback';
+                    }
+                    
+                    try {
+                        // Make API request
+                        const response = await fetch('/api/add-instrumental', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok && result.code === 200) {
+                            // Success
+                            showSuccess(result);
+                        } else {
+                            // Error
+                            showError(result.msg || 'Failed to add instrumental');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showError('Network error: ' + error.message);
+                    } finally {
+                        // Reset button
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<span class="material-symbols-outlined mr-2">library_add</span>Add Instrumental';
+                    }
+                });
+            }
+            
+            function showSuccess(result) {
+                statusContainer.classList.add('hidden');
+                successContainer.classList.remove('hidden');
+                
+                const successTaskId = document.getElementById('successTaskId');
+                const successMessage = document.getElementById('successMessage');
+                
+                if (successTaskId && result.data && result.data.taskId) {
+                    successTaskId.textContent = result.data.taskId;
+                }
+                
+                if (successMessage) {
+                    successMessage.textContent = result.msg || 'Your instrumental has been added successfully.';
+                }
+                
+                // Set up success buttons
+                const viewInLibraryBtn = document.getElementById('viewInLibraryBtn');
+                const addAnotherBtn = document.getElementById('addAnotherBtn');
+                
+                if (viewInLibraryBtn) {
+                    viewInLibraryBtn.addEventListener('click', function() {
+                        window.location.href = '/library';
+                    });
+                }
+                
+                if (addAnotherBtn) {
+                    addAnotherBtn.addEventListener('click', function() {
+                        successContainer.classList.add('hidden');
+                        form.reset();
+                        // Reset character counters
+                        if (titleChars) titleChars.textContent = '0';
+                        // Reset sliders
+                        if (styleWeightValue) styleWeightValue.textContent = '0.61';
+                        if (weirdnessConstraintValue) weirdnessConstraintValue.textContent = '0.72';
+                        if (audioWeightValue) audioWeightValue.textContent = '0.65';
+                    });
+                }
+            }
+            
+            function showError(message) {
+                statusContainer.classList.add('hidden');
+                errorContainer.classList.remove('hidden');
+                
+                const errorMessage = document.getElementById('errorMessage');
+                if (errorMessage) {
+                    errorMessage.textContent = message;
+                }
+                
+                // Set up retry button
+                const retryBtn = document.getElementById('retryBtn');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', function() {
+                        errorContainer.classList.add('hidden');
+                        form.dispatchEvent(new Event('submit'));
+                    });
+                }
+            }
+            
+            // Theme toggle
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    const html = document.documentElement;
+                    if (html.classList.contains('dark')) {
+                        html.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        html.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                    }
+                });
+            }
+            
+            // Mobile menu toggle
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    const sidebar = document.querySelector('aside');
+                    if (sidebar) {
+                        sidebar.classList.toggle('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+# Git
+.git
+.gitignore
+.gitattributes
+*.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+*.coverage
+.coverage.*
+.cache/
+.tox/
+.venv/
+.venv_clean/
+.venv_new/
+venv/
+env/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.next/
+out/
+dist/
+build/
+.nuxt/
+phase2/client/node_modules/
+phase2/server/node_modules/
+
+# Environment files (never include real secrets!)
+.env
+.env.*
+!.env.example
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+docker/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Tests
+tests/
+test/
+*_test.go
+*_test.py
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Application specific
+instance/
+app.db
+cloudflared.log
+cloudflared.pid
+%BK%/
+static/uploads/
+
+# Logs
+*.log
+logs/
+
+# Scripts (not needed in image)
+scripts/deploy.sh
+scripts/rollback.sh
+
+# Secrets
+secrets/
+*.pem
+*.key
+*.crt

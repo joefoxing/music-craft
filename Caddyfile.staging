@@ -1,0 +1,47 @@
+{
+    email admin@joefoxing.com
+}
+
+# Staging environment - with optional basic auth protection
+staging.joefoxing.com {
+    encode gzip
+
+    # Optional: Basic auth to protect staging from public access
+    # Uncomment and configure via environment variables if needed
+    # basicauth {
+    #     {$BASIC_AUTH_USER} {$BASIC_AUTH_PASSWORD}
+    # }
+
+    # Security headers
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+        X-Robots-Tag "noindex, nofollow"  # Prevent search engine indexing
+        X-Environment "staging"
+    }
+
+    # Health check endpoint (bypass auth if enabled)
+    handle /health {
+        reverse_proxy app-staging-api:8000
+    }
+
+    # API routes
+    handle /api/* {
+        reverse_proxy app-staging-api:8000
+    }
+
+    # Frontend routes
+    handle {
+        reverse_proxy app-staging-web:3000
+    }
+
+    # Logging
+    log {
+        output file /var/log/caddy/staging-access.log {
+            roll_size 10mb
+            roll_keep 5
+        }
+        format json
+    }
+}

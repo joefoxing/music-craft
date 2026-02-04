@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Button Click Test</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .song-item-container {
+            position: relative;
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+        .button-wrapper {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1;
+        }
+        .add-button {
+            padding: 8px 12px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 0, 0, 0.2);
+            z-index: 5;
+            pointer-events: none; /* Change to 'auto' to simulate overlay issue */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Song Library</h1>
+    <p>This tests the fix for multiple "Add" buttons. The old method would only work for "Song 1". The new method works for all buttons.</p>
+
+    <div id="song-list">
+        <!-- Songs would be rendered here -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const songList = document.getElementById('song-list');
+            const songs = [
+                { id: 1, title: 'Song 1', artist: 'Artist A' },
+                { id: 2, title: 'Song 2', artist: 'Artist B' },
+                { id: 3, title: 'Song 3', artist: 'Artist C' }
+            ];
+
+            // Render songs
+            songs.forEach(song => {
+                const songItem = document.createElement('div');
+                songItem.className = 'song-item-container';
+                songItem.innerHTML = `
+                    <div class="song-details">
+                        <strong>${song.title}</strong> by ${song.artist}
+                    </div>
+                    <div class="button-wrapper">
+                        <!-- Using a class, not an ID. Using data-attribute to store song ID. -->
+                        <button class="add-button" data-song-id="${song.id}">Add</button>
+                    </div>
+                `;
+                songList.appendChild(songItem);
+            });
+
+            // --- INCORRECT METHOD (for demonstration) ---
+            // This only attaches a listener to the FIRST button found.
+            // const incorrectButton = document.getElementById('add-song-btn'); // Assuming they had an ID
+            // if (incorrectButton) {
+            //     incorrectButton.addEventListener('click', () => {
+            //         console.log('INCORRECT: Add button clicked, but which one?');
+            //     });
+            // }
+
+
+            // --- CORRECT METHOD (Event Delegation) ---
+            // This is the most efficient way. We add ONE listener to the parent container.
+            songList.addEventListener('click', (event) => {
+                // Check if the clicked element is an "add-button"
+                if (event.target && event.target.classList.contains('add-button')) {
+                    const songId = event.target.dataset.songId;
+                    console.log(`CORRECT: Add button clicked for Song ID: ${songId}`);
+                    // ... logic to add the song
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

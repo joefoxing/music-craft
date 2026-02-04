@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Library - AudioCraft</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f20df2",
+                        "primary-dark": "#c20ac2",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#181118",
+                        "surface-dark": "#271b27",
+                        "border-dark": "#392839",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                    animation: {
+                        "slide-in": "slideIn 0.3s ease-out",
+                        "fade-in": "fadeIn 0.5s ease-out",
+                    },
+                    keyframes: {
+                        slideIn: {
+                            from: { opacity: 0, transform: "translateY(-10px)" },
+                            to: { opacity: 1, transform: "translateY(0)" }
+                        },
+                        fadeIn: {
+                            from: { opacity: 0 },
+                            to: { opacity: 1 }
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+    <div class="flex h-screen w-full">
+        {% include "partials/_sidebar.html" %}
+        
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark relative overflow-hidden">
+            <!-- Header -->
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+                <div class="hidden md:block">
+                    <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Music Library</h2>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center bg-surface-dark rounded-full px-3 py-1.5 border border-border-dark">
+                        <span class="material-symbols-outlined text-primary text-sm mr-2">library_music</span>
+                        <span class="text-white text-xs font-bold font-mono" id="libraryCount">0 Items</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar p-6 pb-32">
+                <div class="max-w-7xl mx-auto space-y-8">
+                    <!-- Tab Navigation -->
+                    <section class="flex flex-col gap-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-1 bg-surface-dark rounded-xl p-1 border border-border-dark">
+                                <button id="templateTabBtn" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 tab-btn active" data-tab="template-library" aria-controls="template-library-content" aria-selected="true">
+                                    <span class="material-symbols-outlined text-lg">content_copy</span>
+                                    <span>Template Library</span>
+                                </button>
+                                <button id="songLibraryTabBtn" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 tab-btn" data-tab="song-library" aria-controls="song-library-content" aria-selected="false">
+                                    <span class="material-symbols-outlined text-lg">library_music</span>
+                                    <span>Song Library</span>
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div class="hidden md:flex items-center bg-surface-dark rounded-full px-3 py-1.5 border border-border-dark">
+                                    <span class="material-symbols-outlined text-primary text-sm mr-2">library_music</span>
+                                    <span class="text-white text-xs font-bold font-mono" id="activeTabCount">0 Items</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Template Library Content -->
+                    <section id="template-library-content" class="tab-content">
+                        <div class="flex flex-col gap-6">
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Template Library</h2>
+                                    <p class="text-slate-500 dark:text-slate-400">Curated music generation templates for instant inspiration</p>
+                                </div>
+                                <button id="templateRefreshBtn" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                                    <span class="material-symbols-outlined text-sm">refresh</span>
+                                    <span class="text-sm font-medium">Refresh</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Template Gallery -->
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-lg">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="text-xl font-bold dark:text-white text-slate-900">Music Generation Templates</h3>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Browse and apply curated templates for different music styles</p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <input id="templateSearch" type="text" placeholder="Search templates..." class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary w-64"/>
+                                </div>
+                            </div>
+                            
+                            <!-- Template Stats -->
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400">Total Templates</p>
+                                            <p id="templateStatsTotal" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                        </div>
+                                        <span class="material-symbols-outlined text-primary text-2xl">content_copy</span>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400">Popular</p>
+                                            <p id="templateStatsPopular" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                        </div>
+                                        <span class="material-symbols-outlined text-yellow-500 text-2xl">star</span>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400">Easy</p>
+                                            <p id="templateStatsEasy" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                        </div>
+                                        <span class="material-symbols-outlined text-green-500 text-2xl">check_circle</span>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400">Advanced</p>
+                                            <p id="templateStatsAdvanced" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                        </div>
+                                        <span class="material-symbols-outlined text-red-500 text-2xl">bolt</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Filters -->
+                            <div class="flex flex-wrap items-center gap-3 mb-6">
+                                <select id="templateCategoryFilter" class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="all">All Categories</option>
+                                    <option value="electronic">Electronic</option>
+                                    <option value="rock">Rock</option>
+                                    <option value="jazz">Jazz</option>
+                                    <option value="classical">Classical</option>
+                                    <option value="cinematic">Cinematic</option>
+                                    <option value="ambient">Ambient</option>
+                                    <option value="hyperpop">Hyperpop</option>
+                                    <option value="drill">Drill</option>
+                                    <option value="afrobeats">Afrobeats</option>
+                                    <option value="neo-soul">Neo-Soul</option>
+                                    <option value="drum-bass">Drum & Bass</option>
+                                    <option value="reggaeton">Reggaetón</option>
+                                    <option value="phonk">Phonk</option>
+                                    <option value="k-pop">K-Pop</option>
+                                    <option value="trap-metal">Trap Metal</option>
+                                    <option value="hip-hop">Hip-Hop</option>
+                                    <option value="latin">Latin</option>
+                                </select>
+                                <select id="templateDifficultyFilter" class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="all">All Difficulties</option>
+                                    <option value="beginner">Beginner</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="advanced">Advanced</option>
+                                </select>
+                                <select id="templateSortSelect" class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <option value="popularity_desc">Most Popular</option>
+                                    <option value="popularity_asc">Least Popular</option>
+                                    <option value="name_asc">Name A-Z</option>
+                                    <option value="name_desc">Name Z-A</option>
+                                    <option value="difficulty_asc">Easiest First</option>
+                                    <option value="difficulty_desc">Hardest First</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Loading State -->
+                            <div id="templateLoading" class="text-center py-8">
+                                <div class="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                                    <span class="material-symbols-outlined animate-spin">sync</span>
+                                    <span>Loading templates...</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Empty State -->
+                            <div id="templateEmpty" class="text-center py-8 hidden">
+                                <div class="flex flex-col items-center gap-3">
+                                    <span class="material-symbols-outlined text-slate-400 text-4xl">content_copy</span>
+                                    <h4 class="text-lg font-medium text-slate-700 dark:text-slate-300">No templates found</h4>
+                                    <p class="text-slate-500 dark:text-slate-400">Try adjusting your filters or check back later.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Error State -->
+                            <div id="templateError" class="text-center py-8 hidden">
+                                <div class="flex flex-col items-center gap-3">
+                                    <span class="material-symbols-outlined text-red-500 text-4xl">error</span>
+                                    <h4 class="text-lg font-medium text-slate-700 dark:text-slate-300">Failed to load templates</h4>
+                                    <p class="text-slate-500 dark:text-slate-400 error-message"></p>
+                                    <button class="mt-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                                        Try Again
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Template Gallery Container -->
+                            <div id="templateGalleryContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+                                <!-- Template cards will be inserted here by JavaScript -->
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Song Library Content -->
+                    <section id="song-library-content" class="tab-content hidden" aria-labelledby="songLibraryTabBtn">
+                        <div class="flex flex-col gap-6">
+                            <!-- Header -->
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Song Library</h2>
+                                        <p class="text-slate-500 dark:text-slate-400">Manage and organize your audio collection</p>
+                                    </div>
+                                    <button id="songLibraryRefreshBtn" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                                        <span class="material-symbols-outlined text-sm">refresh</span>
+                                        <span class="text-sm font-medium">Refresh</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Song Library Stats -->
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400">Total Songs</p>
+                                            <p id="songStatsTotal" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                        </div>
+                                        <span class="material-symbols-outlined text-primary text-2xl">music_note</span>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400">Favorites</p>
+                                            <p id="songStatsFavorites" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                        </div>
+                                        <span class="material-symbols-outlined text-red-500 text-2xl">favorite</span>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400">Recent</p>
+                                            <p id="songStatsRecent" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                        </div>
+                                        <span class="material-symbols-outlined text-blue-500 text-2xl">schedule</span>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400">Playlists</p>
+                                            <p id="songStatsPlaylists" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                        </div>
+                                        <span class="material-symbols-outlined text-green-500 text-2xl">playlist_play</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Controls -->
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                                <!-- Search and Filters -->
+                                <div class="flex flex-col md:flex-row gap-3 flex-1">
+                                    <input id="songLibrarySearch" type="text" placeholder="Search songs, artists, albums..." class="bg-surface-dark border border-border-dark rounded-lg px-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary w-full md:w-80"/>
+                                    
+                                    <select id="songLibrarySort" class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="created_at_desc">Newest First</option>
+                                        <option value="created_at_asc">Oldest First</option>
+                                        <option value="title_asc">Title A-Z</option>
+                                        <option value="title_desc">Title Z-A</option>
+                                        <option value="artist_asc">Artist A-Z</option>
+                                        <option value="artist_desc">Artist Z-A</option>
+                                        <option value="play_count_desc">Most Played</option>
+                                        <option value="duration_desc">Longest First</option>
+                                        <option value="duration_asc">Shortest First</option>
+                                    </select>
+                                    
+                                    <select id="songLibraryGenreFilter" class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="">All Genres</option>
+                                        <option value="electronic">Electronic</option>
+                                        <option value="rock">Rock</option>
+                                        <option value="jazz">Jazz</option>
+                                        <option value="classical">Classical</option>
+                                        <option value="hip-hop">Hip-Hop</option>
+                                        <option value="pop">Pop</option>
+                                        <option value="r&b">R&B</option>
+                                        <option value="country">Country</option>
+                                        <option value="indie">Indie</option>
+                                        <option value="alternative">Alternative</option>
+                                    </select>
+                                    
+                                    <select id="songLibrarySourceFilter" class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="">All Sources</option>
+                                        <option value="upload">Uploaded</option>
+                                        <option value="generated">AI Generated</option>
+                                        <option value="url">From URL</option>
+                                        <option value="history">From History</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Action Buttons -->
+                                <div class="flex gap-2">
+                                    <button id="songLibraryFavoritesFilter" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">favorite</span>
+                                        <span class="hidden md:inline">Favorites</span>
+                                    </button>
+                                    <button id="songLibraryCreatePlaylistBtn" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">playlist_add</span>
+                                        <span class="hidden md:inline">New Playlist</span>
+                                    </button>
+                                    <button id="songLibraryYourPlaylistsBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">queue_music</span>
+                                        <span class="hidden md:inline">Your Playlist</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Loading State -->
+                            <div id="songLibraryLoading" class="text-center py-12">
+                                <div class="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                                    <span class="material-symbols-outlined animate-spin">sync</span>
+                                    <span>Loading your music library...</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Empty State -->
+                            <div id="songLibraryEmpty" class="text-center py-12 hidden">
+                                <div class="flex flex-col items-center gap-3">
+                                    <span class="material-symbols-outlined text-slate-400 text-6xl">library_music</span>
+                                    <h3 class="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">Your library is empty</h3>
+                                    <p class="text-slate-500 dark:text-slate-400 mb-6">Start building your collection by uploading songs or adding from generated music.</p>
+                                    <div class="flex flex-col sm:flex-row gap-3">
+                                        <button class="px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
+                                            <span class="material-symbols-outlined">upload</span>
+                                            Upload Songs
+                                        </button>
+                                        <button class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
+                                            <span class="material-symbols-outlined">auto_awesome</span>
+                                            Generate Music
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Error State -->
+                            <div id="songLibraryError" class="text-center py-12 hidden">
+                                <div class="flex flex-col items-center gap-3">
+                                    <span class="material-symbols-outlined text-red-500 text-4xl">error</span>
+                                    <h4 class="text-lg font-medium text-red-700 dark:text-red-300">Failed to load library</h4>
+                                    <p class="text-red-500 dark:text-red-400 mb-4 error-message"></p>
+                                    <button id="songLibraryRetryBtn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                                        Try Again
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Song Library Container -->
+                            <div id="songLibraryContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden" role="list" aria-label="Song library">
+                                <!-- Song cards will be inserted here by JavaScript -->
+                            </div>
+                            
+                            <!-- Pagination -->
+                            <div id="songLibraryPagination" class="flex items-center justify-center gap-2 mt-8 hidden" role="navigation" aria-label="Song library pagination">
+                                <button id="songLibraryPrevPage" class="px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    <span class="material-symbols-outlined">chevron_left</span>
+                                </button>
+                                <div id="songLibraryPageNumbers" class="flex gap-1">
+                                    <!-- Page numbers will be inserted here -->
+                                </div>
+                                <button id="songLibraryNextPage" class="px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <span class="material-symbols-outlined">chevron_right</span>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            
+            <!-- Song Card Template -->
+            <template id="songCardTemplate">
+                <div class="song-card bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-lg hover:shadow-xl transition-all duration-300 group" role="listitem">
+                    <!-- Header -->
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-bold text-slate-900 dark:text-white text-lg mb-1 truncate song-title" data-song-title></h3>
+                            <p class="text-slate-600 dark:text-slate-400 text-sm mb-1 song-artist" data-song-artist></p>
+                            <p class="text-slate-500 dark:text-slate-500 text-xs song-album" data-song-album></p>
+                        </div>
+                        <div class="flex items-center gap-2 ml-4">
+                            <button class="song-favorite-btn p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" aria-label="Toggle favorite">
+                                <span class="material-symbols-outlined text-red-500 text-lg hidden" data-favorite-icon>favorite</span>
+                                <span class="material-symbols-outlined text-slate-400 text-lg" data-not-favorite-icon>favorite_border</span>
+                            </button>
+                            <div class="relative">
+                                <button class="song-menu-btn p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Song options">
+                                    <span class="material-symbols-outlined text-slate-400">more_vert</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Audio Player -->
+                    <div class="mb-4">
+                        <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-800 rounded-lg p-3">
+                            <button class="song-play-btn p-2 bg-primary hover:bg-primary-dark text-white rounded-full transition-colors" aria-label="Play song">
+                                <span class="material-symbols-outlined play-icon" data-play-icon>play_arrow</span>
+                                <span class="material-symbols-outlined pause-icon hidden" data-pause-icon>pause</span>
+                            </button>
+                            <div class="flex-1">
+                                <div class="song-progress-bar h-1 bg-slate-300 dark:bg-slate-700 rounded-full overflow-hidden cursor-pointer">
+                                    <div class="song-progress h-full bg-primary" style="width: 0%" data-progress></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                    <span class="song-current-time">0:00</span>
+                                    <span class="song-duration" data-duration>0:00</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button class="volume-btn p-1 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300" aria-label="Volume">
+                                    <span class="material-symbols-outlined text-sm">volume_up</span>
+                                </button>
+                                <input type="range" min="0" max="100" value="80" class="volume-slider w-16 accent-primary" aria-label="Volume slider">
+                            </div>
+                        </div>
+                        <audio class="hidden" data-audio-element>
+                            <source src="" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                    
+                    <!-- Metadata -->
+                    <div class="grid grid-cols-2 gap-3 text-xs text-slate-500 dark:text-slate-400 mb-4">
+                        <div>
+                            <span class="font-medium">Duration:</span>
+                            <span class="song-meta-duration" data-meta-duration>--:--</span>
+                        </div>
+                        <div>
+                            <span class="font-medium">Size:</span>
+                            <span class="song-meta-size" data-meta-size>-- MB</span>
+                        </div>
+                        <div>
+                            <span class="font-medium">Genre:</span>
+                            <span class="song-meta-genre" data-meta-genre>Unknown</span>
+                        </div>
+                        <div>
+                            <span class="font-medium">Plays:</span>
+                            <span class="song-play-count" data-play-count>0</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Tags -->
+                    <div class="flex flex-wrap gap-1 mb-4" data-tags-container>
+                        <!-- Tags will be inserted here -->
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-slate-400" data-upload-date>Added recently</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="song-add-to-playlist-btn px-3 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-1" aria-label="Add to playlist">
+                                <span class="material-symbols-outlined text-xs">playlist_add</span>
+                                <span class="hidden sm:inline">Add</span>
+                            </button>
+                            <button class="song-download-btn px-3 py-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center gap-1" aria-label="Download">
+                                <span class="material-symbols-outlined text-xs">download</span>
+                                <span class="hidden sm:inline">Download</span>
+                            </button>
+                            <button class="song-edit-btn px-3 py-1 text-xs bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors flex items-center gap-1" aria-label="Edit metadata">
+                                <span class="material-symbols-outlined text-xs">edit</span>
+                                <span class="hidden sm:inline">Edit</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            
+            <!-- Create Playlist Modal -->
+            <template id="createPlaylistModalTemplate">
+                <div class="fixed inset-0 z-50 overflow-y-auto" id="playlistModal">
+                    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        <!-- Background overlay -->
+                        <div class="fixed inset-0 transition-opacity bg-black/70" aria-hidden="true"></div>
+                        
+                        <!-- Modal panel -->
+                        <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-surface-dark shadow-xl rounded-xl border border-slate-200 dark:border-border-dark sm:my-8 sm:align-middle">
+                            <!-- Modal header -->
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary">playlist_add</span>
+                                    Create New Playlist
+                                </h3>
+                                <button class="playlist-modal-close-btn text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors" aria-label="Close modal">
+                                    <span class="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Modal content -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Playlist Type</label>
+                                    <div class="flex gap-4">
+                                        <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                            <input type="radio" name="playlistType" value="manual" checked class="text-primary focus:ring-primary w-4 h-4">
+                                            <span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Manual</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                            <input type="radio" name="playlistType" value="prompt" class="text-primary focus:ring-primary w-4 h-4">
+                                            <span class="text-slate-700 dark:text-slate-300 text-sm font-medium flex items-center gap-1">
+                                                Smart (AI)
+                                                <span class="material-symbols-outlined text-xs text-primary">auto_awesome</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div id="smartPlaylistOptions" class="hidden animate-slide-in">
+                                    <div class="p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/30 rounded-lg">
+                                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Generation Prompt</label>
+                                        <textarea id="playlistPromptInput" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-purple-200 dark:border-purple-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm" placeholder="E.g. A cyberpunk detective story in a rainy neon city..." rows="3"></textarea>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[14px]">info</span>
+                                            AI will generate a sequence of tracks based on your prompt.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Playlist Name</label>
+                                    <input type="text" id="playlistNameInput" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="My Awesome Playlist" maxlength="100">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Description (Optional)</label>
+                                    <textarea id="playlistDescriptionInput" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Describe your playlist..." rows="3" maxlength="500"></textarea>
+                                </div>
+                            </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="mt-6 flex justify-end gap-3">
+                                <button class="playlist-modal-cancel-btn px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors border border-slate-300 dark:border-slate-700">
+                                    Cancel
+                                </button>
+                                <button class="playlist-modal-create-btn px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-lg transition-colors flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                    Create Playlist
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </main>
+    </div>
+    
+    <!-- JavaScript Includes -->
+    <script src="{{ url_for('static', filename='js/components/templateGallery.js') }}?v=2"></script>
+    <script src="{{ url_for('static', filename='js/components/unifiedCard.js') }}?v=2"></script>
+    <script src="{{ url_for('static', filename='js/components/specializedCards.js') }}?v=2"></script>
+    <script src="{{ url_for('static', filename='js/components/addButton.js') }}?v=2"></script>
+    <script src="{{ url_for('static', filename='js/components/audioLibrary.js') }}?v=2"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing template gallery on library page...');
+            
+            // Check if TemplateGallery class is available
+            if (typeof TemplateGallery === 'undefined') {
+                console.error('TemplateGallery class not found. Make sure templateGallery.js is loaded.');
+                return;
+            }
+            
+            // Get DOM elements
+            const galleryContainer = document.getElementById('templateGalleryContainer');
+            const loadingState = document.getElementById('templateLoading');
+            const emptyState = document.getElementById('templateEmpty');
+            const errorState = document.getElementById('templateError');
+            const refreshBtn = document.getElementById('templateRefreshBtn');
+            const searchInput = document.getElementById('templateSearch');
+            const categoryFilter = document.getElementById('templateCategoryFilter');
+            const difficultyFilter = document.getElementById('templateDifficultyFilter');
+            const sortSelect = document.getElementById('templateSortSelect');
+            const statsTotal = document.getElementById('templateStatsTotal');
+            const statsPopular = document.getElementById('templateStatsPopular');
+            const statsEasy = document.getElementById('templateStatsEasy');
+            const statsAdvanced = document.getElementById('templateStatsAdvanced');
+            
+            if (!galleryContainer) {
+                console.error('Template gallery container not found.');
+                return;
+            }
+            
+            // Create TemplateGallery instance
+            const templateGallery = new TemplateGallery();
+            
+            // Initialize with DOM elements
+            templateGallery.initialize({
+                galleryContainer: galleryContainer,
+                loadingState: loadingState,
+                emptyState: emptyState,
+                errorState: errorState,
+                refreshBtn: refreshBtn,
+                searchInput: searchInput,
+                categoryFilter: categoryFilter,
+                subcategoryFilter: null, // This element doesn't exist
+                difficultyFilter: difficultyFilter,
+                sortSelect: sortSelect,
+                statsTotal: statsTotal,
+                statsPopular: statsPopular,
+                statsEasy: statsEasy,
+                statsAdvanced: statsAdvanced
+            });
+            
+            // Set callbacks
+            templateGallery.setOnTemplateSelect(function(template) {
+                console.log('Template selected:', template);
+                // Show template preview
+                alert(`Template Preview: ${template.name}\n\n${template.description}`);
+            });
+            
+            templateGallery.setOnTemplateApplyWithMusicGenerator(function(template) {
+                console.log('Apply with Music Generator clicked:', template);
+                // Store template in sessionStorage
+                try {
+                    sessionStorage.setItem('selectedMusicTemplate', JSON.stringify(template));
+                    console.log('Music template stored in sessionStorage.');
+                } catch (e) {
+                    console.error('Failed to store template in sessionStorage:', e);
+                }
+                
+                // Navigate to music generator page
+                const confirmed = confirm(`Apply template "${template.name}" to Music Generator?\n\nThis will navigate to the Music Generator page with the template pre-filled.`);
+                if (confirmed) {
+                    window.location.href = '/music-generator';
+                }
+            });
+            
+            templateGallery.setOnTemplateApplyWithCoverGenerator(function(template) {
+                console.log('Apply with Cover Generator clicked:', template);
+                // Store template in sessionStorage
+                try {
+                    sessionStorage.setItem('selectedTemplate', JSON.stringify(template));
+                    console.log('Template stored in sessionStorage.');
+                } catch (e) {
+                    console.error('Failed to store template in sessionStorage:', e);
+                }
+                
+                // Navigate to cover generator page
+                const confirmed = confirm(`Apply template "${template.name}" to Cover Generator?\n\nThis will navigate to the Cover Generator page with the template pre-filled.`);
+                if (confirmed) {
+                    window.location.href = '/cover-generator';
+                }
+            });
+            
+            // Load templates
+            templateGallery.loadTemplates();
+            
+            // Store instance globally for debugging/access
+            window.templateGallery = templateGallery;
+            
+            console.log('Template Gallery initialized on library page.');
+        });
+        
+        // Song Library Tab Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing Song Library tab functionality...');
+            
+            // Tab switching functionality
+            const templateTabBtn = document.getElementById('templateTabBtn');
+            const songLibraryTabBtn = document.getElementById('songLibraryTabBtn');
+            const templateContent = document.getElementById('template-library-content');
+            const songLibraryContent = document.getElementById('song-library-content');
+            const activeTabCount = document.getElementById('activeTabCount');
+            
+            function switchTab(targetTab) {
+                const isTemplateTab = targetTab === 'template-library';
+                
+                // Update button states
+                templateTabBtn.classList.toggle('active', isTemplateTab);
+                songLibraryTabBtn.classList.toggle('active', !isTemplateTab);
+                
+                // Update ARIA attributes
+                templateTabBtn.setAttribute('aria-selected', isTemplateTab);
+                songLibraryTabBtn.setAttribute('aria-selected', !isTemplateTab);
+                
+                // Show/hide content
+                templateContent.classList.toggle('hidden', !isTemplateTab);
+                songLibraryContent.classList.toggle('hidden', isTemplateTab);
+                
+                // Update count display
+                if (isTemplateTab) {
+                    const templateCount = document.getElementById('templateStatsTotal')?.textContent || '0';
+                    activeTabCount.textContent = `${templateCount} Templates`;
+                } else {
+                    const songCount = document.getElementById('songStatsTotal')?.textContent || '0';
+                    activeTabCount.textContent = `${songCount} Songs`;
+                }
+                
+                // Initialize Song Library if switching to it
+                if (!isTemplateTab && window.songLibrary) {
+                    window.songLibrary.loadLibrary();
+                }
+            }
+            
+            // Add event listeners
+            if (templateTabBtn) {
+                templateTabBtn.addEventListener('click', () => switchTab('template-library'));
+            }
+            
+            if (songLibraryTabBtn) {
+                songLibraryTabBtn.addEventListener('click', () => switchTab('song-library'));
+            }
+            
+            // Initialize Song Library if the class is available
+            if (typeof SongLibrary === 'undefined') {
+                console.error('SongLibrary class not found. Make sure audioLibrary.js is loaded.');
+                return;
+            }
+            
+            // Create SongLibrary instance
+            const songLibrary = new SongLibrary();
+            
+            // Initialize with DOM elements
+            songLibrary.initialize({
+                container: document.getElementById('songLibraryContainer'),
+                loadingState: document.getElementById('songLibraryLoading'),
+                emptyState: document.getElementById('songLibraryEmpty'),
+                errorState: document.getElementById('songLibraryError'),
+                refreshBtn: document.getElementById('songLibraryRefreshBtn'),
+                searchInput: document.getElementById('songLibrarySearch'),
+                sortSelect: document.getElementById('songLibrarySort'),
+                genreFilter: document.getElementById('songLibraryGenreFilter'),
+                sourceFilter: document.getElementById('songLibrarySourceFilter'),
+                favoritesFilter: document.getElementById('songLibraryFavoritesFilter'),
+                createPlaylistBtn: document.getElementById('songLibraryCreatePlaylistBtn'),
+                yourPlaylistsBtn: document.getElementById('songLibraryYourPlaylistsBtn'),
+                retryBtn: document.getElementById('songLibraryRetryBtn'),
+                statsTotal: document.getElementById('songStatsTotal'),
+                statsFavorites: document.getElementById('songStatsFavorites'),
+                statsRecent: document.getElementById('songStatsRecent'),
+                statsPlaylists: document.getElementById('songStatsPlaylists'),
+                pagination: {
+                    container: document.getElementById('songLibraryPagination'),
+                    prevBtn: document.getElementById('songLibraryPrevPage'),
+                    nextBtn: document.getElementById('songLibraryNextPage'),
+                    pageNumbers: document.getElementById('songLibraryPageNumbers')
+                }
+            });
+            
+            // Store instance globally for access
+            window.songLibrary = songLibrary;
+            
+            console.log('Song Library tab functionality initialized.');
+        });
+    </script>
+</body>
+</html>

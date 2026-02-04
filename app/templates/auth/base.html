@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Music Cover Generator{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        .bg-gradient-auth {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .input-focus:focus {
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-gradient-auth opacity-10"></div>
+    
+    <div class="relative w-full max-w-md">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <a href="{{ url_for('main.index') }}" class="inline-flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-4xl text-purple-600 mr-2">graphic_eq</span>
+                <h1 class="text-2xl font-bold text-gray-800">Music Cover Generator</h1>
+            </a>
+            <h2 class="text-xl font-semibold text-gray-700">{% block page_title %}{% endblock %}</h2>
+            <p class="text-gray-500 mt-2">{% block page_subtitle %}{% endblock %}</p>
+        </div>
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-6">
+                    {% for category, message in messages %}
+                        <div class="p-4 rounded-lg mb-2 {% if category == 'success' %}bg-green-50 text-green-700 border border-green-200{% elif category == 'danger' or category == 'error' %}bg-red-50 text-red-700 border border-red-200{% elif category == 'warning' %}bg-yellow-50 text-yellow-700 border border-yellow-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Content -->
+        <div class="bg-white rounded-2xl card-shadow p-8">
+            {% block content %}{% endblock %}
+        </div>
+        
+        <!-- Footer Links -->
+        <div class="text-center mt-6 text-gray-500">
+            {% block footer_links %}
+                <p>
+                    {% if request.endpoint != 'auth.login' %}
+                        <a href="{{ url_for('auth.login') }}" class="text-purple-600 hover:text-purple-800 font-medium">Login</a>
+                    {% endif %}
+                    {% if request.endpoint != 'auth.register' %}
+                        <span class="mx-2">•</span>
+                        <a href="{{ url_for('auth.register') }}" class="text-purple-600 hover:text-purple-800 font-medium">Register</a>
+                    {% endif %}
+                    {% if request.endpoint != 'auth.forgot_password' %}
+                        <span class="mx-2">•</span>
+                        <a href="{{ url_for('auth.forgot_password') }}" class="text-purple-600 hover:text-purple-800 font-medium">Forgot Password?</a>
+                    {% endif %}
+                </p>
+            {% endblock %}
+            <p class="mt-4 text-sm">
+                &copy; {{ now.year }} Music Cover Generator. All rights reserved.
+            </p>
+        </div>
+    </div>
+    
+    <!-- CSRF Token for AJAX requests -->
+    <script>
+        // Get CSRF token for forms
+        fetch('{{ url_for("auth.get_csrf_token") }}')
+            .then(response => response.json())
+            .then(data => {
+                window.csrfToken = data.csrf_token;
+            });
+    </script>
+</body>
+</html>

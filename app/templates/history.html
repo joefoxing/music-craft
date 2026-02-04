@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Callback History - Music Cover Generator</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f20df2",
+                        "primary-dark": "#c20ac2",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#181118",
+                        "surface-dark": "#271b27",
+                        "border-dark": "#392839",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        .history-card {
+            transition: all 0.2s ease;
+        }
+        
+        .history-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .status-success {
+            background-color: rgba(34, 197, 94, 0.1);
+            color: rgb(34, 197, 94);
+        }
+        
+        .status-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: rgb(239, 68, 68);
+        }
+        
+        .status-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: rgb(245, 158, 11);
+        }
+        
+        .status-info {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: rgb(59, 130, 246);
+        }
+        
+        .callback-type-badge {
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .callback-type-complete {
+            background-color: rgba(34, 197, 94, 0.1);
+            color: rgb(34, 197, 94);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+        
+        .callback-type-first {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: rgb(245, 158, 11);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+        
+        .callback-type-text {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: rgb(59, 130, 246);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .callback-type-error {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: rgb(239, 68, 68);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+        
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+        }
+        
+        .json-viewer {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .json-key {
+            color: #f20df2;
+        }
+        
+        .json-string {
+            color: #10b981;
+        }
+        
+        .json-number {
+            color: #3b82f6;
+        }
+        
+        .json-boolean {
+            color: #f59e0b;
+        }
+        
+        .json-null {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+    <div class="flex h-screen w-full">
+        {% include "partials/_sidebar.html" %}
+        
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark relative overflow-hidden">
+            <!-- Header -->
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+                <div class="flex items-center gap-4 text-white md:hidden">
+                    <button class="text-slate-400 hover:text-white" id="mobileMenuBtn">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <h2 class="text-lg font-bold">History</h2>
+                </div>
+                
+                <div class="hidden md:block">
+                    <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Callback History</h2>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center bg-surface-dark rounded-full px-3 py-1.5 border border-border-dark">
+                        <span class="material-symbols-outlined text-primary text-sm mr-2">history</span>
+                        <span class="text-white text-xs font-bold font-mono" id="historyCount">Loading...</span>
+                    </div>
+                    
+                    <button class="p-2 text-slate-400 hover:text-white relative" id="themeToggle">
+                        <span class="material-symbols-outlined">dark_mode</span>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar p-6 pb-32">
+                <div class="max-w-7xl mx-auto space-y-8">
+                    <!-- Page Header -->
+                    <section class="flex flex-col gap-4">
+                        <div class="flex flex-col gap-2">
+                            <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Callback History</h2>
+                            <p class="text-slate-500 dark:text-slate-400">View all callback information from the Kie API. History is retained for 15 days from creation date.</p>
+                        </div>
+                        
+                        <!-- Stats and Controls -->
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <!-- Stats Cards -->
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="px-4 py-3 bg-surface-dark rounded-lg border border-border-dark">
+                                    <p class="text-xs text-slate-400">Total Entries</p>
+                                    <p id="statsTotal" class="text-white font-bold text-xl">0</p>
+                                </div>
+                                <div class="px-4 py-3 bg-surface-dark rounded-lg border border-border-dark">
+                                    <p class="text-xs text-slate-400">Today</p>
+                                    <p id="statsToday" class="text-white font-bold text-xl">0</p>
+                                </div>
+                                <div class="px-4 py-3 bg-surface-dark rounded-lg border border-border-dark">
+                                    <p class="text-xs text-slate-400">Success</p>
+                                    <p id="statsSuccess" class="text-white font-bold text-xl">0</p>
+                                </div>
+                                <div class="px-4 py-3 bg-surface-dark rounded-lg border border-border-dark">
+                                    <p class="text-xs text-slate-400">Failed</p>
+                                    <p id="statsFailed" class="text-white font-bold text-xl">0</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Controls -->
+                            <div class="flex flex-col md:flex-row items-start md:items-center gap-3">
+                                <!-- Filter and Search -->
+                                <div class="flex flex-col md:flex-row gap-2">
+                                    <select id="filterSelect" class="px-3 py-2 bg-surface-dark border border-border-dark rounded-lg text-white text-sm">
+                                        <option value="all">All Entries</option>
+                                        <option value="success">Success Only</option>
+                                        <option value="failed">Failed Only</option>
+                                        <option value="today">Today Only</option>
+                                        <option value="has_audio">Has Audio</option>
+                                    </select>
+                                    <input id="searchInput" type="text" placeholder="Search by task ID or message..." class="px-3 py-2 bg-surface-dark border border-border-dark rounded-lg text-white text-sm w-full md:w-64">
+                                </div>
+                                
+                                <!-- Action Buttons -->
+                                <div class="flex gap-2">
+                                    <button id="refreshBtn" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors flex items-center">
+                                        <span class="material-symbols-outlined mr-2">refresh</span>
+                                        Refresh
+                                    </button>
+                                    <button id="deleteSelectedBtn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors flex items-center opacity-50 cursor-not-allowed" disabled>
+                                        <span class="material-symbols-outlined mr-2">delete</span>
+                                        Delete Selected
+                                    </button>
+                                    <button id="cleanupBtn" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors flex items-center">
+                                        <span class="material-symbols-outlined mr-2">cleaning_services</span>
+                                        Cleanup
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    
+                    <!-- Loading State -->
+                    <div id="loadingState" class="text-center py-12">
+                        <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                        <p class="mt-4 text-slate-500 dark:text-slate-400">Loading callback history...</p>
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div id="emptyState" class="text-center py-12 hidden">
+                        <span class="material-symbols-outlined text-6xl text-slate-400 mb-4">history</span>
+                        <h3 class="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">No Callback History</h3>
+                        <p class="text-slate-500 dark:text-slate-400 mb-6">No callback history found. Generate some covers to see history here.</p>
+                        <a href="/cover-generator" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors inline-flex items-center">
+                            <span class="material-symbols-outlined mr-2">add_circle</span>
+                            Generate Cover
+                        </a>
+                    </div>
+                    
+                    <!-- Error State -->
+                    <div id="errorState" class="text-center py-12 hidden">
+                        <span class="material-symbols-outlined text-6xl text-red-500 mb-4">error</span>
+                        <h3 class="text-xl font-bold text-red-700 dark:text-red-300 mb-2">Failed to Load History</h3>
+                        <p id="errorMessage" class="text-red-500 dark:text-red-400 mb-6">An error occurred while loading history.</p>
+                        <button id="retryHistoryBtn" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors inline-flex items-center">
+                            <span class="material-symbols-outlined mr-2">refresh</span>
+                            Retry Loading
+                        </button>
+                    </div>
+                    
+                    <!-- History List Container -->
+                    <div id="historyContainer" class="space-y-6 hidden">
+                        <!-- History cards will be dynamically inserted here -->
+                    </div>
+                    
+                    <!-- History Card Template -->
+                    <template id="historyCardTemplate">
+                        <div class="history-card bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-lg">
+                            <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <h3 class="text-lg font-bold text-slate-900 dark:text-white" data-title>Task History</h3>
+                                        <span class="callback-type-badge" data-callback-type>complete</span>
+                                        <span class="status-badge" data-status>success</span>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                                        <div>
+                                            <p class="text-slate-500">Task ID</p>
+                                            <p class="font-mono text-slate-900 dark:text-white truncate" data-task-id>-</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-slate-500">Timestamp</p>
+                                            <p class="text-slate-900 dark:text-white" data-timestamp>-</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-slate-500">Status Code</p>
+                                            <p class="font-mono" data-status-code>-</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <p class="text-slate-500">Message</p>
+                                        <p class="text-slate-900 dark:text-white" data-message>-</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex flex-col gap-2">
+                                    <button class="view-details-btn px-4 py-2 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors flex items-center justify-center">
+                                        <span class="material-symbols-outlined mr-2">visibility</span>
+                                        View Details
+                                    </button>
+                                    <button class="copy-data-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center">
+                                        <span class="material-symbols-outlined mr-2">content_copy</span>
+                                        Copy Data
+                                    </button>
+                                    <button class="delete-entry-btn px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center">
+                                        <span class="material-symbols-outlined mr-2">delete</span>
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Tracks Summary -->
+                            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                                <h4 class="font-medium text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary">music_note</span>
+                                    Generated Tracks
+                                </h4>
+                                <div class="tracks-summary" data-tracks-summary>
+                                    <!-- Tracks will be dynamically inserted -->
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    
+                    <!-- Track Summary Template -->
+                    <template id="trackSummaryTemplate">
+                        <div class="track-summary p-3 bg-slate-50 dark:bg-slate-900 rounded-lg mb-2">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-medium text-slate-900 dark:text-white" data-track-title>-</p>
+                                    <p class="text-sm text-slate-500" data-track-model>-</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <a href="#" target="_blank" class="audio-link-btn px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors flex items-center" data-audio-link>
+                                        <span class="material-symbols-outlined text-sm mr-1">play_arrow</span>
+                                        Audio
+                                    </a>
+                                    <a href="#" target="_blank" class="image-link-btn px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors flex items-center" data-image-link>
+                                        <span class="material-symbols-outlined text-sm mr-1">image</span>
+                                        Image
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    
+                    <!-- Audio Player Template for History Modal -->
+                    <template id="audioPlayerTemplate">
+                        <div class="audio-player bg-slate-50 dark:bg-slate-900 rounded-lg p-4 mb-4 border border-slate-200 dark:border-slate-700">
+                            <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="material-symbols-outlined text-primary">music_note</span>
+                                        <h4 class="font-bold text-slate-900 dark:text-white" data-track-title>Track Title</h4>
+                                        <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full" data-track-number>Track 1</span>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm mb-3">
+                                        <div>
+                                            <p class="text-slate-500">Model</p>
+                                            <p class="text-slate-900 dark:text-white" data-track-model>chirp-crow</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-slate-500">Duration</p>
+                                            <p class="text-slate-900 dark:text-white" data-track-duration>0:00</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-slate-500">Tags</p>
+                                            <p class="text-slate-900 dark:text-white" data-track-tags>No tags</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-slate-500">Created</p>
+                                            <p class="text-slate-900 dark:text-white" data-track-created>N/A</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <p class="text-slate-500 text-sm mb-1">Lyrics</p>
+                                        <div class="lyrics-container max-h-32 overflow-y-auto bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
+                                            <div class="lyrics-content text-xs text-slate-700 dark:text-slate-300" data-track-prompt>No lyrics available</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex flex-col gap-2">
+                                    <button class="download-audio-btn px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center">
+                                        <span class="material-symbols-outlined mr-2">download</span>
+                                        Download MP3
+                                    </button>
+                                    
+                                    <!-- Create Music Video Button -->
+                                    <button class="create-video-btn px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center" data-video-btn>
+                                        <span class="material-symbols-outlined mr-2">movie</span>
+                                        Create Music Video
+                                    </button>
+                                    
+                                    <!-- Image Display Area -->
+                                    <div class="mt-2">
+                                        <p class="text-slate-500 text-sm mb-2">Generated Image</p>
+                                        <div class="relative bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                                            <!-- Thumbnail image display -->
+                                            <img src="" alt="Generated cover image" class="w-full h-32 object-contain bg-white hidden" data-image-display>
+                                            
+                                            <!-- Image Placeholder -->
+                                            <div class="w-full h-32 flex items-center justify-center" data-image-placeholder>
+                                                <span class="material-symbols-outlined text-slate-400 text-4xl">image</span>
+                                            </div>
+                                        </div>
+                                        <a href="#" target="_blank" class="mt-1 text-xs text-primary hover:underline block text-center" data-image-url>View full image</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Audio Player -->
+                            <div class="mt-4">
+                                <p class="text-slate-500 text-sm mb-2">Audio Preview</p>
+                                <div class="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 p-3 rounded-lg">
+                                    <button class="play-pause-btn p-2 bg-primary hover:bg-primary-dark text-white rounded-full">
+                                        <span class="material-symbols-outlined">play_arrow</span>
+                                    </button>
+                                    <div class="flex-1">
+                                        <div class="audio-progress-bar h-2 bg-slate-300 dark:bg-slate-700 rounded-full overflow-hidden">
+                                            <div class="audio-progress h-full bg-primary" style="width: 0%"></div>
+                                        </div>
+                                        <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                            <span class="current-time">0:00</span>
+                                            <span class="duration">0:00</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button class="volume-btn p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white">
+                                            <span class="material-symbols-outlined">volume_up</span>
+                                        </button>
+                                        <input type="range" min="0" max="100" value="80" class="volume-slider w-20 accent-primary">
+                                    </div>
+                                </div>
+                                <audio class="hidden" data-audio-element>
+                                    <source src="" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            </div>
+                            
+                            <!-- Audio URLs -->
+                            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                                <p class="text-slate-500 text-sm mb-2">Audio URLs</p>
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-xs text-green-500">link</span>
+                                        <a href="#" target="_blank" class="text-primary hover:underline text-xs break-all" data-audio-url>Generated Audio URL</a>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-xs text-blue-500">link</span>
+                                        <a href="#" target="_blank" class="text-primary hover:underline text-xs break-all" data-source-audio-url>Source Audio URL</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    
+                    <!-- Video Player Template for History Modal -->
+                    <template id="videoPlayerTemplate">
+                        <div class="video-player border border-blue-200 dark:border-blue-800 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20 mt-6">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h5 class="font-bold text-slate-900 dark:text-white text-lg" data-video-title>Music Video</h5>
+                                    <div class="flex items-center gap-3 mt-1">
+                                        <span class="text-xs px-2 py-1 bg-blue-500/10 text-blue-500 rounded-full">Video</span>
+                                        <span class="text-xs text-slate-500" data-video-status>Processing</span>
+                                    </div>
+                                </div>
+                                <button class="btn-video-download px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center" data-video-download-btn style="display: none;">
+                                    <span class="material-symbols-outlined mr-2">download</span>
+                                    Download MP4
+                                </button>
+                            </div>
+                            
+                            <div class="video-player-container mb-3" data-video-container style="display: none;">
+                                <video controls class="w-full rounded-lg" data-video>
+                                    Your browser does not support the video element.
+                                </video>
+                            </div>
+                            
+                            <div class="video-status mb-3" data-video-status-container>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="material-symbols-outlined text-blue-500">sync</span>
+                                    <span class="text-sm font-medium">Video generation in progress...</span>
+                                </div>
+                                <progress value="0" max="100" class="w-full h-2 rounded-full" data-video-progress></progress>
+                                <p class="text-xs text-slate-500 mt-1" data-video-status-text>Starting video generation</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Video Task ID</label>
+                                    <code class="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-sm" data-video-task-id>-</code>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Video URL</label>
+                                    <a href="#" target="_blank" class="text-blue-500 hover:underline break-all text-sm" data-video-url style="display: none;">View video</a>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    
+                    <!-- Modal for Detailed View -->
+                    <div id="historyModal" class="modal-overlay hidden">
+                        <div class="modal-content bg-white dark:bg-surface-dark rounded-xl p-6 w-full max-w-4xl">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Callback Details</h3>
+                                <button id="modalCloseBtn" class="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                                    <span class="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
+                            
+                            <div id="modalContent">
+                                <!-- Modal content will be dynamically inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/components/trackOptions.js') }}?v=2"></script>
+    <script src="{{ url_for('static', filename='js/history.js') }}"></script>
+    
+    <!-- Music Video Creation Modal -->
+    <div id="videoCreationModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity bg-black/70" aria-hidden="true"></div>
+            
+            <!-- Modal panel -->
+            <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-surface-dark shadow-xl rounded-xl border border-slate-200 dark:border-border-dark sm:my-8 sm:align-middle">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">movie</span>
+                        Create Music Video
+                    </h3>
+                    <button id="closeVideoModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                
+                <!-- Modal content -->
+                <div class="space-y-4">
+                    <p class="text-slate-500 dark:text-slate-400 text-sm">
+                        Create a music video using the generated audio and image. This will use the Kie API to generate a video with visualizations.
+                    </p>
+                    
+                    <!-- Task ID field -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Task ID</label>
+                        <input type="text" id="modalTaskId" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" readonly>
+                    </div>
+                    
+                    <!-- Audio ID field -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Audio ID</label>
+                        <input type="text" id="modalAudioId" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" readonly>
+                    </div>
+                    
+                    <!-- Song title display -->
+                    <div id="modalSongTitleContainer" class="hidden">
+                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Song Title</label>
+                        <p id="modalSongTitle" class="text-slate-700 dark:text-slate-300 font-medium"></p>
+                    </div>
+                    
+                    <!-- Author field -->
+                    <div>
+                        <label for="modalAuthor" class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Author (Artist/Creator)</label>
+                        <input type="text" id="modalAuthor" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                               placeholder="e.g., DJ Electronic" maxlength="50">
+                        <p class="text-xs text-slate-500 mt-1">Artist or creator name to display as a signature on the video cover. Maximum 50 characters.</p>
+                    </div>
+                    
+                    <!-- Domain name field -->
+                    <div>
+                        <label for="modalDomainName" class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Domain Name (Watermark)</label>
+                        <input type="text" id="modalDomainName" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                               placeholder="e.g., music.example.com" maxlength="50">
+                        <p class="text-xs text-slate-500 mt-1">Website or brand to display as a watermark at the bottom of the video. Maximum 50 characters.</p>
+                    </div>
+                    
+                    <!-- Status message -->
+                    <div id="modalStatusMessage" class="hidden p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <p class="text-sm text-blue-700 dark:text-blue-400" id="modalStatusText"></p>
+                    </div>
+                </div>
+                
+                <!-- Modal footer -->
+                <div class="mt-6 flex justify-end gap-3">
+                    <button id="cancelVideoBtn" class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors border border-slate-300 dark:border-slate-700">
+                        Cancel
+                    </button>
+                    <button id="createVideoBtn" class="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-lg transition-colors flex items-center">
+                        <span class="material-symbols-outlined mr-2 text-sm">movie</span>
+                        Create Video
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+<script>
+console.log('Inline script loaded');
+// Test if history.js loads
+if (typeof loadHistory === 'function') {
+    console.log('loadHistory function exists');
+} else {
+    console.warn('loadHistory not found');
+}
+</script>
+</body>
+</html>

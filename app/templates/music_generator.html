@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Generator - AudioCraft</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f20df2",
+                        "primary-dark": "#c20ac2",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#181118",
+                        "surface-dark": "#271b27",
+                        "border-dark": "#392839",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+    <div class="flex h-screen w-full">
+        {% include "partials/_sidebar.html" %}
+        
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark relative overflow-hidden">
+            <!-- Header -->
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+                <div class="flex items-center gap-4 text-white md:hidden">
+                    <button class="text-slate-400 hover:text-white" id="mobileMenuBtn">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <h2 class="text-lg font-bold">Create</h2>
+                </div>
+                
+                <div class="hidden md:block">
+                    <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Studio Dashboard</h2>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center bg-surface-dark rounded-full px-3 py-1.5 border border-border-dark">
+                        <span class="material-symbols-outlined text-primary text-sm mr-2">bolt</span>
+                        <span class="text-white text-xs font-bold font-mono">
+                            {% if current_user.is_authenticated %}
+                            500 CREDITS
+                            {% else %}
+                            0 CREDITS
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.profile') }}" class="p-2 text-slate-400 hover:text-white relative" title="Profile">
+                        <span class="material-symbols-outlined">account_circle</span>
+                    </a>
+                    {% endif %}
+                    
+                    <button class="p-2 text-slate-400 hover:text-white relative" id="themeToggle">
+                        <span class="material-symbols-outlined">dark_mode</span>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar p-6 pb-32">
+                <div class="max-w-5xl mx-auto space-y-8">
+                    <!-- Generator Section -->
+                    <section class="flex flex-col gap-6">
+                        <div class="flex flex-col gap-2">
+                            <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Create Music</h2>
+                            <p class="text-slate-500 dark:text-slate-400">Describe your musical vision and customize the parameters for AI-generated music.</p>
+                        </div>
+                        
+                        <!-- Music Description Card -->
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">music_note</span>
+                                1. Music Description
+                            </h3>
+                            
+                            <!-- Prompt Input -->
+                            <div class="mb-4">
+                                <label for="musicPrompt" class="block text-sm font-medium mb-2">Describe the music you want to create</label>
+                                <textarea id="musicPrompt" class="form-control" rows="4" placeholder="e.g., 'A cinematic orchestral piece with epic brass sections, fast tempo, and dramatic percussion for a fantasy battle scene'"></textarea>
+                                <div class="char-counter">
+                                    <span id="musicPromptChars">0</span>/<span id="musicPromptMax">500</span> characters
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Styles -->
+                            <div class="mt-6">
+                                <label class="block text-sm font-medium mb-2">Quick Styles</label>
+                                <div class="flex flex-wrap gap-2 items-center">
+                                    <button class="quick-style px-3 py-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-transparent hover:bg-primary/10 hover:border-primary/50 text-xs font-medium text-slate-600 dark:text-slate-300 transition-colors" data-style="cinematic">Cinematic Epic</button>
+                                    <button class="quick-style px-3 py-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-transparent hover:bg-primary/10 hover:border-primary/50 text-xs font-medium text-slate-600 dark:text-slate-300 transition-colors" data-style="lofi">Lo-Fi Chill</button>
+                                    <button class="quick-style px-3 py-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-transparent hover:bg-primary/10 hover:border-primary/50 text-xs font-medium text-slate-600 dark:text-slate-300 transition-colors" data-style="synthwave">Synthwave Retro</button>
+                                    <button class="quick-style px-3 py-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-transparent hover:bg-primary/10 hover:border-primary/50 text-xs font-medium text-slate-600 dark:text-slate-300 transition-colors" data-style="ambient">Ambient Space</button>
+                                    <button class="quick-style px-3 py-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-transparent hover:bg-primary/10 hover:border-primary/50 text-xs font-medium text-slate-600 dark:text-slate-300 transition-colors" data-style="jazz">Jazz Lounge</button>
+                                    <button id="browseTemplatesBtn" class="px-3 py-1.5 rounded-full border border-primary/50 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-medium transition-colors flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-sm">grid_view</span>
+                                        Browse All Templates
+                                    </button>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Select a quick style or browse the full template library for detailed configurations.</p>
+                            </div>
+                            
+                            <!-- Source Info Display (hidden by default, used for consistency) -->
+                            <div id="sourceInfo" class="source-info hidden mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                                <h4 class="font-bold text-green-700 dark:text-green-400 flex items-center gap-2">
+                                    <span class="material-symbols-outlined">check_circle</span>
+                                    Music Description Ready
+                                </h4>
+                                <div class="mt-2 space-y-2">
+                                    <p><strong>Prompt:</strong> <span id="sourcePrompt" class="font-medium">-</span></p>
+                                </div>
+                                <button class="mt-4 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors flex items-center" onclick="clearMusicDescription()">
+                                    <span class="material-symbols-outlined mr-2">close</span>
+                                    Change Description
+                                </button>
+                            </div>
+                        </div><!-- Generation Settings Card -->
+                        
+                        <!-- Audio Source Card -->
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">music_note</span>
+                                2. Audio Source
+                            </h3>
+                            
+                            <!-- Source Selection Tabs -->
+                            <div class="source-tabs mb-6">
+                                <button class="source-tab active" id="uploadTab">
+                                    <span class="material-symbols-outlined">upload</span>
+                                    Upload File
+                                </button>
+                                <button class="source-tab" id="urlTab">
+                                    <span class="material-symbols-outlined">link</span>
+                                    Use URL
+                                </button>
+                            </div>
+                            
+                            <!-- File Upload Section -->
+                            <div id="uploadSection" class="source-section">
+                                <div class="upload-area" id="uploadArea">
+                                    <span class="material-symbols-outlined text-primary text-5xl mb-4">file_upload</span>
+                                    <p class="text-lg font-medium mb-2">Drag & drop your audio file here</p>
+                                    <p class="text-slate-500 dark:text-slate-400 mb-4">or click to browse</p>
+                                    <p class="file-types text-sm text-slate-500">Supported: MP3, WAV, OGG, M4A, FLAC (max 100MB)</p>
+                                    <input type="file" id="audioFile" accept=".mp3,.wav,.ogg,.m4a,.flac" hidden>
+                                    <button class="mt-4 px-6 py-2 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors" onclick="document.getElementById('audioFile').click()">
+                                        <span class="material-symbols-outlined mr-2">folder_open</span>
+                                        Browse Files
+                                    </button>
+                                </div>
+                                
+                                <div id="fileInfo" class="file-info hidden mt-6 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                                    <p class="font-medium"><strong>Selected file:</strong> <span id="fileName"></span></p>
+                                    <p class="font-medium mt-2"><strong>Status:</strong> <span id="uploadStatus">Ready to upload</span></p>
+                                    
+                                    <div class="progress-container hidden mt-4" id="progressContainer">
+                                        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
+                                            <div class="progress-bar bg-primary h-2.5 rounded-full" id="progressBar" style="width: 0%"></div>
+                                        </div>
+                                        <div class="flex justify-between mt-1">
+                                            <span class="text-sm text-slate-500">Uploading...</span>
+                                            <span id="progressText" class="text-sm font-medium">0%</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="mt-4 px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors flex items-center" id="uploadBtn">
+                                        <span class="material-symbols-outlined mr-2">cloud_upload</span>
+                                        Upload File
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- URL Input Section -->
+                            <div id="urlSection" class="source-section hidden">
+                                <div class="mb-4">
+                                    <label for="audioUrlInput" class="block text-sm font-medium mb-2 flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-primary">link</span>
+                                        Audio URL
+                                    </label>
+                                    <input type="url" id="audioUrlInput" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                           placeholder="https://drive.google.com/uc?export=download&id=FILE_ID">
+                                    
+                                    <div class="mt-3 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                                        <p class="text-sm font-medium mb-2">For Google Drive:</p>
+                                        <ol class="text-sm text-slate-600 dark:text-slate-400 space-y-1 ml-4 list-decimal">
+                                            <li>Upload file to Google Drive</li>
+                                            <li>Right-click → "Get link" → Set to "Anyone with the link"</li>
+                                            <li>Copy the file ID from the URL</li>
+                                            <li>Use format: <code class="bg-slate-200 dark:bg-slate-800 px-1 rounded">https://drive.google.com/uc?export=download&id=FILE_ID</code></li>
+                                        </ol>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-4">
+                                    <button class="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors flex items-center" id="urlTestBtn">
+                                        <span class="material-symbols-outlined mr-2">play_arrow</span>
+                                        Test URL
+                                    </button>
+                                    
+                                    <span id="urlTestResult" class="test-result hidden px-3 py-1 rounded text-sm font-medium"></span>
+                                </div>
+                                
+                                <button class="mt-4 px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors flex items-center" id="useUrlBtn">
+                                    <span class="material-symbols-outlined mr-2">check</span>
+                                    Use This URL
+                                </button>
+                            </div>
+                            
+                            <!-- Source Info Display -->
+                            <div id="audioSourceInfo" class="source-info hidden mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                                <h4 class="font-bold text-green-700 dark:text-green-400 flex items-center gap-2">
+                                    <span class="material-symbols-outlined">check_circle</span>
+                                    Audio Source Ready
+                                </h4>
+                                
+                                <div class="mt-2 space-y-2">
+                                    <p><strong>Source:</strong> <span id="sourceType" class="font-medium">-</span></p>
+                                    <p><strong>URL:</strong> <code id="sourceUrl" class="bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded text-sm break-all">-</code></p>
+                                </div>
+                                
+                                <button class="mt-4 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors flex items-center" onclick="clearAudioSource()">
+                                    <span class="material-symbols-outlined mr-2">close</span>
+                                    Change Source
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Lyric Generator Card -->
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">lyrics</span>
+                                3. Lyric Generator
+                                <button id="toggleLyricSectionBtn" class="ml-auto text-slate-400 hover:text-primary transition-colors" title="Collapse/expand">
+                                    <span class="material-symbols-outlined">expand_less</span>
+                                </button>
+                            </h3>
+                            <div id="lyricSection">
+                                <!-- Lyric prompt input -->
+                                <div class="mb-4">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label for="lyricPrompt" class="block text-sm font-medium">Describe the lyrics you want to generate</label>
+                                        <button id="expandMainEditorBtn" type="button" class="text-xs text-primary hover:text-primary-dark font-medium flex items-center gap-1 transition-colors" title="Open in full editor">
+                                            <span class="material-symbols-outlined text-sm">open_in_full</span>
+                                            Expand Editor
+                                        </button>
+                                    </div>
+                                    <textarea id="lyricPrompt" class="form-control" rows="3" placeholder="e.g., 'A love song about summer with a catchy chorus'"></textarea>
+                                    <div class="char-counter">
+                                        <span id="lyricCharCount">0</span>/<span>200</span> words
+                                    </div>
+                                </div>
+                                <!-- Generate button -->
+                                <div class="flex items-center gap-3">
+                                    <button id="generateLyricsBtn" class="btn-primary flex items-center">
+                                        <span class="material-symbols-outlined mr-2">auto_awesome</span>
+                                        Generate Lyrics
+                                    </button>
+                                    <button id="lyricAdvancedBtn" class="btn-secondary text-sm">
+                                        Advanced
+                                    </button>
+                                </div>
+                                <!-- Results container (hidden by default) -->
+                                <div id="lyricsResultsContainer" class="hidden mt-6">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h4 class="font-bold text-lg">Generated Lyrics</h4>
+                                        <div class="flex gap-2">
+                                            <button id="refreshLyricsBtn" class="btn-secondary text-sm">
+                                                <span class="material-symbols-outlined mr-1">refresh</span>
+                                                Refresh
+                                            </button>
+                                            <button id="clearLyricsBtn" class="btn-secondary text-sm">
+                                                <span class="material-symbols-outlined mr-1">delete</span>
+                                                Clear
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="lyricsResults" class="space-y-4">
+                                        <!-- Lyric cards will be inserted here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- Generation Settings Card -->
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">tune</span>
+                                4. Generation Settings
+                            </h3>
+                            
+                            <div class="space-y-6">
+                                <!-- Mode Selection -->
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Generation Mode</label>
+                                    <div class="toggle-group">
+                                        <button class="toggle-btn active" id="simpleModeBtn" onclick="setMode(false)">
+                                            Simple Mode
+                                        </button>
+                                        <button class="toggle-btn" id="customModeBtn" onclick="setMode(true)">
+                                            Custom Mode
+                                        </button>
+                                    </div>
+                                    <p id="modeHelp" class="text-sm text-slate-500 mt-2">Simple Mode: Just provide a prompt, lyrics will be auto-generated.</p>
+                                </div>
+                                
+                                <!-- Model Selection -->
+                                <div>
+                                    <label for="modelSelect" class="block text-sm font-medium mb-2">Model Version</label>
+                                    <select id="modelSelect" class="form-control">
+                                        <option value="V5" selected>V5 - Superior musical expression, faster generation</option>
+                                        <option value="V4_5PLUS">V4.5+ - Richer sound, new ways to create, max 8 min</option>
+                                        <option value="V4_5">V4.5 - Smarter prompts, faster generations, max 8 min</option>
+                                        <option value="V4_5ALL">V4.5ALL - Smarter prompts, faster generations, max 8 min</option>
+                                        <option value="V4">V4 - Improved vocal quality, max 4 min</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Prompt Input -->
+                                <div>
+                                    <label for="promptInput" class="block text-sm font-medium mb-2">Prompt <span class="text-slate-500">(Describe the style you want)</span></label>
+                                    <textarea id="promptInput" class="form-control" rows="3" placeholder="e.g., 'A pop cover with upbeat electronic elements and catchy vocals'"></textarea>
+                                    <div class="char-counter">
+                                        <span id="promptChars">0</span>/<span id="promptMax">500</span> characters
+                                    </div>
+                                </div>
+                                
+                                <!-- Custom Fields (Hidden by default) -->
+                                <div id="customFields" class="hidden space-y-6">
+                                    <!-- Style Input -->
+                                    <div>
+                                        <label for="styleInput" class="block text-sm font-medium mb-2">Style Details</label>
+                                        <textarea id="styleInput" class="form-control" rows="2" placeholder="e.g., 'Upbeat pop with synth elements, female vocals, 120 BPM'"></textarea>
+                                        <div class="char-counter">
+                                            <span id="styleChars">0</span>/<span id="styleMax">200</span> characters
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Title Input -->
+                                    <div>
+                                        <label for="titleInput" class="block text-sm font-medium mb-2">Song Title</label>
+                                        <input type="text" id="titleInput" class="form-control" placeholder="e.g., 'Summer Vibes'">
+                                        <div class="char-counter">
+                                            <span id="titleChars">0</span>/<span id="titleMax">80</span> characters
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Advanced Options -->
+                                    <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                                        <label class="block text-sm font-medium mb-2">Advanced Options</label>
+                                        <div class="space-y-4">
+                                            <!-- Vocal Gender -->
+                                            <div>
+                                                <label for="vocalGender" class="block text-sm font-medium mb-1">Vocal Gender</label>
+                                                <select id="vocalGender" class="form-control">
+                                                    <option value="">Auto (Based on prompt)</option>
+                                                    <option value="female">Female</option>
+                                                    <option value="male">Male</option>
+                                                    <option value="mixed">Mixed</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <!-- Negative Tags -->
+                                            <div>
+                                                <label for="negativeTags" class="block text-sm font-medium mb-1">Negative Tags</label>
+                                                <input type="text" id="negativeTags" class="form-control" placeholder="e.g., 'distortion, low quality, noise'">
+                                            </div>
+                                            
+                                            <!-- Optional Parameters -->
+                                            <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                                                <label class="block text-sm font-medium mb-2">Optional Parameters</label>
+                                                <div class="space-y-4">
+                                                    <!-- Style Weight -->
+                                                    <div>
+                                                        <label for="styleWeight" class="block text-sm font-medium mb-1">Style Weight (0-1)</label>
+                                                        <div class="flex items-center gap-3">
+                                                            <input type="range" id="styleWeight" min="0" max="1" step="0.01" value="0.5" class="flex-1">
+                                                            <input type="number" id="styleWeightNumber" min="0" max="1" step="0.01" value="0.5" class="w-20 form-control">
+                                                        </div>
+                                                        <p class="text-xs text-slate-500 mt-1">Controls how much the style influences generation (0.0-1.0)</p>
+                                                    </div>
+                                                    
+                                                    <!-- Weirdness Constraint -->
+                                                    <div>
+                                                        <label for="weirdnessConstraint" class="block text-sm font-medium mb-1">Weirdness Constraint (0-1)</label>
+                                                        <div class="flex items-center gap-3">
+                                                            <input type="range" id="weirdnessConstraint" min="0" max="1" step="0.01" value="0.5" class="flex-1">
+                                                            <input type="number" id="weirdnessConstraintNumber" min="0" max="1" step="0.01" value="0.5" class="w-20 form-control">
+                                                        </div>
+                                                        <p class="text-xs text-slate-500 mt-1">Controls how "weird" or experimental the output can be (0.0-1.0)</p>
+                                                    </div>
+                                                    
+                                                    <!-- Audio Weight -->
+                                                    <div>
+                                                        <label for="audioWeight" class="block text-sm font-medium mb-1">Audio Weight (0-1)</label>
+                                                        <div class="flex items-center gap-3">
+                                                            <input type="range" id="audioWeight" min="0" max="1" step="0.01" value="0.5" class="flex-1">
+                                                            <input type="number" id="audioWeightNumber" min="0" max="1" step="0.01" value="0.5" class="w-20 form-control">
+                                                        </div>
+                                                        <p class="text-xs text-slate-500 mt-1">Controls audio quality vs. style adherence (0.0-1.0)</p>
+                                                    </div>
+                                                    
+                                                    <!-- Persona ID -->
+                                                    <div>
+                                                        <label for="personaId" class="block text-sm font-medium mb-1">Persona ID</label>
+                                                        <input type="text" id="personaId" class="form-control" placeholder="e.g., 'artist123'">
+                                                        <p class="text-xs text-slate-500 mt-1">Optional persona identifier for custom mode</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Instrumental Toggle -->
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">Instrumental Only</label>
+                                        <p class="text-sm text-slate-500">Generate without vocals</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="instrumentalToggle" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-primary"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Generate Button -->
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">play_circle</span>
+                                5. Generate Music
+                            </h3>
+                            
+                            <p class="text-slate-500 dark:text-slate-400 mb-6">Once you've set your audio source and generation settings, you can generate your cover.</p>
+                            
+                            <button id="generateBtn" class="btn-generate flex items-center justify-center" onclick="generateCover()" disabled>
+                                <span class="material-symbols-outlined mr-2">play_circle</span>
+                                Generate Music
+                            </button>
+                            
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-4">
+                                <span class="material-symbols-outlined text-xs align-text-bottom mr-1">info</span>
+                                Generation typically takes 2-5 minutes. You'll be notified when it's complete.
+                            </p>
+                        </div>
+                        
+                        <!-- Task Status (Hidden by default) -->
+                        <div id="taskStatus" class="task-status hidden">
+                            <div class="status-card">
+                                <div class="status-header">
+                                    <h4 class="text-lg font-bold dark:text-white text-slate-900">Generation Status</h4>
+                                    <div class="flex items-center gap-3">
+                                        <span id="statusBadge" class="status-badge">Processing</span>
+                                        <button id="refreshStatusBtn" class="refresh-btn" onclick="refreshTaskStatus()">
+                                            <span class="material-symbols-outlined mr-1">refresh</span>
+                                            Refresh
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">Task ID</label>
+                                        <code id="taskId" class="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-sm">-</code>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">Progress</label>
+                                        <progress id="statusProgress" value="0" max="100" class="w-full h-2 rounded-full"></progress>
+                                        <p id="statusText" class="text-sm text-slate-500 mt-1">Starting generation...</p>
+                                    </div>
+                                    
+                                    <div class="status-details">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p class="text-sm font-medium">Started</p>
+                                                <p id="startTime" class="text-sm">-</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium">Status Code</p>
+                                                <p id="statusCode" class="text-sm">-</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium">Audio ID</p>
+                                                <p id="audioId" class="text-sm">-</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-medium">Callback Type</p>
+                                                <p id="callbackType" class="text-sm">-</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-4">
+                                            <p class="text-sm font-medium">Message</p>
+                                            <p id="statusMessage" class="text-sm text-slate-600 dark:text-slate-400">-</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Results (Hidden by default) -->
+                        <div id="results" class="results hidden">
+                            <div class="result-card">
+                                <h4 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-green-500">check_circle</span>
+                                    Cover Generated Successfully!
+                                </h4>
+                                
+                                <p class="text-slate-500 dark:text-slate-400 mb-4">Your generated covers are ready to play and download.</p>
+                                
+                                <!-- Container for multiple audio players -->
+                                <div id="audioPlayersContainer" class="space-y-6">
+                                    <!-- Audio players will be dynamically inserted here -->
+                                </div>
+                                
+                                <!-- Single audio player template (hidden, used for cloning) -->
+                                <template id="audioPlayerTemplate">
+                                    <div class="audio-player border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-900/50">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div>
+                                                <h5 class="font-bold text-slate-900 dark:text-white text-lg" data-title>Song Title</h5>
+                                                <div class="flex items-center gap-3 mt-1">
+                                                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full" data-model>Model</span>
+                                                    <span class="text-xs text-slate-500" data-duration>Duration</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex flex-col gap-2">
+                                                <button class="btn-download" data-download-btn>
+                                                    <span class="material-symbols-outlined mr-2">download</span>
+                                                    Download MP3
+                                                </button>
+                                                <button class="btn-video" data-video-btn style="display: none;">
+                                                    <span class="material-symbols-outlined mr-2">movie</span>
+                                                    Create Music Video
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="audio-player-container mb-3">
+                                            <audio controls class="w-full" data-audio>
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                            <div>
+                                                <label class="block text-sm font-medium mb-1">Audio URL</label>
+                                                <a href="#" target="_blank" class="text-primary hover:underline break-all" data-audio-url>-</a>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium mb-1">Generated Image</label>
+                                                <div class="mt-2">
+                                                    <!-- Thumbnail image display -->
+                                                    <div class="relative bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                                                        <img src="" alt="Generated cover image" class="w-full h-32 object-contain bg-white" data-image-display style="display: none;">
+                                                        <div class="image-placeholder h-32 flex items-center justify-center" data-image-placeholder>
+                                                            <span class="material-symbols-outlined text-slate-400 text-4xl">image</span>
+                                                        </div>
+                                                    </div>
+                                                    <a href="#" target="_blank" class="text-primary hover:underline break-all text-sm mt-2 block" data-image-url style="display: none;">View full image</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-3">
+                                            <label class="block text-sm font-medium mb-1">Lyrics</label>
+                                            <div class="lyrics-container max-h-48 overflow-y-auto bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
+                                                <div class="lyrics-content text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line" data-lyrics>-</div>
+                                            </div>
+                                            <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                                                <span class="material-symbols-outlined align-text-bottom text-xs mr-1">info</span>
+                                                Lyrics are displayed line by line as generated by the AI.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                                
+                                <!-- Video player template (hidden, used for cloning) -->
+                                <template id="videoPlayerTemplate">
+                                    <div class="video-player border border-blue-200 dark:border-blue-800 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20 mt-6">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div>
+                                                <h5 class="font-bold text-slate-900 dark:text-white text-lg" data-video-title>Music Video</h5>
+                                                <div class="flex items-center gap-3 mt-1">
+                                                    <span class="text-xs px-2 py-1 bg-blue-500/10 text-blue-500 rounded-full">Video</span>
+                                                    <span class="text-xs text-slate-500" data-video-status>Processing</span>
+                                                </div>
+                                            </div>
+                                            <button class="btn-video-download" data-video-download-btn style="display: none;">
+                                                <span class="material-symbols-outlined mr-2">download</span>
+                                                Download MP4
+                                            </button>
+                                        </div>
+                                        
+                                        <div class="video-player-container mb-3" data-video-container style="display: none;">
+                                            <video controls class="w-full rounded-lg" data-video>
+                                                Your browser does not support the video element.
+                                            </video>
+                                        </div>
+                                        
+                                        <div class="video-status mb-3" data-video-status-container>
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <span class="material-symbols-outlined text-blue-500">sync</span>
+                                                <span class="text-sm font-medium">Video generation in progress...</span>
+                                            </div>
+                                            <progress value="0" max="100" class="w-full h-2 rounded-full" data-video-progress></progress>
+                                            <p class="text-xs text-slate-500 mt-1" data-video-status-text>Starting video generation</p>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                            <div>
+                                                <label class="block text-sm font-medium mb-1">Video Task ID</label>
+                                                <code class="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-sm" data-video-task-id>-</code>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium mb-1">Video URL</label>
+                                                <a href="#" target="_blank" class="text-blue-500 hover:underline break-all text-sm" data-video-url style="display: none;">View video</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Component JavaScript -->
+    <script src="{{ url_for('static', filename='js/utils/fileHandler.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/modeManager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/taskManager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/notification.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/trackOptions.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/audioPlayer.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/lyricGenerator.js') }}"></script>
+
+    <!-- Template Data Loader -->
+    <script src="{{ url_for('static', filename='js/utils/templateDataLoader.js') }}"></script>
+    
+    <!-- Main Application JavaScript -->
+    <script src="{{ url_for('static', filename='js/app-modular.js') }}"></script>
+
+    <!-- Quick Styles Component -->
+    <script src="{{ url_for('static', filename='js/components/quickStyles.js') }}"></script>
+
+    <!-- Initialize Quick Styles -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof QuickStyles !== 'undefined') {
+                const quickStyles = new QuickStyles();
+                quickStyles.initialize();
+                window.quickStyles = quickStyles; // optional global reference
+                console.log('Quick Styles initialized.');
+            } else {
+                console.error('QuickStyles component not loaded.');
+            }
+        });
+    </script>
+
+    <!-- Initialize Lyric Generator -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof LyricGenerator !== 'undefined') {
+                const lyricGenerator = new LyricGenerator();
+                const elements = {
+                    lyricPrompt: document.getElementById('lyricPrompt'),
+                    lyricCharCount: document.getElementById('lyricCharCount'),
+                    generateLyricsBtn: document.getElementById('generateLyricsBtn'),
+                    lyricsResultsContainer: document.getElementById('lyricsResultsContainer'),
+                    lyricsResults: document.getElementById('lyricsResults'),
+                    refreshLyricsBtn: document.getElementById('refreshLyricsBtn'),
+                    clearLyricsBtn: document.getElementById('clearLyricsBtn'),
+                    toggleLyricSectionBtn: document.getElementById('toggleLyricSectionBtn'),
+                    lyricSection: document.getElementById('lyricSection'),
+                    lyricAdvancedBtn: document.getElementById('lyricAdvancedBtn'),
+                    expandMainEditorBtn: document.getElementById('expandMainEditorBtn')
+                };
+                lyricGenerator.initialize(elements);
+                window.lyricGenerator = lyricGenerator; // optional global reference
+                console.log('Lyric Generator initialized.');
+            } else {
+                console.error('LyricGenerator component not loaded.');
+            }
+        });
+    </script>
+
+    <!-- Initialize template data loader for music generator -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof TemplateDataLoader !== 'undefined') {
+                TemplateDataLoader.initializeForMusicGenerator();
+            } else {
+                console.error('TemplateDataLoader not found. Template data cannot be applied.');
+            }
+        });
+    </script>
+    
+    <!-- Music Video Creation Modal -->
+    <div id="videoCreationModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity bg-black/70" aria-hidden="true"></div>
+            
+            <!-- Modal panel -->
+            <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-surface-dark shadow-xl rounded-xl border border-slate-200 dark:border-border-dark sm:my-8 sm:align-middle">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">movie</span>
+                        Create Music Video
+                    </h3>
+                    <button id="closeVideoModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                
+                <!-- Modal content -->
+                <div class="space-y-4">
+                    <p class="text-slate-500 dark:text-slate-400 text-sm">
+                        Create a music video using the generated audio and image. This will use the Kie API to generate a video with visualizations.
+                    </p>
+                    
+                    <!-- Task ID field -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Task ID</label>
+                        <input type="text" id="modalTaskId" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" readonly>
+                    </div>
+                    
+                    <!-- Audio ID field -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Audio ID</label>
+                        <input type="text" id="modalAudioId" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" readonly>
+                    </div>
+                    
+                    <!-- Song title display -->
+                    <div id="modalSongTitleContainer" class="hidden">
+                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Song Title</label>
+                        <p id="modalSongTitle" class="text-slate-700 dark:text-slate-300 font-medium"></p>
+                    </div>
+                    
+                    <!-- Author field -->
+                    <div>
+                        <label for="modalAuthor" class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Author (Artist/Creator)</label>
+                        <input type="text" id="modalAuthor" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                               placeholder="e.g., DJ Electronic" maxlength="50">
+                        <p class="text-xs text-slate-500 mt-1">Artist or creator name to display as a signature on the video cover. Maximum 50 characters.</p>
+                    </div>
+                    
+                    <!-- Domain name field -->
+                    <div>
+                        <label for="modalDomainName" class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Domain Name (Watermark)</label>
+                        <input type="text" id="modalDomainName" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                               placeholder="e.g., music.example.com" maxlength="50">
+                        <p class="text-xs text-slate-500 mt-1">Website or brand to display as a watermark at the bottom of the video. Maximum 50 characters.</p>
+                    </div>
+                    
+                    <!-- Status message -->
+                    <div id="modalStatusMessage" class="hidden p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <p class="text-sm text-blue-700 dark:text-blue-400" id="modalStatusText"></p>
+                    </div>
+                </div>
+                
+                <!-- Modal footer -->
+                <div class="mt-6 flex justify-end gap-3">
+                    <button id="cancelVideoBtn" class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors border border-slate-300 dark:border-slate-700">
+                        Cancel
+                    </button>
+                    <button id="createVideoBtn" class="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-lg transition-colors flex items-center">
+                        <span class="material-symbols-outlined mr-2 text-sm">movie</span>
+                        Create Video
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Quick Styles Modal -->
+    <div id="quickStylesModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity bg-black/70" aria-hidden="true"></div>
+            
+            <!-- Modal panel -->
+            <div class="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-surface-dark shadow-xl rounded-xl border border-slate-200 dark:border-border-dark sm:my-8 sm:align-middle" role="dialog" aria-modal="true" aria-labelledby="quickStylesModalTitle" aria-describedby="quickStylesModalDescription">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 id="quickStylesModalTitle" class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">style</span>
+                            Quick Styles Template Library
+                        </h2>
+                        <p id="quickStylesModalDescription" class="text-sm text-slate-500 dark:text-slate-400 mt-1">Browse and apply pre-configured musical style templates with one click.</p>
+                    </div>
+                    <button id="closeQuickStylesModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                
+                <!-- Search and filters -->
+                <div class="mb-6 space-y-4">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <!-- Search input -->
+                        <div class="flex-1">
+                            <label for="templateSearch" class="sr-only">Search templates</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">
+                                    <span class="material-symbols-outlined">search</span>
+                                </span>
+                                <input type="text" id="templateSearch" class="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Search templates by name, description, or tags...">
+                            </div>
+                        </div>
+                        <!-- Category filter -->
+                        <div class="w-full sm:w-48">
+                            <label for="templateCategory" class="sr-only">Category</label>
+                            <select id="templateCategory" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="">All Categories</option>
+                                <option value="electronic">Electronic</option>
+                                <option value="cinematic">Cinematic</option>
+                                <option value="ambient">Ambient</option>
+                                <option value="lofi">Lo-Fi</option>
+                                <option value="synthwave">Synthwave</option>
+                                <option value="house">House</option>
+                                <option value="orchestral">Orchestral</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Active filters tags -->
+                    <div id="activeFilters" class="flex flex-wrap gap-2 hidden">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Loading state -->
+                <div id="templatesLoading" class="py-12 text-center">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <p class="text-slate-500 dark:text-slate-400 mt-2">Loading templates...</p>
+                </div>
+                
+                <!-- Templates grid -->
+                <div id="templatesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 hidden">
+                    <!-- Template cards will be inserted here -->
+                </div>
+                
+                <!-- Empty state -->
+                <div id="templatesEmpty" class="py-12 text-center hidden">
+                    <span class="material-symbols-outlined text-slate-300 dark:text-slate-600 text-5xl">music_note</span>
+                    <h4 class="text-lg font-medium text-slate-700 dark:text-slate-300 mt-4">No templates found</h4>
+                    <p class="text-slate-500 dark:text-slate-400 mt-1">Try adjusting your search or filter criteria.</p>
+                </div>
+                
+                <!-- Template card template (hidden) -->
+                <template id="templateCardTemplate">
+                    <div class="template-card border border-slate-200 dark:border-border-dark rounded-lg p-4 bg-slate-50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-surface-dark transition-all hover:shadow-md cursor-pointer group" data-template-id="">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                    <span class="material-symbols-outlined">music_note</span>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-slate-900 dark:text-white text-base" data-template-name>Template Name</h5>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <span class="text-xs px-2 py-0.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded" data-template-category>electronic</span>
+                                        <span class="text-xs text-slate-500" data-template-bpm>120 BPM</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="apply-template-btn opacity-0 group-hover:opacity-100 px-3 py-1.5 text-xs font-medium bg-primary hover:bg-primary-dark text-white rounded-lg transition-all flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                                Apply
+                            </button>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-3 line-clamp-2" data-template-description>Template description goes here, providing details about the style, instruments, and mood.</p>
+                        <div class="flex flex-wrap gap-1.5 mb-3" data-template-tags>
+                            <!-- Tags will be inserted here -->
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-500">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-xs">schedule</span>
+                                <span data-template-duration>3:15</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-xs">volume_up</span>
+                                <span data-template-instrumental>Instrumental</span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                
+                <!-- Modal footer -->
+                <div class="mt-6 flex justify-between items-center">
+                    <div class="text-sm text-slate-500 dark:text-slate-400">
+                        <span id="templatesCount">0</span> templates available
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="cancelQuickStylesModalBtn" class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors border border-slate-300 dark:border-slate-700">
+                            Cancel
+                        </button>
+                        <button id="applySelectedTemplateBtn" class="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-lg transition-colors flex items-center hidden">
+                            <span class="material-symbols-outlined mr-2 text-sm">arrow_forward</span>
+                            Apply Selected Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Lyric Editor Modal (Expand Editor) -->
+    <div id="lyricEditorModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="lyricEditorModalTitle" aria-hidden="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity bg-black/70" aria-hidden="true"></div>
+            <!-- Modal panel -->
+            <div class="inline-block w-full max-w-6xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-surface-dark shadow-xl rounded-xl border border-slate-200 dark:border-border-dark sm:my-8 sm:align-middle">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2" id="lyricEditorModalTitle">
+                        <span class="material-symbols-outlined text-primary">lyrics</span>
+                        Lyric Editor
+                    </h3>
+                    <div class="flex items-center gap-3">
+                        <!-- Monospace toggle -->
+                        <label class="flex items-center gap-2 cursor-pointer text-sm text-slate-600 dark:text-slate-400">
+                            <input type="checkbox" id="lyricEditorMonospaceToggle" class="sr-only peer" checked>
+                            <div class="w-8 h-4 bg-slate-300 dark:bg-slate-700 peer-checked:bg-primary rounded-full relative transition-colors">
+                                <div class="absolute left-0.5 top-0.5 bg-white w-3 h-3 rounded-full transition-transform peer-checked:translate-x-4"></div>
+                            </div>
+                            <span>Monospace</span>
+                        </label>
+                        <button id="closeLyricEditor" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors" aria-label="Close modal" onclick="document.getElementById('lyricEditorModal').classList.add('hidden'); document.getElementById('lyricEditorModal').classList.remove('flex'); document.getElementById('lyricEditorModal').style.display='none';">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Modal content -->
+                <div class="space-y-6">
+                    <!-- Title input (optional) -->
+                    <div>
+                        <label for="lyricEditorTitle" class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Title</label>
+                        <input type="text" id="lyricEditorTitle" class="form-control" placeholder="Song Title">
+                    </div>
+                    <!-- Editor with line numbers -->
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Lyrics</label>
+                            <div class="relative flex border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-900">
+                                <!-- Line numbers column -->
+                                <div id="lyricEditorLineNumbers" class="line-numbers py-3 px-2 text-right text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 select-none font-mono overflow-hidden" aria-hidden="true">
+                                    1<br>2<br>3<br>4<br>5
+                                </div>
+                                <!-- Textarea -->
+                                <textarea id="lyricEditorText" class="flex-1 py-3 px-4 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white font-mono resize-none min-h-[400px]" placeholder="Paste or edit lyrics here..." rows="20"></textarea>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <div class="text-xs text-slate-500 dark:text-slate-400">
+                                    <span id="lyricEditorLineCount">0 lines</span>
+                                    • <span id="lyricEditorWordCount">0 words</span>
+                                    • <span id="lyricEditorCharCount">0 characters</span>
+                                </div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400">
+                                    <button id="addSectionBtn" class="text-primary hover:text-primary-dark">Add Section</button>
+                                    <button id="formatLyricBtn" class="text-primary hover:text-primary-dark ml-3">Format</button>
+                                    <button id="previewLyricBtn" class="text-primary hover:text-primary-dark ml-3">Preview</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Side panel for structure and options -->
+                        <div class="md:w-64 flex-shrink-0 space-y-6 sticky top-6">
+                            <div>
+                                <h4 class="text-sm font-medium mb-2 dark:text-white text-slate-900">Structure</h4>
+                                <div id="lyricStructure" class="space-y-2 max-h-60 overflow-y-auto p-2 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                                    <!-- Sections will be inserted here -->
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium mb-2 dark:text-white text-slate-900">Actions</h4>
+                                <div class="space-y-3">
+                                    <button id="saveLyricEdit" class="w-full btn-primary flex items-center justify-center">
+                                        <span class="material-symbols-outlined mr-2">save</span>
+                                        Save Changes
+                                    </button>
+                                    <button id="cancelLyricEdit" class="w-full btn-secondary flex items-center justify-center" onclick="document.getElementById('lyricEditorModal').classList.add('hidden'); document.getElementById('lyricEditorModal').classList.remove('flex'); document.getElementById('lyricEditorModal').style.display='none';">
+                                        <span class="material-symbols-outlined mr-2">close</span>
+                                        Cancel
+                                    </button>
+                                    <button id="lyricEditorCopyBtn" class="w-full bg-transparent border border-primary text-primary hover:bg-primary/10 flex items-center justify-center">
+                                        <span class="material-symbols-outlined mr-2">content_copy</span>
+                                        Copy to Clipboard
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Fetch CSRF token for upload requests
+        fetch('/auth/csrf-token')
+            .then(response => response.json())
+            .then(data => {
+                window.csrfToken = data.csrf_token;
+                console.log('CSRF token loaded');
+            })
+            .catch(error => console.error('Failed to load CSRF token:', error));
+        
+        // Sync range sliders with number inputs for optional parameters
+        document.addEventListener('DOMContentLoaded', function() {
+            // Style Weight sync
+            const styleWeightSlider = document.getElementById('styleWeight');
+            const styleWeightNumber = document.getElementById('styleWeightNumber');
+            if (styleWeightSlider && styleWeightNumber) {
+                styleWeightSlider.addEventListener('input', function() {
+                    styleWeightNumber.value = this.value;
+                });
+                styleWeightNumber.addEventListener('input', function() {
+                    let value = parseFloat(this.value);
+                    if (isNaN(value)) value = 0.5;
+                    if (value < 0) value = 0;
+                    if (value > 1) value = 1;
+                    this.value = value.toFixed(2);
+                    styleWeightSlider.value = value;
+                });
+            }
+            
+            // Weirdness Constraint sync
+            const weirdnessSlider = document.getElementById('weirdnessConstraint');
+            const weirdnessNumber = document.getElementById('weirdnessConstraintNumber');
+            if (weirdnessSlider && weirdnessNumber) {
+                weirdnessSlider.addEventListener('input', function() {
+                    weirdnessNumber.value = this.value;
+                });
+                weirdnessNumber.addEventListener('input', function() {
+                    let value = parseFloat(this.value);
+                    if (isNaN(value)) value = 0.5;
+                    if (value < 0) value = 0;
+                    if (value > 1) value = 1;
+                    this.value = value.toFixed(2);
+                    weirdnessSlider.value = value;
+                });
+            }
+            
+            // Audio Weight sync
+            const audioWeightSlider = document.getElementById('audioWeight');
+            const audioWeightNumber = document.getElementById('audioWeightNumber');
+            if (audioWeightSlider && audioWeightNumber) {
+                audioWeightSlider.addEventListener('input', function() {
+                    audioWeightNumber.value = this.value;
+                });
+                audioWeightNumber.addEventListener('input', function() {
+                    let value = parseFloat(this.value);
+                    if (isNaN(value)) value = 0.5;
+                    if (value < 0) value = 0;
+                    if (value > 1) value = 1;
+                    this.value = value.toFixed(2);
+                    audioWeightSlider.value = value;
+                });
+            }
+            
+            // Persona ID validation - only enable when custom mode is true
+            const personaIdInput = document.getElementById('personaId');
+            const customModeBtn = document.getElementById('customModeBtn');
+            const simpleModeBtn = document.getElementById('simpleModeBtn');
+            
+            function updatePersonaIdState() {
+                const isCustomMode = customModeBtn && customModeBtn.classList.contains('active');
+                if (personaIdInput) {
+                    personaIdInput.disabled = !isCustomMode;
+                    if (!isCustomMode) {
+                        personaIdInput.value = '';
+                    }
+                }
+            }
+            
+            if (customModeBtn && simpleModeBtn) {
+                customModeBtn.addEventListener('click', updatePersonaIdState);
+                simpleModeBtn.addEventListener('click', updatePersonaIdState);
+            }
+            
+            // Initial state
+            updatePersonaIdState();
+        });
+    </script>
+</body>
+</html>

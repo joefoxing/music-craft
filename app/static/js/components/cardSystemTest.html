@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card System Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .card-container {
+            min-height: 200px;
+            border: 2px dashed #ccc;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .test-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        
+        .test-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+        
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Unified Card System Test</h1>
+        
+        <div id="test-results" class="mb-8 p-4 bg-gray-100 rounded"></div>
+        
+        <!-- Test 1: Base Card -->
+        <div class="test-section">
+            <h2 class="test-title">Test 1: Base Card</h2>
+            <div id="base-card-test" class="card-container">
+                <p>Base card will be created here...</p>
+            </div>
+        </div>
+        
+        <!-- Test 2: History Card -->
+        <div class="test-section">
+            <h2 class="test-title">Test 2: History Card</h2>
+            <div id="history-card-test" class="card-container">
+                <p>History card will be created here...</p>
+            </div>
+        </div>
+        
+        <!-- Test 3: Song Card -->
+        <div class="test-section">
+            <h2 class="test-title">Test 3: Song Card</h2>
+            <div id="song-card-test" class="card-container">
+                <p>Song card will be created here...</p>
+            </div>
+        </div>
+        
+        <!-- Test 4: Template Card -->
+        <div class="test-section">
+            <h2 class="test-title">Test 4: Template Card</h2>
+            <div id="template-card-test" class="card-container">
+                <p>Template card will be created here...</p>
+            </div>
+        </div>
+        
+        <!-- Test 5: Card Manager -->
+        <div class="test-section">
+            <h2 class="test-title">Test 5: Card Manager</h2>
+            <div id="card-manager-test" class="card-container">
+                <p>Card manager with multiple cards will be created here...</p>
+            </div>
+        </div>
+        
+        <!-- Test 6: Card Factory -->
+        <div class="test-section">
+            <h2 class="test-title">Test 6: Card Factory</h2>
+            <div id="card-factory-test" class="card-container">
+                <p>Cards created via factory will be displayed here...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load the card system -->
+    <script src="unifiedCard.js"></script>
+    <script src="specializedCards.js"></script>
+    <script src="additionalCards.js"></script>
+    <script src="cardFactory.js"></script>
+    <script src="cardSystem.js"></script>
+    
+    <script>
+        // Test results
+        const testResults = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = {
+                timestamp,
+                message,
+                type
+            };
+            testResults.push(logEntry);
+            
+            const resultsDiv = document.getElementById('test-results');
+            const entry = document.createElement('div');
+            entry.className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+            entry.textContent = `[${timestamp}] ${message}`;
+            resultsDiv.appendChild(entry);
+        }
+        
+        // Test functions
+        function testBaseCard() {
+            try {
+                log('Creating BaseCard...');
+                const baseCard = new BaseCard({
+                    id: 'test-base-card',
+                    className: 'test-card',
+                    clickable: true,
+                    hoverable: true
+                });
+                
+                const element = baseCard.createElement();
+                document.getElementById('base-card-test').appendChild(element);
+                
+                // Test callbacks
+                baseCard.setCallbacks({
+                    onClick: (card, event) => log('BaseCard clicked!', 'success'),
+                    onAction: (action, data, event) => log(`BaseCard action: ${action}`, 'success')
+                });
+                
+                log('BaseCard created successfully', 'success');
+                return true;
+            } catch (error) {
+                log(`BaseCard error: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        function testHistoryCard() {
+            try {
+                log('Creating HistoryCard...');
+                const historyData = {
+                    id: 'hist-123',
+                    task_id: 'test-task-456',
+                    timestamp: new Date(),
+                    status_code: 200,
+                    callback_type: 'complete',
+                    tracks_count: 3,
+                    status_message: 'Task completed successfully'
+                };
+                
+                const historyCard = new HistoryCard({
+                    data: historyData,
+                    variant: 'default',
+                    clickable: true
+                });
+                
+                historyCard.setCallbacks({
+                    onAction: (action, data, event) => log(`HistoryCard action: ${action}`, 'success'),
+                    onClick: (card, event) => log('HistoryCard clicked!', 'success')
+                });
+                
+                const element = historyCard.createElement();
+                document.getElementById('history-card-test').appendChild(element);
+                
+                log('HistoryCard created successfully', 'success');
+                return true;
+            } catch (error) {
+                log(`HistoryCard error: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        function testSongCard() {
+            try {
+                log('Creating SongCard...');
+                const songData = {
+                    id: 'song-789',
+                    title: 'Test Song',
+                    artist: 'Test Artist',
+                    album: 'Test Album',
+                    duration: 245,
+                    file_size: 5242880,
+                    genre: 'Rock',
+                    play_count: 42,
+                    audio_url: '/test/audio.mp3',
+                    is_favorite: true,
+                    tags: ['rock', 'energetic', 'guitar']
+                };
+                
+                const songCard = new SongCard({
+                    data: songData,
+                    variant: 'default',
+                    showControls: true,
+                    clickable: true
+                });
+                
+                songCard.setCallbacks({
+                    onAction: (action, data, event) => log(`SongCard action: ${action}`, 'success'),
+                    onClick: (card, event) => log('SongCard clicked!', 'success')
+                });
+                
+                const element = songCard.createElement();
+                document.getElementById('song-card-test').appendChild(element);
+                
+                log('SongCard created successfully', 'success');
+                return true;
+            } catch (error) {
+                log(`SongCard error: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        function testTemplateCard() {
+            try {
+                log('Creating TemplateCard...');
+                const templateData = {
+                    id: 'template-101',
+                    name: 'Epic Cinematic Template',
+                    description: 'A powerful cinematic template with orchestral elements',
+                    category: 'cinematic',
+                    difficulty: 'advanced',
+                    popularity: 85,
+                    estimated_time: '10-15 min',
+                    tags: ['cinematic', 'orchestral', 'epic', 'powerful']
+                };
+                
+                const templateCard = new TemplateCard({
+                    data: templateData,
+                    variant: 'default',
+                    clickable: true
+                });
+                
+                templateCard.setCallbacks({
+                    onAction: (action, data, event) => log(`TemplateCard action: ${action}`, 'success'),
+                    onClick: (card, event) => log('TemplateCard clicked!', 'success')
+                });
+                
+                const element = templateCard.createElement();
+                document.getElementById('template-card-test').appendChild(element);
+                
+                log('TemplateCard created successfully', 'success');
+                return true;
+            } catch (error) {
+                log(`TemplateCard error: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        function testCardManager() {
+            try {
+                log('Creating CardManager...');
+                const manager = new CardManager({
+                    container: document.getElementById('card-manager-test'),
+                    cardType: 'history',
+                    config: {
+                        enableSelection: true,
+                        enableSorting: true,
+                        itemsPerPage: 5
+                    }
+                });
+                
+                // Create sample cards
+                const sampleData = [
+                    { id: 1, task_id: 'task-1', timestamp: new Date(), status_code: 200, callback_type: 'complete', tracks_count: 2 },
+                    { id: 2, task_id: 'task-2', timestamp: new Date(), status_code: 500, callback_type: 'error', tracks_count: 0 },
+                    { id: 3, task_id: 'task-3', timestamp: new Date(), status_code: 200, callback_type: 'complete', tracks_count: 1 }
+                ];
+                
+                const cards = sampleData.map(data => {
+                    const card = new HistoryCard({ data });
+                    card.setCallbacks({
+                        onAction: (action, data, event) => log(`Manager card action: ${action}`, 'success'),
+                        onClick: (card, event) => log('Manager card clicked!', 'success')
+                    });
+                    return card;
+                });
+                
+                cards.forEach(card => manager.addCard(card));
+                manager.renderCards();
+                
+                manager.setCallbacks({
+                    onCardClick: (card, event) => log('Manager card clicked!', 'success'),
+                    onCardAction: (action, data, event) => log(`Manager action: ${action}`, 'success')
+                });
+                
+                log('CardManager created successfully', 'success');
+                return true;
+            } catch (error) {
+                log(`CardManager error: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        function testCardFactory() {
+            try {
+                log('Testing CardFactory...');
+                
+                // Test auto-detection
+                const historyData = { timestamp: new Date(), task_id: 'auto-detect' };
+                const autoCard = CardFactory.createCardFromData(historyData);
+                const autoElement = autoCard.createElement();
+                document.getElementById('card-factory-test').appendChild(autoElement);
+                
+                // Test explicit creation
+                const songData = { title: 'Factory Song', duration: 180 };
+                const songCard = CardFactory.createCard('song', songData);
+                const songElement = songCard.createElement();
+                document.getElementById('card-factory-test').appendChild(songElement);
+                
+                log('CardFactory created cards successfully', 'success');
+                return true;
+            } catch (error) {
+                log(`CardFactory error: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        // Run all tests
+        function runTests() {
+            log('Starting Card System Tests...');
+            
+            const tests = [
+                { name: 'BaseCard', fn: testBaseCard },
+                { name: 'HistoryCard', fn: testHistoryCard },
+                { name: 'SongCard', fn: testSongCard },
+                { name: 'TemplateCard', fn: testTemplateCard },
+                { name: 'CardManager', fn: testCardManager },
+                { name: 'CardFactory', fn: testCardFactory }
+            ];
+            
+            let passed = 0;
+            let failed = 0;
+            
+            tests.forEach(test => {
+                try {
+                    if (test.fn()) {
+                        passed++;
+                    } else {
+                        failed++;
+                    }
+                } catch (error) {
+                    log(`Test ${test.name} crashed: ${error.message}`, 'error');
+                    failed++;
+                }
+            });
+            
+            log(`Tests completed: ${passed} passed, ${failed} failed`);
+            
+            if (failed === 0) {
+                log('🎉 All tests passed! Card System is working correctly.', 'success');
+            } else {
+                log(`⚠️  ${failed} tests failed. Please check the errors above.`, 'error');
+            }
+        }
+        
+        // Start tests when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runTests, 500); // Small delay to ensure scripts are loaded
+        });
+    </script>
+</body>
+</html>

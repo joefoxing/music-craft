@@ -1,0 +1,170 @@
+# Production Docker Compose Configuration
+# 
+# Usage:
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod pull
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --no-deps --build api
+#
+# Migration (one-off):
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod run --rm migrate
+
+name: app-prod
+
+services:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # REVERSE PROXY (Caddy)
+  # ─────────────────────────────────────────────────────────────────────────────
+  proxy:
+    image: caddy:2.7.6-alpine
+    container_name: app-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"  # HTTP/3
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - static_volume:/srv/static:ro  # Serve static files if needed
+    environment:
+      - DOMAIN=${DOMAIN:?DOMAIN is required}
+    networks:
+      - backend
+  #  depends_on:
+  #    api:
+  #      condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:2019/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service,environment"
+        env: "OS_VERSION,DOMAIN"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # API BACKEND (Python/FastAPI/Flask/Django)
+  # ─────────────────────────────────────────────────────────────────────────────
+  api:
+    image: ${REGISTRY:-ghcr.io}/${REPO_OWNER:-owner}/${REPO_NAME:-app}/api:${IMAGE_TAG:?IMAGE_TAG is required}
+    container_name: app-api
+    restart: unless-stopped
+    expose:
+      - "8000"
+    environment:
+      - APP_ENV=production
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - LOG_FORMAT=json
+      - DATABASE_URL=${DATABASE_URL:?DATABASE_URL is required}
+      - SECRET_KEY=${SECRET_KEY:?SECRET_KEY is required}
+      - REDIS_URL=${REDIS_URL:-}
+      - S3_BUCKET=${S3_BUCKET:-}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY:-}
+      - S3_SECRET_KEY=${S3_SECRET_KEY:-}
+      - S3_ENDPOINT=${S3_ENDPOINT:-}
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service"
+        env: "APP_ENV,LOG_LEVEL"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # FRONTEND (Next.js/React - SSR or static served by Caddy)
+  # ─────────────────────────────────────────────────────────────────────────────
+#  web:
+#   image: ${REGISTRY:-ghcr.io}/${REPO_OWNER:-owner}/${REPO_NAME:-app}/web:${IMAGE_TAG:?IMAGE_TAG is required}
+#   container_name: app-web
+#   restart: unless-stopped
+#   expose:
+#     - "3000"
+#   environment:
+#     - NODE_ENV=production
+#     - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-/api}
+#     - PORT=3000
+#   networks:
+#     - backend
+#   healthcheck:
+#     test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+#     interval: 30s
+#     timeout: 10s
+#     retries: 3
+#     start_period: 30s
+#   deploy:
+#     resources:
+#       limits:
+#         cpus: '0.5'
+#         memory: 256M
+#       reservations:
+#         cpus: '0.1'
+#         memory: 64M
+#   logging:
+#     driver: "json-file"
+#     options:
+#       max-size: "10m"
+#       max-file: "3"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # DATABASE MIGRATIONS (One-off job - run manually or in CI)
+  # ─────────────────────────────────────────────────────────────────────────────
+  migrate:
+    image: ${REGISTRY:-ghcr.io}/${REPO_OWNER:-owner}/${REPO_NAME:-app}/api:${IMAGE_TAG:?IMAGE_TAG is required}
+    container_name: app-migrate
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      - APP_ENV=production
+      - DATABASE_URL=${DATABASE_URL:?DATABASE_URL is required}
+      - SECRET_KEY=${SECRET_KEY:-}
+    networks:
+      - backend
+    profiles:
+      - migrate  # Only starts when explicitly requested: --profile migrate
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "1"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# VOLUMES
+# ─────────────────────────────────────────────────────────────────────────────
+volumes:
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+  static_volume:
+    driver: local
+
+# ─────────────────────────────────────────────────────────────────────────────
+# NETWORKS
+# ─────────────────────────────────────────────────────────────────────────────
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
