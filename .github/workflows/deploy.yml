@@ -33,7 +33,7 @@ on:
 env:
   REGISTRY: ghcr.io
   REPO_OWNER: ${{ github.repository_owner }}
-  REPO_NAME: ${{ github.event.repository.name }}
+  REPO_NAME: music-craft
 
 jobs:
   # ───────────────────────────────────────────────────────────────────────────
@@ -48,7 +48,6 @@ jobs:
     outputs:
       sha: ${{ steps.meta.outputs.sha }}
       api_image: ${{ steps.meta.outputs.api_image }}
-      web_image: ${{ steps.meta.outputs.web_image }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -61,7 +60,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Generate image metadata
         id: meta
@@ -70,36 +69,22 @@ jobs:
           SHORT_SHA=${SHA:0:12}
           echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT
           echo "api_image=${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/api:sha-$SHORT_SHA" >> $GITHUB_OUTPUT
-          echo "web_image=${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/web:sha-$SHORT_SHA" >> $GITHUB_OUTPUT
-          echo "Building images for SHA: $SHORT_SHA"
+          echo "Building API image for SHA: $SHORT_SHA"
 
       - name: Build and push API image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile.api
+          target: production
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/api:sha-${{ steps.meta.outputs.sha }}
-            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/api:latest
+            ${{ steps.meta.outputs.api_image }}
+            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/music-craft/api:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
             BUILDKIT_INLINE_CACHE=1
-
-      - name: Build and push Web image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile.web
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/web:sha-${{ steps.meta.outputs.sha }}
-            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/web:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
 
   # ───────────────────────────────────────────────────────────────────────────
   # RUN TESTS (optional but recommended)
