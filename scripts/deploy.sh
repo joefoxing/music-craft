@@ -97,7 +97,7 @@ log_info "Migrations completed successfully"
 
 # Deploy with new image tag
 log_info "Deploying new containers..."
-IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --no-deps --build api web worker
+IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --no-deps --build api
 
 # Wait for health checks
 log_info "Waiting for health checks (timeout: ${HEALTH_TIMEOUT}s)..."
