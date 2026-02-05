@@ -97,7 +97,7 @@ log_info "Migrations completed successfully"
 
 # Deploy with new image tag
 log_info "Deploying new containers..."
-IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --no-deps --build api
+IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --no-deps api
 
 # Wait for health checks
 log_info "Waiting for health checks (timeout: ${HEALTH_TIMEOUT}s)..."
@@ -106,8 +106,8 @@ while true; do
     # Check API health
     API_HEALTH=$(docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps -q api | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
     
-    if [ "$API_HEALTH" == "healthy" ] ; then
-        log_info "All services are healthy!"
+    if [ "$API_HEALTH" == "healthy" ]; then
+        log_info "API service is healthy!"
         break
     fi
     

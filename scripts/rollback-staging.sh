@@ -72,21 +72,20 @@ IMAGE_TAG="$TARGET_SHA" docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE
 
 # Deploy rollback version
 log_info "Deploying rollback version..."
-IMAGE_TAG="$TARGET_SHA" docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE" -f "$STAGING_COMPOSE_FILE" --env-file "$ENV_FILE" up -d --no-deps api web
+IMAGE_TAG="$TARGET_SHA" docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE" -f "$STAGING_COMPOSE_FILE" --env-file "$ENV_FILE" up -d --no-deps api
 
 # Wait for health
-log_info "Waiting for services to become healthy..."
+log_info "Waiting for API to become healthy..."
 for i in {1..30}; do
     API_HEALTH=$(docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE" -f "$STAGING_COMPOSE_FILE" ps -q api | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
-    WEB_HEALTH=$(docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE" -f "$STAGING_COMPOSE_FILE" ps -q web | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
     
-    if [ "$API_HEALTH" == "healthy" ] && [ "$WEB_HEALTH" == "healthy" ]; then
-        log_info "Rollback successful! Services are healthy."
+    if [ "$API_HEALTH" == "healthy" ]; then
+        log_info "Rollback successful! API is healthy."
         log_info "Rolled back to: $TARGET_SHA"
         exit 0
     fi
     
-    echo "Waiting... API: $API_HEALTH, Web: $WEB_HEALTH ($i/30)"
+    echo "Waiting... API: $API_HEALTH ($i/30)"
     sleep 5
 done
 

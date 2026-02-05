@@ -21,19 +21,9 @@ staging.joefoxing.com {
         X-Environment "staging"
     }
 
-    # Health check endpoint (bypass auth if enabled)
-    handle /health {
-        reverse_proxy app-staging-api:8000
-    }
-
-    # API routes
-    handle /api/* {
-        reverse_proxy app-staging-api:8000
-    }
-
-    # Frontend routes
+    # API routes (all traffic goes to API)
     handle {
-        reverse_proxy app-staging-web:3000
+        reverse_proxy app-staging-api:8000
     }
 
     # Logging

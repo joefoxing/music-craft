@@ -53,25 +53,6 @@ services:
           memory: 64M
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # FRONTEND - Staging overrides
-  # ─────────────────────────────────────────────────────────────────────────────
-  web:
-    container_name: app-staging-web
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-/api}
-      - NEXT_PUBLIC_APP_NAME=${NEXT_PUBLIC_APP_NAME:-YourApp (Staging)}
-      - PORT=3000
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'      # Lower resource limits for staging
-          memory: 128M
-        reservations:
-          cpus: '0.05'
-          memory: 32M
-
-  # ─────────────────────────────────────────────────────────────────────────────
   # DATABASE MIGRATIONS - Staging overrides
   # ─────────────────────────────────────────────────────────────────────────────
   migrate:

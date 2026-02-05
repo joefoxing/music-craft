@@ -104,7 +104,7 @@ log_info "Migrations completed successfully"
 
 # Deploy with new image tag
 log_info "Deploying new containers..."
-IMAGE_TAG="$IMAGE_TAG" docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE" -f "$STAGING_COMPOSE_FILE" --env-file "$ENV_FILE" up -d --no-deps api web
+IMAGE_TAG="$IMAGE_TAG" docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE" -f "$STAGING_COMPOSE_FILE" --env-file "$ENV_FILE" up -d --no-deps api
 
 # Wait for health checks
 log_info "Waiting for health checks (timeout: ${HEALTH_TIMEOUT}s)..."
@@ -112,10 +112,9 @@ START_TIME=$(date +%s)
 while true; do
     # Check API health
     API_HEALTH=$(docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE" -f "$STAGING_COMPOSE_FILE" ps -q api | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
-    WEB_HEALTH=$(docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE" -f "$STAGING_COMPOSE_FILE" ps -q web | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
     
-    if [ "$API_HEALTH" == "healthy" ] && [ "$WEB_HEALTH" == "healthy" ]; then
-        log_info "All services are healthy!"
+    if [ "$API_HEALTH" == "healthy" ]; then
+        log_info "API service is healthy!"
         break
     fi
     
@@ -135,7 +134,7 @@ while true; do
         exit 1
     fi
     
-    log_debug "Waiting... API: $API_HEALTH, Web: $WEB_HEALTH"
+    log_debug "Waiting... API: $API_HEALTH"
     sleep 5
 done
 
