@@ -149,7 +149,7 @@ jobs:
             sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=sha-$DEPLOY_SHA/" .env.staging
             
             # Run staging deploy script
-            ./scripts/deploy-staging.sh $DEPLOY_SHA
+            bash scripts/deploy-staging.sh $DEPLOY_SHA
             
             echo "Staging deploy completed successfully"
           EOF
@@ -221,7 +221,7 @@ jobs:
             sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=sha-$DEPLOY_SHA/" .env.prod
             
             # Run deploy script
-            ./scripts/deploy.sh $DEPLOY_SHA
+            bash scripts/deploy.sh $DEPLOY_SHA
             
             echo "Deploy completed successfully"
           EOF
@@ -284,10 +284,10 @@ jobs:
             
             if [ -n "$TARGET_SHA" ]; then
               echo "Rolling back STAGING to specific SHA: $TARGET_SHA"
-              ./scripts/rollback-staging.sh $TARGET_SHA
+              bash scripts/rollback-staging.sh $TARGET_SHA
             else
               echo "Rolling back STAGING to previous version"
-              ./scripts/rollback-staging.sh
+              bash scripts/rollback-staging.sh
             fi
             
             echo "Staging rollback completed"
@@ -329,10 +329,10 @@ jobs:
             
             if [ -n "$TARGET_SHA" ]; then
               echo "Rolling back to specific SHA: $TARGET_SHA"
-              ./scripts/rollback.sh $TARGET_SHA
+              bash scripts/rollback.sh $TARGET_SHA
             else
               echo "Rolling back to previous version"
-              ./scripts/rollback.sh
+              bash scripts/rollback.sh
             fi
             
             echo "Rollback completed"
