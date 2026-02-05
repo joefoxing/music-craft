@@ -68,9 +68,10 @@ jobs:
         run: |
           SHA=$(git rev-parse HEAD)
           SHORT_SHA=${SHA:0:12}
+          REPO_NAME_LOWER=$(echo "${{ env.REPO_NAME }}" | tr '[:upper:]' '[:lower:]')
           echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT
-          echo "api_image=${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/api:sha-$SHORT_SHA" >> $GITHUB_OUTPUT
-          echo "web_image=${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/web:sha-$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "api_image=${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${REPO_NAME_LOWER}/api:sha-$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "web_image=${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${REPO_NAME_LOWER}/web:sha-$SHORT_SHA" >> $GITHUB_OUTPUT
           echo "Building images for SHA: $SHORT_SHA"
 
       - name: Build and push API image
@@ -80,8 +81,8 @@ jobs:
           file: ./Dockerfile.api
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/api:sha-${{ steps.meta.outputs.sha }}
-            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/api:latest
+            ${{ steps.meta.outputs.api_image }}
+            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/music-craft/api:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
@@ -94,8 +95,8 @@ jobs:
           file: ./Dockerfile.web
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/web:sha-${{ steps.meta.outputs.sha }}
-            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/web:latest
+            ${{ steps.meta.outputs.web_image }}
+            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/music-craft/web:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
