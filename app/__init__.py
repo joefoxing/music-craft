@@ -23,9 +23,25 @@ csrf = CSRFProtect()
 
 def create_app(test_config=None):
     app = Flask(__name__)
+    
+    # Load configuration first to get CORS settings
+    Config.configure_app(app)
+    
+    if test_config:
+        app.config.update(test_config)
+    
+    # Configure CORS with environment-based allowed origins
+    allowed_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+    # Filter out empty strings and strip whitespace
+    allowed_origins = [origin.strip() for origin in allowed_origins if origin.strip()]
+    
+    # If no origins specified, use localhost for development
+    if not allowed_origins:
+        allowed_origins = ['http://localhost:5000', 'http://127.0.0.1:5000']
+    
     CORS(app, 
          supports_credentials=True,
-         origins=['*'],  # Allow all origins for Cloudflare tunnel
+         origins=allowed_origins,
          allow_headers=['Content-Type', 'Authorization', 'X-Requested-With'],
          methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
     
@@ -39,12 +55,6 @@ def create_app(test_config=None):
         x_prefix=1  # Number of proxies trusted for X-Forwarded-Prefix
     )
     
-    # Load configuration
-    Config.configure_app(app)
-    
-    if test_config:
-        app.config.update(test_config)
-    
     # Initialize extensions with app
     db.init_app(app)
     bcrypt.init_app(app)
@@ -56,13 +66,12 @@ def create_app(test_config=None):
     @app.errorhandler(CSRFError)
     def handle_csrf_error(e):
         from flask import request, jsonify
-        # For API requests, return success without CSRF validation
-        if request.path.startswith('/api/') or \
-           request.headers.get('X-Requested-With') == 'XMLHttpRequest' or \
-           (request.accept_mimetypes.accept_json and not request.accept_mimetypes.accept_html):
-            return jsonify({'status': 'ok'}), 200
+        # Return proper error for CSRF failures
+        # API routes are already exempted via csrf.exempt() calls below
+        if request.accept_mimetypes.accept_json and not request.accept_mimetypes.accept_html:
+            return jsonify({'error': 'CSRF token missing or incorrect', 'reason': str(e)}), 403
         # For form requests, return the error
-        return jsonify({'error': 'CSRF token missing or incorrect', 'reason': str(e)}), 400
+        return jsonify({'error': 'CSRF token missing or incorrect', 'reason': str(e)}), 403
     
     # Health check endpoint for Docker/container orchestration
     @app.route('/health')

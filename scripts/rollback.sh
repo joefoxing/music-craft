@@ -50,7 +50,8 @@ fi
 
 # Determine rollback target
 if [ $# -eq 1 ]; then
-    TARGET_TAG="sha-$1"
+    GIT_SHA="$1"
+    TARGET_TAG="sha-${GIT_SHA}"
     log_info "Rolling back to specified version: $TARGET_TAG"
 elif [ -f "$ROLLBACK_TAG_FILE" ]; then
     TARGET_TAG=$(cat "$ROLLBACK_TAG_FILE")
@@ -58,6 +59,13 @@ elif [ -f "$ROLLBACK_TAG_FILE" ]; then
 else
     log_error "No rollback target specified and no previous version recorded."
     log_error "Usage: $0 <GIT_SHA>"
+    exit 1
+fi
+
+# Validate SHA format
+if [[ ! "$TARGET_TAG" =~ ^sha-[a-f0-9]+$ ]]; then
+    log_error "Invalid SHA format: $TARGET_TAG"
+    log_error "Expected format: sha-abc123def456"
     exit 1
 fi
 
@@ -76,15 +84,15 @@ set +a
 # Get current version for confirmation
 CURRENT_TAG=$(docker compose -f "$COMPOSE_FILE" ps -q api 2>/dev/null | xargs -I {} docker inspect --format='{{.Config.Image}}' {} 2>/dev/null | grep -o 'sha-[a-f0-9]*' || echo "unknown")
 
-log_warn "=========================================="
-log_warn "ROLLBACK OPERATION"
-log_warn "=========================================="
+log_warn "═══════════════════════════════════════════════════════════"
+log_warn "PRODUCTION ROLLBACK OPERATION"
+log_warn "═══════════════════════════════════════════════════════════"
 log_warn "Current version: $CURRENT_TAG"
 log_warn "Target version:  $TARGET_TAG"
 log_warn ""
 log_warn "IMPORTANT: This will NOT revert database migrations."
 log_warn "Ensure the target code is compatible with current schema."
-log_warn "=========================================="
+log_warn "═══════════════════════════════════════════════════════════="
 
 read -p "Are you sure you want to rollback? (yes/no): " confirm
 if [ "$confirm" != "yes" ]; then
@@ -92,25 +100,17 @@ if [ "$confirm" != "yes" ]; then
     exit 0
 fi
 
-# Check if image exists locally or can be pulled
-log_info "Checking for image: $TARGET_TAG"
-FULL_IMAGE="${REGISTRY:-ghcr.io}/${REPO_OWNER:-owner}/${REPO_NAME:-app}/api:${TARGET_TAG}"
-
-if ! docker pull "$FULL_IMAGE" 2>/dev/null; then
-    log_error "Failed to pull image: $FULL_IMAGE"
+# Pull rollback images
+log_info "Pulling rollback images..."
+if ! IMAGE_TAG="$TARGET_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" pull; then
+    log_error "Failed to pull rollback images"
     log_error "Rollback target may not exist in registry."
     exit 1
 fi
 
-# Record current for potential "roll-forward"
-echo "$CURRENT_TAG" > "$ROLLBACK_TAG_FILE"
-
 # Perform rollback
-log_info "Stopping current containers..."
-docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" stop api web worker
-
-log_info "Starting rollback version..."
-IMAGE_TAG="$TARGET_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d api web worker
+log_info "Deploying rollback version..."
+IMAGE_TAG="$TARGET_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --no-deps api
 
 # Wait for health
 log_info "Waiting for services to become healthy..."
