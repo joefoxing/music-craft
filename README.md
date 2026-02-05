@@ -395,4 +395,5 @@ This project is for educational and demonstration purposes.
 For issues with the Kie API, contact [Kie AI support](mailto:support@kie.ai).
 
 For application issues, check the [GitHub issues](https://github.com/your-repo/issues) or create a new issue.T e s t   d e p l o y m e n t  
+ #   A u t o m a t e d   D e p l o y m e n t   T e s t  
  
