@@ -33,7 +33,7 @@ on:
 env:
   REGISTRY: ghcr.io
   REPO_OWNER: ${{ github.repository_owner }}
-  REPO_NAME: ${{ github.event.repository.name }}
+  REPO_NAME: music-craft
 
 jobs:
   # ───────────────────────────────────────────────────────────────────────────
@@ -68,10 +68,9 @@ jobs:
         run: |
           SHA=$(git rev-parse HEAD)
           SHORT_SHA=${SHA:0:12}
-          REPO_NAME_LOWER=$(echo "${{ env.REPO_NAME }}" | tr '[:upper:]' '[:lower:]')
           echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT
-          echo "api_image=${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${REPO_NAME_LOWER}/api:sha-$SHORT_SHA" >> $GITHUB_OUTPUT
-          echo "web_image=${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${REPO_NAME_LOWER}/web:sha-$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "api_image=${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/api:sha-$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "web_image=${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/web:sha-$SHORT_SHA" >> $GITHUB_OUTPUT
           echo "Building images for SHA: $SHORT_SHA"
 
       - name: Build and push API image
@@ -79,6 +78,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile.api
+          target: production
           push: true
           tags: |
             ${{ steps.meta.outputs.api_image }}
