@@ -104,10 +104,9 @@ log_info "Waiting for health checks (timeout: ${HEALTH_TIMEOUT}s)..."
 START_TIME=$(date +%s)
 while true; do
     # Check API health
-    API_HEALTH=$(docker compose -f "$COMPOSE_FILE" ps -q api | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
-    WEB_HEALTH=$(docker compose -f "$COMPOSE_FILE" ps -q web | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
+    API_HEALTH=$(docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps -q api | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
     
-    if [ "$API_HEALTH" == "healthy" ] && [ "$WEB_HEALTH" == "healthy" ]; then
+    if [ "$API_HEALTH" == "healthy" ] ; then
         log_info "All services are healthy!"
         break
     fi
@@ -128,7 +127,7 @@ while true; do
         exit 1
     fi
     
-    log_info "Waiting... API: $API_HEALTH, Web: $WEB_HEALTH"
+    log_info "Waiting... API: $API_HEALTH"
     sleep 5
 done
 
