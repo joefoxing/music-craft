@@ -102,7 +102,7 @@ fi
 
 # Pull rollback images
 log_info "Pulling rollback images..."
-if ! IMAGE_TAG="$TARGET_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" pull; then
+if ! IMAGE_TAG="$TARGET_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" pull api; then
     log_error "Failed to pull rollback images"
     log_error "Rollback target may not exist in registry."
     exit 1

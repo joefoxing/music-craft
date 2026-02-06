@@ -68,7 +68,7 @@ log_warn "═══════════════════════�
 
 # Pull target images
 log_info "Pulling rollback images..."
-IMAGE_TAG="$TARGET_SHA" docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE" -f "$STAGING_COMPOSE_FILE" --env-file "$ENV_FILE" pull
+IMAGE_TAG="$TARGET_SHA" docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE" -f "$STAGING_COMPOSE_FILE" --env-file "$ENV_FILE" pull api
 
 # Deploy rollback version
 log_info "Deploying rollback version..."

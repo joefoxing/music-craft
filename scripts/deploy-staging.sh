@@ -90,7 +90,7 @@ fi
 
 # Pull new images
 log_info "Pulling images with tag: $IMAGE_TAG"
-IMAGE_TAG="$IMAGE_TAG" docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE" -f "$STAGING_COMPOSE_FILE" --env-file "$ENV_FILE" pull
+IMAGE_TAG="$IMAGE_TAG" docker compose -p "$PROJECT_NAME" -f "$BASE_COMPOSE_FILE" -f "$STAGING_COMPOSE_FILE" --env-file "$ENV_FILE" pull api
 
 # Run database migrations (one-off container)
 log_info "Running database migrations against STAGING database..."
