@@ -145,6 +145,9 @@ jobs:
             set -e
             cd ~/app
             
+            # Pull latest code (including updated deploy scripts)
+            git pull origin main
+            
             # Update IMAGE_TAG in staging env file
             sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=sha-$DEPLOY_SHA/" .env.staging
             
@@ -216,6 +219,9 @@ jobs:
           ssh ${{ vars.PROD_USER }}@${{ vars.PROD_HOST }} << EOF
             set -e
             cd ~/app
+            
+            # Pull latest code (including updated deploy scripts)
+            git pull origin main
             
             # Update IMAGE_TAG in env file
             sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=sha-$DEPLOY_SHA/" .env.prod
