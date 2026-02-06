@@ -5,6 +5,7 @@ Contains API endpoints for music generation, status checking, and downloads.
 from flask import Blueprint, request, jsonify, current_app, Response
 import requests
 
+from app import limiter
 from app.config import Config
 from app.core.api_client import KieAPIClient
 from app.core.utils import ResponseUtils, DateTimeUtils, URLUtils, FileUtils
@@ -27,6 +28,7 @@ def handle_templates_options():
 
 
 @api_bp.route('/generate-music', methods=['POST'])
+@limiter.limit("10 per minute")
 def generate_music():
     """Generate music from text prompt using Kie API."""
     try:
@@ -122,6 +124,7 @@ def generate_music():
 
 
 @api_bp.route('/generate-music-direct', methods=['POST'])
+@limiter.limit("10 per minute")
 def generate_music_direct():
     """Generate music directly from text prompt (no upload)."""
     try:
@@ -217,6 +220,7 @@ def generate_music_direct():
 
 
 @api_bp.route('/v1/generate', methods=['POST'])
+@limiter.limit("10 per minute")
 def generate_music_v1():
     """
     Generate music using the /api/v1/generate endpoint.
@@ -328,6 +332,7 @@ def generate_music_v1():
 
 
 @api_bp.route('/generate-lyrics', methods=['POST'])
+@limiter.limit("20 per minute")
 def generate_lyrics():
     """Generate lyrics from text prompt using Kie API."""
     try:
@@ -398,6 +403,7 @@ def get_lyrics_record_info():
 
 
 @api_bp.route('/generate-cover', methods=['POST'])
+@limiter.limit("10 per minute")
 def generate_cover():
     """Generate music cover using Kie API."""
     try:
@@ -492,6 +498,7 @@ def generate_cover():
 
 
 @api_bp.route('/generate-extend', methods=['POST'])
+@limiter.limit("10 per minute")
 def generate_extend():
     """Generate audio extension using Kie API."""
     try:
@@ -584,6 +591,7 @@ def generate_extend():
 
 
 @api_bp.route('/generate-music-video', methods=['POST'])
+@limiter.limit("5 per minute")
 def generate_music_video():
     """Generate music video using Kie API."""
     try:
@@ -642,6 +650,7 @@ def generate_music_video():
 
 
 @api_bp.route('/add-instrumental', methods=['POST'])
+@limiter.limit("10 per minute")
 def add_instrumental():
     """Add instrumental using Kie API."""
     try:
@@ -753,6 +762,7 @@ def add_instrumental():
 
 
 @api_bp.route('/add-vocals', methods=['POST'])
+@limiter.limit("10 per minute")
 def add_vocals():
     """Add AI-generated vocals to an existing instrumental using Kie API."""
     try:
@@ -871,6 +881,7 @@ def add_vocals():
 
 
 @api_bp.route('/vocal-removal', methods=['POST'])
+@limiter.limit("5 per minute")
 def vocal_removal():
     """Separate vocal/stems from a track using Kie API."""
     try:

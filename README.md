@@ -11,7 +11,7 @@ A Python web application for generating music covers using the Kie API. This app
 - **Enhanced Callback System**: Comprehensive callback processing and history tracking
 - **Production Ready**: Clean codebase with proper error handling and documentation
 - **Ngrok Integration**: Built-in public tunnel support for external API callbacks
-
+- AI assistants: see docs/AI_RULES.md
 ## Features
 
 - **Audio File Upload**: Upload MP3, WAV, OGG, M4A, or FLAC files (max 100MB)
@@ -394,6 +394,8 @@ This project is for educational and demonstration purposes.
 
 For issues with the Kie API, contact [Kie AI support](mailto:support@kie.ai).
 
-For application issues, check the [GitHub issues](https://github.com/your-repo/issues) or create a new issue.T e s t   d e p l o y m e n t  
- #   A u t o m a t e d   D e p l o y m e n t   T e s t  
+For application issues, check the [GitHub issues](https://github.com/your-repo/issues) or create a new issue.T e s t   d e p l o y m e n t 
+ 
+ #   A u t o m a t e d   D e p l o y m e n t   T e s t 
+ 
  

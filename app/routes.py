@@ -4,21 +4,49 @@ import uuid
 import datetime
 import json
 import requests
+from urllib.parse import urlparse
 from werkzeug.utils import secure_filename
 from app.kie_client import KieAPIClient
 from app.config import Config
 
 main_bp = Blueprint('main', __name__)
 
-# Allowed audio file extensions
-ALLOWED_EXTENSIONS = {'mp3', 'wav', 'ogg', 'm4a', 'flac'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 def get_public_base_url():
     """Get public base URL, preferring localtunnel if configured, then ngrok."""
     return Config.get_public_base_url(request)
+
+def is_safe_url(url):
+    """
+    Check if the URL is safe to access (SSRF protection).
+    Allowed domains: kie.ai, suno.ai and their subdomains.
+    """
+    if not url:
+        return False
+        
+    try:
+        parsed = urlparse(url)
+        domain = parsed.netloc.lower()
+        
+        # List of allowed base domains
+        allowed_domains = {
+            'kie.ai', 
+            'musicfile.kie.ai',
+            'api.kie.ai',
+            'suno.ai', 
+            'cdn1.suno.ai', 
+            'cdn2.suno.ai',
+            'images.unsplash.com', # Used for covers
+            'www.soundhelix.com'   # Used in mocks
+        }
+        
+        # Check if domain matches or is a subdomain of allowed domains
+        for allowed in allowed_domains:
+            if domain == allowed or domain.endswith('.' + allowed):
+                return True
+                
+        return False
+    except Exception:
+        return False
 
 @main_bp.route('/')
 def index():
@@ -46,8 +74,8 @@ def upload_file():
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
     
-    if not allowed_file(file.filename):
-        return jsonify({'error': f'File type not allowed. Allowed types: {", ".join(ALLOWED_EXTENSIONS)}'}), 400
+    if not Config.is_extension_allowed(file.filename):
+        return jsonify({'error': f'File type not allowed. Allowed types: {", ".join(Config.get_allowed_extensions())}'}), 400
     
     # Check file size
     max_upload_size = current_app.config.get('MAX_UPLOAD_SIZE')
@@ -682,6 +710,11 @@ def download_audio():
         # Validate URL
         if not (url.startswith('http://') or url.startswith('https://')):
             return jsonify({'error': 'Invalid URL format'}), 400
+            
+        # SSRF Protection: Check if URL is safe
+        if not is_safe_url(url):
+            current_app.logger.warning(f"Blocked potential SSRF attempt to URL: {url}")
+            return jsonify({'error': 'URL not allowed'}), 403
         
         # Clean filename for safety
         filename = secure_filename(filename)

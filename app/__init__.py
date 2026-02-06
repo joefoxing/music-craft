@@ -146,7 +146,7 @@ def create_app(test_config=None):
     csrf.exempt(history_api_bp)
     csrf.exempt(audio_library_bp)
     csrf.exempt(playlist_api_bp)
-    csrf.exempt(api_auth_bp)
+    # api_auth_bp is NOT exempted to protect login/register/profile endpoints
     csrf.exempt(api_admin_bp)
     csrf.exempt(vc_bp)
     csrf.exempt(auth_bp)  # Exempt auth for tunnel compatibility
@@ -165,5 +165,9 @@ def create_app(test_config=None):
     # Initialize OAuth
     from app.routes.auth import init_oauth
     init_oauth(app)
+    
+    # Configure structured logging
+    from app.core.logging import configure_logging
+    configure_logging(app)
     
     return app
