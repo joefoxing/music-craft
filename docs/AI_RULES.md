@@ -10,6 +10,7 @@
 - Validate request inputs; return consistent JSON errors.
 - Use structured JSON logging; never log secrets.
 - Add/adjust unit tests for logic changes.
+- Update documentation when features or APIs are modified.
 
 ## Node
 - Keep handlers/services pure where possible.

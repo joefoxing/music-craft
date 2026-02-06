@@ -314,7 +314,7 @@ abort @blocked
 docker compose -p app-staging -f docker-compose.prod.yml -f compose.staging.yml logs
 
 # Check env file
-cat .env.staging | grep -v "SECRET\|PASSWORD"
+grep -v "SECRET\|PASSWORD\|URL\|KEY" .env.staging
 
 # Verify network
 docker network ls | grep staging
