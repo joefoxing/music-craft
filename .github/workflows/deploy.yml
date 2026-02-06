@@ -123,6 +123,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug Secret Availability
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          if [ -z "$SSH_KEY" ]; then
+            echo "::error::SSH_PRIVATE_KEY is empty or not accessible!"
+            exit 1
+          else
+            echo "SUCCESS: SSH_PRIVATE_KEY is present (length: ${#SSH_KEY})."
+          fi
+
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.8.0
         with:
