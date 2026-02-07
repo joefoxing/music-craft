@@ -165,20 +165,43 @@ jobs:
           echo "Waiting for services to stabilize..."
           sleep 30
           
-          # Check health endpoint (try standard port and 8443 for staging)
-          # Use -k to allow self-signed certs on staging
-          for i in {1..10}; do
-            if curl -sfk "https://${{ vars.STAGING_DOMAIN }}/health" > /dev/null 2>&1 || \
-               curl -sfk "https://${{ vars.STAGING_DOMAIN }}:8443/health" > /dev/null 2>&1; then
-              echo "Staging health check passed!"
-              exit 0
-            fi
-            echo "Attempt $i/10 - waiting..."
-            sleep 10
-          done
+          # Run health check from within the staging server via SSH
+          # This checks the internal Docker health status and local endpoints
+          ssh ${{ vars.STAGING_USER }}@${{ vars.STAGING_HOST }} << 'EOF'
+            set -e
+            cd ~/app
+            
+            echo "Checking Docker container health status..."
+            
+            # Check API container health (Docker healthcheck)
+            for i in {1..10}; do
+              API_HEALTH=$(docker compose -p app-staging -f docker-compose.prod.yml -f compose.staging.yml ps -q api | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
+              
+              if [ "$API_HEALTH" == "healthy" ]; then
+                echo "API container health check: PASSED"
+                
+                # Also verify local endpoint is responding
+                if curl -sf http://localhost:8080/health > /dev/null 2>&1; then
+                  echo "Local health endpoint check: PASSED"
+                  echo "Staging deployment health verification: SUCCESS"
+                  exit 0
+                fi
+              fi
+              
+              echo "Attempt $i/10 - API health: $API_HEALTH"
+              sleep 10
+            done
+            
+            echo "Health check failed after 10 attempts"
+            exit 1
+          EOF
           
-          echo "Staging health check failed!"
-          exit 1
+          if [ $? -eq 0 ]; then
+            echo "Staging health check passed!"
+          else
+            echo "Staging health check failed!"
+            exit 1
+          fi
 
       - name: Notify on failure
         if: failure()
