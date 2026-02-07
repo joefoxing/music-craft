@@ -30,7 +30,7 @@ on:
 env:
   REGISTRY: ghcr.io
   REPO_OWNER: ${{ github.repository_owner }}
-  REPO_NAME: lyric_cover_staging
+  REPO_NAME: music-craft
 
 jobs:
   build:
