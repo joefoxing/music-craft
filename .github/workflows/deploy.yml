@@ -166,9 +166,10 @@ jobs:
           sleep 30
           
           # Check health endpoint (try standard port and 8443 for staging)
+          # Use -k to allow self-signed certs on staging
           for i in {1..10}; do
-            if curl -sf "https://${{ vars.STAGING_DOMAIN }}/health" > /dev/null 2>&1 || \
-               curl -sf "https://${{ vars.STAGING_DOMAIN }}:8443/health" > /dev/null 2>&1; then
+            if curl -sfk "https://${{ vars.STAGING_DOMAIN }}/health" > /dev/null 2>&1 || \
+               curl -sfk "https://${{ vars.STAGING_DOMAIN }}:8443/health" > /dev/null 2>&1; then
               echo "Staging health check passed!"
               exit 0
             fi

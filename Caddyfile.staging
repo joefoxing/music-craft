@@ -4,6 +4,7 @@
 
 # Staging environment - with optional basic auth protection
 staging.joefoxing.com {
+    tls internal
     encode gzip
 
     # Optional: Basic auth to protect staging from public access
