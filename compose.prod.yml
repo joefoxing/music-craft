@@ -1,16 +1,38 @@
-name: app_staging
+name: app_prod
 
 services:
-  # STAGING API BACKEND
+  # REVERSE PROXY (Caddy)
+  proxy:
+    image: caddy:2.7.6-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - proxy_net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:2019/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # PRODUCTION API BACKEND
   api:
     image: ${REGISTRY:-ghcr.io}/${REPO_OWNER:-owner}/${REPO_NAME:-app}/api:${IMAGE_TAG:?IMAGE_TAG is required}
     restart: unless-stopped
     env_file:
-      - .env.staging
+      - .env.prod
     networks:
       proxy_net:
         aliases:
-          - staging_app
+          - prod_app
       default:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -24,19 +46,23 @@ services:
           cpus: '1.0'
           memory: 512M
         reservations:
-          cpus: '0.1'
+          cpus: '0.25'
           memory: 128M
 
-  # DATABASE MIGRATIONS (Staging)
+  # DATABASE MIGRATIONS (Prod)
   migrate:
     image: ${REGISTRY:-ghcr.io}/${REPO_OWNER:-owner}/${REPO_NAME:-app}/api:${IMAGE_TAG:?IMAGE_TAG is required}
     command: ["alembic", "upgrade", "head"]
     env_file:
-      - .env.staging
+      - .env.prod
     networks:
       - default
     profiles:
       - migrate
+
+volumes:
+  caddy_data:
+  caddy_config:
 
 networks:
   proxy_net:
@@ -45,4 +71,4 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/16
+        - subnet: 172.19.0.0/16
