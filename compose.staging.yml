@@ -38,6 +38,7 @@ services:
   # ─────────────────────────────────────────────────────────────────────────────
   api:
     container_name: app-staging-api
+    command: ["gunicorn", "wsgi:app", "-w", "2", "-b", "0.0.0.0:8000", "--access-logfile", "-", "--error-logfile", "-", "--timeout", "120"]
     environment:
       - APP_ENV=staging
       - LOG_LEVEL=${LOG_LEVEL:-DEBUG}
