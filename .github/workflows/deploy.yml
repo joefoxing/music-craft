@@ -60,6 +60,7 @@ jobs:
         with:
           context: .
           file: ./Dockerfile.api
+          target: production
           push: true
           tags: |
             ${{ steps.meta.outputs.api_image }}
