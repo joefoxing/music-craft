@@ -17,9 +17,9 @@ services:
   proxy:
     container_name: app-staging-proxy
     ports:
-      - "8080:80"       # Different host ports to avoid conflicts
-      - "8443:443"
-      - "8443:443/udp"
+      - "9080:80"       # Different host ports to avoid conflicts with production
+      - "9443:443"
+      - "9443:443/udp"
     volumes:
       - ./Caddyfile.staging:/etc/caddy/Caddyfile:ro
       - caddy_staging_data:/data
