@@ -1,48 +1,32 @@
-{
-    email admin@joefoxing.com
-}
-
-# Staging environment - with optional basic auth protection
-staging.joefoxing.com {
-    tls internal
+# Staging environment - HTTP only for SSH tunnel access
+:80 {
     encode gzip
-
-    # Optional: Basic auth to protect staging from public access
-    # Uncomment and configure via environment variables if needed
-    # basicauth {
-    #     {$BASIC_AUTH_USER} {$BASIC_AUTH_PASSWORD}
-    # }
 
     # Security headers
     header {
         X-Content-Type-Options nosniff
         X-Frame-Options DENY
         Referrer-Policy strict-origin-when-cross-origin
-        X-Robots-Tag "noindex, nofollow"  # Prevent search engine indexing
+        X-Robots-Tag "noindex, nofollow"
         X-Environment "staging"
     }
 
     # API routes (all traffic goes to API)
-    handle {
-        reverse_proxy app-staging-api:8000 {
-            # Health check against backend
-            health_uri /health
-            health_interval 30s
-            health_timeout 10s
-            
-            # Pass real client IP
-            header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
-        }
+    reverse_proxy app-staging-api:8000 {
+        # Health check against backend
+        health_uri /health
+        health_interval 30s
+        health_timeout 10s
+        
+        # Pass real client IP
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
     }
 
     # Logging
     log {
-        output file /var/log/caddy/staging-access.log {
-            roll_size 10mb
-            roll_keep 5
-        }
+        output stdout
         format json
     }
 }
