@@ -48,7 +48,7 @@ fi
 source "$ENV_FILE"
 
 # Record current version
-CURRENT_TAG=$(docker compose -f "$COMPOSE_FILE" ps -q api 2>/dev/null | xargs -I {} docker inspect --format='{{.Config.Image}}' {} 2>/dev/null | grep -o 'sha-[a-f0-9]*' || echo "unknown")
+CURRENT_TAG=$(IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps -q api 2>/dev/null | xargs -I {} docker inspect --format='{{.Config.Image}}' {} 2>/dev/null | grep -o 'sha-[a-f0-9]*' || echo "unknown")
 if [ "$CURRENT_TAG" != "unknown" ]; then
     echo "$CURRENT_TAG" > "$ROLLBACK_TAG_FILE"
 fi
@@ -63,14 +63,14 @@ IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" 
 
 # Deploy
 log_info "Updating services..."
-# We update 'api' and ensure 'proxy' is running. Proxy recreates only if config changed.
-IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d api proxy
+# Caddy runs as systemd service on host; only start api container
+IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d api
 
 # Healthcheck
 log_info "Waiting for health..."
 START_TIME=$(date +%s)
 while true; do
-    API_HEALTH=$(docker compose -f "$COMPOSE_FILE" ps -q api | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
+    API_HEALTH=$(IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps -q api | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
     if [ "$API_HEALTH" == "healthy" ]; then
         log_info "API healthy!"
         break
