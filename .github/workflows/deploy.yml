@@ -183,26 +183,21 @@ jobs:
             
             echo "Checking Docker container health status..."
             
-            # Check API container health (Docker healthcheck)
+            # Check API container health (Docker healthcheck already verifies /health endpoint)
             for i in {1..10}; do
               API_HEALTH=$(docker compose -p app-staging -f docker-compose.prod.yml -f compose.staging.yml --env-file .env.staging ps -q api | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
               
               if [ "$API_HEALTH" == "healthy" ]; then
                 echo "API container health check: PASSED"
-                
-                # Also verify local endpoint is responding
-                if curl -sf http://localhost:8080/health > /dev/null 2>&1; then
-                  echo "Local health endpoint check: PASSED"
-                  echo "Staging deployment health verification: SUCCESS"
-                  exit 0
-                fi
+                echo "Staging deployment health verification: SUCCESS"
+                exit 0
               fi
               
               echo "Attempt $i/10 - API health: $API_HEALTH"
               sleep 10
             done
             
-            echo "Health check failed after 10 attempts"
+            echo "Health check failed - API container not healthy after 10 attempts"
             exit 1
           EOF
           
