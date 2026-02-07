@@ -1,7 +1,8 @@
 name: app_prod
 
 services:
-  # REVERSE PROXY (Caddy)
+  # REVERSE PROXY (Caddy) - Only use if NOT running Caddy via systemd
+  # Start explicitly: docker compose -f compose.prod.yml --profile proxy up -d proxy
   proxy:
     image: caddy:2.7.6-alpine
     container_name: caddy
@@ -22,6 +23,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    profiles:
+      - proxy
 
   # PRODUCTION API BACKEND
   api:
