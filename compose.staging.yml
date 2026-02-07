@@ -5,6 +5,8 @@ services:
   api:
     image: ${REGISTRY:-ghcr.io}/${REPO_OWNER:-owner}/${REPO_NAME:-app}/api:${IMAGE_TAG:?IMAGE_TAG is required}
     restart: unless-stopped
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["gunicorn wsgi:app -w 2 -b 0.0.0.0:8000 --access-logfile - --error-logfile -"]
     env_file:
       - .env.staging
     environment:
