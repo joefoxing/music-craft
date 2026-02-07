@@ -123,22 +123,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug Secret Availability
-        env:
-          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          if [ -z "$SSH_KEY" ]; then
-            echo "::error::SSH_PRIVATE_KEY is empty or not accessible!"
-            exit 1
-          else
-            echo "SUCCESS: SSH_PRIVATE_KEY is present (length: ${#SSH_KEY})."
-          fi
-
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           log-public-key: false
+
+      - name: Verify SSH Key Loaded
+        run: ssh-add -l -E sha256
 
       - name: Add host to known hosts
         run: |
@@ -152,7 +144,7 @@ jobs:
         run: |
           echo "Deploying SHA to STAGING: $DEPLOY_SHA"
           
-          ssh ${{ vars.STAGING_USER }}@${{ vars.STAGING_HOST }} << EOF
+          ssh -v ${{ vars.STAGING_USER }}@${{ vars.STAGING_HOST }} << EOF
             set -e
             cd ~/app
             
