@@ -7,6 +7,8 @@ services:
     restart: unless-stopped
     env_file:
       - .env.staging
+    environment:
+      - WORKERS=2
     networks:
       proxy_net:
         aliases:
@@ -22,10 +24,10 @@ services:
       resources:
         limits:
           cpus: '1.0'
-          memory: 512M
+          memory: 768M
         reservations:
           cpus: '0.1'
-          memory: 128M
+          memory: 256M
 
   # DATABASE MIGRATIONS (Staging)
   migrate:
