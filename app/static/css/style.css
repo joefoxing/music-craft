@@ -1083,23 +1083,22 @@ code {
    ============================================================================ */
 
 /* Sidebar Aside Element - Direct targeting for the actual sidebar */
-aside.w-68 {
+#main-sidebar {
     height: 100vh; /* Full viewport height */
     overflow: hidden; /* Hide overflow on container */
-    display: flex !important;
     flex-direction: column !important;
 }
 
 /* Mobile responsive for sidebar */
-@media (max-width: 768px) {
-    aside.w-68 {
+@media (max-width: 1024px) {
+    #main-sidebar {
         height: auto;
         min-height: 100vh;
     }
 }
 
 /* Navigation inside sidebar aside */
-aside.w-68 > nav {
+#main-sidebar > nav {
     flex: 1 1 0%;
     overflow-y: auto; /* Enable vertical scrolling */
     scrollbar-width: thin; /* Thin scrollbar for Firefox */
@@ -1107,21 +1106,21 @@ aside.w-68 > nav {
 }
 
 /* Webkit scrollbar for sidebar navigation */
-aside.w-68 > nav::-webkit-scrollbar {
+#main-sidebar > nav::-webkit-scrollbar {
     width: 6px;
 }
 
-aside.w-68 > nav::-webkit-scrollbar-track {
+#main-sidebar > nav::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.05);
     border-radius: 3px;
 }
 
-aside.w-68 > nav::-webkit-scrollbar-thumb {
+#main-sidebar > nav::-webkit-scrollbar-thumb {
     background: rgba(79, 70, 229, 0.5);
     border-radius: 3px;
 }
 
-aside.w-68 > nav::-webkit-scrollbar-thumb:hover {
+#main-sidebar > nav::-webkit-scrollbar-thumb:hover {
     background: rgba(79, 70, 229, 0.7);
 }
 

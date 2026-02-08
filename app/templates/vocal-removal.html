@@ -255,7 +255,10 @@
     </div>
     
     <!-- JavaScript Includes -->
+    <script src="{{ url_for('static', filename='js/utils/fileHandler.js') }}"></script>
     <script src="{{ url_for('static', filename='js/utils/notification.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/taskManager.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     
     <!-- Vocal Removal JavaScript -->
     <script>
@@ -404,16 +407,7 @@
                 });
             }
             
-            // Mobile menu toggle
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            if (mobileMenuBtn) {
-                mobileMenuBtn.addEventListener('click', function() {
-                    const sidebar = document.querySelector('aside');
-                    if (sidebar) {
-                        sidebar.classList.toggle('hidden');
-                    }
-                });
-            }
+            // Mobile menu toggle - handled by sidebar.js
         });
     </script>
 </body>

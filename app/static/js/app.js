@@ -129,9 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (themeToggle) {
         themeToggle.addEventListener('click', toggleTheme);
     }
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-    }
+    // Mobile menu handled by sidebar.js
     
     // Video modal event listeners - initialize elements first
     initVideoModalElements();
@@ -222,13 +220,6 @@ function toggleTheme() {
         html.classList.add('dark');
         themeToggle.innerHTML = '<span class="material-symbols-outlined">dark_mode</span>';
     }
-}
-
-// Mobile menu
-function toggleMobileMenu() {
-    const sidebar = document.querySelector('aside');
-    sidebar.classList.toggle('hidden');
-    sidebar.classList.toggle('md:flex');
 }
 
 // Drag and drop
