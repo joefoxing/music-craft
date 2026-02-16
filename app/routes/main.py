@@ -2,13 +2,15 @@
 Main routes for the Music Cover Generator application.
 Contains basic page routes and file upload handling.
 """
-from flask import Blueprint, request, jsonify, render_template, current_app, url_for, send_file, abort
+from flask import Blueprint, request, jsonify, render_template, current_app, url_for, send_file, abort, redirect
 from flask_login import login_required, current_user
 import os
+import re
 
 from app.config import Config
 from app.core.utils import FileUtils, ResponseUtils, DateTimeUtils
 from app.core.validation import ParameterValidator
+from app.services.audio_library_service import AudioLibraryService
 
 
 main_bp = Blueprint('main', __name__)
@@ -16,8 +18,20 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def index():
-    """Render the main page with enhanced dashboard."""
-    return render_template('index_enhanced.html', active_nav='dashboard')
+    """Render the main landing page."""
+    return render_template('index.html')
+
+
+@main_bp.route('/login')
+def login_redirect():
+    """Redirect /login to /auth/login."""
+    return redirect(url_for('auth.login'))
+
+
+@main_bp.route('/register')
+def register_redirect():
+    """Redirect /register to /auth/register."""
+    return redirect(url_for('auth.register'))
 
 
 @main_bp.route('/cover-generator')
@@ -46,6 +60,13 @@ def history():
 def library():
     """Render the music library page."""
     return render_template('library.html', active_nav='library')
+
+
+@main_bp.route('/playlist/<playlist_id>')
+@login_required
+def view_playlist(playlist_id):
+    """Render the library page filtered by playlist."""
+    return render_template('library.html', active_nav='library', playlist_id=playlist_id)
 
 
 @main_bp.route('/admin')
@@ -104,6 +125,10 @@ def upload_file():
     if not is_valid:
         return jsonify(ResponseUtils.create_error_response(error_msg)), 400
     
+    requested_lyrics_language = (request.form.get('lyrics_language') or '').strip().lower()
+    if requested_lyrics_language and not re.fullmatch(r'[a-z]{2,3}(?:-[a-z]{2,4})?', requested_lyrics_language):
+        return jsonify(ResponseUtils.create_error_response('Invalid lyrics language code')), 400
+
     # Generate unique filename
     unique_filename = FileUtils.generate_unique_filename(file.filename)
     
@@ -114,15 +139,46 @@ def upload_file():
     
     # Create URL for the uploaded file
     # Use our dedicated audio serving endpoint for better control
-    # Use public base URL (localtunnel if enabled, otherwise ngrok) for external API access
+    # Use public base URL for external API access
     public_base_url = Config.get_public_base_url(request)
     file_url = f"{public_base_url}/serve-audio/{unique_filename}"
+
+    # Immediately add uploaded file to user's audio library so lyrics extraction starts right away.
+    # Allow opt-out for specific flows by setting form field auto_add_to_library=false.
+    auto_add_to_library = request.form.get('auto_add_to_library', 'true').lower() == 'true'
+    audio_item_payload = None
+    if auto_add_to_library:
+        try:
+            service = AudioLibraryService()
+            base_title = os.path.splitext(file.filename)[0] if file.filename else 'Uploaded Audio'
+            file_ext = os.path.splitext(file.filename or '')[1].lower().lstrip('.')
+            library_data = {
+                'title': base_title,
+                'artist': current_user.display_name if getattr(current_user, 'display_name', None) else 'Unknown Artist',
+                'file_size': os.path.getsize(file_path),
+                'file_format': file_ext,
+                'audio_url': file_url,
+                'original_filename': file.filename,
+                'source_type': 'upload',
+                'processing_status': 'ready',
+                'extract_lyrics': True,
+                'lyrics_language': requested_lyrics_language or None
+            }
+
+            success, error_message, audio_item = service.add_to_library(library_data)
+            if success and audio_item:
+                audio_item_payload = audio_item.to_dict()
+            else:
+                current_app.logger.warning(f"Upload succeeded but add_to_library failed: {error_message}")
+        except Exception as exc:
+            current_app.logger.warning(f"Upload succeeded but failed to enqueue lyrics extraction: {exc}")
     
     return jsonify(ResponseUtils.create_success_response({
         'filename': unique_filename,
         'original_filename': file.filename,
         'file_url': file_url,
-        'file_path': file_path
+        'file_path': file_path,
+        'audio_item': audio_item_payload
     }, 'File uploaded successfully'))
 
 
@@ -201,4 +257,4 @@ def profile_redirect():
 @login_required
 def dashboard():
     """User dashboard page."""
-    return render_template('index_enhanced.html', active_nav='dashboard')
+    return render_template('dashboard.html', active_nav='dashboard')

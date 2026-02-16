@@ -8,7 +8,8 @@ COMPOSE_FILE="$PROJECT_DIR/compose.prod.yml"
 ENV_FILE="$PROJECT_DIR/.env.prod"
 LOCK_FILE="/tmp/app-deploy.lock"
 HEALTH_TIMEOUT=120
-ROLLBACK_TAG_FILE="$PROJECT_DIR/.rollback-tag"
+DEPLOY_SHA_FILE="$PROJECT_DIR/DEPLOYED_SHA_PROD.txt"
+DEPLOY_SHA_PREV_FILE="$PROJECT_DIR/DEPLOYED_SHA_PROD.txt.prev"
 
 # Colors
 RED='\033[0;31m'
@@ -47,24 +48,19 @@ fi
 
 source "$ENV_FILE"
 
-# Record current version
-CURRENT_TAG=$(IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps -q api 2>/dev/null | xargs -I {} docker inspect --format='{{.Config.Image}}' {} 2>/dev/null | grep -o 'sha-[a-f0-9]*' || echo "unknown")
-if [ "$CURRENT_TAG" != "unknown" ]; then
-    echo "$CURRENT_TAG" > "$ROLLBACK_TAG_FILE"
+# Version Tracking: Shift current -> prev
+if [ -f "$DEPLOY_SHA_FILE" ]; then
+    cp "$DEPLOY_SHA_FILE" "$DEPLOY_SHA_PREV_FILE"
 fi
 
 # Pull
 log_info "Pulling $IMAGE_TAG..."
 IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" pull api
 
-# Migrate
-log_info "Running migrations..."
-IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" run --rm migrate
-
 # Deploy
 log_info "Updating services..."
 # Caddy runs as systemd service on host; only start api container
-IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d api
+IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --remove-orphans api
 
 # Healthcheck
 log_info "Waiting for health..."
@@ -73,13 +69,17 @@ while true; do
     API_HEALTH=$(IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps -q api | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
     if [ "$API_HEALTH" == "healthy" ]; then
         log_info "API healthy!"
+        # Update current version file on success
+        echo "$GIT_SHA" > "$DEPLOY_SHA_FILE"
         break
     fi
     ELAPSED=$(($(date +%s) - START_TIME))
     if [ $ELAPSED -ge $HEALTH_TIMEOUT ]; then
         log_error "Timeout. Rolling back..."
-        if [ -f "$ROLLBACK_TAG_FILE" ]; then
-            "$SCRIPT_DIR/rollback.sh" "$(cat "$ROLLBACK_TAG_FILE")"
+        if [ -f "$DEPLOY_SHA_PREV_FILE" ]; then
+            PREV_SHA=$(cat "$DEPLOY_SHA_PREV_FILE")
+            log_warn "Rolling back to $PREV_SHA"
+            "$SCRIPT_DIR/rollback.sh" "$PREV_SHA"
         fi
         exit 1
     fi

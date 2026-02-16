@@ -23,6 +23,7 @@ class SongLibrary {
         this.refreshDebounceTimer = null;
         this.activeMenu = null;
         this.activeMenuCloseHandler = null;
+        this.lyricsPollingIds = new Set();
     }
     
     initialize(elements) {
@@ -244,6 +245,10 @@ class SongLibrary {
         songs.forEach(song => {
             const songCard = this.createSongCard(song);
             this.elements.container.appendChild(songCard);
+
+            if (this.shouldPollLyricsStatus(song)) {
+                this.startLyricsStatusPolling(song.id);
+            }
         });
         
         this.elements.container.classList.remove('hidden');
@@ -265,6 +270,46 @@ class SongLibrary {
         // If the library was empty, hide the empty state message
         this.hideAllStates();
         this.elements.container.classList.remove('hidden');
+
+        if (this.shouldPollLyricsStatus(song)) {
+            this.startLyricsStatusPolling(song.id);
+        }
+    }
+
+    shouldPollLyricsStatus(song) {
+        const status = song?.lyrics_extraction_status;
+        return status === 'queued' || status === 'processing';
+    }
+
+    async startLyricsStatusPolling(songId, maxAttempts = 30, intervalMs = 4000) {
+        if (!songId || this.lyricsPollingIds.has(songId)) {
+            return;
+        }
+
+        this.lyricsPollingIds.add(songId);
+
+        try {
+            for (let attempt = 0; attempt < maxAttempts; attempt++) {
+                await new Promise(resolve => setTimeout(resolve, intervalMs));
+
+                const response = await fetch(`/api/audio-library/${songId}/lyrics-status`);
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    break;
+                }
+
+                const status = data.data?.lyrics_extraction_status;
+                if (status === 'completed' || status === 'failed' || status === 'not_requested') {
+                    this.refreshLibrary();
+                    break;
+                }
+            }
+        } catch (error) {
+            console.error('Lyrics status polling failed:', error);
+        } finally {
+            this.lyricsPollingIds.delete(songId);
+        }
     }
     
     /**
@@ -1603,6 +1648,7 @@ class SongLibrary {
 
         // Check if we are in a playlist view
         const isInPlaylist = !!this.currentFilters.playlist_id;
+        const canRetryLyricsExtraction = this.canRetryLyricsExtraction(song);
 
         // Menu items
         menu.innerHTML = `
@@ -1610,6 +1656,12 @@ class SongLibrary {
                 <span class="material-symbols-outlined text-[20px]">playlist_add</span>
                 <span class="font-medium">Add to Playlist</span>
             </button>
+            ${canRetryLyricsExtraction ? `
+            <button class="w-full text-left px-4 py-2.5 text-sm text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 flex items-center gap-3 transition-colors" data-action="retry-lyrics-extraction">
+                <span class="material-symbols-outlined text-[20px]">lyrics</span>
+                <span class="font-medium">Retry Lyrics Extraction</span>
+            </button>
+            ` : ''}
             <div class="h-px bg-slate-100 dark:bg-slate-700 my-1"></div>
             ${isInPlaylist ? `
             <button class="w-full text-left px-4 py-2.5 text-sm text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 flex items-center gap-3 transition-colors" data-action="remove-from-playlist">
@@ -1655,6 +1707,15 @@ class SongLibrary {
             });
         }
 
+        const retryLyricsBtn = menu.querySelector('[data-action="retry-lyrics-extraction"]');
+        if (retryLyricsBtn) {
+            retryLyricsBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                this.closeActiveMenu();
+                await this.retryLyricsExtraction(song);
+            });
+        }
+
         // Close when clicking outside
         // Delay slightly to prevent the click that opened it from closing it immediately
         setTimeout(() => {
@@ -1668,6 +1729,44 @@ class SongLibrary {
         }, 10);
         
         this.activeMenu = menu;
+    }
+
+    canRetryLyricsExtraction(song) {
+        if (!song || song.source_type !== 'upload' || !song.id) {
+            return false;
+        }
+
+        const status = song.lyrics_extraction_status;
+        return status === 'failed' || status === 'not_requested';
+    }
+
+    async retryLyricsExtraction(song) {
+        if (!song?.id) {
+            this.showNotification('Audio item not found', 'error');
+            return;
+        }
+
+        this.showNotification(`Retrying lyrics extraction for "${song.title || 'song'}"...`, 'info');
+
+        try {
+            const response = await fetch(`/api/audio-library/${song.id}/lyrics-retry`, {
+                method: 'POST'
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Failed to queue lyrics extraction retry');
+            }
+
+            this.showNotification('Lyrics extraction retry queued', 'success');
+            this.startLyricsStatusPolling(song.id);
+            this.refreshLibrary();
+
+        } catch (error) {
+            console.error('Error retrying lyrics extraction:', error);
+            this.showNotification(`Error retrying lyrics extraction: ${error.message}`, 'error');
+        }
     }
 
     closeActiveMenu() {

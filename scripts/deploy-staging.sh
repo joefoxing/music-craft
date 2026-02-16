@@ -8,7 +8,8 @@ COMPOSE_FILE="$PROJECT_DIR/compose.staging.yml"
 ENV_FILE="$PROJECT_DIR/.env.staging"
 LOCK_FILE="/tmp/app-staging-deploy.lock"
 HEALTH_TIMEOUT=120
-ROLLBACK_TAG_FILE="$PROJECT_DIR/.rollback-tag-staging"
+DEPLOY_SHA_FILE="$PROJECT_DIR/DEPLOYED_SHA_STAGING.txt"
+DEPLOY_SHA_PREV_FILE="$PROJECT_DIR/DEPLOYED_SHA_STAGING.txt.prev"
 
 # Colors
 RED='\033[0;31m'
@@ -48,24 +49,19 @@ fi
 
 source "$ENV_FILE"
 
-# Record current
-CURRENT_TAG=$(IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps -q api 2>/dev/null | xargs -I {} docker inspect --format='{{.Config.Image}}' {} 2>/dev/null | grep -o 'sha-[a-f0-9]*' || echo "unknown")
-if [ "$CURRENT_TAG" != "unknown" ]; then
-    echo "$CURRENT_TAG" > "$ROLLBACK_TAG_FILE"
+# Version Tracking: Shift current -> prev
+if [ -f "$DEPLOY_SHA_FILE" ]; then
+    cp "$DEPLOY_SHA_FILE" "$DEPLOY_SHA_PREV_FILE"
 fi
 
 # Pull
 log_info "Pulling..."
 IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" pull api
 
-# Migrate
-log_info "Running migrations (Staging DB)..."
-IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" run --rm migrate
-
 # Deploy
 log_info "Updating staging api..."
 # Only 'api' exists in staging compose now
-IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d api
+IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" up -d --remove-orphans api
 
 # Healthcheck
 log_info "Waiting for health..."
@@ -74,6 +70,8 @@ while true; do
     API_HEALTH=$(IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps -q api | xargs -I {} docker inspect --format='{{.State.Health.Status}}' {} 2>/dev/null || echo "unhealthy")
     if [ "$API_HEALTH" == "healthy" ]; then
         log_info "API healthy!"
+        # Update current version file on success
+        echo "$GIT_SHA" > "$DEPLOY_SHA_FILE"
         break
     fi
     ELAPSED=$(($(date +%s) - START_TIME))
@@ -87,8 +85,10 @@ while true; do
         IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" ps api || true
         log_warn "----------------------"
 
-        if [ -f "$ROLLBACK_TAG_FILE" ]; then
-            "$SCRIPT_DIR/rollback-staging.sh" "$(cat "$ROLLBACK_TAG_FILE")"
+        if [ -f "$DEPLOY_SHA_PREV_FILE" ]; then
+            PREV_SHA=$(cat "$DEPLOY_SHA_PREV_FILE")
+            log_warn "Rolling back to $PREV_SHA"
+            "$SCRIPT_DIR/rollback-staging.sh" "$PREV_SHA"
         fi
         exit 1
     fi

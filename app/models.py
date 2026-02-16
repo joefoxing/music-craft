@@ -52,6 +52,10 @@ class User(UserMixin, db.Model):
     last_login_at = db.Column(db.DateTime)
     failed_login_attempts = db.Column(db.Integer, default=0)
     locked_until = db.Column(db.DateTime)
+
+    # Soft delete
+    is_deleted = db.Column(db.Boolean, default=False, nullable=False)
+    deleted_at = db.Column(db.DateTime)
     
     # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -341,6 +345,10 @@ class AudioLibrary(db.Model):
     album = db.Column(db.String(255))
     year = db.Column(db.Integer)
     tags = db.Column(db.JSON)  # Array of tag strings
+    lyrics = db.Column(db.Text)
+    lyrics_source = db.Column(db.String(50))  # metadata, whisper, user
+    lyrics_extraction_status = db.Column(db.String(50), default='not_requested')  # not_requested, queued, processing, completed, failed
+    lyrics_extraction_error = db.Column(db.Text)
     
     # Playback and library info
     play_count = db.Column(db.Integer, default=0)
@@ -386,6 +394,10 @@ class AudioLibrary(db.Model):
             'album': self.album,
             'year': self.year,
             'tags': self.tags or [],
+            'lyrics': self.lyrics,
+            'lyrics_source': self.lyrics_source,
+            'lyrics_extraction_status': self.lyrics_extraction_status,
+            'lyrics_extraction_error': self.lyrics_extraction_error,
             'play_count': self.play_count,
             'is_favorite': self.is_favorite,
             'processing_status': self.processing_status,

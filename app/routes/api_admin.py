@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from functools import wraps
 
 from flask import Blueprint, current_app, jsonify, request
@@ -82,8 +83,12 @@ def users_list():
     q = (request.args.get("q") or "").strip().lower()
     limit = min(int(request.args.get("limit", 50)), 200)
     offset = max(int(request.args.get("offset", 0)), 0)
+    show_deleted = request.args.get("show_deleted", "false").lower() == "true"
 
     query = User.query
+    if not show_deleted:
+        query = query.filter(User.is_deleted == False)
+
     if q:
         query = query.filter(User.email.ilike(f"%{q}%"))
 
@@ -161,6 +166,37 @@ def users_update(user_id: str):
     db.session.commit()
 
     return jsonify({"success": True, "user": {**user.to_dict(), "roles": sorted(_user_role_names(user))}}), 200
+
+
+@api_admin_bp.route("/users/<user_id>", methods=["DELETE"])
+@require_permission("manage_users")
+def users_delete(user_id: str):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"message": "User not found or already deleted"}), 204
+
+    if user.is_deleted:
+        return jsonify({"message": "User already deleted"}), 204
+
+    if user.id == current_user.id:
+        return jsonify({"error": "Cannot delete yourself"}), 403
+
+    user.is_deleted = True
+    user.deleted_at = datetime.now(timezone.utc)
+    
+    db.session.add(
+        AuthAuditLog(
+            user_id=current_user.id,
+            event_type="admin_user_delete",
+            ip_address=request.remote_addr,
+            user_agent=request.user_agent.string,
+            success=True,
+            event_data={"target_user_id": user.id, "target_email": user.email},
+        )
+    )
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "User deleted"}), 200
 
 
 @api_admin_bp.route("/users/<user_id>/roles", methods=["PUT"])

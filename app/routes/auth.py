@@ -214,24 +214,58 @@ def oauth_callback(provider):
             profile_data=profile_data
         )
         
-        # Log OAuth login event
-        log_auth_event(
-            user_id=user.id,
-            event_type=f'oauth_login_{provider}',
-            ip_address=request.remote_addr,
-            user_agent=request.user_agent.string,
-            success=True,
-            event_data={'provider': provider, 'email': email}
-        )
+        # Verify user exists and has an ID
+        if not user or not user.id:
+            current_app.logger.error(f"OAuth: User object invalid after creation")
+            flash(f'Failed to create user account.', 'danger')
+            return redirect(url_for('auth.login'))
         
-        # Login the user
+        user_id = user.id
+        user_email = user.email
+        
+        current_app.logger.info(f"OAuth: Got user {user_id} ({user_email}), logging in")
+        
+        # Merge user into current session to ensure it's properly tracked
+        user = db.session.merge(user)
+        
+        # Login the user - Flask-Login will store user_id in the session cookie
         login_user(user, remember=True)
-        flash(f'Successfully logged in with {provider.capitalize()}!', 'success')
         
-        return redirect(url_for('main.index'))
+        # Mark session as permanent for remember-me and ensure it's saved
+        from flask import session
+        session.permanent = True
+        session.modified = True
+        
+        current_app.logger.info(f"OAuth: Logged in {user_email}, is_authenticated={current_user.is_authenticated}, user_id={current_user.get_id() if current_user.is_authenticated else 'N/A'}")
+        
+        # Log OAuth login event
+        try:
+            log_auth_event(
+                user_id=user_id,
+                event_type=f'oauth_login_{provider}',
+                ip_address=request.remote_addr,
+                user_agent=request.user_agent.string,
+                success=True,
+                event_data={'provider': provider, 'email': user_email}
+            )
+        except Exception as e:
+            current_app.logger.warning(f"Failed to log auth event: {e}")
+        
+        # Determine redirect URL
+        next_page = request.args.get('next')
+        if not next_page or not next_page.startswith('/'):
+            next_page = url_for('main.dashboard')
+        
+        current_app.logger.info(f"OAuth: Redirecting {user_email} to {next_page}")
+        
+        # Use the success template to ensure session cookie is set
+        # This prevents the race condition where the redirect happens before the cookie is saved
+        return render_template('auth/oauth_success.html', provider=provider, redirect_url=next_page)
         
     except Exception as e:
         current_app.logger.error(f"OAuth callback error for {provider}: {e}")
+        import traceback
+        current_app.logger.error(traceback.format_exc())
         flash(f'Failed to authenticate with {provider.capitalize()}. Please try again.', 'danger')
         return redirect(url_for('auth.login'))
 
@@ -241,7 +275,7 @@ def oauth_callback(provider):
 def register():
     """User registration endpoint."""
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
     
     form = RegistrationForm()
     
@@ -348,7 +382,7 @@ The Music Cover Generator Team
         # Auto-login after registration
         login_user(user, remember=True)
         
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
     
     return render_template('auth/register.html', form=form)
 
@@ -358,7 +392,7 @@ The Music Cover Generator Team
 def login():
     """User login endpoint."""
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
     
     form = LoginForm()
     
@@ -433,7 +467,7 @@ def login():
         # Redirect to next page or dashboard
         next_page = request.args.get('next')
         if not next_page or not next_page.startswith('/'):
-            next_page = url_for('main.index')
+            next_page = url_for('main.dashboard')
         
         # Handle AJAX requests differently
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or \
@@ -497,7 +531,7 @@ def verify_email(token):
         if not current_user.is_authenticated:
             login_user(user, remember=True)
         
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
     else:
         flash('Invalid or expired verification token.', 'danger')
         return redirect(url_for('auth.login'))
@@ -509,7 +543,7 @@ def resend_verification():
     """Resend verification email endpoint."""
     if current_user.email_verified:
         flash('Your email is already verified.', 'info')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
     
     # Generate new verification token
     verification_token = current_user.generate_verification_token()
@@ -543,7 +577,7 @@ The Music Cover Generator Team
     else:
         flash('Email service not configured. Please contact support.', 'warning')
     
-    return redirect(url_for('main.index'))
+    return redirect(url_for('main.dashboard'))
 
 
 @auth_bp.route('/forgot-password', methods=['GET', 'POST'])
@@ -551,7 +585,7 @@ The Music Cover Generator Team
 def forgot_password():
     """Forgot password endpoint."""
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
     
     form = ForgotPasswordForm()
     
@@ -617,7 +651,7 @@ The Music Cover Generator Team
 def reset_password(token):
     """Reset password endpoint."""
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
     
     # Find user by reset token
     user = User.query.filter_by(reset_token=token).first()
@@ -738,6 +772,26 @@ The Music Cover Generator Team
 def get_csrf_token():
     """Get CSRF token for API requests."""
     return jsonify({'csrf_token': generate_csrf()})
+
+
+# Debug endpoint for session checking
+@auth_bp.route('/debug/session')
+def debug_session():
+    """Debug endpoint to check session status."""
+    from flask import session
+    if current_user.is_authenticated:
+        return jsonify({
+            'authenticated': True,
+            'user_id': current_user.id,
+            'email': current_user.email,
+            'session_permanent': session.permanent,
+            'session_keys': list(session.keys())
+        })
+    return jsonify({
+        'authenticated': False,
+        'session_permanent': session.permanent,
+        'session_keys': list(session.keys())
+    })
 
 
 # API endpoints for frontend

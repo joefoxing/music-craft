@@ -45,7 +45,7 @@ def create_app(test_config=None):
          allow_headers=['Content-Type', 'Authorization', 'X-Requested-With'],
          methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
     
-    # When behind a proxy (like Cloudflare tunnel), use ProxyFix to handle headers
+    # When behind a proxy, use ProxyFix to handle headers
     # This ensures url_for(_external=True) generates correct URLs
     app.wsgi_app = ProxyFix(
         app.wsgi_app,
@@ -95,7 +95,10 @@ def create_app(test_config=None):
     @login_manager.user_loader
     def load_user(user_id):
         from app.models import User
-        return User.query.get(user_id)
+        user = User.query.get(user_id)
+        if user and user.is_deleted:
+            return None
+        return user
 
     # Unauthorized handler for API requests
     @login_manager.unauthorized_handler
@@ -135,6 +138,7 @@ def create_app(test_config=None):
     from app.routes.api_auth import api_auth_bp
     from app.routes.api_admin import api_admin_bp
     from app.routes.vc_api import vc_bp
+    from app.routes.pricing import pricing_bp
     
     # Import and register auth blueprint
     # (Forces reload)
@@ -149,7 +153,6 @@ def create_app(test_config=None):
     # api_auth_bp is NOT exempted to protect login/register/profile endpoints
     csrf.exempt(api_admin_bp)
     csrf.exempt(vc_bp)
-    csrf.exempt(auth_bp)  # Exempt auth for tunnel compatibility
 
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp)
@@ -158,6 +161,7 @@ def create_app(test_config=None):
     app.register_blueprint(audio_library_bp)
     app.register_blueprint(playlist_api_bp)
     app.register_blueprint(vc_bp)
+    app.register_blueprint(pricing_bp)
     app.register_blueprint(api_auth_bp, url_prefix='/api/auth')
     app.register_blueprint(api_admin_bp, url_prefix='/api/admin')
     app.register_blueprint(auth_bp, url_prefix='/auth')

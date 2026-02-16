@@ -93,8 +93,8 @@ class KieAPIClient:
         endpoint = f"{self.base_url}/api/v1/generate/upload-cover"
         
         # Build request payload based on API documentation
-        # Use Cloudflared URL if available, otherwise Ngrok, otherwise Localtunnel, otherwise BASE_URL
-        base_url = self._get_config('CLOUDFLARED_URL') or self._get_config('NGROK_URL') or self._get_config('LOCALTUNNEL_URL') or self._get_config('BASE_URL', '')
+        # Use BASE_URL
+        base_url = self._get_config('BASE_URL', '')
         if not base_url and not call_back_url:
             # Try to construct from request context if available
             try:
@@ -238,7 +238,7 @@ class KieAPIClient:
         endpoint = f"{self.base_url}/api/v1/generate/upload-extend"
         
         # Build request payload
-        base_url = self._get_config('CLOUDFLARED_URL') or self._get_config('NGROK_URL') or self._get_config('LOCALTUNNEL_URL') or self._get_config('BASE_URL', '')
+        base_url = self._get_config('BASE_URL', '')
         if not base_url and not call_back_url:
             # Try to construct from request context if available
             try:
@@ -545,6 +545,108 @@ class KieAPIClient:
             
             raise
     
+    def generate_music_direct(
+        self,
+        custom_mode: bool,
+        instrumental: bool,
+        call_back_url: str,
+        model: str,
+        prompt: str,
+        style: Optional[str] = None,
+        title: Optional[str] = None,
+        **optional_params
+    ) -> Dict[str, Any]:
+        """
+        Generate music directly using the /api/v1/generate endpoint.
+        
+        Args:
+            custom_mode: Whether to use custom mode
+            instrumental: Whether the audio should be instrumental
+            call_back_url: Callback URL for status updates (required)
+            model: Model version (V4, V4_5, V4_5PLUS, V4_5ALL, V5)
+            prompt: Description of desired audio content or exact lyrics
+            style: Music style/genre (required if custom_mode=True)
+            title: Title of generated track (required if custom_mode=True)
+            **optional_params: Additional optional parameters
+            
+        Returns:
+            API response dictionary
+        """
+        if self.use_mock:
+            self.logger.info("Using mock mode for generate_music_direct")
+            import time
+            import hashlib
+            
+            # Generate a mock task ID
+            task_id = hashlib.md5(f"{prompt}{model}{time.time()}".encode()).hexdigest()[:24]
+            
+            # Simulate API delay
+            time.sleep(0.5)
+            
+            return {
+                "code": 200,
+                "msg": "success",
+                "data": {
+                    "taskId": task_id
+                }
+            }
+        
+        endpoint = f"{self.base_url}/api/v1/generate"
+        
+        # Build request payload
+        payload = {
+            "customMode": custom_mode,
+            "instrumental": instrumental,
+            "callBackUrl": call_back_url,
+            "model": model,
+            "prompt": prompt
+        }
+        
+        # Add optional fields based on mode
+        if custom_mode:
+            if style:
+                payload["style"] = style
+            if title:
+                payload["title"] = title
+        
+        # Add optional parameters if provided
+        optional_fields = [
+            "negativeTags", "vocalGender", "styleWeight",
+            "weirdnessConstraint", "audioWeight", "personaId"
+        ]
+        
+        for field in optional_fields:
+            if field in optional_params and optional_params[field] is not None:
+                payload[field] = optional_params[field]
+        
+        try:
+            self.logger.info(f"Making request to Kie API: {endpoint}")
+            self.logger.info(f"Request payload keys: {list(payload.keys())}")
+            self.logger.debug(f"Request payload: {json.dumps(payload, indent=2)}")
+            
+            response = requests.post(
+                endpoint,
+                headers=self.headers,
+                json=payload,
+                timeout=15
+            )
+            
+            self.logger.info(f"Response status: {response.status_code}")
+            
+            response.raise_for_status()
+            
+            result = response.json()
+            self.logger.info(f"Kie API generate request successful: {result.get('code', 'No code')}")
+            self.logger.info(f"Kie API response data: {json.dumps(result, indent=2)}")
+            return result
+            
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f"Kie API generate request failed: {e}")
+            if hasattr(e, 'response') and e.response is not None:
+                self.logger.error(f"Response status: {e.response.status_code}")
+                self.logger.error(f"Response text: {e.response.text[:500]}")
+            raise
+    
     def add_instrumental(
         self,
         upload_url: str,
@@ -598,8 +700,8 @@ class KieAPIClient:
         endpoint = f"{self.base_url}/api/v1/generate/add-instrumental"
         
         # Build request payload based on API documentation
-        # Use Cloudflared URL if available, otherwise Ngrok, otherwise Localtunnel, otherwise BASE_URL
-        base_url = self._get_config('CLOUDFLARED_URL') or self._get_config('NGROK_URL') or self._get_config('LOCALTUNNEL_URL') or self._get_config('BASE_URL', '')
+        # Use BASE_URL
+        base_url = self._get_config('BASE_URL', '')
         if not base_url and not call_back_url:
             # Try to construct from request context if available
             try:
@@ -824,7 +926,7 @@ class EnhancedKieAPIClient(KieAPIClient):
     
     def _get_callback_url(self) -> str:
         """Get callback URL for AI generation."""
-        base_url = self._get_config('CLOUDFLARED_URL') or self._get_config('NGROK_URL') or self._get_config('LOCALTUNNEL_URL') or self._get_config('BASE_URL', '')
+        base_url = self._get_config('BASE_URL', '')
         if not base_url:
             try:
                 from flask import request

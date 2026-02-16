@@ -253,11 +253,11 @@ class AudioPlayerCard extends BaseCard {
                         ${CardUtils.createMetadataItem('Created', data.created ? CardUtils.formatTimeAgo(data.created) : 'N/A').outerHTML}
                     </div>
                     
-                    ${data.prompt ? `
+                    ${data.lyrics || data.prompt ? `
                     <div class="mb-3">
                         <p class="text-slate-500 text-sm mb-1">Lyrics</p>
                         <div class="lyrics-container max-h-32 overflow-y-auto bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
-                            <div class="lyrics-content text-xs text-slate-700 dark:text-slate-300" data-track-prompt>${data.prompt}</div>
+                            <div class="lyrics-content text-xs text-slate-700 dark:text-slate-300 whitespace-pre-line" data-track-prompt>${data.lyrics || data.prompt}</div>
                         </div>
                     </div>
                     ` : ''}

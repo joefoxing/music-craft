@@ -800,6 +800,20 @@
             // Store instance globally for access
             window.songLibrary = songLibrary;
             
+            // Check for initial playlist from server-side route
+            const initialPlaylistId = "{{ playlist_id if playlist_id else '' }}";
+            if (initialPlaylistId) {
+                console.log('Initializing with playlist:', initialPlaylistId);
+                // Switch to song library tab
+                switchTab('song-library');
+                
+                // Load the playlist
+                // Small delay to ensure everything is ready
+                setTimeout(() => {
+                    songLibrary.handlePlaylistClick(initialPlaylistId);
+                }, 100);
+            }
+            
             console.log('Song Library tab functionality initialized.');
         });
     </script>

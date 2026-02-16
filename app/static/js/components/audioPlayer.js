@@ -180,13 +180,18 @@ class AudioPlayerComponent {
      */
     _setupLyricsDisplay(clone, song) {
         const lyricsElement = clone.querySelector('[data-lyrics]');
-        if (song.prompt) {
-            // Use the prompt as lyrics, preserving line breaks
-            lyricsElement.textContent = song.prompt;
-            // Add line numbers or special formatting for better readability
-            lyricsElement.innerHTML = song.prompt.split('\n').map(line => {
+        const lyricsText = song.lyrics || song.prompt;
+        if (lyricsText) {
+            // Helper to escape HTML
+            const escapeHtml = (text) => {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            };
+            // Add line-by-line formatting for better readability
+            lyricsElement.innerHTML = lyricsText.split('\n').map(line => {
                 if (line.trim() === '') return '<br>';
-                return `<div class="lyric-line py-1 border-b border-slate-100 dark:border-slate-700/50 last:border-b-0">${line}</div>`;
+                return `<div class="lyric-line py-1 border-b border-slate-100 dark:border-slate-700/50 last:border-b-0">${escapeHtml(line)}</div>`;
             }).join('');
         }
     }

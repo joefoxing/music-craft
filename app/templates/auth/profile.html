@@ -163,7 +163,7 @@
             Update Profile
         </button>
         
-        <a href="{{ url_for('main.index') }}" class="flex-1 bg-gray-100 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 text-center">
+        <a href="{{ url_for('main.dashboard') }}" class="flex-1 bg-gray-100 text-gray-700 font-semibold py-3 px-4 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 text-center">
             Cancel
         </a>
     </div>
@@ -180,6 +180,6 @@
 
 {% block footer_links %}
 <p>
-    <a href="{{ url_for('main.index') }}" class="text-purple-600 hover:text-purple-800 font-medium">Back to Dashboard</a>
+    <a href="{{ url_for('main.dashboard') }}" class="text-purple-600 hover:text-purple-800 font-medium">Back to Dashboard</a>
 </p>
 {% endblock %}

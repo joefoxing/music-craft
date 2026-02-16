@@ -19,6 +19,8 @@ class FileHandler {
         this.progressBar = null;
         this.progressText = null;
         this.uploadBtn = null;
+        this.lyricsLanguageSelect = null;
+        this.lyricsLanguageWarning = null;
         this.generateBtn = null;
         this.audioUrlInput = null;
         this.urlTestResult = null;
@@ -30,6 +32,139 @@ class FileHandler {
         this.urlTab = null;
         this.uploadSection = null;
         this.urlSection = null;
+        this.lyricsPreview = null;
+        this.extractedLyrics = null;
+    }
+
+    /**
+     * Check if current page is the cover generator page.
+     * @returns {boolean}
+     * @private
+     */
+    _isCoverGeneratorPage() {
+        return window.location.pathname.includes('/cover-generator');
+    }
+
+    /**
+     * Delay helper for polling operations.
+     * @param {number} ms - delay in milliseconds
+     * @returns {Promise<void>}
+     * @private
+     */
+    _delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    /**
+     * Populate the cover generator prompt with extracted lyrics.
+     * This runs only on the cover generator page.
+     * @param {Object} audioItem - Uploaded audio library item from upload response
+     * @private
+     */
+    async _populateCoverGeneratorLyricsPrompt(audioItem) {
+        if (!this._isCoverGeneratorPage()) {
+            return;
+        }
+
+        const promptInput = document.getElementById('promptInput');
+        if (!promptInput) {
+            return;
+        }
+
+        if (audioItem?.lyrics && audioItem.lyrics.trim()) {
+            promptInput.value = audioItem.lyrics.trim();
+            promptInput.dispatchEvent(new Event('input', { bubbles: true }));
+            window.NotificationSystem?.showSuccess('Extracted lyrics populated in prompt box.');
+            return;
+        }
+
+        const audioId = audioItem?.id;
+        if (!audioId) {
+            return;
+        }
+
+        const maxAttempts = 300;
+        const pollIntervalMs = 2000;
+        let extractionStartedNotified = false;
+
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            try {
+                const response = await fetch(`/api/audio-library/${audioId}/lyrics-status`);
+                const data = await response.json();
+
+                if (!data.success) {
+                    return;
+                }
+
+                const status = data?.data?.lyrics_extraction_status || data?.data?.status;
+                const lyrics = data?.data?.lyrics;
+                const extractionError = data?.data?.lyrics_extraction_error;
+
+                if (!extractionStartedNotified && (status === 'queued' || status === 'processing')) {
+                    extractionStartedNotified = true;
+                    window.NotificationSystem?.showInfo('Lyrics extraction started. This may take a minute.');
+                }
+
+                if (status === 'completed' && lyrics && lyrics.trim()) {
+                    // First, populate in prompt box (critical functionality)
+                    promptInput.value = lyrics.trim();
+                    promptInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    
+                    // Auto-resize textarea to fit content
+                    promptInput.style.height = 'auto';
+                    promptInput.style.height = Math.min(promptInput.scrollHeight, 400) + 'px';
+                    
+                    // Then try to display extracted lyrics in preview area (optional enhancement)
+                    try {
+                        if (this.extractedLyrics && this.lyricsPreview) {
+                            // Helper function to escape HTML
+                            const escapeHtml = (text) => {
+                                const div = document.createElement('div');
+                                div.textContent = text;
+                                return div.innerHTML;
+                            };
+                            
+                            // Clear and build line-by-line display
+                            const lines = lyrics.trim().split('\n');
+                            this.extractedLyrics.innerHTML = lines.map(line => {
+                                if (line.trim() === '') return '<br>';
+                                return `<div class="lyric-line py-1 border-b border-slate-100 dark:border-slate-700/50 last:border-b-0">${escapeHtml(line)}</div>`;
+                            }).join('');
+                            this.lyricsPreview.classList.remove('hidden');
+                        }
+                    } catch (error) {
+                        console.error('Error displaying lyrics preview:', error);
+                        // Fallback: just show as pre-formatted text
+                        if (this.extractedLyrics && this.lyricsPreview) {
+                            this.extractedLyrics.textContent = lyrics.trim();
+                            this.lyricsPreview.classList.remove('hidden');
+                        }
+                    }
+                    
+                    window.NotificationSystem?.showSuccess('Extracted lyrics populated in prompt box.');
+                    return;
+                }
+
+                if (status === 'completed') {
+                    window.NotificationSystem?.showWarning('Lyrics extraction completed, but no lyrics were detected for this audio.');
+                    return;
+                }
+
+                if (status === 'failed') {
+                    window.NotificationSystem?.showWarning(
+                        extractionError || 'Lyrics extraction failed for this audio file.'
+                    );
+                    return;
+                }
+            } catch (error) {
+                window.NotificationSystem?.showWarning('Could not check lyrics extraction status.');
+                return;
+            }
+
+            await this._delay(pollIntervalMs);
+        }
+
+        window.NotificationSystem?.showInfo('Lyrics extraction is still running. Please wait a bit and try upload again if needed.');
     }
 
     /**
@@ -46,6 +181,8 @@ class FileHandler {
         this.progressBar = elements.progressBar;
         this.progressText = elements.progressText;
         this.uploadBtn = elements.uploadBtn;
+        this.lyricsLanguageSelect = elements.lyricsLanguageSelect;
+        this.lyricsLanguageWarning = elements.lyricsLanguageWarning;
         this.generateBtn = elements.generateBtn;
         this.audioUrlInput = elements.audioUrlInput;
         this.urlTestResult = elements.urlTestResult;
@@ -57,8 +194,25 @@ class FileHandler {
         this.urlTab = elements.urlTab;
         this.uploadSection = elements.uploadSection;
         this.urlSection = elements.urlSection;
+        this.lyricsPreview = elements.lyricsPreview;
+        this.extractedLyrics = elements.extractedLyrics;
+
+        this._updateLyricsLanguageWarning();
 
         this._setupEventListeners();
+    }
+
+    _updateLyricsLanguageWarning() {
+        if (!this.lyricsLanguageWarning || !this.lyricsLanguageSelect) {
+            return;
+        }
+
+        const selectedLanguage = this.lyricsLanguageSelect.value?.trim();
+        if (selectedLanguage) {
+            this.lyricsLanguageWarning.classList.add('hidden');
+        } else {
+            this.lyricsLanguageWarning.classList.remove('hidden');
+        }
     }
 
     /**
@@ -81,6 +235,10 @@ class FileHandler {
                 if (this.urlTestResult) this.urlTestResult.classList.add('hidden');
                 if (this.useUrlBtn) this.useUrlBtn.disabled = !this.audioUrlInput.value.trim();
             });
+        }
+
+        if (this.lyricsLanguageSelect) {
+            this.lyricsLanguageSelect.addEventListener('change', () => this._updateLyricsLanguageWarning());
         }
     }
 
@@ -281,6 +439,10 @@ class FileHandler {
 
         const formData = new FormData();
         formData.append('file', file);
+        const selectedLyricsLanguage = this.lyricsLanguageSelect?.value?.trim();
+        if (selectedLyricsLanguage) {
+            formData.append('lyrics_language', selectedLyricsLanguage);
+        }
         
         if (this.progressContainer) this.progressContainer.classList.remove('hidden');
         if (this.uploadBtn) this.uploadBtn.disabled = true;
@@ -313,6 +475,8 @@ class FileHandler {
                     this.generateBtn.disabled = false;
                     this.generateBtn.innerHTML = '<span class="material-symbols-outlined mr-2">play_circle</span> Generate Music Cover';
                 }
+
+                await this._populateCoverGeneratorLyricsPrompt(data.data?.audio_item);
                 
                 window.NotificationSystem?.showSuccess('File uploaded successfully! Ready to generate cover.');
             } else {

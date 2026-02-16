@@ -1,0 +1,213 @@
+## Coding Agent Implementation Brief (copy/paste)
+
+You are implementing v1 of a vocal regeneration web service. Follow this spec exactly. Do not invent requirements. Ask clarifying questions only if blocked.
+
+### Goal
+Build an async job-based web app that regenerates a vocal stem using a future ML generator. For v1, implement all plumbing, persistence, caching, chunking, audio I/O rules, and a stub “generator” that produces deterministic placeholder output. The ML model integration will replace the stub later.
+
+### Hard requirements (locked)
+- Input: vocal stem up to 8 minutes, WAV upload (mono or stereo).
+- Sample rate: 48,000 Hz internal and output.
+- If stereo input: process mid = 0.5*(L+R).
+- Output: stereo dual-mono WAV (16-bit PCM), L=R=mid_out.
+- Output loudness: -18 LUFS integrated; limiter to -1.0 dBTP.
+- Chunking: 18s chunks, 2s overlap, 16s stride, equal-power crossfade in waveform domain.
+- Profiles: per-user private only.
+- Persistent Singer Profile concept with reference clips (isolated/dry); v1 computes placeholder “embeddings” (stub).
+- Re-render: user can re-render same uploaded stem with different params without re-upload and without re-extracting features (feature cache).
+- All heavy work is async via a GPU worker process (use CPU for now; keep interface).
+
+### Tech constraints
+- Use Postgres for metadata.
+- Use S3-compatible object storage for inputs/outputs/chunks/features (local MinIO in dev ok).
+- Use Redis queue for async jobs.
+- Everything dockerized: api, worker, postgres, redis, minio.
+- Structured JSON logging.
+
+### Milestones (implement in order)
+
+#### Milestone 1 — DB schema + storage key conventions
+Implement SQL migrations for tables:
+
+1) singer_profiles
+- id uuid pk
+- user_id uuid indexed
+- name text
+- status enum building|ready|error
+- embedding_version text
+- profile_embedding bytea nullable
+- cluster_embeddings jsonb/bytea nullable
+- stats jsonb
+- created_at/updated_at
+
+2) singer_references
+- id uuid pk
+- user_id uuid indexed
+- singer_profile_id uuid fk
+- object_key text
+- duration_sec float
+- quality_metrics jsonb
+- accepted bool default true
+- created_at
+
+3) singer_exemplars (optional but create table now)
+- id uuid pk
+- singer_profile_id uuid fk
+- embedding bytea
+- f0_p50 float, f0_p90 float, voiced_pct float, energy float
+- source_reference_id uuid fk
+- created_at
+
+4) stem_feature_cache
+- id uuid pk
+- user_id uuid indexed
+- input_hash text indexed
+- feature_version text
+- sample_rate int (48000)
+- object_key text
+- duration_sec float
+- created_at
+- last_accessed_at
+
+5) render_jobs
+- id uuid pk
+- user_id uuid indexed
+- singer_profile_id uuid fk
+- input_object_key text
+- output_object_key text nullable
+- input_hash text indexed
+- stem_feature_cache_id uuid fk nullable
+- status enum queued|running|done|failed
+- params jsonb
+- progress jsonb (chunks_done, chunks_total)
+- metrics jsonb
+- created_at/updated_at
+
+Storage keys (must match):
+- users/{user_id}/profiles/{profile_id}/references/{ref_id}.wav
+- users/{user_id}/jobs/{job_id}/input.wav
+- users/{user_id}/jobs/{job_id}/chunks/{i}.wav (temporary)
+- users/{user_id}/jobs/{job_id}/output.wav
+- users/{user_id}/feature-cache/{input_hash}/{feature_version}.bin
+
+Lifecycle policy notes (document only): chunks expire 24–72h, inputs 30d, outputs 30–90d.
+
+#### Milestone 2 — API endpoints + auth stubs
+Implement HTTP API with these endpoints:
+
+Singer Profiles
+- POST /v1/singer-profiles {name} -> {id,status}
+- POST /v1/singer-profiles/{id}/references:prepare-upload -> {upload_url, object_key, ref_id}
+- POST /v1/singer-profiles/{id}/references:commit {ref_id, object_key, duration_sec} -> enqueue profile_build job
+- GET /v1/singer-profiles/{id} -> profile + stats + status
+
+Render Jobs
+- POST /v1/render-jobs:prepare-upload -> {upload_url, object_key}
+- POST /v1/render-jobs -> creates job:
+  body: {singer_profile_id, input_object_key, params:{style,intensity,quality,output_format}}
+  params defaults:
+    sample_rate=48000
+    output_channels=stereo_dual_mono
+    target_lufs=-18
+    true_peak_db=-1.0
+    output_format=wav16
+- GET /v1/render-jobs/{job_id} -> status + progress + metrics
+- POST /v1/render-jobs/{job_id}:download -> signed URL for output if done
+- POST /v1/render-jobs/{job_id}:clone -> creates new job using same input_object_key and cached features if available, with overridden params
+
+Auth:
+- Implement simple user_id injection (dev header X-User-Id) but keep all queries scoped by user_id. No cross-user access.
+
+#### Milestone 3 — Worker pipeline (stub ML)
+Implement worker consumers for:
+- profile_build job
+- render_job
+
+Profile build job (stub):
+- Mark profile status building -> ready.
+- Compute fake embeddings deterministically (e.g., hash of ref file) and store in profile_embedding/cluster_embeddings/stats.
+- Record quality_metrics placeholders.
+
+Render job:
+- Download input wav.
+- Resample to 48k if needed.
+- Convert stereo -> mid mono.
+- Compute input_hash (sha256/blake3 of normalized audio bytes or original file bytes; document decision).
+- Feature cache:
+  - feature_version = "v1"
+  - If exists, reuse; else compute and store feature blob.
+Feature extraction (v1 stub, but structure must match future):
+- content: placeholder array aligned to token rate (store metadata only for now)
+- f0/voiced: compute with a real algorithm if available; otherwise stub but keep interface
+- loudness: compute RMS curve or stub
+- Persist feature blob to object storage and row in stem_feature_cache.
+
+Chunk processing:
+- Generate chunks per spec (18s/2s overlap).
+- For each chunk, produce a chunk output wav:
+  - Stub generator: apply a deterministic “regeneration placeholder” effect (e.g., mild denoise/EQ/compression) OR simply pass-through mid.
+  - Must be deterministic per (job_id, chunk_index, params).
+- Upload chunk wav to chunks key.
+- Update progress in DB.
+
+Stitch:
+- Download chunks, stitch with equal-power crossfade 2s.
+Post:
+- Loudness normalize to -18 LUFS.
+- Limiter to -1 dBTP.
+Export:
+- Dual-mono stereo 48k WAV16.
+- Upload output.wav, set job done.
+
+Re-render:
+- When cloning job, must reuse feature cache.
+
+#### Milestone 4 — Observability + correctness tests
+Logging:
+- JSON logs with job_id, user_id, chunk_index, stage, elapsed_ms.
+
+Metrics computed/stored in render_jobs.metrics:
+- runtime_sec, rtf_estimate, chunks_total
+- true_peak_db
+- loudness_lufs
+- (optional) f0 stats placeholders
+
+Add tests:
+- Chunking math: correct number of chunks for given duration
+- Stitching: no gaps, correct duration within tolerance
+- Stereo handling: output is stereo dual-mono
+- Loudness target within tolerance (e.g. ±1 LUFS)
+- Limiter ceiling honored (peak <= -1.0 dBTP approx)
+- Access control: user cannot fetch others’ profiles/jobs
+
+### Deliverables
+- docker-compose.yml for api, worker, postgres, redis, minio
+- migrations + seed
+- OpenAPI/Swagger spec file
+- README with run instructions and example curl commands
+- A “model integration interface” module that the stub generator conforms to:
+  - generate_chunk(features, singer_profile, params) -> audio array
+
+### Non-goals (explicitly exclude)
+- No real ML training.
+- No real diffusion/token codec implementation in v1.
+- No sharing profiles across users.
+- No realtime streaming playback; polling is fine.
+
+---
+
+## 2) Extra instructions that make agents succeed
+Add these “guardrails” after the brief:
+
+- “Do not implement the ML model yet; isolate it behind an interface and return stub output.”
+- “Keep everything versioned (`feature_version`, `embedding_version`) so we can upgrade later.”
+- “Make all worker tasks idempotent and resumable at chunk level.”
+
+---
+
+## 3) What to ask the agent to show you at each milestone
+- Milestone 1: SQL migrations + schema diagram + example rows.
+- Milestone 2: OpenAPI spec + curl examples + auth scoping proof.
+- Milestone 3: end-to-end run: upload → job done → download output (with progress).
+- Milestone 4: test output + a short audio sample generated from a fixture.
+

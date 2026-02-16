@@ -1,0 +1,18 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Default playlist cover">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="16" fill="url(#gradient)" />
+  <g fill="#ffffff" opacity="0.92">
+    <circle cx="45" cy="55" r="8" />
+    <circle cx="75" cy="40" r="8" />
+    <rect x="52" y="30" width="10" height="48" rx="2" />
+    <rect x="82" y="52" width="10" height="36" rx="2" />
+    <rect x="28" y="65" width="10" height="30" rx="2" />
+    <circle cx="62" cy="83" r="16" fill="none" stroke="#ffffff" stroke-width="6" />
+    <polygon points="68,74 68,92 82,83" fill="#ffffff" />
+  </g>
+</svg>

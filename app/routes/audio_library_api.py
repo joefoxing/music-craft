@@ -107,6 +107,50 @@ def get_audio_item(audio_id):
         return jsonify(ResponseUtils.create_error_response(str(e))), 500
 
 
+@audio_library_bp.route('/<audio_id>/lyrics-status', methods=['GET'])
+def get_lyrics_extraction_status(audio_id):
+    """Get lyrics extraction status for a specific audio item."""
+    try:
+        service = AudioLibraryService()
+        audio_item = service.get_audio_item(audio_id)
+
+        if not audio_item:
+            return jsonify(ResponseUtils.create_error_response('Audio item not found')), 404
+
+        return jsonify(ResponseUtils.create_success_response({
+            'audio_id': audio_item.id,
+            'lyrics_extraction_status': audio_item.lyrics_extraction_status,
+            'lyrics_extraction_error': audio_item.lyrics_extraction_error,
+            'lyrics': audio_item.lyrics,
+            'lyrics_source': audio_item.lyrics_source
+        }))
+
+    except Exception as e:
+        current_app.logger.error(f"Error getting lyrics extraction status for {audio_id}: {e}")
+        return jsonify(ResponseUtils.create_error_response(str(e))), 500
+
+
+@audio_library_bp.route('/<audio_id>/lyrics-retry', methods=['POST'])
+def retry_lyrics_extraction(audio_id):
+    """Retry lyrics extraction for an audio item."""
+    try:
+        service = AudioLibraryService()
+        success, error_message = service.retry_lyrics_extraction(audio_id)
+
+        if not success:
+            return jsonify(ResponseUtils.create_error_response(error_message)), 400
+
+        return jsonify(ResponseUtils.create_success_response({
+            'audio_id': audio_id,
+            'lyrics_extraction_status': 'queued',
+            'message': 'Lyrics extraction retry queued'
+        }))
+
+    except Exception as e:
+        current_app.logger.error(f"Error retrying lyrics extraction for {audio_id}: {e}")
+        return jsonify(ResponseUtils.create_error_response(str(e))), 500
+
+
 @audio_library_bp.route('', methods=['POST'])
 def add_to_library():
     """Add audio to user's library."""

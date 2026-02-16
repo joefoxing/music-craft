@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Suno Pricing Plans</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#ad2bee",
+                "background-light": "#f7f6f8",
+                "background-dark": "#0a060c",
+              },
+              fontFamily: {
+                "display": ["Space Grotesk", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .pro-glow {
+            box-shadow: 0 0 30px 2px rgba(173, 43, 238, 0.15);
+        }
+        .mesh-bg {
+            background-color: #0a060c;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(173, 43, 238, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.1) 0px, transparent 50%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white mesh-bg min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col max-w-[430px] mx-auto overflow-x-hidden pb-12">
+<!-- Top Navigation -->
+<div class="flex items-center p-4 justify-between sticky top-0 z-50 bg-background-dark/80 backdrop-blur-md">
+<button class="text-white flex size-10 items-center justify-center rounded-full hover:bg-white/10">
+<span class="material-symbols-outlined">close</span>
+</button>
+<h2 class="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center font-display">Suno Pricing</h2>
+<div class="flex w-10 items-center justify-end">
+<button class="text-primary text-sm font-bold tracking-tight hover:opacity-80">Restore</button>
+</div>
+</div>
+<!-- Header Content -->
+<div class="px-6 pt-8 pb-4">
+<h1 class="text-white tracking-tight text-4xl font-bold leading-tight text-center font-display">Unleash your sound</h1>
+<p class="text-slate-400 text-center mt-3 text-base">Select the plan that fits your creativity.</p>
+</div>
+<!-- Billing Toggle -->
+<div class="flex px-6 py-6">
+<div class="flex h-12 w-full items-center justify-center rounded-xl bg-white/5 border border-white/10 p-1.5 backdrop-blur-sm">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-primary has-[:checked]:text-white text-slate-400 text-sm font-bold transition-all duration-300">
+<span class="truncate">Monthly</span>
+<input checked="" class="invisible w-0" name="billing-cycle" type="radio" value="Monthly"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-primary has-[:checked]:text-white text-slate-400 text-sm font-bold transition-all duration-300">
+<span class="truncate">Yearly <span class="ml-1 text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full">SAVE 20%</span></span>
+<input class="invisible w-0" name="billing-cycle" type="radio" value="Yearly"/>
+</label>
+</div>
+</div>
+<!-- Pricing Cards Container -->
+<div class="flex flex-col gap-6 px-6 py-4">
+<!-- Basic Plan -->
+<div class="flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+<div class="flex flex-col gap-1">
+<h3 class="text-slate-400 text-sm font-medium uppercase tracking-widest">Basic</h3>
+<div class="flex items-baseline gap-1">
+<span class="text-white text-4xl font-bold tracking-tight">$0</span>
+<span class="text-slate-400 text-base font-medium">/mo</span>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<div class="text-sm font-normal leading-normal flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>50 daily credits (10 songs)</span>
+</div>
+<div class="text-sm font-normal leading-normal flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Non-commercial terms</span>
+</div>
+<div class="text-sm font-normal leading-normal flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Shared generation queue</span>
+</div>
+</div>
+<button class="w-full cursor-pointer flex items-center justify-center rounded-xl h-14 px-4 bg-white/10 hover:bg-white/15 text-white text-base font-bold transition-colors">
+                    Current Plan
+                </button>
+</div>
+<!-- Pro Plan (Most Popular) -->
+<div class="flex flex-col gap-5 rounded-2xl border-2 border-primary bg-[#1a0b22] p-6 pro-glow relative overflow-hidden">
+<!-- Decorative Glow Background -->
+<div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 blur-[60px] rounded-full"></div>
+<div class="flex flex-col gap-1 relative z-10">
+<div class="flex items-center justify-between">
+<h3 class="text-primary text-sm font-bold uppercase tracking-widest">Pro</h3>
+<span class="text-white text-[10px] font-bold uppercase tracking-wider rounded-full bg-primary px-3 py-1 shadow-lg shadow-primary/20">Most Popular</span>
+</div>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-white text-5xl font-bold tracking-tight">$8</span>
+<span class="text-slate-400 text-base font-medium">/mo</span>
+</div>
+<p class="text-slate-500 text-xs font-medium">Billed annually at $96</p>
+</div>
+<div class="flex flex-col gap-3 relative z-10">
+<div class="text-sm font-normal leading-normal flex items-start gap-3 text-slate-200">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1">check_circle</span>
+<span>2,500 monthly credits (500 songs)</span>
+</div>
+<div class="text-sm font-normal leading-normal flex items-start gap-3 text-slate-200">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1">check_circle</span>
+<span>General commercial terms</span>
+</div>
+<div class="text-sm font-normal leading-normal flex items-start gap-3 text-slate-200">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1">check_circle</span>
+<span>Priority generation queue</span>
+</div>
+<div class="text-sm font-normal leading-normal flex items-start gap-3 text-slate-200">
+<span class="material-symbols-outlined text-primary text-lg" style="font-variation-settings: 'FILL' 1">check_circle</span>
+<span>Optional private songs</span>
+</div>
+</div>
+<button class="w-full relative z-10 cursor-pointer flex items-center justify-center rounded-xl h-14 px-4 bg-primary hover:bg-opacity-90 text-white text-base font-bold shadow-lg shadow-primary/30 transition-all active:scale-[0.98]">
+                    Upgrade Now
+                </button>
+</div>
+<!-- Premier Plan -->
+<div class="flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+<div class="flex flex-col gap-1">
+<h3 class="text-slate-400 text-sm font-medium uppercase tracking-widest">Premier</h3>
+<div class="flex items-baseline gap-1">
+<span class="text-white text-4xl font-bold tracking-tight">$24</span>
+<span class="text-slate-400 text-base font-medium">/mo</span>
+</div>
+<p class="text-slate-500 text-xs font-medium">Billed annually at $288</p>
+</div>
+<div class="flex flex-col gap-3">
+<div class="text-sm font-normal leading-normal flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>10,000 monthly credits (2,000 songs)</span>
+</div>
+<div class="text-sm font-normal leading-normal flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Everything in Pro plan</span>
+</div>
+<div class="text-sm font-normal leading-normal flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Early access to new models</span>
+</div>
+<div class="text-sm font-normal leading-normal flex items-start gap-3 text-slate-300">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Max priority queue status</span>
+</div>
+</div>
+<button class="w-full cursor-pointer flex items-center justify-center rounded-xl h-14 px-4 bg-white/10 hover:bg-white/15 text-white text-base font-bold transition-colors">
+                    Go Premier
+                </button>
+</div>
+</div>
+<!-- Footnote -->
+<div class="px-6 py-6 text-center">
+<p class="text-slate-500 text-xs leading-relaxed max-w-[280px] mx-auto">
+                Subscription credits reset at the start of every billing cycle. Terms of Service and Privacy Policy apply.
+            </p>
+<div class="mt-8 flex justify-center gap-6 text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+</div>
+</div>
+<!-- iOS Home Indicator Spacing -->
+<div class="h-8"></div>
+</div>
+</body></html>

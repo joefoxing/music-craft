@@ -13,36 +13,66 @@
     
     <!-- Main Navigation -->
     <nav class="flex-1 flex flex-col gap-2 p-5">
-        <!-- Dashboard Link -->
-        <a class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 {% if active_nav == 'dashboard' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}" href="/">
-            <span class="material-symbols-outlined text-xl {% if active_nav == 'dashboard' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'dashboard' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>dashboard</span>
-            <span class="text-sm font-semibold {% if active_nav == 'dashboard' %}font-bold{% endif %}">Dashboard</span>
-        </a>
+        <!-- Dashboard Link with Dropdown Menu -->
+        <div class="relative">
+            <div class="flex items-center justify-between">
+                <button id="dashboard-main-btn" class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 flex-1 text-left {% if active_nav == 'dashboard' or active_nav == 'history' or active_nav == 'library' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}">
+                    <span class="material-symbols-outlined text-xl {% if active_nav == 'dashboard' or active_nav == 'history' or active_nav == 'library' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'dashboard' or active_nav == 'history' or active_nav == 'library' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>dashboard</span>
+                    <span class="text-sm font-semibold {% if active_nav == 'dashboard' or active_nav == 'history' or active_nav == 'library' %}font-bold{% endif %}">Dashboard</span>
+                </button>
+                <button id="dashboard-menu-btn" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-2" aria-label="Dashboard menu">
+                    <span class="material-symbols-outlined text-lg text-slate-500 dark:text-slate-400">more_vert</span>
+                </button>
+            </div>
+            
+            <!-- Dropdown Menu -->
+            <div id="dashboard-dropdown" class="hidden absolute left-0 top-full mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 z-50">
+                <div class="py-2">
+                    <!-- History Link -->
+                    <a class="flex items-center gap-4 px-4 py-3 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors" href="/history">
+                        <span class="material-symbols-outlined text-lg {% if active_nav == 'history' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'history' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>library_music</span>
+                        <span class="font-medium {% if active_nav == 'history' %}font-bold text-indigo-600 dark:text-indigo-300{% endif %}">History</span>
+                    </a>
+                    
+                    <!-- Library Link -->
+                    <a class="flex items-center gap-4 px-4 py-3 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors" href="/library">
+                        <span class="material-symbols-outlined text-lg {% if active_nav == 'library' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'library' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>explore</span>
+                        <span class="font-medium {% if active_nav == 'library' %}font-bold text-indigo-600 dark:text-indigo-300{% endif %}">Library</span>
+                    </a>
+                </div>
+            </div>
+        </div>
         
-        <!-- Music Generator Link -->
-        <a class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 {% if active_nav == 'music-generator' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}" href="/music-generator">
-            <span class="material-symbols-outlined text-xl {% if active_nav == 'music-generator' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'music-generator' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>add_circle</span>
-            <span class="text-sm font-semibold {% if active_nav == 'music-generator' %}font-bold{% endif %}">Music Generator</span>
-        </a>
-        
-        <!-- Cover Generator Link -->
-        <a class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 {% if active_nav == 'cover-generator' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}" href="/cover-generator">
-            <span class="material-symbols-outlined text-xl {% if active_nav == 'cover-generator' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'cover-generator' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>graphic_eq</span>
-            <span class="text-sm font-semibold {% if active_nav == 'cover-generator' %}font-bold{% endif %}">Cover Generator</span>
-        </a>
-        
-        <!-- History Link -->
-        <a class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 {% if active_nav == 'history' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}" href="/history">
-            <span class="material-symbols-outlined text-xl {% if active_nav == 'history' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'history' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>library_music</span>
-            <span class="text-sm font-semibold {% if active_nav == 'history' %}font-bold{% endif %}">History</span>
-        </a>
-        
-        <!-- Library Link -->
-        <a class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 {% if active_nav == 'library' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}" href="/library">
-            <span class="material-symbols-outlined text-xl {% if active_nav == 'library' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'library' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>explore</span>
-            <span class="text-sm font-semibold {% if active_nav == 'library' %}font-bold{% endif %}">Library</span>
-        </a>
+        <!-- Create Link with Dropdown Menu -->
+        <div class="relative">
+            <div class="flex items-center justify-between">
+                <button id="create-main-btn" class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 flex-1 text-left {% if active_nav == 'music-generator' or active_nav == 'cover-generator' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}">
+                    <span class="material-symbols-outlined text-xl {% if active_nav == 'music-generator' or active_nav == 'cover-generator' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'music-generator' or active_nav == 'cover-generator' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>add_circle</span>
+                    <span class="text-sm font-semibold {% if active_nav == 'music-generator' or active_nav == 'cover-generator' %}font-bold{% endif %}">Create</span>
+                </button>
+                <button id="create-menu-btn" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-2" aria-label="Create menu">
+                    <span class="material-symbols-outlined text-lg text-slate-500 dark:text-slate-400">more_vert</span>
+                </button>
+            </div>
 
+            <!-- Dropdown Menu -->
+            <div id="create-dropdown" class="hidden absolute left-0 top-full mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 z-50">
+                <div class="py-2">
+                    <!-- Music Link -->
+                    <a class="flex items-center gap-4 px-4 py-3 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors" href="/music-generator">
+                        <span class="material-symbols-outlined text-lg {% if active_nav == 'music-generator' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'music-generator' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>add_circle</span>
+                        <span class="font-medium {% if active_nav == 'music-generator' %}font-bold text-indigo-600 dark:text-indigo-300{% endif %}">Music</span>
+                    </a>
+
+                    <!-- Cover Link -->
+                    <a class="flex items-center gap-4 px-4 py-3 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors" href="/cover-generator">
+                        <span class="material-symbols-outlined text-lg {% if active_nav == 'cover-generator' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'cover-generator' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>graphic_eq</span>
+                        <span class="font-medium {% if active_nav == 'cover-generator' %}font-bold text-indigo-600 dark:text-indigo-300{% endif %}">Cover</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
         {% if current_user.is_authenticated and current_user.has_permission('view_admin') %}
         <a class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 {% if active_nav == 'admin' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}" href="/admin">
             <span class="material-symbols-outlined text-xl {% if active_nav == 'admin' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'admin' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>admin_panel_settings</span>
@@ -50,46 +80,108 @@
         </a>
         {% endif %}
         
-        <!-- Add Instrumental Link -->
-        <a class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 {% if active_nav == 'add-instrumental' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}" href="/add-instrumental">
-            <span class="material-symbols-outlined text-xl {% if active_nav == 'add-instrumental' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'add-instrumental' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>library_add</span>
-            <span class="text-sm font-semibold {% if active_nav == 'add-instrumental' %}font-bold{% endif %}">Add Instrumental</span>
-        </a>
-        
-        <!-- Add Vocal Link -->
-        <a class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 {% if active_nav == 'add-vocal' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}" href="/add-vocal">
-            <span class="material-symbols-outlined text-xl {% if active_nav == 'add-vocal' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'add-vocal' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>record_voice_over</span>
-            <span class="text-sm font-semibold {% if active_nav == 'add-vocal' %}font-bold{% endif %}">Add Vocal</span>
-        </a>
-
-        <!-- Voice Conversion Link -->
-        <a class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 {% if active_nav == 'voice-conversion' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}" href="/voice">
-            <span class="material-symbols-outlined text-xl {% if active_nav == 'voice-conversion' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'voice-conversion' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>swap_horiz</span>
-            <span class="text-sm font-semibold {% if active_nav == 'voice-conversion' %}font-bold{% endif %}">Voice Conversion</span>
-        </a>
-        
-        <!-- Vocal Removal Link -->
-        <a class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 {% if active_nav == 'vocal-removal' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}" href="/vocal-removal">
-            <span class="material-symbols-outlined text-xl {% if active_nav == 'vocal-removal' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'vocal-removal' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>cut</span>
-            <span class="text-sm font-semibold {% if active_nav == 'vocal-removal' %}font-bold{% endif %}">Vocal Removal</span>
-        </a>
+        <!-- Add/Remove Link with Dropdown Menu -->
+        <div class="relative">
+            <div class="flex items-center justify-between">
+                <button id="addremove-main-btn" class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 flex-1 text-left {% if active_nav == 'add-instrumental' or active_nav == 'add-vocal' or active_nav == 'vocal-removal' %}bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 text-indigo-600 dark:text-indigo-300 border-l-4 border-indigo-500 shadow-sm{% else %}text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:translate-x-1 hover:shadow-md{% endif %}">
+                    <span class="material-symbols-outlined text-xl {% if active_nav == 'add-instrumental' or active_nav == 'add-vocal' or active_nav == 'vocal-removal' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'add-instrumental' or active_nav == 'add-vocal' or active_nav == 'vocal-removal' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>edit</span>
+                    <span class="text-sm font-semibold {% if active_nav == 'add-instrumental' or active_nav == 'add-vocal' or active_nav == 'vocal-removal' %}font-bold{% endif %}">Add/Remove</span>
+                </button>
+                <button id="addremove-menu-btn" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors ml-2" aria-label="Add/Remove menu">
+                    <span class="material-symbols-outlined text-lg text-slate-500 dark:text-slate-400">more_vert</span>
+                </button>
+            </div>
+            
+            <!-- Dropdown Menu -->
+            <div id="addremove-dropdown" class="hidden absolute left-0 top-full mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 z-50">
+                <div class="py-2">
+                    <!-- Add Instrumental Link -->
+                    <a class="flex items-center gap-4 px-4 py-3 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors" href="/add-instrumental">
+                        <span class="material-symbols-outlined text-lg {% if active_nav == 'add-instrumental' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'add-instrumental' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>library_add</span>
+                        <span class="font-medium {% if active_nav == 'add-instrumental' %}font-bold text-indigo-600 dark:text-indigo-300{% endif %}">Add Instrumental</span>
+                    </a>
+                    
+                    <!-- Add Vocal Link -->
+                    <a class="flex items-center gap-4 px-4 py-3 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors" href="/add-vocal">
+                        <span class="material-symbols-outlined text-lg {% if active_nav == 'add-vocal' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'add-vocal' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>record_voice_over</span>
+                        <span class="font-medium {% if active_nav == 'add-vocal' %}font-bold text-indigo-600 dark:text-indigo-300{% endif %}">Add Vocal</span>
+                    </a>
+                    
+                    <!-- Remove Vocal Link -->
+                    <a class="flex items-center gap-4 px-4 py-3 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors" href="/vocal-removal">
+                        <span class="material-symbols-outlined text-lg {% if active_nav == 'vocal-removal' %}text-indigo-600 dark:text-indigo-300{% else %}text-slate-500 dark:text-slate-400{% endif %}" {% if active_nav == 'vocal-removal' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>cut</span>
+                        <span class="font-medium {% if active_nav == 'vocal-removal' %}font-bold text-indigo-600 dark:text-indigo-300{% endif %}">Remove Vocal</span>
+                    </a>
+                </div>
+            </div>
+        </div>
         
         <!-- Divider -->
         <div class="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent dark:via-slate-700 my-6 mx-5"></div>
         
-        <!-- Playlists Section -->
-        <div class="px-5 py-3">
-            <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-4">Your Playlists</h3>
-            <div class="flex flex-col gap-3">
-                <a class="flex items-center gap-3.5 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-300 text-sm transition-all duration-300 px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:translate-x-1 group" href="#">
-                    <span class="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">queue_music</span>
-                    <span class="font-medium">Cyberpunk Vibes</span>
-                </a>
-                <a class="flex items-center gap-3.5 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-300 text-sm transition-all duration-300 px-3 py-2.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 hover:translate-x-1 group" href="#">
-                    <span class="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">queue_music</span>
-                    <span class="font-medium">Lo-Fi Study</span>
+        <!-- Playlists Section - Dynamic Component -->
+        <div id="your-playlists-container" class="px-5 py-3 flex-shrink-0 min-h-0">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest sidebar-playlists-title">Your Playlists</h3>
+                <a href="/library" class="sidebar-playlists-view-all text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium opacity-0 transition-opacity duration-200" aria-label="View all playlists">
+                    View all
                 </a>
             </div>
+            
+            <!-- Loading State - Skeleton -->
+            <div id="playlists-loading" class="flex flex-col gap-3" role="status" aria-label="Loading playlists">
+                <div class="flex items-center gap-3.5 px-3 py-2.5">
+                    <div class="w-[60px] h-[60px] rounded-lg bg-slate-200 dark:bg-slate-700 animate-pulse flex-shrink-0"></div>
+                    <div class="flex-1 min-w-0 space-y-2">
+                        <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-3/4"></div>
+                        <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-1/2"></div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3.5 px-3 py-2.5">
+                    <div class="w-[60px] h-[60px] rounded-lg bg-slate-200 dark:bg-slate-700 animate-pulse flex-shrink-0"></div>
+                    <div class="flex-1 min-w-0 space-y-2">
+                        <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-2/3"></div>
+                        <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-1/3"></div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3.5 px-3 py-2.5">
+                    <div class="w-[60px] h-[60px] rounded-lg bg-slate-200 dark:bg-slate-700 animate-pulse flex-shrink-0"></div>
+                    <div class="flex-1 min-w-0 space-y-2">
+                        <div class="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-4/5"></div>
+                        <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-1/2"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="playlists-empty" class="hidden flex flex-col items-center justify-center py-6 text-center" role="status" aria-label="No playlists found">
+                <span class="material-symbols-outlined text-4xl text-slate-300 dark:text-slate-600 mb-3">playlist_add</span>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">No playlists yet</p>
+                <a href="/library" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors">
+                    <span class="material-symbols-outlined text-base">add</span>
+                    Create your first playlist
+                </a>
+            </div>
+            
+            <!-- Error State -->
+            <div id="playlists-error" class="hidden flex flex-col items-center justify-center py-6 text-center" role="alert" aria-label="Error loading playlists">
+                <span class="material-symbols-outlined text-4xl text-red-400 dark:text-red-500 mb-3">error_outline</span>
+                <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">Failed to load playlists</p>
+                <button id="playlists-retry-btn" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium rounded-lg transition-colors">
+                    <span class="material-symbols-outlined text-base">refresh</span>
+                    Retry
+                </button>
+            </div>
+            
+            <!-- Playlists List -->
+            <ul id="playlists-list" class="hidden flex flex-col gap-2" role="list" aria-label="List of recent playlists">
+                <!-- Playlist items will be dynamically inserted here -->
+            </ul>
+            
+            <!-- Compact View for Mobile/Icon-only mode -->
+            <ul id="playlists-list-compact" class="hidden flex-col gap-2" role="list" aria-label="List of recent playlists">
+                <!-- Compact playlist items will be dynamically inserted here -->
+            </ul>
         </div>
     </nav>
     
@@ -147,3 +239,4 @@
         {% endif %}
     </div>
 </aside>
+<script src="{{ url_for('static', filename='js/sidebar.js') }}" defer></script>

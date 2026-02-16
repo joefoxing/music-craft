@@ -142,6 +142,8 @@ function initializeDOM() {
         progressBar: document.getElementById('progressBar'),
         progressText: document.getElementById('progressText'),
         uploadBtn: document.getElementById('uploadBtn'),
+        lyricsLanguageSelect: document.getElementById('lyricsLanguageSelect'),
+        lyricsLanguageWarning: document.getElementById('lyricsLanguageWarning'),
         generateBtn: document.getElementById('generateBtn'),
         audioUrlInput: document.getElementById('audioUrlInput'),
         urlTestBtn: document.getElementById('urlTestBtn'),
@@ -154,6 +156,8 @@ function initializeDOM() {
         urlTab: document.getElementById('urlTab'),
         uploadSection: document.getElementById('uploadSection'),
         urlSection: document.getElementById('urlSection'),
+        lyricsPreview: document.getElementById('lyricsPreview'),
+        extractedLyrics: document.getElementById('extractedLyrics'),
         
         // Mode and model elements
         coverTaskBtn: document.getElementById('coverTaskBtn'),
@@ -274,6 +278,8 @@ function initializeComponents() {
         progressBar: DOM.progressBar,
         progressText: DOM.progressText,
         uploadBtn: DOM.uploadBtn,
+        lyricsLanguageSelect: DOM.lyricsLanguageSelect,
+        lyricsLanguageWarning: DOM.lyricsLanguageWarning,
         generateBtn: DOM.generateBtn,
         audioUrlInput: DOM.audioUrlInput,
         urlTestResult: DOM.urlTestResult,
@@ -284,7 +290,9 @@ function initializeComponents() {
         uploadTab: DOM.uploadTab,
         urlTab: DOM.urlTab,
             uploadSection: DOM.uploadSection,
-            urlSection: DOM.urlSection
+            urlSection: DOM.urlSection,
+        lyricsPreview: DOM.lyricsPreview,
+        extractedLyrics: DOM.extractedLyrics
         };
         fileHandler.initialize(fileHandlerElements);
     } else {

@@ -43,20 +43,15 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
 ```
 
-### 3.2. Network Setup
-The `compose.prod.yml` expects an external network named `proxy_net`.
-```bash
-docker network create proxy_net
-```
-
-### 3.3. Directory Structure
+### 3.2. Directory Structure
 Create the application directory:
 ```bash
 mkdir -p ~/app/scripts
 cd ~/app
 ```
+*Note: The server is treated as a runtime environment. We do NOT pull the full git repository source code to run the app, only the orchestration files.*
 
-### 3.4. Environment Configuration
+### 3.3. Environment Configuration
 Create the environment specific files (`.env.prod` for production, `.env.staging` for staging).
 
 **Example `.env.prod`:**
@@ -83,8 +78,12 @@ REPO_OWNER=your_github_username
 REPO_NAME=music-craft
 ```
 
-### 3.5. Scripts
-Ensure the `scripts/` directory on the server contains the deployment scripts. The CI pipeline will pull the latest code, but the scripts must be executable.
+### 3.4. Orchestration Files
+Copy the `compose.prod.yml` (or `compose.staging.yml`) and `scripts/` folder to `~/app` on the server.
+*   **Staging:** `compose.staging.yml`
+*   **Production:** `compose.prod.yml`
+
+Make scripts executable:
 ```bash
 chmod +x scripts/*.sh
 ```
@@ -95,28 +94,30 @@ chmod +x scripts/*.sh
 
 The pipeline is defined in `.github/workflows/deploy.yml`.
 
-### Triggers
-1.  **Push to `main`**: Deploys to **Production**.
-2.  **Push to `develop`**: Deploys to **Staging**.
-3.  **Manual Dispatch**: Allows manual deployment or rollback to specific environments.
+### Triggers & Flow
+1.  **Push to `main`**:
+    *   Builds and Pushes Docker Image to GHCR.
+    *   **Auto-deploys to Staging**.
+2.  **Verify Staging**:
+    *   Manual verification of Staging environment.
+3.  **Manual Promotion to Production**:
+    *   Triggered via GitHub Actions "Run workflow" (workflow_dispatch).
+    *   Requires selecting `production` environment and providing the **exact SHA** that passed staging.
 
 ### Job Breakdown
-1.  **`build`**:
-    *   Checks out code.
-    *   Builds the Docker image using `Dockerfile.api`.
-    *   Tags image with `sha-<short_commit_hash>` and `latest`.
+1.  **`build-and-push`** (Push to `main`):
+    *   Builds `Dockerfile.api`.
+    *   Tags with `sha-<short_commit_hash>` and `latest`.
     *   Pushes to GHCR.
-    *   **Output**: Passes the `sha` to deployment jobs.
+    *   **Output**: Passes the `short_sha`.
 
-2.  **`deploy-staging`** (Runs on `develop` branch):
+2.  **`deploy-staging`** (Automatic after build):
     *   SSHs into `STAGING_HOST`.
-    *   Pulls latest git changes to `~/app`.
     *   Updates `IMAGE_TAG` in `.env.staging`.
     *   Executes `bash scripts/deploy-staging.sh <SHA>`.
 
-3.  **`deploy-production`** (Runs on `main` branch):
+3.  **`deploy-production`** (Manual Workflow Dispatch):
     *   SSHs into `PROD_HOST`.
-    *   Pulls latest git changes to `~/app`.
     *   Updates `IMAGE_TAG` in `.env.prod`.
     *   Executes `bash scripts/deploy.sh <SHA>`.
 
@@ -124,34 +125,58 @@ The pipeline is defined in `.github/workflows/deploy.yml`.
 
 ## 5. Deployment Scripts Logic
 
-### `scripts/deploy.sh` (Production)
+### `scripts/deploy.sh` (Production) & `scripts/deploy-staging.sh`
 1.  **Locking**: Uses `flock` to prevent concurrent deployments.
-2.  **Version Tracking**: Records the currently running image SHA into `.rollback-tag` before updating.
-3.  **Pull**: Pulls the specific image tag (`sha-XXXXXX`).
-4.  **Migrate**: Runs database migrations (`alembic upgrade head`) using the `migrate` profile/service.
-5.  **Update**: Recreates the `api` container.
-6.  **Health Check**: Loops checking container health.
-    *   **Success**: Logs success.
-    *   **Failure**: Automatically triggers `rollback.sh`.
+2.  **Version Tracking**:
+    *   Shifts `DEPLOYED_SHA_<ENV>.txt` to `DEPLOYED_SHA_<ENV>.txt.prev`.
+3.  **Pull**: `docker compose pull api`. **(No git pull)**.
+4.  **Update**: `docker compose up -d --remove-orphans api`.
+    *   **Note**: Migrations are **NOT** run automatically.
+5.  **Health Check**: Loops checking container health.
+    *   **Success**: Writes new SHA to `DEPLOYED_SHA_<ENV>.txt` and logs success.
+    *   **Failure**: Automatically triggers rollback using `.prev` SHA.
+6.  **External Verification**:
+    *   Curls `https://<domain>/health` to ensure the service is reachable via the reverse proxy.
 
 ---
 
-## 6. Manual Operations & Debugging
+## 6. Database Migrations (Explicit Only)
 
-### Triggering a Manual Deployment
+Migrations are **never** run automatically during deployment. They must be triggered manually when needed.
+
+### Running Migrations via GitHub Actions
+1.  Go to GitHub Actions -> "Run Migrations".
+2.  Run workflow.
+3.  Select Environment: `staging` or `production`.
+
+### Running Migrations Manually (SSH)
+Connect to the server and run the migration profile:
+
+**Staging:**
+```bash
+docker compose -f compose.staging.yml --env-file .env.staging --profile migrate run --rm migrate
+```
+
+**Production:**
+```bash
+docker compose -f compose.prod.yml --env-file .env.prod --profile migrate run --rm migrate
+```
+
+---
+
+## 7. Manual Operations & Debugging
+
+### Triggering a Manual Production Deploy
 1.  Go to GitHub Actions tab.
 2.  Select "Build and Deploy".
 3.  Click "Run workflow".
-4.  Choose Branch: `main` (for prod) or `develop` (for staging).
-5.  Environment: `production` or `staging`.
-6.  Action: `deploy`.
+4.  Environment: `production`.
+5.  Image Tag: Enter the SHA you want to deploy (e.g., `a1b2c3d4e5f6`).
 
 ### Triggering a Rollback
 If a deployment fails and the auto-rollback fails, or you need to revert to a previous version:
-1.  Identify the target Commit SHA you want to revert to (first 12 characters).
-2.  Go to GitHub Actions -> "Build and Deploy" -> "Run workflow".
-3.  Action: `rollback`.
-4.  Target SHA: `<old_sha>`.
+1.  Identify the target Commit SHA you want to revert to.
+2.  Run the manual deploy workflow (as above) with the old SHA.
 
 ### Accessing Logs
 SSH into the server:
@@ -161,29 +186,20 @@ cd ~/app
 
 # View API logs
 docker compose -f compose.prod.yml --env-file .env.prod logs -f api
-
-# View Migration logs
-docker compose -f compose.prod.yml --env-file .env.prod logs -f migrate
-```
-
-### Entering the Container
-```bash
-docker compose -f compose.prod.yml --env-file .env.prod exec api /bin/bash
 ```
 
 ---
 
-## 7. Troubleshooting
-
-### "Error response from daemon: network proxy_net not found"
-**Fix**: Run `docker network create proxy_net`.
+## 8. Troubleshooting
 
 ### "alembic: command not found" or Migration Fails
-**Fix**: Check logs: `docker compose ... logs migrate`. Ensure `DATABASE_URL` is correct in `.env.prod`.
+**Fix**: Ensure you are using the `--profile migrate` flag as shown in Section 6. Check `DATABASE_URL` in `.env`.
 
 ### Health Check Timeout
-**Cause**: The application failed to start within 120 seconds.
-**Fix**: Check logs (`docker compose ... logs api`). Common causes: invalid `SECRET_KEY`, database connection failure, or missing dependencies.
+**Cause**: The application failed to start within 120 seconds or the external URL is unreachable.
+**Fix**:
+1.  Check container logs: `docker compose ... logs api`.
+2.  Check if Caddy/Proxy is running and properly routing.
 
 ### GHCR Permission Denied
 **Fix**: Ensure the `GHCR_TOKEN` secret in GitHub has `write:packages` scope and the workflow has logged in successfully.

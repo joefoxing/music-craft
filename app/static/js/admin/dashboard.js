@@ -33,6 +33,79 @@ async function apiFetch(path, options) {
     return fetch(path, opts);
 }
 
+let deleteTargetUserId = null;
+
+function initDeleteModal() {
+    const modal = document.getElementById('deleteUserModal');
+    const input = document.getElementById('deleteConfirmationInput');
+    const cancelBtn = document.getElementById('cancelDeleteBtn');
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    const spinner = document.getElementById('deleteSpinner');
+
+    if (!modal || !input || !cancelBtn || !confirmBtn) return;
+
+    function closeModal() {
+        modal.classList.add('hidden');
+        input.value = '';
+        deleteTargetUserId = null;
+        confirmBtn.disabled = true;
+    }
+
+    input.addEventListener('input', () => {
+        confirmBtn.disabled = input.value !== 'DELETE';
+    });
+
+    cancelBtn.addEventListener('click', closeModal);
+
+    confirmBtn.addEventListener('click', async () => {
+        if (!deleteTargetUserId) return;
+
+        confirmBtn.disabled = true;
+        spinner.classList.remove('hidden');
+        
+        try {
+            const resp = await apiFetch(`/api/admin/users/${deleteTargetUserId}`, {
+                method: 'DELETE'
+            });
+
+            if (resp.ok) {
+                closeModal();
+                loadAdmin();
+            } else {
+                const data = await resp.json().catch(() => ({}));
+                showAdminError(data.error || data.message || `Failed to delete user (HTTP ${resp.status})`);
+                closeModal();
+            }
+        } catch (e) {
+            showAdminError(`Network error: ${e.message}`);
+            closeModal();
+        } finally {
+            spinner.classList.add('hidden');
+        }
+    });
+
+    // Close on background click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+}
+
+function openDeleteModal(userId, userEmail) {
+    const modal = document.getElementById('deleteUserModal');
+    const emailSpan = document.getElementById('deleteModalUserEmail');
+    const input = document.getElementById('deleteConfirmationInput');
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    
+    if (!modal || !emailSpan) return;
+
+    deleteTargetUserId = userId;
+    emailSpan.textContent = userEmail;
+    input.value = '';
+    confirmBtn.disabled = true;
+    modal.classList.remove('hidden');
+    input.focus();
+}
+
 function renderUsersTable(users, roleNames) {
     const container = document.getElementById('adminUsersTable');
     if (!container) return;
@@ -69,8 +142,9 @@ function renderUsersTable(users, roleNames) {
                             ${options}
                         </select>
                     </td>
-                    <td class="py-2">
+                    <td class="py-2 flex gap-2">
                         <button data-save-user-id="${u.id}" class="px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium">Save</button>
+                        <button data-delete-user-id="${u.id}" data-user-email="${u.email}" class="px-3 py-2 rounded-lg bg-red-500/10 text-red-600 hover:bg-red-500/20 transition-colors text-sm font-medium">Delete</button>
                     </td>
                 </tr>
             `;
@@ -101,6 +175,14 @@ function renderUsersTable(users, roleNames) {
             if (!resp.ok) {
                 showAdminError(data.error || `Failed to update roles (HTTP ${resp.status})`);
             }
+        });
+    });
+
+    container.querySelectorAll('button[data-delete-user-id]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+            const userId = btn.getAttribute('data-delete-user-id');
+            const userEmail = btn.getAttribute('data-user-email');
+            openDeleteModal(userId, userEmail);
         });
     });
 }
@@ -138,6 +220,7 @@ async function loadAdmin() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    initDeleteModal();
     document.getElementById('adminRefreshBtn')?.addEventListener('click', loadAdmin);
 
     const search = document.getElementById('adminUserSearch');

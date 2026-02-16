@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Successful - Redirecting...</title>
+    <style>
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h1 {
+            color: #333;
+            font-size: 1.5rem;
+            margin: 0 0 0.5rem;
+        }
+        p {
+            color: #666;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+        .success-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .provider-info {
+            color: #999;
+            font-size: 0.85rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+        a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">✓</div>
+        <h1>Login Successful!</h1>
+        <p>You have been authenticated with {{ provider.capitalize() }}</p>
+        <p style="margin-top: 0.5rem; color: #999;">Redirecting you now...</p>
+        <div class="spinner"></div>
+        <div class="provider-info">
+            If you are not redirected automatically, <a href="{{ redirect_url }}">click here</a>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration
+        const MAX_ATTEMPTS = 5;
+        const REDIRECT_DELAY = 1200; // Increased delay for cookie setting
+        let redirectAttempts = 0;
+        
+        function attemptRedirect() {
+            redirectAttempts++;
+            console.log(`Redirect attempt ${redirectAttempts}/${MAX_ATTEMPTS}`);
+            
+            // Try to redirect using replace (doesn't add to history)
+            window.location.replace('{{ redirect_url }}');
+            
+            // Fallback to href if replace doesn't work
+            setTimeout(function() {
+                if (window.location.href.includes('oauth_success') && redirectAttempts < MAX_ATTEMPTS) {
+                    console.log('Replace redirect failed, trying href');
+                    window.location.href = '{{ redirect_url }}';
+                }
+            }, 500);
+        }
+        
+        // Start redirect after delay to ensure session cookie is set
+        setTimeout(attemptRedirect, REDIRECT_DELAY);
+        
+        // Additional fallback after longer wait
+        setTimeout(function() {
+            if (window.location.href.includes('oauth_success')) {
+                console.log('Initial redirect timeout, retrying with longer delay');
+                attemptRedirect();
+            }
+        }, 4000);
+    </script>
+</body>
+</html>

@@ -66,7 +66,6 @@ An alternative script with more advanced features:
 - Debug scripts: `debug_*.py`
 - Test scripts: `test_*.py`, `diagnose_*.py`
 - Configuration test scripts: `check_config.py`, `fix_config.py`
-- Tunnel management scripts: `start_tunnel*.py`
 
 #### System Files
 - IDE configurations: `.vscode/`, `.idea/`

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Suno - Make any song</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-orange": "#FA6E4A",
+                        "suno-pink": "#f43f5e",
+                        "background-dark": "#0a0a0a",
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        :root {
+            --grain: url("https://grainy-gradients.vercel.app/noise.svg");
+        }
+        body {
+            background-color: #0a0a0a;
+            color: white;
+            overflow-x: hidden;
+        }
+        .grainy-bg {
+            background: linear-gradient(135deg, #450a0a 0%, #7c2d12 25%, #4c1d95 75%, #1e1b4b 100%);
+            position: relative;
+        }
+        .grainy-bg::before, .promoted-card::before, .pricing-section::before, .features-section::before, .app-download-section::before, .testimonials-section::before, .main-footer::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.4;
+            pointer-events: none;
+            background-image: var(--grain);
+            filter: contrast(150%) brightness(100%);
+            z-index: 1;
+        }
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to { border-color: transparent }
+            50% { border-color: white }
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .mask-fade {
+            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        }
+        .neon-border-purple {
+            box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.3), 0 0 10px rgba(139, 92, 246, 0.1);
+        }
+        .neon-border-orange {
+            box-shadow: 0 0 0 1px rgba(250, 110, 74, 0.3), 0 0 10px rgba(250, 110, 74, 0.1);
+        }
+        .features-section {
+            background: linear-gradient(180deg, #0a0a0a 0%, #312e81 50%, #1e1b4b 100%);
+            position: relative;
+        }
+        .testimonials-section {
+            background: #1e1b4b;
+            position: relative;
+        }
+        .pricing-section {
+            background: linear-gradient(180deg, #1e1b4b 0%, #0a0a0a 100%);
+            position: relative;
+        }
+        .app-download-section {
+            background: radial-gradient(circle at top, #1e1b4b 0%, #0a0a0a 100%);
+            position: relative;
+        }
+        .main-footer {
+            background: #0a0a0a;
+            position: relative;
+        }
+        .highlight-border {
+            position: relative;
+        }
+        .highlight-border::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            padding: 1px;
+            border-radius: inherit;
+            background: linear-gradient(to bottom right, #FA6E4A, #f43f5e);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        .neon-icon-glow {
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+        .glassmorphic-btn {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            z-index: 2;
+        }
+        .testimonial-glow {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(250, 110, 74, 0.15) 0%, transparent 70%);
+            filter: blur(20px);
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen pb-40">
+<section class="grainy-bg min-h-screen flex flex-col items-center pt-8 px-6 relative overflow-hidden">
+<header class="w-full flex items-center justify-between z-20 mb-16">
+<div class="flex items-center gap-1">
+<span class="font-black text-xl tracking-tighter uppercase italic text-white">Suno</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-xs font-semibold px-3 py-1.5 hover:bg-white/10 rounded-full transition-colors text-white">Sign In</button>
+<button class="text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full">Sign Up</button>
+</div>
+</header>
+<div class="max-w-xl w-full text-center z-10 mt-12">
+<h1 class="text-4xl sm:text-6xl font-extrabold leading-[1.1] tracking-tight mb-6 text-white">
+                Make a country song about Jess<span class="inline-block border-r-4 border-white h-10 sm:h-14 ml-1 cursor-blink"></span>
+</h1>
+<p class="text-white/60 text-sm sm:text-base font-medium mb-8 max-w-sm mx-auto">
+                Start with a simple prompt or dive into our pro editing tools, your next track is just a step away.
+            </p>
+<div class="bg-black/30 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 w-full shadow-2xl">
+<div class="relative min-h-[100px] flex flex-col justify-between">
+<p class="text-left text-white/40 text-sm font-medium px-2">Type any idea you have into a song</p>
+<div class="flex items-center justify-between mt-4">
+<div class="flex gap-2">
+<button class="size-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-xl text-white">add</span>
+</button>
+</div>
+<div class="flex items-center gap-2">
+<button class="size-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-xl text-white">casino</span>
+</button>
+<button class="bg-gradient-to-r from-primary-orange via-suno-pink to-primary-orange bg-[length:200%_auto] text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-lg flex items-center gap-2 transition-all active:scale-95">
+<span class="material-symbols-outlined text-base">music_note</span>
+                                Create
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<button class="mt-8 flex items-center gap-2 text-xs font-semibold bg-white/5 border border-white/10 px-4 py-2 rounded-full mx-auto hover:bg-white/10 transition-all text-white">
+                Explore Advanced Features
+                <span class="material-symbols-outlined text-sm">arrow_downward</span>
+</button>
+</div>
+<div class="mt-auto w-full max-w-4xl pb-12 pt-20">
+<div class="flex flex-wrap justify-center gap-8 opacity-30 grayscale invert">
+<span class="text-xl font-bold tracking-tighter text-white">Billboard</span>
+<span class="text-xl font-bold tracking-tighter text-white">COMPLEX</span>
+<span class="text-xl font-serif font-bold italic text-white">Forbes</span>
+<span class="text-xl font-serif font-bold text-white">RollingStone</span>
+<span class="text-xl font-bold uppercase text-white">Variety</span>
+<span class="text-xl font-mono font-bold tracking-widest uppercase text-white">Wired</span>
+</div>
+</div>
+</section>
+<section class="mt-20 px-0 overflow-hidden relative">
+<div class="px-6 flex items-center justify-between mb-8">
+<h2 class="text-3xl font-extrabold tracking-tighter uppercase italic leading-none text-white">Self-Promoted</h2>
+<button class="text-[10px] font-bold tracking-widest uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2 hover:bg-white/10 transition-colors text-white">
+                Boost
+                <span class="material-symbols-outlined text-xs">rocket_launch</span>
+</button>
+</div>
+<div class="mask-fade relative">
+<div class="flex gap-5 overflow-x-auto no-scrollbar pb-12 px-12">
+<div class="flex-none w-48 group cursor-pointer promoted-card relative p-3 rounded-2xl bg-white/[0.03] backdrop-blur-md neon-border-purple border border-white/5 overflow-hidden">
+<div class="relative aspect-square rounded-lg overflow-hidden mb-4 border border-white/5">
+<img alt="Cover Art" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvlQE-5JCdXX9WOjP5fLMLyRAbAp9wAvyaUrCOr3iYHDY9wLx2cxtn05HjkwUd1xsX2fcOkAg6F-JsNWyG8f0CEhNEpLvdzi2NCL-5r7dkBhOt0W-y5n574Bx8lCv_hn-JvFEq6-GOzFuNYPsK4e2S5f46g1bGG-5eH3uVy-V5c7o5APP21io8b5fvjrGE579v4MaSxPnnM4Ynl9Ppq9S2rZ-RZLgAynrDKc491HNUiv7E5at3cCkqAfWvZ1YQEXX9w4vdGeXrtonS"/>
+<div class="absolute top-2 right-2 bg-black/80 backdrop-blur-xl border border-white/10 px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-tighter text-white/90 z-20 flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-primary-orange animate-pulse"></span>
+                            Promoted
+                        </div>
+</div>
+<div class="px-1">
+<h3 class="font-bold text-sm tracking-tight truncate text-white/90">Electric Dreams</h3>
+<p class="text-[11px] font-medium text-white/40 tracking-wide truncate">@synth_wizard</p>
+</div>
+</div>
+<div class="flex-none w-48 group cursor-pointer promoted-card relative p-3 rounded-2xl bg-white/[0.03] backdrop-blur-md neon-border-orange border border-white/5 overflow-hidden">
+<div class="relative aspect-square rounded-lg overflow-hidden mb-4 border border-white/5">
+<img alt="Cover Art" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHOvG5EOU1_wi-8diWzvd03s3grhkS6ChZiW8Fmt-wSg7As5Mw8RzLtZ0Uaob2ue9V15EMsPZb7FIPZ1Qx0JvOseX0tqyuER_oHvP-yvlfY2jU1-BIlzCOzIdiSnKu43G8T4CPlbMfIsYb3Ff1Ra6MCJOsbhqsj0BIRYyXQB3H3OFys3zzKULNJcqtfgT-GDIdzpxjbD7ubCs3b4x13Hfd2xL3jzDMhxDOGPWp6wSLlVcwmn29TWI5HytucFqgtUzbjAM1LCDF_AUj"/>
+<div class="absolute top-2 right-2 bg-black/80 backdrop-blur-xl border border-white/10 px-2 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-tighter text-white/90 z-20 flex items-center gap-1">
+<span class="w-1 h-1 rounded-full bg-primary-orange animate-pulse"></span>
+                            Promoted
+                        </div>
+</div>
+<div class="px-1">
+<h3 class="font-bold text-sm tracking-tight truncate text-white/90">Midnight Jazz</h3>
+<p class="text-[11px] font-medium text-white/40 tracking-wide truncate">@blue_notes</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="features-section py-24 px-6 overflow-hidden">
+<div class="relative z-10 max-w-4xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="text-3xl font-extrabold tracking-tighter uppercase italic leading-[1.1] mb-4 text-white">Everything you need<br/>to make music your way</h2>
+<div class="w-12 h-1 bg-gradient-to-r from-primary-orange to-suno-pink mx-auto rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 gap-6">
+<div class="group relative bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl p-6 flex items-start gap-5 transition-all hover:bg-white/[0.05]">
+<div class="bg-suno-pink/20 p-3 rounded-2xl">
+<span class="material-symbols-outlined text-suno-pink neon-icon-glow text-2xl font-light">edit_note</span>
+</div>
+<div>
+<h3 class="text-lg font-bold tracking-tight mb-1 text-white">Custom Lyrics</h3>
+<p class="text-white/50 text-xs leading-relaxed">Shape your story word-for-word or let our AI enhance your ideas with poetic precision.</p>
+</div>
+</div>
+<div class="group relative bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-3xl p-6 flex items-start gap-5 transition-all hover:bg-white/[0.05]">
+<div class="bg-primary-orange/20 p-3 rounded-2xl">
+<span class="material-symbols-outlined text-primary-orange neon-icon-glow text-2xl font-light">tune</span>
+</div>
+<div>
+<h3 class="text-lg font-bold tracking-tight mb-1 text-white">Style Control</h3>
+<p class="text-white/50 text-xs leading-relaxed">From lo-fi hip hop to cinematic orchestral, define your sound with granular style prompts.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="testimonials-section py-24 overflow-hidden relative">
+<div class="relative z-10">
+<div class="px-6 mb-12">
+<h2 class="text-3xl font-extrabold tracking-tighter uppercase italic leading-none text-white">Hear from our creators</h2>
+<div class="mt-4 w-12 h-1 bg-gradient-to-r from-suno-pink to-indigo-500 rounded-full"></div>
+</div>
+<div class="mask-fade overflow-x-auto no-scrollbar flex gap-6 px-6 pb-8">
+<div class="flex-none w-[280px] relative">
+<div class="testimonial-glow top-0 left-0"></div>
+<div class="testimonial-card rounded-3xl p-6 flex flex-col justify-between h-full">
+<p class="text-white/80 text-sm italic leading-relaxed mb-6 font-medium">"I never thought I could produce a full metal track in minutes. Suno is a complete game changer for my workflow."</p>
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-gradient-to-tr from-primary-orange to-suno-pink p-[1px]">
+<img alt="Avatar" class="w-full h-full rounded-full bg-zinc-900 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9K2PSSQaI-rJL92jJaM3tAQ1T2NtZ5yVrUT2-gXZgXoq2dnSkXQwtcs5P7XoFFZ5pJY7r4uDh3AVwHknMgulK0Gf8JNEVE1ez_Htp_2GbJH_LBgeYgs0xyLZ9aevK_Bbb5HOQ-oSSjWOPOmQn943f6E2S0OKOrW1sC64pIgjVBM8YRbbNsuJ7qdzsIjdHHcPVBCXFcTBEB9x1XHa8RoMSLQbp2y0TJm8kbqnp0NkLnvSHJC6ObUCjAIQwuhcI4Ox_PdA3PuW3Hhrl"/>
+</div>
+<div>
+<p class="text-xs font-bold text-white tracking-tight">@RiffMaster</p>
+<p class="text-[10px] text-white/40 uppercase font-bold tracking-widest">Producer</p>
+</div>
+</div>
+</div>
+</div>
+<div class="flex-none w-[280px] relative">
+<div class="testimonial-glow bottom-0 right-0" style="background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);"></div>
+<div class="testimonial-card rounded-3xl p-6 flex flex-col justify-between h-full">
+<p class="text-white/80 text-sm italic leading-relaxed mb-6 font-medium">"The lyrics engine is terrifyingly good. It captured the exact mood of my poem and turned it into a haunting ballad."</p>
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 p-[1px]">
+<img alt="Avatar" class="w-full h-full rounded-full bg-zinc-900 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA37vBktAruczZiLMKAPG16Z15rIrIl5cW0NLTI5qeMApP3JcJ79k1_qMaBlAtg_2xRxUEfx4ziJ4GozmSJBij-h0rZrm3skCo-psZwH1MH-Mw0wZ4zFr8iIeL_3ynl2xAezIszWwen5l6VPT6xe7xsPMyYGM5OB15RpLK0s4PaqkSiPWKbwEq1vjtbqhC9VymFWJ98Ot85K5c8fMbWNo-gMozGKrmwSl6JPaBLd3FPcTTe1-mmOcl8qvJ23b6jAye_wFtSUpmHswIs"/>
+</div>
+<div>
+<p class="text-xs font-bold text-white tracking-tight">@Lyricist_Luna</p>
+<p class="text-[10px] text-white/40 uppercase font-bold tracking-widest">Songwriter</p>
+</div>
+</div>
+</div>
+</div>
+<div class="flex-none w-[280px] relative">
+<div class="testimonial-glow top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="background: radial-gradient(circle, rgba(244, 63, 94, 0.15) 0%, transparent 70%);"></div>
+<div class="testimonial-card rounded-3xl p-6 flex flex-col justify-between h-full">
+<p class="text-white/80 text-sm italic leading-relaxed mb-6 font-medium">"From lo-fi beats to full cinematic scores, the range is incredible. My content creation has never sounded this professional."</p>
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-gradient-to-tr from-yellow-400 to-primary-orange p-[1px]">
+<img alt="Avatar" class="w-full h-full rounded-full bg-zinc-900 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEmUE5XL3ZoJiBu1PGrU5ZIm4u0vERj5qL-KTb6j0KApexQhHkfP0TQgTB66wD9LiC7esNuDR-Hcc2HuA6lhJ9emB20KAONXej55_FoShvnLTzxpl6vgRh0HE5yD1NBCqg2ZB_PWN2zeURrLtWyRr56MKWxfxoALgA9qyaMKAueT4Lqtp-dvjZDo9NUGw0xa2GKXcPzqP4zBfYY0z6d4jq_bQIMHiQmXScpTp6-ckoUFNuMFyg4UPqeKOgwyxOatsMZlAq-5LvBzhl"/>
+</div>
+<div>
+<p class="text-xs font-bold text-white tracking-tight">@VibeCreator</p>
+<p class="text-[10px] text-white/40 uppercase font-bold tracking-widest">YouTuber</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="pricing-section py-20 px-6 overflow-hidden">
+<div class="relative z-10 max-w-4xl mx-auto">
+<div class="text-center mb-12">
+<h2 class="text-3xl font-extrabold tracking-tighter uppercase italic leading-none mb-4 text-white">Pricing</h2>
+<p class="text-white/40 text-sm font-medium">Choose the plan that fuels your creativity</p>
+</div>
+<div class="flex flex-col gap-8">
+<div class="highlight-border relative bg-black/40 backdrop-blur-2xl rounded-3xl p-8 flex flex-col shadow-[0_0_50px_rgba(250,110,74,0.15)]">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-primary-orange to-suno-pink rounded-full z-20">
+<span class="text-[10px] font-black uppercase tracking-widest text-white whitespace-nowrap">Most Popular</span>
+</div>
+<div class="mb-6">
+<h3 class="text-xl font-bold mb-1 text-white">Pro</h3>
+<div class="flex items-baseline gap-1">
+<span class="text-4xl font-black italic tracking-tighter text-white">$12</span>
+<span class="text-white/40 text-xs font-bold uppercase">/ month</span>
+</div>
+</div>
+<button class="w-full py-4 rounded-full bg-gradient-to-r from-primary-orange to-suno-pink text-white text-sm font-bold uppercase tracking-widest shadow-lg shadow-primary-orange/20 active:scale-95 transition-transform">Subscribe</button>
+</div>
+</div>
+</div>
+</section>
+<section class="app-download-section py-24 px-6 overflow-hidden mt-10">
+<div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+<div class="text-center mb-12">
+<h2 class="text-4xl font-black tracking-tight mb-4 text-white">Take Suno with you</h2>
+<p class="text-white/50 text-sm font-medium max-w-xs mx-auto">Create and discover music on the go with our premium mobile experience.</p>
+</div>
+<div class="relative w-full mb-16 flex justify-center">
+<div class="relative z-10 w-64 h-[420px] bg-zinc-900 rounded-[3rem] border-[8px] border-zinc-800 shadow-2xl overflow-hidden transform -rotate-3 hover:rotate-0 transition-transform duration-500">
+<div class="absolute inset-0 bg-gradient-to-b from-indigo-900/50 to-black"></div>
+<div class="absolute top-0 inset-x-0 h-6 bg-black flex justify-center items-end pb-1">
+<div class="w-20 h-4 bg-zinc-800 rounded-full"></div>
+</div>
+<div class="p-6 pt-12 space-y-4">
+<div class="w-12 h-1 bg-white/20 rounded-full"></div>
+<div class="space-y-2">
+<div class="w-full h-32 bg-white/5 rounded-2xl flex items-center justify-center">
+<span class="material-symbols-outlined text-white/20 text-4xl">music_note</span>
+</div>
+<div class="w-3/4 h-4 bg-white/10 rounded-full"></div>
+<div class="w-1/2 h-3 bg-white/5 rounded-full"></div>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-4">
+<div class="h-16 bg-white/5 rounded-xl"></div>
+<div class="h-16 bg-white/5 rounded-xl"></div>
+</div>
+</div>
+</div>
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-primary-orange/20 blur-[100px] rounded-full pointer-events-none"></div>
+<div class="absolute -bottom-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-suno-pink/20 blur-[100px] rounded-full pointer-events-none"></div>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
+<button class="glassmorphic-btn flex items-center justify-center gap-3 px-6 py-4 rounded-2xl hover:bg-white/10 transition-all active:scale-95 group border-white/20">
+<svg class="w-6 h-6 fill-white" viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"></path></svg>
+<div class="text-left">
+<p class="text-[10px] uppercase font-bold tracking-widest text-white/50">Download on</p>
+<p class="text-sm font-bold text-white">iPhone</p>
+</div>
+</button>
+<button class="glassmorphic-btn flex items-center justify-center gap-3 px-6 py-4 rounded-2xl hover:bg-white/10 transition-all active:scale-95 group border-white/20">
+<svg class="w-6 h-6 fill-white" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"></path></svg>
+<div class="text-left">
+<p class="text-[10px] uppercase font-bold tracking-widest text-white/50">Get it on</p>
+<p class="text-sm font-bold text-white">Android</p>
+</div>
+</button>
+</div>
+</div>
+</section>
+<footer class="main-footer pt-16 pb-32 px-6">
+<div class="w-full h-px bg-white/5 mb-12"></div>
+<div class="max-w-4xl mx-auto z-10 relative">
+<div class="grid grid-cols-2 gap-12 mb-16">
+<div>
+<h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Brand</h4>
+<ul class="space-y-4">
+<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">About Us</a></li>
+<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Careers</a></li>
+<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Press</a></li>
+<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Community</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Support</h4>
+<ul class="space-y-4">
+<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Help Center</a></li>
+<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Safety</a></li>
+<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Terms of Service</a></li>
+<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+</div>
+<div class="flex flex-col items-center gap-8 border-t border-white/5 pt-12">
+<div class="flex gap-6">
+<a class="text-white/30 hover:text-white transition-colors" href="#">
+<svg class="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path></svg>
+</a>
+<a class="text-white/30 hover:text-white transition-colors" href="#">
+<svg class="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.441 1.441 1.441c.795 0 1.439-.645 1.439-1.441s-.644-1.44-1.439-1.44z"></path></svg>
+</a>
+<a class="text-white/30 hover:text-white transition-colors" href="#">
+<svg class="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path></svg>
+</a>
+</div>
+<p class="text-white/20 text-[10px] font-bold tracking-widest uppercase">© 2024 Suno Inc. All rights reserved.</p>
+</div>
+</div>
+</footer>
+<div class="fixed bottom-24 left-4 right-4 z-50">
+<div class="bg-black/60 backdrop-blur-xl p-3 rounded-2xl flex items-center gap-3 border border-white/10 shadow-2xl">
+<div class="size-12 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-white/20">music_note</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center gap-2">
+<p class="font-bold text-sm truncate text-white">Neon Rain</p>
+<span class="text-[9px] bg-white/10 text-white px-1.5 py-0.5 rounded font-bold uppercase">Pro</span>
+</div>
+<div class="w-full bg-white/5 h-1 mt-2 rounded-full overflow-hidden">
+<div class="bg-primary-orange h-full w-1/3"></div>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-2 text-white/60 hover:text-white">
+<span class="material-symbols-outlined">skip_previous</span>
+</button>
+<button class="size-10 bg-white text-black rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined font-fill text-xl">play_arrow</span>
+</button>
+<button class="p-2 text-white/60 hover:text-white">
+<span class="material-symbols-outlined">skip_next</span>
+</button>
+</div>
+</div>
+</div>
+<nav class="fixed bottom-0 inset-x-0 h-20 bg-black/80 backdrop-blur-md border-t border-white/10 flex items-center justify-around px-6 z-50">
+<button class="flex flex-col items-center gap-1 text-white">
+<span class="material-symbols-outlined font-fill">home</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-white/40 hover:text-white transition-colors">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Feed</span>
+</button>
+<div class="-mt-12 size-16 bg-gradient-to-tr from-primary-orange to-suno-pink rounded-full flex items-center justify-center text-white shadow-[0_0_30px_rgba(250,110,74,0.4)] border-4 border-black active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined text-3xl font-bold">add</span>
+</div>
+<button class="flex flex-col items-center gap-1 text-white/40 hover:text-white transition-colors">
+<span class="material-symbols-outlined">library_music</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Library</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-white/40 hover:text-white transition-colors">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Profile</span>
+</button>
+</nav>
+
+</body></html>

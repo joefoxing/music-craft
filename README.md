@@ -10,7 +10,6 @@ A Python web application for generating music covers using the Kie API. This app
 - **Complete Feature Set**: Audio upload, dual generation modes, multiple AI models
 - **Enhanced Callback System**: Comprehensive callback processing and history tracking
 - **Production Ready**: Clean codebase with proper error handling and documentation
-- **Ngrok Integration**: Built-in public tunnel support for external API callbacks
 - AI assistants: see docs/AI_RULES.md
 ## Features
 
@@ -86,6 +85,46 @@ A Python web application for generating music covers using the Kie API. This app
    - **Step 1**: Upload an audio file
    - **Step 2**: Configure generation settings
    - **Step 3**: Generate the music cover
+
+## Local Docker Development
+
+Run the application locally using Docker Compose to mirror the staging environment.
+
+### Prerequisites
+- Docker and Docker Compose installed.
+
+### Quick Start
+
+1.  **Start the stack**:
+    ```bash
+    make up
+    # or
+    docker compose up -d
+    ```
+    This builds the `app` image and starts `db` (Postgres).
+
+2.  **Access the application**:
+    - Web Interface: [http://localhost:3000](http://localhost:3000)
+    - The app runs in development mode (`FLASK_DEBUG=1`) with hot-reloading enabled (code mounted).
+
+3.  **Stop**:
+    ```bash
+    make down
+    ```
+
+4.  **View Logs**:
+    ```bash
+    make logs
+    ```
+
+5.  **Reset (Clean Start)**:
+    ```bash
+    make reset
+    ```
+
+### Architecture
+- **app**: Flask Monolith (mirrors `Dockerfile.api`). Exposes port 3000 (mapped from 8000).
+- **db**: PostgreSQL 15. Persists data to `postgres_data` volume.
 
 ## API Endpoints
 
@@ -194,7 +233,6 @@ The application supports OAuth authentication via Google and GitHub. To enable O
   - Create a web application credential
   - Add authorized redirect URI: `https://your-domain.com/auth/oauth/callback/google`
     - For local development: `http://localhost:5000/auth/oauth/callback/google`
-    - For Ngrok: `https://your-ngrok-url.ngrok-free.app/auth/oauth/callback/google`
   - Copy the Client ID and Client Secret to your `.env` file:
     ```
     GOOGLE_OAUTH_CLIENT_ID=your-google-client-id-here
@@ -205,10 +243,9 @@ The application supports OAuth authentication via Google and GitHub. To enable O
   - Go to [GitHub Developer Settings](https://github.com/settings/developers)
   - Click "New OAuth App"
   - Application name: "Music Cover Generator"
-  - Homepage URL: Your application URL (e.g., `http://localhost:5000` or Ngrok URL)
+  - Homepage URL: Your application URL (e.g., `http://localhost:5000`)
   - Authorization callback URL: `https://your-domain.com/auth/oauth/callback/github`
     - For local development: `http://localhost:5000/auth/oauth/callback/github`
-    - For Ngrok: `https://your-ngrok-url.ngrok-free.app/auth/oauth/callback/github`
   - Register application
   - Copy the Client ID and Client Secret to your `.env` file:
     ```
@@ -221,24 +258,6 @@ The application supports OAuth authentication via Google and GitHub. To enable O
   - Restart the application
 
 **Note**: OAuth authentication creates user accounts automatically if they don't exist. Email verification is automatically marked as verified for OAuth users.
-
-### Ngrok Integration
-The application includes built-in Ngrok support for creating public tunnels to your local server. This is essential for receiving callbacks from external APIs like Kie.
-
-**Ngrok Environment Variables:**
-- `NGROK_ENABLED`: Enable Ngrok tunnel (default: false)
-- `NGROK_AUTH_TOKEN`: Optional Ngrok auth token for persistent tunnels
-- `NGROK_REGION`: Ngrok server region (us, eu, ap, au, sa, jp, in) (default: us)
-- `NGROK_URL`: Manually set Ngrok URL if not using auto-tunnel
-
-**Usage:**
-1. Set `NGROK_ENABLED=true` in your `.env` file
-2. (Optional) Get a free auth token from [ngrok.com](https://ngrok.com) and set `NGROK_AUTH_TOKEN`
-3. Start the application: `python run.py`
-4. The application will automatically create a public Ngrok tunnel
-5. Use the provided public URL for callbacks and external access
-
-**Note:** Without an auth token, Ngrok tunnels are temporary and change each time you restart the application.
 
 ### Model Limitations
 Each model has different character limits:
@@ -261,7 +280,6 @@ Lyric_Cover/
 │   ├── __init__.py          # Flask application factory
 │   ├── kie_client.py        # Kie API client
 │   ├── routes.py            # Application routes
-│   ├── ngrok_utils.py       # Ngrok tunnel management
 │   ├── core/                # Core utilities and API client
 │   ├── services/            # Business logic services
 │   │   ├── template_service.py    # Template management service
@@ -321,8 +339,7 @@ black .
 2. **File Retention**: Generated files are deleted from Kie servers after 15 days
 3. **API Rate Limits**: Subject to Kie API rate limits
 4. **File Size**:
-   - Maximum upload size is 40MB when using Ngrok (free tier limit)
-   - Can be increased to 100MB when running locally without Ngrok
+   - File size limit is 100MB (configurable via MAX_CONTENT_LENGTH)
    - Configure via `MAX_CONTENT_LENGTH` in `.env` file
 
 ## Troubleshooting
@@ -334,34 +351,23 @@ black .
    - Check if the API key has sufficient credits
 
 2. **File upload fails with 413 error**:
-   - **When using Ngrok**: Ensure file size is under 40MB (Ngrok free tier limit)
-   - **When running locally**: File size limit is 100MB (configurable via MAX_CONTENT_LENGTH)
+   - File size limit is 100MB (configurable via MAX_CONTENT_LENGTH)
    - Check file format (MP3, WAV, OGG, M4A, FLAC)
    - Verify uploads directory has write permissions
 
-3. **"Can't fetch the uploaded audio" error**:
-   - Usually caused by file size exceeding Ngrok limits
-   - Reduce file size or compress audio
-   - Alternatively, run locally without Ngrok (set NGROK_ENABLED=false)
-
-4. **Generation fails**:
+3. **Generation fails**:
    - Check character limits for your selected model
    - Ensure all required fields are filled
    - Verify internet connectivity to Kie API
 
-5. **Task status returns 404 error**:
+4. **Task status returns 404 error**:
    - The Kie API may not expose a public task status endpoint
    - The application will automatically switch to callback-only mode
    - Status updates will be received via the callback endpoint
    - Check that your callback URL is accessible (http://localhost:5000/callback when running locally)
    - The web interface will show "Waiting for Callback" when this occurs
 
-6. **Ngrok tunnel creation fails**:
-   - "Endpoint already online" error: Another Ngrok process is running
-   - Solution: Stop existing Ngrok processes or set NGROK_ENABLED=false
-   - The application will try to reuse existing tunnels when possible
-
-7. **Email verification not sent**:
+5. **Email verification not sent**:
    - **Development Mode**: Check the console for verification links (printed when email is not configured)
    - **Gmail Authentication Error**: Ensure you're using an app-specific password, not your regular Gmail password
    - **SMTP Configuration**: Verify MAIL_USERNAME and MAIL_PASSWORD in .env file
@@ -394,11 +400,4 @@ This project is for educational and demonstration purposes.
 
 For issues with the Kie API, contact [Kie AI support](mailto:support@kie.ai).
 
-For application issues, check the [GitHub issues](https://github.com/your-repo/issues) or create a new issue.T e s t   d e p l o y m e n t 
- 
- #   A u t o m a t e d   D e p l o y m e n t   T e s t 
- 
- #   T e s t   d e p l o y   u s e r   m i g r a t i o n  
-  
-  
- 
+For application issues, check the [GitHub issues](https://github.com/your-repo/issues) or create a new issue.

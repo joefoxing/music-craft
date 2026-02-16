@@ -1,0 +1,17 @@
+/* Card Sizing Overrides for Promoted and Features sections */
+.promoted-section .unified-card,
+.features-section .unified-card {
+    width: 376px;
+    height: 460px;
+    min-width: 376px; /* Ensure fixed width */
+    flex: 0 0 auto;   /* Prevent shrinking in flex containers */
+}
+
+/* Grid Layout for Sections */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 376px);
+    gap: 24px;
+    justify-content: center;
+    padding: 20px 0;
+}

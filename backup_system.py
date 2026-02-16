@@ -47,7 +47,6 @@ def should_exclude(path: Path, root: Path) -> bool:
     
     # Exclude specific files
     exclude_files = [
-        'cloudflared.log', 'cloudflared.pid',
         '.clinerules',  # Optional: include if you want to backup rules
     ]
     if os.path.basename(path) in exclude_files:
@@ -56,10 +55,9 @@ def should_exclude(path: Path, root: Path) -> bool:
     # Exclude development/test scripts
     dev_scripts = [
         'debug_', 'test_', 'diagnose_', 'fix_config', 'check_config',
-        'start_tunnel', 'download_cloudflared', 'add_templates',
+        'add_templates',
         'generate_templates', 'merge_templates', 'create_new_templates',
-        'final_merge', 'final_add', 'add_missing', 'add_all_templates',
-        'run_new_connector'
+        'final_merge', 'final_add', 'add_missing', 'add_all_templates'
     ]
     filename = path.name.lower()
     if any(script in filename for script in dev_scripts):

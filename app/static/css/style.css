@@ -2090,3 +2090,68 @@ code {
     }
 }
 
+/* ============================================
+   Sidebar - Your Playlists Component Styles
+   ============================================ */
+
+.line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#playlists-list a,
+#playlists-list-compact a {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.75rem;
+    color: #475569;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dark #playlists-list a,
+.dark #playlists-list-compact a {
+    color: #cbd5e1;
+}
+
+#playlists-list a:hover,
+#playlists-list-compact a:hover {
+    background-color: #f1f5f9;
+    color: #4f46e5;
+}
+
+.dark #playlists-list a:hover,
+.dark #playlists-list-compact a:hover {
+    background-color: #1f2937;
+    color: #a5b4fc;
+}
+
+#playlists-list-compact a {
+    justify-content: center;
+    padding: 0.75rem;
+}
+
+#playlists-list a:focus-visible,
+#playlists-list-compact a:focus-visible {
+    outline: 2px solid #4f46e5;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #your-playlists-container,
+    #playlists-list a,
+    #playlists-list-compact a {
+        transition: none;
+    }
+}

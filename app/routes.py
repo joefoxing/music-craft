@@ -12,7 +12,7 @@ from app.config import Config
 main_bp = Blueprint('main', __name__)
 
 def get_public_base_url():
-    """Get public base URL, preferring localtunnel if configured, then ngrok."""
+    """Get public base URL."""
     return Config.get_public_base_url(request)
 
 def is_safe_url(url):
@@ -99,7 +99,7 @@ def upload_file():
     
     # Create URL for the uploaded file
     # Use our dedicated audio serving endpoint for better control
-    # Use public base URL (ngrok if enabled) for external API access
+    # Use public base URL for external API access
     public_base_url = get_public_base_url()
     file_url = f"{public_base_url}/serve-audio/{unique_filename}"
     
@@ -110,6 +110,67 @@ def upload_file():
         'file_url': file_url,
         'file_path': file_path
     })
+
+@main_bp.route('/api/generate-music', methods=['POST'])
+def generate_music():
+    """Generate music without login required - unauthenticated generation."""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'error': 'No JSON data provided'}), 400
+        
+        # Required parameters
+        prompt = data.get('prompt')
+        if not prompt:
+            return jsonify({'error': 'prompt is required'}), 400
+        
+        # Optional parameters with defaults
+        model = data.get('model', 'V5')
+        instrumental = data.get('instrumental', False)
+        custom_mode = data.get('custom_mode', False)
+        style = data.get('style')
+        title = data.get('title')
+        
+        # Validate prompt length
+        if len(prompt) > 5000:
+            return jsonify({'error': 'Prompt is too long (max 5000 characters)'}), 400
+        
+        # Get callback URL
+        public_base_url = get_public_base_url()
+        call_back_url = f"{public_base_url}/callback"
+        
+        # Initialize API client
+        client = KieAPIClient()
+        
+        # Validate parameters
+        is_valid, error_msg = client.validate_parameters(
+            custom_mode=custom_mode,
+            instrumental=instrumental,
+            prompt=prompt,
+            style=style,
+            title=title,
+            model=model
+        )
+        
+        if not is_valid:
+            return jsonify({'error': error_msg}), 400
+        
+        # Call Kie API directly for music generation
+        response = client.generate_music_direct(
+            custom_mode=custom_mode,
+            instrumental=instrumental,
+            call_back_url=call_back_url,
+            model=model,
+            prompt=prompt,
+            style=style,
+            title=title
+        )
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        current_app.logger.error(f"Error generating music: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @main_bp.route('/api/generate-cover', methods=['POST'])
 def generate_cover():
@@ -776,6 +837,64 @@ def download_audio():
     except Exception as e:
         current_app.logger.error(f"Error downloading audio: {e}")
         return jsonify({'error': str(e)}), 500
+
+# Promoted Songs API
+@main_bp.route('/api/songs/promoted', methods=['GET'])
+def get_promoted_songs():
+    """Get promoted creator songs from history."""
+    try:
+        # Load history
+        history = load_history()
+        
+        # Filter for successful song generations that have tracks
+        songs = []
+        for entry in history:
+            # Check if it's a completed generation
+            # We want successful entries that are NOT video callbacks
+            if entry.get('status') == 'success' and not entry.get('is_video_callback'):
+                # Get tracks from processed_data
+                processed_data = entry.get('processed_data', {})
+                tracks = processed_data.get('tracks', [])
+                
+                # If we still don't have tracks, skip
+                if not tracks:
+                    continue
+
+                for track in tracks:
+                    # Construct song object compatible with PromotedSongs/CardFactory
+                    # We need to ensure we have at least a title and audio URL
+                    title = track.get('title')
+                    audio_url = track.get('audio_urls', {}).get('generated')
+                    
+                    if not title or not audio_url:
+                        continue
+                        
+                    song = {
+                        'id': track.get('id'),
+                        'title': title,
+                        'artist': 'Creator', # Default to Creator as we don't track user names yet
+                        'duration': track.get('duration'),
+                        'cover_url': track.get('image_urls', {}).get('generated'),
+                        'audio_url': audio_url,
+                        'tags': track.get('tags'),
+                        'model_name': track.get('model_name'),
+                        'created_at': track.get('create_time')
+                    }
+                    songs.append(song)
+        
+        # Limit to 6 songs for the section
+        songs = songs[:6]
+        
+        return jsonify({
+            'success': True,
+            'data': {
+                'songs': songs
+            }
+        })
+        
+    except Exception as e:
+        current_app.logger.error(f"Error getting promoted songs: {e}")
+        return jsonify({'success': False, 'msg': str(e)}), 500
 
 # History API routes
 @main_bp.route('/api/history', methods=['GET'])

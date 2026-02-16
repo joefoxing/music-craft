@@ -1,0 +1,225 @@
+--- a/app/services/lyrics_extraction_service.py
++++ b/app/services/lyrics_extraction_service.py
+@@ -457,9 +457,15 @@ class LyricsExtractionServiceLegacy:
+         try:
+             model = whisper.load_model(model_name)
+             result = model.transcribe(audio_path, **transcribe_options)
+             text = self._extract_text_from_whisper_result(result)
++            # DEBUG: Log raw Whisper output
++            current_app.logger.info(f'[DEBUG] Raw Whisper output: len={len(text) if text else 0}, repr={repr(text[:120] if text else "")}')
+             cleaned = self._postprocess_lyrics(text)
+-            return self._apply_language_post_corrections(cleaned, language)
++            # DEBUG: Log after postprocessing
++            current_app.logger.info(f'[DEBUG] After postprocess: len={len(cleaned) if cleaned else 0}, repr={repr(cleaned[:120] if cleaned else "")}')
++            final = self._apply_language_post_corrections(cleaned, language)
++            # DEBUG: Log final output
++            current_app.logger.info(f'[DEBUG] Final lyrics: len={len(final) if final else 0}, repr={repr(final[:120] if final else "")}')
++            return final
+         except Exception as exc:
+             current_app.logger.info(f'Whisper transcription failed: {exc}')
+             return None
+@@ -674,12 +680,16 @@ class LyricsExtractionServiceLegacy:
+ 
+     @staticmethod
+     def _tokenize_words(text: str):
+-        return re.findall(r"[a-zA-Z']+", text.lower())
++        # Support Vietnamese and other Unicode characters, not just English a-z
++        # Match sequences of letters (including Unicode) and apostrophes
++        return re.findall(r"[\w']+", text.lower(), re.UNICODE)
+ 
+     @staticmethod
+     def _normalize_for_repeat_check(text: str) -> str:
+-        return re.sub(r"\s+", ' ', re.sub(r"[^a-zA-Z0-9' ]", '', text.lower())).strip()
+-    
++        # Preserve Unicode characters (Vietnamese, etc.), only remove punctuation except apostrophes
++        # Keep letters (Unicode), digits, apostrophes, and spaces
++        cleaned = re.sub(r"[^\w\s']", '', text.lower(), flags=re.UNICODE)
++        return re.sub(r"\s+", ' ', cleaned).strip()
++
+     def _download_audio_file(self, audio_url: str, temp_dir: str) -> str:
+         """Download remote audio URL to a temporary local file."""
+
+--- a/app/lyrics_service/pipeline/transcribe.py
++++ b/app/lyrics_service/pipeline/transcribe.py
+@@ -133,6 +133,9 @@ class LyricsTranscriber:
+                 full_text_parts.append(segment.text.strip())
+             
+             full_text = " ".join(full_text_parts)
++            
++            # DEBUG: Log raw Whisper output
++            logger.info(f"[DEBUG] Raw Whisper text: len={len(full_text)}, repr={repr(full_text[:120])}")
+             
+             result = {
+                 "text": full_text,
+
+--- a/app/lyrics_service/pipeline/postprocess.py
++++ b/app/lyrics_service/pipeline/postprocess.py
+@@ -245,14 +245,22 @@ def postprocess_lyrics(
+     elif raw_text:
+         # Fallback: clean raw text
+         lyrics = clean_transcription_text(raw_text)
++    
++    # DEBUG: Log after formatting
++    logger.info(f"[DEBUG] After formatting: len={len(lyrics)}, repr={repr(lyrics[:120])}")
+     
+     # Deduplicate if requested
+     if deduplicate and lyrics:
+         lyrics = deduplicate_repetitive_lines(lyrics)
++    
++    # DEBUG: Log after deduplication
++    logger.info(f"[DEBUG] After deduplication: len={len(lyrics)}, repr={repr(lyrics[:120])}")
+     
+     # Detect language
+     language_detected = detect_language(lyrics)
++    
++    # DEBUG: Log final output
++    logger.info(f"[DEBUG] Final lyrics: language={language_detected}, len={len(lyrics)}, repr={repr(lyrics[:120])}")
+     
+     return {
+         'lyrics': lyrics,
+
+--- /dev/null
++++ b/tests/test_vietnamese_lyrics.py
+@@ -0,0 +1,150 @@
++"""
++Unit tests for Vietnamese lyrics extraction: verify diacritics are preserved.
++"""
++import re
++import sys
++from pathlib import Path
++
++# Add project root to path
++sys.path.insert(0, str(Path(__file__).parent.parent))
++
++# Test the fixed functions that were stripping diacritics
++
++
++def test_normalize_for_repeat_check_preserves_vietnamese():
++    """Test that _normalize_for_repeat_check preserves Vietnamese diacritics."""
++    # Sample Vietnamese text with diacritics
++    vietnamese_text = "Tôi yêu em, con đường dài, ánh mắt người"
++    
++    # Simulate the fixed _normalize_for_repeat_check function
++    cleaned = re.sub(r"[^\w\s']", '', vietnamese_text.lower(), flags=re.UNICODE)
++    normalized = re.sub(r"\s+", ' ', cleaned).strip()
++    
++    # Assert Vietnamese characters are preserved
++    assert 'ô' in normalized, f"Lost ô: {repr(normalized)}"
++    assert 'ê' in normalized, f"Lost ê: {repr(normalized)}"
++    assert 'ư' in normalized, f"Lost ư: {repr(normalized)}"
++    assert 'đ' in normalized, f"Lost đ: {repr(normalized)}"
++    assert 'á' in normalized, f"Lost á: {repr(normalized)}"
++    assert 'ắ' in normalized or 'ă' in normalized or 'ạ' in normalized, "Lost Vietnamese diacritic marks"
++    
++    print(f"✓ _normalize_for_repeat_check preserves Vietnamese: {repr(normalized)}")
++
++
++def test_tokenize_words_recognizes_vietnamese():
++    """Test that _tokenize_words recognizes Vietnamese words."""
++    vietnamese_text = "Tôi yêu Việt Nam, con đường dài"
++    
++    # Simulate the fixed _tokenize_words function
++    words = re.findall(r"[\w']+", vietnamese_text.lower(), re.UNICODE)
++    
++    # Should extract all words including Vietnamese characters
++    assert len(words) >= 5, f"Expected at least 5 words, got {len(words)}: {words}"
++    
++    # Check that Vietnamese words are not split into characters
++    assert any(len(w) > 2 for w in words), f"Words seem too short (char-split?): {words}"
++    
++    # Verify specific Vietnamese words are intact
++    text_lower = vietnamese_text.lower()
++    for word_original in ['tôi', 'việt', 'đường']:
++        assert any(word_original in w for w in words), f"Word '{word_original}' not found in tokens: {words}"
++    
++    print(f"✓ _tokenize_words recognizes Vietnamese: {words}")
++
++
++def test_postprocess_pipeline_preserves_diacritics():
++    """Test full postprocessing pipeline with Vietnamese sample."""
++    from app.lyrics_service.pipeline.postprocess import postprocess_lyrics
++    
++    # Sample Vietnamese lyrics with diacritics
++    vietnamese_segments = [
++        {"start": 0.0, "end": 3.0, "text": "Tôi yêu em nhiều lắm"},
++        {"start": 3.5, "end": 6.0, "text": "Con đường dài về nhà"},
++        {"start": 6.5, "end": 9.0, "text": "Ánh mắt người xa xôi"}
++    ]
++    
++    result = postprocess_lyrics(
++        segments=vietnamese_segments,
++        deduplicate=True
++    )
++    
++    lyrics = result['lyrics']
++    
++    # Verify diacritics are preserved
++    assert 'ô' in lyrics, f"Lost ô after postprocessing: {repr(lyrics)}"
++    assert 'ê' in lyrics, f"Lost ê after postprocessing: {repr(lyrics)}"
++    assert 'đ' in lyrics, f"Lost đ after postprocessing: {repr(lyrics)}"
++    assert 'á' in lyrics or 'ắ' in lyrics, f"Lost tone marks after postprocessing: {repr(lyrics)}"
++    
++    # Verify words are not character-split with spaces
++    assert 'T ô i' not in lyrics, f"Text is character-split: {repr(lyrics)}"
++    assert 'y ê u' not in lyrics, f"Text is character-split: {repr(lyrics)}"
++    
++    # Verify reasonable word boundaries (words should have 2+ chars typically)
++    words = lyrics.split()
++    long_words = [w for w in words if len(w) >= 2]
++    assert len(long_words) >= len(words) * 0.7, f"Too many single-char 'words': {words}"
++    
++    print(f"✓ Postprocessing preserves diacritics: {repr(lyrics[:80])}")
++    print(f"  Language detected: {result['language_detected']}")
++
++
++def test_clean_transcription_preserves_vietnamese():
++    """Test clean_transcription_text preserves Vietnamese."""
++    from app.lyrics_service.pipeline.postprocess import clean_transcription_text
++    
++    vietnamese_text = "Tôi yêu em (music) ánh đèn [applause] người xa"
++    cleaned = clean_transcription_text(vietnamese_text)
++    
++    # Noise tags should be removed
++    assert '(music)' not in cleaned
++    assert '[applause]' not in cleaned
++    
++    # Vietnamese characters should remain
++    assert 'ô' in cleaned, f"Lost ô: {repr(cleaned)}"
++    assert 'ê' in cleaned, f"Lost ê: {repr(cleaned)}"
++    assert 'đ' in cleaned, f"Lost đ: {repr(cleaned)}"
++    assert 'á' in cleaned, f"Lost á: {repr(cleaned)}"
++    
++    print(f"✓ clean_transcription_text preserves Vietnamese: {repr(cleaned)}")
++
++
++def test_detect_language_recognizes_vietnamese():
++    """Test language detection for Vietnamese."""
++    from app.lyrics_service.pipeline.postprocess import detect_language
++    
++    vietnamese_text = "Tôi yêu em nhiều lắm, con đường dài về nhà"
++    detected = detect_language(vietnamese_text)
++    
++    assert detected in ['vi', 'mixed'], f"Expected 'vi' or 'mixed', got '{detected}'"
++    
++    print(f"✓ Language detection recognizes Vietnamese: {detected}")
++
++
++if __name__ == '__main__':
++    print("\n=== Testing Vietnamese Lyrics Extraction ===\n")
++    
++    try:
++        test_normalize_for_repeat_check_preserves_vietnamese()
++        test_tokenize_words_recognizes_vietnamese()
++        test_clean_transcription_preserves_vietnamese()
++        test_detect_language_recognizes_vietnamese()
++        test_postprocess_pipeline_preserves_diacritics()
++        
++        print("\n✅ All tests passed! Vietnamese diacritics are preserved.\n")
++    except AssertionError as e:
++        print(f"\n❌ Test failed: {e}\n")
++        sys.exit(1)
++    except Exception as e:
++        print(f"\n❌ Unexpected error: {e}\n")
++        import traceback
++        traceback.print_exc()
++        sys.exit(1)

@@ -1,0 +1,496 @@
+--- a/app/lyrics_service/config.py
++++ b/app/lyrics_service/config.py
+@@ -39,6 +39,12 @@ PREPROCESS_AUDIO = os.getenv("LYRICS_PREPROCESS_AUDIO", "true").lower() == "tru
+ VAD_FILTER = os.getenv("LYRICS_VAD_FILTER", "true").lower() == "true"
+ BEAM_SIZE = int(os.getenv("LYRICS_BEAM_SIZE", "5"))
+ TEMPERATURE = float(os.getenv("LYRICS_TEMPERATURE", "0.0"))
++
++# Word-level timestamps and formatting
++ENABLE_WORD_TIMESTAMPS = os.getenv("LYRICS_ENABLE_WORD_TIMESTAMPS", "true").lower() == "true"
++MAX_CHARS_PER_LINE = int(os.getenv("LYRICS_MAX_CHARS_PER_LINE", "60"))
++LINE_GAP_THRESHOLD = float(os.getenv("LYRICS_LINE_GAP_THRESHOLD", "0.8"))
++STANZA_GAP_THRESHOLD = float(os.getenv("LYRICS_STANZA_GAP_THRESHOLD", "2.5"))
+ 
+ # Concurrency
+ MAX_CONCURRENT_JOBS = int(os.getenv("LYRICS_MAX_CONCURRENT_JOBS", "1"))
+
+--- a/app/lyrics_service/pipeline/postprocess.py
++++ b/app/lyrics_service/pipeline/postprocess.py
+@@ -105,6 +105,93 @@ def detect_language(text: str) -> str:
+ 
+ 
+ def format_lyrics_from_words(
++    segments: List[Dict],
++    max_chars_per_line: int = 60,
++    line_gap_threshold: float = 0.8,
++    stanza_gap_threshold: float = 2.5
++) -> tuple[str, List[Dict]]:
++    """
++    Format lyrics from word-level timestamps with intelligent line/stanza breaks.
++    
++    Args:
++        segments: List of segment dicts with 'words' arrays
++        max_chars_per_line: Maximum characters per line (soft limit)
++        line_gap_threshold: Time gap (seconds) to trigger new line
++        stanza_gap_threshold: Time gap (seconds) to trigger stanza break
++    
++    Returns:
++        (formatted_lyrics_text, word_timestamps_list)
++    """
++    if not segments:
++        return "", []
++    
++    # Extract all words with timestamps
++    all_words = []
++    for segment in segments:
++        if 'words' in segment:
++            for word_info in segment['words']:
++                word_text = word_info.get('word', '').strip()
++                if word_text:
++                    all_words.append({
++                        'word': word_text,
++                        'start': word_info.get('start', 0.0),
++                        'end': word_info.get('end', 0.0)
++                    })
++    
++    if not all_words:
++        return "", []
++    
++    # Build lines based on timing gaps and character limits
++    lines = []
++    current_line = []
++    current_line_chars = 0
++    prev_end = 0.0
++    
++    for i, word_info in enumerate(all_words):
++        word = word_info['word']
++        start = word_info['start']
++        end = word_info['end']
++        gap = start - prev_end if i > 0 else 0.0
++        
++        # Determine if we should break to new line/stanza
++        should_break_stanza = gap >= stanza_gap_threshold and current_line
++        should_break_line = (gap >= line_gap_threshold and current_line) or \
++                           (current_line_chars + len(word) + 1 > max_chars_per_line and current_line)
++        
++        if should_break_stanza:
++            # Flush current line and add stanza break
++            lines.append(' '.join(current_line))
++            lines.append('')  # Blank line for stanza separator
++            current_line = [word]
++            current_line_chars = len(word)
++        elif should_break_line:
++            # Flush current line
++            lines.append(' '.join(current_line))
++            current_line = [word]
++            current_line_chars = len(word)
++        else:
++            # Add to current line
++            current_line.append(word)
++            if len(current_line) > 1:
++                current_line_chars += 1  # Space before word
++            current_line_chars += len(word)
++        
++        prev_end = end
++    
++    # Flush remaining line
++    if current_line:
++        lines.append(' '.join(current_line))
++    
++    # Join and clean (but preserve stanza breaks)
++    formatted_lyrics = '\n'.join(lines)
++    
++    # Clean individual lines without removing blank lines
++    cleaned_lines = []
++    for line in formatted_lyrics.split('\n'):
++        if line.strip():
++            # Clean non-empty lines
++            cleaned_line = line.strip()
++            # Remove noise patterns from this line
++            for pattern in COMPILED_NOISE_PATTERNS:
++                cleaned_line = pattern.sub('', cleaned_line)
++            cleaned_line = re.sub(r' +', ' ', cleaned_line)
++            cleaned_lines.append(cleaned_line)
++        else:
++            # Preserve blank lines
++            cleaned_lines.append('')
++    
++    formatted_lyrics = '\n'.join(cleaned_lines)
++    
++    # Remove excessive line breaks (more than double)
++    formatted_lyrics = re.sub(r'\n{3,}', '\n\n', formatted_lyrics)
++    
++    return formatted_lyrics.strip(), all_words
++
++
++def format_lyrics_with_timestamps(
+     segments: List[Dict],
+     include_word_timestamps: bool = False
+ ) -> tuple[str, Optional[List[Dict]]]:
+@@ -123,6 +210,12 @@ def format_lyrics_with_timestamps(
+     if not segments:
+         return "", None
+     
++    # Check if we have word-level data - if so, use word-based formatting
++    has_words = any('words' in seg and seg['words'] for seg in segments)
++    if has_words:
++        formatted, words = format_lyrics_from_words(segments)
++        return formatted, words if include_word_timestamps else None
++    
++    # Fallback: segment-level formatting
+     lines = []
+     word_timestamps = [] if include_word_timestamps else None
+     
+
+--- a/app/lyrics_service/worker.py
++++ b/app/lyrics_service/worker.py
+@@ -117,13 +117,18 @@ def process_lyrics_extraction(
+         # Step 3: Transcribe with faster-whisper
+         logger.info(f"[{job_id}] Transcribing with Whisper model: {config.WHISPER_MODEL_SIZE}")
+         
+-        word_timestamps = (include_timestamps == "word")
++        # Enable word timestamps by default for better formatting (unless explicitly disabled)
++        word_timestamps = config.ENABLE_WORD_TIMESTAMPS if include_timestamps != "none" else (include_timestamps == "word")
+         
+         transcriber = transcribe.LyricsTranscriber(
+             model_size=config.WHISPER_MODEL_SIZE,
+             device=config.DEVICE,
+             compute_type=config.COMPUTE_TYPE,
+             num_workers=1
+         )
+         
++        # Ensure Vietnamese settings for better accuracy
++        transcribe_language = language_hint if language_hint != "auto" else None
++        
+         transcription_result = transcriber.transcribe(
+             audio_path=transcription_input,
+-            language=language_hint if language_hint != "auto" else None,
++            language=transcribe_language,
+             word_timestamps=word_timestamps,
+             vad_filter=config.VAD_FILTER,
+             beam_size=config.BEAM_SIZE,
+@@ -147,10 +152,12 @@ def process_lyrics_extraction(
+         # Build result
+         result["status"] = "done"
+         result["result"] = {
+             "lyrics": processed["lyrics"],
++            "raw_transcript": transcription_result.get("text", ""),  # Include raw transcript
+         }
+         
+         # Add word timestamps if requested
+         if word_timestamps and processed.get("words"):
+             result["result"]["words"] = processed["words"]
++            logger.info(f"[{job_id}] Included {len(processed['words'])} word timestamps")
+         
+         # Update metadata
+
+--- /dev/null
++++ b/tests/test_word_based_lyrics_formatting.py
+@@ -0,0 +1,293 @@
++"""
++Unit tests for word-based lyrics formatting with Vietnamese support.
++Tests format_lyrics_from_words() function.
++"""
++import sys
++from pathlib import Path
++
++# Add project root to path
++sys.path.insert(0, str(Path(__file__).parent.parent))
++
++from app.lyrics_service.pipeline.postprocess import format_lyrics_from_words
++
++
++def test_line_break_at_gap_threshold():
++    """Test that line breaks occur at line_gap_threshold."""
++    segments = [{
++        "start": 0.0,
++        "end": 5.0,
++        "words": [
++            {"word": "Tôi", "start": 0.0, "end": 0.5},
++            {"word": "yêu", "start": 0.6, "end": 1.0},
++            {"word": "em", "start": 1.1, "end": 1.5},
++            # Gap of 1.0 seconds (> 0.8 default threshold)
++            {"word": "Con", "start": 2.5, "end": 3.0},
++            {"word": "đường", "start": 3.1, "end": 3.6},
++        ]
++    }]
++    
++    formatted, words = format_lyrics_from_words(
++        segments,
++        line_gap_threshold=0.8
++    )
++    
++    lines = formatted.split('\n')
++    
++    # Should have 2 lines due to gap
++    assert len(lines) >= 2, f"Expected at least 2 lines, got {len(lines)}: {lines}"
++    
++    # First line should contain first 3 words
++    assert "Tôi yêu em" in formatted, f"Expected 'Tôi yêu em' in first line: {formatted}"
++    
++    # Second line should contain last 2 words
++    assert "Con đường" in formatted, f"Expected 'Con đường' in second line: {formatted}"
++    
++    # Verify word order is preserved
++    assert formatted.replace('\n', ' ').strip() == "Tôi yêu em Con đường"
++    
++    print(f"✓ Line break at gap threshold:\n{formatted}\n")
++
++
++def test_stanza_break_at_gap_threshold():
++    """Test that stanza breaks (blank lines) occur at stanza_gap_threshold."""
++    segments = [{
++        "start": 0.0,
++        "end": 10.0,
++        "words": [
++            {"word": "Verse", "start": 0.0, "end": 0.5},
++            {"word": "one", "start": 0.6, "end": 1.0},
++            # Gap of 3.0 seconds (> 2.5 default threshold)
++            {"word": "Verse", "start": 4.0, "end": 4.5},
++            {"word": "two", "start": 4.6, "end": 5.0},
++        ]
++    }]
++    
++    formatted, words = format_lyrics_from_words(
++        segments,
++        stanza_gap_threshold=2.5
++    )
++    
++    # Should have blank line between stanzas
++    assert '\n\n' in formatted, f"Expected blank line for stanza break: {repr(formatted)}"
++    
++    lines = [line for line in formatted.split('\n') if line.strip()]
++    assert len(lines) == 2, f"Expected 2 non-empty lines: {lines}"
++    
++    print(f"✓ Stanza break at gap threshold:\n{formatted}\n")
++
++
++def test_line_wrapping_at_max_chars():
++    """Test that lines wrap when exceeding max_chars_per_line."""
++    segments = [{
++        "start": 0.0,
++        "end": 5.0,
++        "words": [
++            {"word": "This", "start": 0.0, "end": 0.2},
++            {"word": "is", "start": 0.3, "end": 0.4},
++            {"word": "a", "start": 0.5, "end": 0.6},
++            {"word": "very", "start": 0.7, "end": 0.9},
++            {"word": "long", "start": 1.0, "end": 1.2},
++            {"word": "line", "start": 1.3, "end": 1.5},
++            {"word": "that", "start": 1.6, "end": 1.8},
++            {"word": "should", "start": 1.9, "end": 2.1},
++            {"word": "wrap", "start": 2.2, "end": 2.4},
++        ]
++    }]
++    
++    formatted, words = format_lyrics_from_words(
++        segments,
++        max_chars_per_line=20,  # Short limit to force wrapping
++        line_gap_threshold=5.0  # High threshold so gaps don't trigger breaks
++    )
++    
++    lines = formatted.split('\n')
++    
++    # Should have multiple lines due to character limit
++    assert len(lines) >= 2, f"Expected multiple lines due to char limit: {lines}"
++    
++    # Each line should be roughly under max_chars (soft limit)
++    for line in lines:
++        if line.strip():
++            # Allow some flexibility (max_chars + word length)
++            assert len(line) <= 35, f"Line too long ({len(line)} chars): {line}"
++    
++    print(f"✓ Line wrapping at max chars ({len(lines)} lines):\n{formatted}\n")
++
++
++def test_vietnamese_diacritics_preserved():
++    """Test that Vietnamese diacritics are preserved in formatted output."""
++    segments = [{
++        "start": 0.0,
++        "end": 5.0,
++        "words": [
++            {"word": "Tôi", "start": 0.0, "end": 0.5},
++            {"word": "yêu", "start": 0.6, "end": 1.0},
++            {"word": "em", "start": 1.1, "end": 1.5},
++            {"word": "Ánh", "start": 2.0, "end": 2.5},
++            {"word": "mắt", "start": 2.6, "end": 3.0},
++            {"word": "đẹp", "start": 3.1, "end": 3.5},
++        ]
++    }]
++    
++    formatted, words = format_lyrics_from_words(segments)
++    
++    # Check Vietnamese characters are preserved
++    assert 'ô' in formatted, f"Lost ô: {repr(formatted)}"
++    assert 'ê' in formatted, f"Lost ê: {repr(formatted)}"
++    assert 'á' in formatted or 'Á' in formatted, f"Lost á: {repr(formatted)}"
++    assert 'ắ' in formatted or 'ă' in formatted or 'ạ' in formatted or 'ắ' in formatted or 'ặ' in formatted or 'mắt' in formatted, f"Lost Vietnamese tone marks: {repr(formatted)}"
++    assert 'đ' in formatted, f"Lost đ: {repr(formatted)}"
++    assert 'ẹ' in formatted or 'ẻ' in formatted or 'ẽ' in formatted or 'ề' in formatted or 'ể' in formatted or 'ễ' in formatted or 'ệ' in formatted or 'ế' in formatted or 'ề' in formatted or 'ể' in formatted or 'đẹp' in formatted, f"Lost Vietnamese characters: {repr(formatted)}"
++    
++    # Verify no character-level spacing
++    assert 'T ô i' not in formatted
++    assert 'y ê u' not in formatted
++    
++    print(f"✓ Vietnamese diacritics preserved:\n{formatted}\n")
++
++
++def test_token_order_preserved():
++    """Test that word order is always preserved regardless of formatting."""
++    segments = [{
++        "start": 0.0,
++        "end": 10.0,
++        "words": [
++            {"word": "One", "start": 0.0, "end": 0.5},
++            {"word": "Two", "start": 1.0, "end": 1.5},
++            {"word": "Three", "start": 4.0, "end": 4.5},  # Large gap
++            {"word": "Four", "start": 4.6, "end": 5.0},
++            {"word": "Five", "start": 5.1, "end": 5.5},
++        ]
++    }]
++    
++    formatted, words = format_lyrics_from_words(segments)
++    
++    # Remove all line breaks and check order
++    flat_text = ' '.join(formatted.split())
++    expected_order = "One Two Three Four Five"
++    
++    assert flat_text == expected_order, f"Word order not preserved: {flat_text} != {expected_order}"
++    
++    # Check word timestamps list preserves order
++    word_list = [w['word'] for w in words]
++    assert word_list == ["One", "Two", "Three", "Four", "Five"], f"Timestamp order not preserved: {word_list}"
++    
++    print(f"✓ Token order preserved:\n{formatted}\n")
++
++
++def test_empty_segments():
++    """Test handling of empty segments."""
++    segments = []
++    
++    formatted, words = format_lyrics_from_words(segments)
++    
++    assert formatted == "", f"Expected empty string for empty segments: {repr(formatted)}"
++    assert words == [], f"Expected empty word list: {words}"
++    
++    print("✓ Empty segments handled correctly\n")
++
++
++def test_segments_without_words():
++    """Test handling of segments without word-level data."""
++    segments = [{
++        "start": 0.0,
++        "end": 5.0,
++        "text": "This segment has no words array"
++    }]
++    
++    formatted, words = format_lyrics_from_words(segments)
++    
++    assert formatted == "", f"Expected empty when no words: {repr(formatted)}"
++    assert words == [], f"Expected empty word list: {words}"
++    
++    print("✓ Segments without words handled correctly\n")
++
++
++def test_mixed_gaps_complex_formatting():
++    """Test complex scenario with mixed timing gaps."""
++    segments = [{
++        "start": 0.0,
++        "end": 20.0,
++        "words": [
++            # First line (tight spacing)
++            {"word": "Tôi", "start": 0.0, "end": 0.3},
++            {"word": "yêu", "start": 0.4, "end": 0.7},
++            {"word": "em", "start": 0.8, "end": 1.1},
++            # Gap 0.9s -> new line
++            {"word": "Từng", "start": 2.0, "end": 2.3},
++            {"word": "ngày", "start": 2.4, "end": 2.7},
++            {"word": "qua", "start": 2.8, "end": 3.1},
++            # Gap 3.0s -> stanza break
++            {"word": "Ánh", "start": 6.1, "end": 6.4},
++            {"word": "mắt", "start": 6.5, "end": 6.8},
++            {"word": "người", "start": 6.9, "end": 7.2},
++            # Gap 0.9s -> new line
++            {"word": "Xa", "start": 8.1, "end": 8.3},
++            {"word": "xôi", "start": 8.4, "end": 8.7},
++        ]
++    }]
++    
++    formatted, words = format_lyrics_from_words(
++        segments,
++        line_gap_threshold=0.8,
++        stanza_gap_threshold=2.5
++    )
++    
++    lines = formatted.split('\n')
++    
++    # Should have 4 non-empty lines (2 stanzas of 2 lines each)
++    non_empty_lines = [line for line in lines if line.strip()]
++    assert len(non_empty_lines) == 4, f"Expected 4 lines, got {len(non_empty_lines)}: {non_empty_lines}"
++    
++    # Should have 1 blank line (stanza separator)
++    blank_lines = [line for line in lines if not line.strip()]
++    assert len(blank_lines) == 1, f"Expected 1 blank line, got {len(blank_lines)}"
++    
++    # Verify content
++    assert "Tôi yêu em" in formatted
++    assert "Từng ngày qua" in formatted
++    assert "Ánh mắt người" in formatted
++    assert "Xa xôi" in formatted
++    
++    print(f"✓ Complex mixed gaps formatting:\n{formatted}\n")
++
++
++def test_configurable_thresholds():
++    """Test that gap thresholds are configurable."""
++    segments = [{
++        "start": 0.0,
++        "end": 5.0,
++        "words": [
++            {"word": "Word1", "start": 0.0, "end": 0.5},
++            {"word": "Word2", "start": 1.0, "end": 1.5},  # 0.5s gap
++            {"word": "Word3", "start": 2.0, "end": 2.5},  # 0.5s gap
++        ]
++    }]
++    
++    # With high threshold: all on one line
++    formatted_high, _ = format_lyrics_from_words(
++        segments,
++        line_gap_threshold=1.0
++    )
++    assert '\n' not in formatted_high.strip(), f"Should be one line: {repr(formatted_high)}"
++    
++    # With low threshold: each word on separate line
++    formatted_low, _ = format_lyrics_from_words(
++        segments,
++        line_gap_threshold=0.3
++    )
++    lines = [line for line in formatted_low.split('\n') if line.strip()]
++    assert len(lines) == 3, f"Should have 3 lines with low threshold: {lines}"
++    
++    print(f"✓ Configurable thresholds work correctly\n")
++
++
++if __name__ == '__main__':
++    print("\n=== Testing Word-Based Lyrics Formatting ===\n")
++    
++    try:
++        test_line_break_at_gap_threshold()
++        test_stanza_break_at_gap_threshold()
++        test_line_wrapping_at_max_chars()
++        test_vietnamese_diacritics_preserved()
++        test_token_order_preserved()
++        test_empty_segments()
++        test_segments_without_words()
++        test_mixed_gaps_complex_formatting()
++        test_configurable_thresholds()
++        
++        print("✅ All word-based formatting tests passed!\n")
++    except AssertionError as e:
++        print(f"\n❌ Test failed: {e}\n")
++        sys.exit(1)
++    except Exception as e:
++        print(f"\n❌ Unexpected error: {e}\n")
++        import traceback
++        traceback.print_exc()
++        sys.exit(1)

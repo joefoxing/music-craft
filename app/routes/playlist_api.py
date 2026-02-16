@@ -11,9 +11,47 @@ playlist_api_bp = Blueprint('playlist_api', __name__, url_prefix='/api/playlists
 @playlist_api_bp.route('', methods=['GET'])
 @login_required
 def get_playlists():
-    """Get all playlists for the current user."""
+    """Get all playlists for the current user.
+    
+    Query parameters:
+    - limit: Maximum number of playlists to return (default: unlimited)
+    - sort: Sort field and direction, format: 'field:direction' (default: 'updated_at:desc')
+            Supported fields: created_at, updated_at, name
+            Supported directions: asc, desc
+    """
     try:
-        playlists = Playlist.query.filter_by(user_id=current_user.id).order_by(Playlist.updated_at.desc()).all()
+        # Parse query parameters
+        limit = request.args.get('limit', type=int)
+        sort_param = request.args.get('sort', 'updated_at:desc')
+        
+        # Build base query
+        query = Playlist.query.filter_by(user_id=current_user.id)
+        
+        # Parse and apply sorting
+        sort_parts = sort_param.split(':')
+        sort_field = sort_parts[0] if sort_parts else 'updated_at'
+        sort_direction = sort_parts[1].lower() if len(sort_parts) > 1 else 'desc'
+        
+        # Validate sort field
+        valid_fields = ['created_at', 'updated_at', 'name']
+        if sort_field not in valid_fields:
+            sort_field = 'updated_at'
+        
+        # Get the column for sorting
+        sort_column = getattr(Playlist, sort_field)
+        
+        # Apply sort direction
+        if sort_direction == 'asc':
+            query = query.order_by(sort_column.asc())
+        else:
+            query = query.order_by(sort_column.desc())
+        
+        # Apply limit if specified
+        if limit and limit > 0:
+            query = query.limit(limit)
+        
+        playlists = query.all()
+        
         return jsonify(ResponseUtils.create_success_response({
             'playlists': [p.to_dict(include_audio_items=False) for p in playlists]
         }))

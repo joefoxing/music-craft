@@ -78,8 +78,6 @@ class SystemBackup:
             r'.*diagnose_.*\.py$',
             r'.*fix_config\.py$',
             r'.*check_config\.py$',
-            r'.*start_tunnel.*\.py$',
-            r'.*download_cloudflared\.py$',
             
             # Backup directories
             r'backups/.*',
@@ -98,8 +96,6 @@ class SystemBackup:
         
         # Define specific files to exclude (in addition to patterns)
         self.exclude_files = [
-            'cloudflared.log',
-            'cloudflared.pid',
             '.clinerules',  # User rules file - optional to include
         ]
         

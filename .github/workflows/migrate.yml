@@ -1,0 +1,57 @@
+name: Run Migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event.inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      
+      - name: Setup SSH
+        run: |
+          if [ "${{ github.event.inputs.environment }}" == "production" ]; then
+            ssh-keyscan -H ${{ vars.PROD_HOST }} >> ~/.ssh/known_hosts
+          else
+            ssh-keyscan -H ${{ vars.STAGING_HOST }} >> ~/.ssh/known_hosts
+          fi
+
+      - name: Run Migration
+        env:
+          ENV_NAME: ${{ github.event.inputs.environment }}
+        run: |
+          HOST=${{ vars.STAGING_HOST }}
+          USER=${{ vars.STAGING_USER }}
+          COMPOSE_FILE="docker-compose.staging.yml"
+          ENV_FILE=".env.staging"
+          
+          if [ "$ENV_NAME" == "production" ]; then
+             HOST=${{ vars.PROD_HOST }}
+             USER=${{ vars.PROD_USER }}
+             COMPOSE_FILE="docker-compose.prod.yml"
+             ENV_FILE=".env.prod"
+          fi
+          
+          ssh $USER@$HOST "bash -s" << EOF
+            set -e
+            cd ~/app
+            echo "Running migrations for $ENV_NAME..."
+            # Ensure IMAGE_TAG is set in env file or we might fail if variable is missing in compose
+            # (Assuming .env file has a valid IMAGE_TAG from last deploy)
+            
+            docker compose -f $COMPOSE_FILE --env-file $ENV_FILE --profile migrate run --rm migrate
+          EOF

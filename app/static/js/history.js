@@ -59,6 +59,15 @@ function initHistory() {
         console.warn('modalCloseBtn not found in DOM');
     }
     
+    // Set up modal click outside to close
+    if (historyModal) {
+        const modalContentDiv = historyModal.querySelector('.modal-content');
+        if (modalContentDiv) {
+            modalContentDiv.addEventListener('click', (e) => e.stopPropagation());
+        }
+        historyModal.addEventListener('click', closeModal);
+    }
+    
     // Set up retry button
     const retryBtn = document.getElementById('retryHistoryBtn');
     if (retryBtn) {
@@ -325,6 +334,15 @@ function createHistoryCard(entry) {
     const taskId = entry.task_id || 'N/A';
     const shortTaskId = taskId.length > 12 ? taskId.substring(0, 12) + '...' : taskId;
     
+    // Get song title from first track
+    let songTitle = shortTaskId; // fallback to task ID
+    if (entry.processed_data && entry.processed_data.tracks && entry.processed_data.tracks.length > 0) {
+        const firstTrack = entry.processed_data.tracks[0];
+        if (firstTrack.title) {
+            songTitle = firstTrack.title;
+        }
+    }
+    
     // Get tracks count
     const tracksCount = entry.tracks_count || 0;
 
@@ -340,7 +358,7 @@ function createHistoryCard(entry) {
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-1">
                         <span class="material-symbols-outlined text-primary text-lg">history</span>
-                        <h4 class="font-bold text-slate-900 dark:text-white truncate">Task: ${shortTaskId}</h4>
+                        <h4 class="font-bold text-slate-900 dark:text-white truncate">Task: ${songTitle}</h4>
                     </div>
                     <p class="text-xs text-slate-500 dark:text-slate-400">${dateStr} at ${timeStr}</p>
                 </div>
@@ -596,9 +614,19 @@ function searchHistory() {
             const statusMessage = (entry.status_message || '').toLowerCase();
             const callbackType = (entry.callback_type || '').toLowerCase();
             
+            // Get song title for search
+            let songTitle = '';
+            if (entry.processed_data && entry.processed_data.tracks && entry.processed_data.tracks.length > 0) {
+                const firstTrack = entry.processed_data.tracks[0];
+                if (firstTrack.title) {
+                    songTitle = firstTrack.title.toLowerCase();
+                }
+            }
+            
             return taskId.includes(searchTerm) || 
                    statusMessage.includes(searchTerm) || 
-                   callbackType.includes(searchTerm);
+                   callbackType.includes(searchTerm) ||
+                   songTitle.includes(searchTerm);
         });
     }
     
@@ -650,8 +678,7 @@ function showEntryDetails(entry) {
     // Create modal content
     const modalHTML = `
         <div class="space-y-6">
-            <div class="flex items-center justify-between">
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Callback Details</h3>
+            <div class="flex items-center justify-center">
                 <span class="text-xs text-slate-500">${formattedTime}</span>
             </div>
             

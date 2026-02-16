@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Callback History - Music Cover Generator</title>
+    <title>Generation History - Music Cover Generator</title>
     
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
@@ -181,7 +181,7 @@
                 </div>
                 
                 <div class="hidden md:block">
-                    <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Callback History</h2>
+                    <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Generation History</h2>
                 </div>
                 
                 <div class="flex items-center gap-4">
@@ -202,8 +202,8 @@
                     <!-- Page Header -->
                     <section class="flex flex-col gap-4">
                         <div class="flex flex-col gap-2">
-                            <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Callback History</h2>
-                            <p class="text-slate-500 dark:text-slate-400">View all callback information from the Kie API. History is retained for 15 days from creation date.</p>
+                            <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Generation History</h2>
+                            <p class="text-slate-500 dark:text-slate-400">View all your generation information. History is retained for 14 days from creation date.</p>
                         </div>
                         
                         <!-- Stats and Controls -->
@@ -265,14 +265,14 @@
                     <!-- Loading State -->
                     <div id="loadingState" class="text-center py-12">
                         <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-                        <p class="mt-4 text-slate-500 dark:text-slate-400">Loading callback history...</p>
+                        <p class="mt-4 text-slate-500 dark:text-slate-400">Loading generation history...</p>
                     </div>
                     
                     <!-- Empty State -->
                     <div id="emptyState" class="text-center py-12 hidden">
                         <span class="material-symbols-outlined text-6xl text-slate-400 mb-4">history</span>
-                        <h3 class="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">No Callback History</h3>
-                        <p class="text-slate-500 dark:text-slate-400 mb-6">No callback history found. Generate some covers to see history here.</p>
+                        <h3 class="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">No Generation History</h3>
+                        <p class="text-slate-500 dark:text-slate-400 mb-6">No generation history found. Generate some covers to see history here.</p>
                         <a href="/cover-generator" class="px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors inline-flex items-center">
                             <span class="material-symbols-outlined mr-2">add_circle</span>
                             Generate Cover
@@ -411,7 +411,7 @@
                                     <div class="mb-3">
                                         <p class="text-slate-500 text-sm mb-1">Lyrics</p>
                                         <div class="lyrics-container max-h-32 overflow-y-auto bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2 border border-slate-200 dark:border-slate-700">
-                                            <div class="lyrics-content text-xs text-slate-700 dark:text-slate-300" data-track-prompt>No lyrics available</div>
+                                            <div class="lyrics-content text-xs text-slate-700 dark:text-slate-300 whitespace-pre-line" data-track-prompt>No lyrics available</div>
                                         </div>
                                     </div>
                                 </div>
@@ -540,7 +540,7 @@
                     <div id="historyModal" class="modal-overlay hidden">
                         <div class="modal-content bg-white dark:bg-surface-dark rounded-xl p-6 w-full max-w-4xl">
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Callback Details</h3>
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Generation Details</h3>
                                 <button id="modalCloseBtn" class="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white">
                                     <span class="material-symbols-outlined">close</span>
                                 </button>

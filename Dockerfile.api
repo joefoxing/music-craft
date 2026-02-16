@@ -14,6 +14,7 @@ RUN pip install --no-cache-dir --upgrade pip==24.0 setuptools==69.0.3 wheel==0.4
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 # Create virtual environment (isolated from system Python)
@@ -23,6 +24,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Install Python dependencies
 # Copy only requirements first for layer caching
 COPY requirements.txt .
+RUN printf "setuptools<81\n" > /tmp/pip-constraints.txt
+ENV PIP_CONSTRAINT=/tmp/pip-constraints.txt
 RUN pip install --no-cache-dir -r requirements.txt gunicorn uvicorn[standard]
 
 # STAGE 2: Production runtime (minimal, no build tools)
@@ -36,6 +39,7 @@ RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
     curl \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
@@ -90,4 +94,7 @@ RUN if [ -f requirements-dev.txt ]; then pip install --no-cache-dir -r requireme
 WORKDIR /app
 COPY . .
 
-CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+ENV FLASK_APP=wsgi.py
+ENV FLASK_DEBUG=1
+
+CMD ["flask", "run", "--host=0.0.0.0", "--port=8000"]

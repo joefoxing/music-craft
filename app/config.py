@@ -29,6 +29,7 @@ class Config:
     # Flask configuration
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key')
     PREFERRED_URL_SCHEME = 'https'
+    TEMPLATES_AUTO_RELOAD = True
     
     # Database configuration
     SQLALCHEMY_DATABASE_URI = normalize_database_url(os.environ.get('DATABASE_URL', 'sqlite:///app.db'))
@@ -45,39 +46,51 @@ class Config:
     
     # File upload configuration
     UPLOAD_FOLDER = None  # Will be set in configure_app()
-    MAX_CONTENT_LENGTH = 20 * 1024 * 1024  # 20MB default for Cloudflared tunnel compatibility
-    MAX_UPLOAD_SIZE = 20 * 1024 * 1024  # 20MB default for Cloudflared tunnel compatibility
+    MAX_CONTENT_LENGTH = 20 * 1024 * 1024  # 20MB default
+    MAX_UPLOAD_SIZE = 20 * 1024 * 1024  # 20MB default
 
     # Kie API configuration
     KIE_API_KEY = os.environ.get('KIE_API_KEY', '')
     KIE_API_BASE_URL = 'https://api.kie.ai'
     USE_MOCK = os.environ.get('USE_MOCK', 'false').lower() == 'true'
     
-    # Ngrok configuration
-    NGROK_ENABLED = os.environ.get('NGROK_ENABLED', 'false').lower() == 'true'
-    NGROK_AUTH_TOKEN = os.environ.get('NGROK_AUTH_TOKEN', '')
-    NGROK_REGION = os.environ.get('NGROK_REGION', 'us')
-    NGROK_URL = os.environ.get('NGROK_URL', '')
-
-    # Localtunnel configuration
-    LOCALTUNNEL_ENABLED = os.environ.get('LOCALTUNNEL_ENABLED', 'false').lower() == 'true'
-    LOCALTUNNEL_URL = os.environ.get('LOCALTUNNEL_URL', '')
-
-    # Cloudflared configuration
-    CLOUDFLARED_ENABLED = os.environ.get('CLOUDFLARED_ENABLED', 'false').lower() == 'true'
-    CLOUDFLARED_TOKEN = os.environ.get('CLOUDFLARED_TOKEN', '')
-    CLOUDFLARED_HOSTNAME = os.environ.get('CLOUDFLARED_HOSTNAME', '')
-    CLOUDFLARED_TUNNEL_ID = os.environ.get('CLOUDFLARED_TUNNEL_ID', '')
-    CLOUDFLARED_CREDENTIALS_FILE = os.environ.get('CLOUDFLARED_CREDENTIALS_FILE', '')
-    CLOUDFLARED_LEGACY_MODE = os.environ.get('CLOUDFLARED_LEGACY_MODE', 'false').lower() == 'true'
-    CLOUDFLARED_URL = os.environ.get('CLOUDFLARED_URL', '')
-
     # History configuration
     HISTORY_MAX_ENTRIES = 100
     HISTORY_CLEANUP_DAYS = 15
     
     # Audio file configuration
     ALLOWED_EXTENSIONS = {'mp3', 'wav', 'ogg', 'm4a', 'flac'}
+
+    # Lyrics extraction configuration
+    LYRICS_EXTRACTION_ENABLED = os.environ.get('LYRICS_EXTRACTION_ENABLED', 'true').lower() == 'true'
+    LYRICS_WHISPER_MODEL = os.environ.get('LYRICS_WHISPER_MODEL', 'base')
+    LYRICS_WHISPER_FALLBACK_MODEL = os.environ.get('LYRICS_WHISPER_FALLBACK_MODEL', 'small')
+    LYRICS_WHISPER_LANGUAGE = os.environ.get('LYRICS_WHISPER_LANGUAGE')
+    LYRICS_WHISPER_TEMPERATURE = float(os.environ.get('LYRICS_WHISPER_TEMPERATURE', '0'))
+    LYRICS_WHISPER_BEAM_SIZE = int(os.environ.get('LYRICS_WHISPER_BEAM_SIZE', '5'))
+    LYRICS_WHISPER_BEST_OF = int(os.environ.get('LYRICS_WHISPER_BEST_OF', '5'))
+    LYRICS_WHISPER_PATIENCE = float(os.environ.get('LYRICS_WHISPER_PATIENCE', '1.0'))
+    LYRICS_WHISPER_CONDITION_ON_PREVIOUS_TEXT = os.environ.get('LYRICS_WHISPER_CONDITION_ON_PREVIOUS_TEXT', 'false').lower() == 'true'
+    LYRICS_WHISPER_COMPRESSION_RATIO_THRESHOLD = float(os.environ.get('LYRICS_WHISPER_COMPRESSION_RATIO_THRESHOLD', '2.2'))
+    LYRICS_WHISPER_LOGPROB_THRESHOLD = float(os.environ.get('LYRICS_WHISPER_LOGPROB_THRESHOLD', '-1.0'))
+    LYRICS_WHISPER_NO_SPEECH_THRESHOLD = float(os.environ.get('LYRICS_WHISPER_NO_SPEECH_THRESHOLD', '0.6'))
+    LYRICS_ENFORCE_ORIGINAL_LANGUAGE = os.environ.get('LYRICS_ENFORCE_ORIGINAL_LANGUAGE', 'true').lower() == 'true'
+    LYRICS_VI_CUSTOM_CORRECTIONS_JSON = os.environ.get('LYRICS_VI_CUSTOM_CORRECTIONS_JSON', '')
+    LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK = os.environ.get('LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK', 'false').lower() == 'true'
+    LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION = os.environ.get('LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION', 'true').lower() == 'true'
+    LYRICS_MIN_UNIQUE_WORD_RATIO = float(os.environ.get('LYRICS_MIN_UNIQUE_WORD_RATIO', '0.22'))
+    LYRICS_MAX_REPEATED_NGRAM_RATIO = float(os.environ.get('LYRICS_MAX_REPEATED_NGRAM_RATIO', '0.08'))
+    LYRICS_MAX_SAME_CHUNK_REPEATS = int(os.environ.get('LYRICS_MAX_SAME_CHUNK_REPEATS', '2'))
+    LYRICS_VOCAL_SEPARATION_ENABLED = os.environ.get('LYRICS_VOCAL_SEPARATION_ENABLED', 'false').lower() == 'true'
+    LYRICS_MAX_DOWNLOAD_MB = int(os.environ.get('LYRICS_MAX_DOWNLOAD_MB', '30'))
+    LYRICS_EXTRACTION_ASYNC_ENABLED = os.environ.get('LYRICS_EXTRACTION_ASYNC_ENABLED', 'true').lower() == 'true'
+    LYRICS_EXTRACTION_WORKERS = int(os.environ.get('LYRICS_EXTRACTION_WORKERS', '2'))
+    
+    # Lyrics Microservice configuration
+    LYRICS_USE_MICROSERVICE = os.environ.get('LYRICS_USE_MICROSERVICE', 'false').lower() == 'true'
+    LYRICS_MICROSERVICE_URL = os.environ.get('LYRICS_MICROSERVICE_URL', 'http://localhost:8000/v1')
+    LYRICS_MICROSERVICE_TIMEOUT = int(os.environ.get('LYRICS_MICROSERVICE_TIMEOUT', '600'))  # 10 minutes
+    LYRICS_MICROSERVICE_POLL_INTERVAL = int(os.environ.get('LYRICS_MICROSERVICE_POLL_INTERVAL', '2'))  # seconds
     
     # Authentication configuration
     SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT', 'password-salt')
@@ -104,21 +117,23 @@ class Config:
     
     # Security configuration
     LOGIN_RATE_LIMIT = os.environ.get('LOGIN_RATE_LIMIT', '5 per minute')
-    REGISTER_RATE_LIMIT = os.environ.get('REGISTER_RATE_LIMIT', '3 per hour')
-    PASSWORD_RESET_RATE_LIMIT = os.environ.get('PASSWORD_RESET_RATE_LIMIT', '2 per hour')
+    REGISTER_RATE_LIMIT = os.environ.get('REGISTER_RATE_LIMIT', '50 per hour')
+    PASSWORD_RESET_RATE_LIMIT = os.environ.get('PASSWORD_RESET_RATE_LIMIT', '10 per hour')
     
     FREE_DAILY_LIMIT_USER = int(os.environ.get('FREE_DAILY_LIMIT_USER', '20'))
     FREE_MONTHLY_LIMIT_USER = int(os.environ.get('FREE_MONTHLY_LIMIT_USER', '200'))
     FREE_DAILY_LIMIT_ANON = int(os.environ.get('FREE_DAILY_LIMIT_ANON', '5'))
     FREE_MONTHLY_LIMIT_ANON = int(os.environ.get('FREE_MONTHLY_LIMIT_ANON', '50'))
     
-    # Session configuration - adjusted for Cloudflare tunnel compatibility
+    # Session configuration
     REMEMBER_COOKIE_DURATION = 86400  # 1 day in seconds
-    SESSION_COOKIE_SECURE = os.environ.get('FORCE_SECURE_COOKIES', 'true').lower() == 'true'  # Make configurable
+    PERMANENT_SESSION_LIFETIME = 86400  # 1 day
+    # For OAuth to work properly, we need proper cookie settings
+    # Note: SESSION_COOKIE_SECURE controls HTTPS requirement
+    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'false').lower() == 'true'
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = os.environ.get('SESSION_COOKIE_SAMESITE')
-    if SESSION_COOKIE_SAMESITE is None:
-        SESSION_COOKIE_SAMESITE = 'None' if SESSION_COOKIE_SECURE else 'Lax'
+    # Use 'Lax' for better compatibility with OAuth flows from third-party (Google)
+    SESSION_COOKIE_SAMESITE = os.environ.get('SESSION_COOKIE_SAMESITE', 'Lax')
     WTF_CSRF_ENABLED = os.environ.get('WTF_CSRF_ENABLED', 'true').lower() == 'true'  # Make configurable
     
     @classmethod
@@ -146,20 +161,36 @@ class Config:
         app.config['KIE_API_KEY'] = cls.KIE_API_KEY
         app.config['KIE_API_BASE_URL'] = cls.KIE_API_BASE_URL
         app.config['USE_MOCK'] = cls.USE_MOCK
-        app.config['NGROK_ENABLED'] = cls.NGROK_ENABLED
-        app.config['NGROK_AUTH_TOKEN'] = cls.NGROK_AUTH_TOKEN
-        app.config['NGROK_REGION'] = cls.NGROK_REGION
-        app.config['NGROK_URL'] = cls.NGROK_URL
-        app.config['LOCALTUNNEL_ENABLED'] = cls.LOCALTUNNEL_ENABLED
-        app.config['LOCALTUNNEL_URL'] = cls.LOCALTUNNEL_URL
-        app.config['CLOUDFLARED_ENABLED'] = cls.CLOUDFLARED_ENABLED
-        app.config['CLOUDFLARED_TOKEN'] = cls.CLOUDFLARED_TOKEN
-        app.config['CLOUDFLARED_HOSTNAME'] = cls.CLOUDFLARED_HOSTNAME
-        app.config['CLOUDFLARED_TUNNEL_ID'] = cls.CLOUDFLARED_TUNNEL_ID
-        app.config['CLOUDFLARED_CREDENTIALS_FILE'] = cls.CLOUDFLARED_CREDENTIALS_FILE
-        app.config['CLOUDFLARED_LEGACY_MODE'] = cls.CLOUDFLARED_LEGACY_MODE
-        app.config['CLOUDFLARED_URL'] = cls.CLOUDFLARED_URL
         app.config['PREFERRED_URL_SCHEME'] = cls.PREFERRED_URL_SCHEME
+        app.config['LYRICS_EXTRACTION_ENABLED'] = cls.LYRICS_EXTRACTION_ENABLED
+        app.config['LYRICS_WHISPER_MODEL'] = cls.LYRICS_WHISPER_MODEL
+        app.config['LYRICS_WHISPER_FALLBACK_MODEL'] = cls.LYRICS_WHISPER_FALLBACK_MODEL
+        app.config['LYRICS_WHISPER_LANGUAGE'] = cls.LYRICS_WHISPER_LANGUAGE
+        app.config['LYRICS_WHISPER_TEMPERATURE'] = cls.LYRICS_WHISPER_TEMPERATURE
+        app.config['LYRICS_WHISPER_BEAM_SIZE'] = cls.LYRICS_WHISPER_BEAM_SIZE
+        app.config['LYRICS_WHISPER_BEST_OF'] = cls.LYRICS_WHISPER_BEST_OF
+        app.config['LYRICS_WHISPER_PATIENCE'] = cls.LYRICS_WHISPER_PATIENCE
+        app.config['LYRICS_WHISPER_CONDITION_ON_PREVIOUS_TEXT'] = cls.LYRICS_WHISPER_CONDITION_ON_PREVIOUS_TEXT
+        app.config['LYRICS_WHISPER_COMPRESSION_RATIO_THRESHOLD'] = cls.LYRICS_WHISPER_COMPRESSION_RATIO_THRESHOLD
+        app.config['LYRICS_WHISPER_LOGPROB_THRESHOLD'] = cls.LYRICS_WHISPER_LOGPROB_THRESHOLD
+        app.config['LYRICS_WHISPER_NO_SPEECH_THRESHOLD'] = cls.LYRICS_WHISPER_NO_SPEECH_THRESHOLD
+        app.config['LYRICS_ENFORCE_ORIGINAL_LANGUAGE'] = cls.LYRICS_ENFORCE_ORIGINAL_LANGUAGE
+        app.config['LYRICS_VI_CUSTOM_CORRECTIONS_JSON'] = cls.LYRICS_VI_CUSTOM_CORRECTIONS_JSON
+        app.config['LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK'] = cls.LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK
+        app.config['LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION'] = cls.LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION
+        app.config['LYRICS_MIN_UNIQUE_WORD_RATIO'] = cls.LYRICS_MIN_UNIQUE_WORD_RATIO
+        app.config['LYRICS_MAX_REPEATED_NGRAM_RATIO'] = cls.LYRICS_MAX_REPEATED_NGRAM_RATIO
+        app.config['LYRICS_MAX_SAME_CHUNK_REPEATS'] = cls.LYRICS_MAX_SAME_CHUNK_REPEATS
+        app.config['LYRICS_VOCAL_SEPARATION_ENABLED'] = cls.LYRICS_VOCAL_SEPARATION_ENABLED
+        app.config['LYRICS_MAX_DOWNLOAD_MB'] = cls.LYRICS_MAX_DOWNLOAD_MB
+        app.config['LYRICS_EXTRACTION_ASYNC_ENABLED'] = cls.LYRICS_EXTRACTION_ASYNC_ENABLED
+        app.config['LYRICS_EXTRACTION_WORKERS'] = cls.LYRICS_EXTRACTION_WORKERS
+        
+        # Lyrics Microservice configuration
+        app.config['LYRICS_USE_MICROSERVICE'] = cls.LYRICS_USE_MICROSERVICE
+        app.config['LYRICS_MICROSERVICE_URL'] = cls.LYRICS_MICROSERVICE_URL
+        app.config['LYRICS_MICROSERVICE_TIMEOUT'] = cls.LYRICS_MICROSERVICE_TIMEOUT
+        app.config['LYRICS_MICROSERVICE_POLL_INTERVAL'] = cls.LYRICS_MICROSERVICE_POLL_INTERVAL
         
         # Authentication configuration
         app.config['SECURITY_PASSWORD_SALT'] = cls.SECURITY_PASSWORD_SALT
@@ -253,7 +284,7 @@ class Config:
     @classmethod
     def get_public_base_url(cls, request=None) -> str:
         """
-        Get public base URL, preferring Cloudflared tunnel if configured, then Ngrok, then Localtunnel.
+        Get public base URL.
         
         Args:
             request: Flask request object (optional)
@@ -261,30 +292,15 @@ class Config:
         Returns:
             Public base URL string
         """
-        # Try to get current app context to check for tunnel URLs
+        # Try to get current app context to check for BASE_URL
         try:
             from flask import current_app
             if current_app:
-                # Priority: Cloudflared > Ngrok > Localtunnel > BASE_URL
-                if current_app.config.get('CLOUDFLARED_URL'):
-                    return current_app.config['CLOUDFLARED_URL'].rstrip('/')
-                if current_app.config.get('NGROK_URL'):
-                    return current_app.config['NGROK_URL'].rstrip('/')
-                if current_app.config.get('LOCALTUNNEL_URL'):
-                    return current_app.config['LOCALTUNNEL_URL'].rstrip('/')
                 if current_app.config.get('BASE_URL'):
                     return current_app.config['BASE_URL'].rstrip('/')
         except RuntimeError:
             # Outside of app context
             pass
-        
-        # Fallback to class-level (environment variable) checks
-        if cls.CLOUDFLARED_ENABLED and cls.CLOUDFLARED_URL:
-            return cls.CLOUDFLARED_URL.rstrip('/')
-        if cls.NGROK_ENABLED and cls.NGROK_URL:
-            return cls.NGROK_URL.rstrip('/')
-        if cls.LOCALTUNNEL_ENABLED and cls.LOCALTUNNEL_URL:
-            return cls.LOCALTUNNEL_URL.rstrip('/')
         
         # Fall back to request host URL if available
         if request:
@@ -303,7 +319,7 @@ def configure_proxy(app) -> None:
     """
     from werkzeug.middleware.proxy_fix import ProxyFix
     
-    # When behind a proxy (like Ngrok), use ProxyFix to handle headers
+    # When behind a proxy, use ProxyFix to handle headers
     # This ensures url_for(_external=True) generates correct URLs
     app.wsgi_app = ProxyFix(
         app.wsgi_app,

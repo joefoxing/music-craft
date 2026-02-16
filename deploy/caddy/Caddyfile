@@ -1,27 +1,86 @@
 {
     email admin@joefoxing.com
+    # Auto HTTPS - Caddy will provision certificates for all configured domains
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# DOMAIN CONSOLIDATION: www → non-www redirects
+# ─────────────────────────────────────────────────────────────────────────────
+www.joefoxing.com {
+    redir https://joefoxing.com{uri} permanent
+}
+
+www.vnuno.com {
+    redir https://vnuno.com{uri} permanent
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CANONICAL DOMAIN: joefoxing.com (Primary Application Server)
+# ─────────────────────────────────────────────────────────────────────────────
 joefoxing.com {
     encode gzip
 
     header {
-        X-Content-Type-Options nosniff
-        X-Frame-Options DENY
-        Referrer-Policy strict-origin-when-cross-origin
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "geolocation=(), microphone=(), camera=()"
     }
 
-    reverse_proxy 127.0.0.1:8000
+    reverse_proxy 127.0.0.1:8000 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-Host {host}
+    }
+
+    log {
+        output file /var/log/caddy/joefoxing_access.log {
+            roll_size 10MB
+            roll_keep 5
+        }
+        format json
+    }
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# DOMAIN ALIAS: vnuno.com → 301 Redirect to canonical domain
+# Consolidates SEO authority at joefoxing.com
+# ─────────────────────────────────────────────────────────────────────────────
+vnuno.com {
+    # 301 Permanent Redirect to canonical domain for SEO consolidation
+    redir https://joefoxing.com{uri} permanent
+
+    # Note: If you want vnuno.com to serve content directly instead of redirecting,
+    # replace the redirect above with the configuration from joefoxing.com block
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STAGING: staging.joefoxing.com
+# ─────────────────────────────────────────────────────────────────────────────
 staging.joefoxing.com {
     encode gzip
 
     header {
-        X-Content-Type-Options nosniff
-        X-Frame-Options DENY
-        Referrer-Policy strict-origin-when-cross-origin
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "geolocation=(), microphone=(), camera=()"
+        X-Robots-Tag "noindex, nofollow"
     }
 
-    reverse_proxy 127.0.0.1:8001
+    reverse_proxy 127.0.0.1:8001 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-Host {host}
+    }
+
+    log {
+        output file /var/log/caddy/staging_access.log {
+            roll_size 10MB
+            roll_keep 5
+        }
+        format json
+    }
 }

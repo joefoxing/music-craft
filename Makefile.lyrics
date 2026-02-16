@@ -1,0 +1,117 @@
+# Makefile for lyrics extraction service
+
+.PHONY: help build start stop restart logs logs-api logs-worker health test clean build-gpu start-gpu
+
+# Default target
+help:
+	@echo "Lyrics Extraction Service - Make Commands"
+	@echo ""
+	@echo "Setup:"
+	@echo "  make setup          - Create .env file from example"
+	@echo ""
+	@echo "Docker (CPU):"
+	@echo "  make build          - Build Docker images"
+	@echo "  make start          - Start all services"
+	@echo "  make stop           - Stop all services"
+	@echo "  make restart        - Restart all services"
+	@echo "  make logs           - View all logs"
+	@echo "  make logs-api       - View API logs"
+	@echo "  make logs-worker    - View worker logs"
+	@echo ""
+	@echo "Docker (GPU):"
+	@echo "  make build-gpu      - Build GPU Docker images"
+	@echo "  make start-gpu      - Start services with GPU support"
+	@echo "  make stop-gpu       - Stop GPU services"
+	@echo ""
+	@echo "Testing:"
+	@echo "  make health         - Check service health"
+	@echo "  make test           - Run test script"
+	@echo ""
+	@echo "Cleanup:"
+	@echo "  make clean          - Remove containers and volumes"
+	@echo "  make clean-temp     - Clean temporary files"
+
+# Setup
+setup:
+	@echo "Creating .env.lyrics file..."
+	@if [ ! -f .env.lyrics ]; then \
+		cp .env.lyrics.example .env.lyrics; \
+		echo "✓ Created .env.lyrics"; \
+	else \
+		echo "✓ .env.lyrics already exists"; \
+	fi
+
+# Docker CPU commands
+build: setup
+	docker compose -f docker-compose.lyrics.yml build
+
+start: setup
+	docker compose -f docker-compose.lyrics.yml up -d
+	@echo "Waiting for services to start..."
+	@sleep 5
+	@make health
+
+stop:
+	docker compose -f docker-compose.lyrics.yml down
+
+restart: stop start
+
+logs:
+	docker compose -f docker-compose.lyrics.yml logs -f
+
+logs-api:
+	docker compose -f docker-compose.lyrics.yml logs -f lyrics-api
+
+logs-worker:
+	docker compose -f docker-compose.lyrics.yml logs -f lyrics-worker
+
+# Docker GPU commands
+build-gpu: setup
+	docker compose -f docker-compose.lyrics-gpu.yml build
+
+start-gpu: setup
+	docker compose -f docker-compose.lyrics-gpu.yml up -d
+	@echo "Waiting for services to start..."
+	@sleep 5
+	@make health
+
+stop-gpu:
+	docker compose -f docker-compose.lyrics-gpu.yml down
+
+# Testing
+health:
+	@echo "Checking service health..."
+	@curl -s http://localhost:8000/healthz | python -m json.tool || echo "✗ Service is not responding"
+
+test:
+	python test_lyrics_service.py
+
+# Cleanup
+clean:
+	docker compose -f docker-compose.lyrics.yml down -v
+	@echo "✓ Removed containers and volumes"
+
+clean-temp:
+	rm -rf /tmp/lyrics_extraction/*
+	@echo "✓ Cleaned temporary files"
+
+# Development
+dev-api:
+	cd app/lyrics_service && python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+dev-worker:
+	python -m app.lyrics_service.worker
+
+# Install dependencies locally
+install:
+	pip install -r requirements.lyrics.txt
+
+# Check dependencies
+check-ffmpeg:
+	@which ffmpeg > /dev/null && echo "✓ ffmpeg found" || echo "✗ ffmpeg not found - install with: apt-get install ffmpeg"
+
+check-demucs:
+	@which demucs > /dev/null && echo "✓ demucs found" || echo "✗ demucs not found - install with: pip install demucs"
+
+check-deps: check-ffmpeg check-demucs
+	@echo "\nAll system dependencies checked"

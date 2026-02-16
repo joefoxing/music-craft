@@ -1,0 +1,71 @@
+name: music-craft-local
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+      target: development
+    container_name: music-craft-app
+    ports:
+      - "3001:8000"
+    environment:
+      - FLASK_APP=wsgi.py
+      - FLASK_DEBUG=1
+      - APP_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/music_craft_db
+      # Defaults that can be overridden by .env
+      - SECRET_KEY=dev-secret-key
+      - LYRICS_EXTRACTION_ENABLED=true
+      - LYRICS_WHISPER_MODEL=small
+      - LYRICS_WHISPER_FALLBACK_MODEL=small
+      - LYRICS_WHISPER_LANGUAGE=auto
+      - LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK=false
+      - LYRICS_VOCAL_SEPARATION_ENABLED=false
+      - LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION=false
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+      - lyrics-network
+    # Healthcheck for the app itself to ensure it's up
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  db:
+    image: postgres:15-alpine
+    container_name: music-craft-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=music_craft_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+  lyrics-network:
+    name: lyric_cover_staging_default
+    external: true
+
+volumes:
+  postgres_data:

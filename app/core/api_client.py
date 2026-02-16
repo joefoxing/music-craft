@@ -103,7 +103,7 @@ class KieAPIClient:
         endpoint = f"{self.base_url}/api/v1/generate/upload-cover"
         
         # Build request payload based on API documentation
-        # Use public base URL (prefers localtunnel, then ngrok, then BASE_URL)
+        # Use public base URL
         base_url = Config.get_public_base_url()
         if not base_url and not call_back_url:
             # Try to construct from request context if available
@@ -636,7 +636,7 @@ class KieAPIClient:
         endpoint = f"{self.base_url}/api/v1/lyrics"
         
         # Build request payload based on API documentation
-        # Use public base URL (prefers localtunnel, then ngrok, then BASE_URL)
+        # Use public base URL
         base_url = Config.get_public_base_url()
         if not base_url and not call_back_url:
             # Try to construct from request context if available
@@ -805,7 +805,7 @@ class KieAPIClient:
         endpoint = f"{self.base_url}/api/v1/generate/add-instrumental"
         
         # Build request payload based on API documentation
-        # Use public base URL (prefers localtunnel, then ngrok, then BASE_URL)
+        # Use public base URL
         base_url = Config.get_public_base_url()
         if not base_url and not call_back_url:
             # Try to construct from request context if available
@@ -952,7 +952,7 @@ class KieAPIClient:
         endpoint = f"{self.base_url}/api/v1/generate/add-vocals"
         
         # Build request payload based on API documentation
-        # Use public base URL (prefers localtunnel, then ngrok, then BASE_URL)
+        # Use public base URL
         base_url = Config.get_public_base_url()
         if not base_url and not call_back_url:
             # Try to construct from request context if available
@@ -1095,7 +1095,7 @@ class KieAPIClient:
         endpoint = f"{self.base_url}/api/v1/vocal-removal/generate"
         
         # Build request payload based on API documentation
-        # Use public base URL (prefers localtunnel, then ngrok, then BASE_URL)
+        # Use public base URL
         base_url = Config.get_public_base_url()
         if not base_url and not call_back_url:
             # Try to construct from request context if available

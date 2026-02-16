@@ -1465,6 +1465,86 @@ def get_user_activity():
         return jsonify(ResponseUtils.create_error_response(str(e))), 500
 
 
+@api_bp.route('/songs/promoted', methods=['GET'])
+def get_promoted_songs():
+    """Get promoted songs from history (all users)."""
+    try:
+        from app.services.history_service import HistoryService
+        from app.core.utils import DateTimeUtils
+        from datetime import datetime
+        
+        # Get query parameters
+        limit = int(request.args.get('limit', 12))
+        offset = int(request.args.get('offset', 0))
+        
+        # Initialize history service
+        history_service = HistoryService()
+        history = history_service.load_history()
+        
+        # Collect tracks from successful generation entries with timestamps
+        songs_with_ts = []
+        for entry in history:
+            # Skip non-successful entries
+            if entry.get('status_code') != 200:
+                continue
+            # Skip entries without processed_data
+            processed_data = entry.get('processed_data', {})
+            if not processed_data:
+                continue
+            # Get entry timestamp for sorting
+            entry_timestamp = entry.get('timestamp')
+            # Parse timestamp to datetime object for sorting
+            entry_dt = DateTimeUtils.parse_timestamp(entry_timestamp) if entry_timestamp else None
+            
+            # Get tracks
+            tracks = processed_data.get('tracks', [])
+            for track in tracks:
+                # Ensure artist is not None
+                artist = track.get('model_name')
+                if not artist or artist == 'None':
+                    artist = 'AI Generated'
+                # Ensure duration is numeric
+                duration = track.get('duration')
+                if duration is None:
+                    duration = 0
+                # Transform track to song format expected by frontend
+                song = {
+                    'title': track.get('title', 'Untitled'),
+                    'artist': artist,
+                    'duration': duration,
+                    'id': track.get('id', ''),
+                    'audio_urls': track.get('audio_urls', {}),
+                    'image_urls': track.get('image_urls', {}),
+                    'tags': track.get('tags', ''),
+                    'prompt': track.get('prompt', ''),
+                    'model_name': track.get('model_name', '')
+                }
+                songs_with_ts.append((entry_dt, song))
+        
+        # Sort by timestamp descending (newest first)
+        # Entries without timestamp go last
+        songs_with_ts.sort(key=lambda x: x[0] or datetime.min, reverse=True)
+        songs = [song for _, song in songs_with_ts]
+        
+        # Apply pagination
+        total = len(songs)
+        paginated_songs = songs[offset:offset + limit]
+        
+        return jsonify(ResponseUtils.create_success_response({
+            'songs': paginated_songs,
+            'pagination': {
+                'limit': limit,
+                'offset': offset,
+                'total': total,
+                'has_more': (offset + limit) < total
+            }
+        }))
+        
+    except Exception as e:
+        current_app.logger.error(f"Error getting promoted songs: {e}")
+        return jsonify(ResponseUtils.create_error_response(str(e))), 500
+
+
 @api_bp.route('/projects', methods=['GET'])
 def get_user_projects():
     """Get all projects for the current user."""

@@ -27,7 +27,7 @@
                         "primary": "#f20df2",
                         "primary-dark": "#c20ac2",
                         "background-light": "#f8f5f8",
-                        "background-dark": "#181118",
+                        "background-dark": "#070403",
                         "surface-dark": "#271b27",
                         "border-dark": "#392839",
                     },
@@ -54,9 +54,9 @@
         {% include "partials/_sidebar.html" %}
         
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark relative overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-gradient-to-b dark:from-[#181118] dark:to-background-dark relative overflow-hidden">
             <!-- Header -->
-            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-[#181118]/50 backdrop-blur-md sticky top-0 z-10">
                 <div class="flex items-center gap-4 text-white md:hidden">
                     <button class="text-slate-400 hover:text-white" id="mobileMenuBtn">
                         <span class="material-symbols-outlined">menu</span>
@@ -99,8 +99,8 @@
                     <!-- Generator Section -->
                     <section class="flex flex-col gap-6">
                         <div class="flex flex-col gap-2">
-                            <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Audio Processor</h2>
-                            <p class="text-slate-500 dark:text-slate-400">Upload your audio to generate a cover or extend the track.</p>
+                            <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Extraordinary Song Quality</h2>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2">Whether the melody is in your head, lyrics you've written, or just to hear your feeling —Vnuno makes high-quality music creation available to all</p>
                         </div>
                         
                         <!-- Audio Source Card -->
@@ -139,6 +139,32 @@
                                 <div id="fileInfo" class="file-info hidden mt-6 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg">
                                     <p class="font-medium"><strong>Selected file:</strong> <span id="fileName"></span></p>
                                     <p class="font-medium mt-2"><strong>Status:</strong> <span id="uploadStatus">Ready to upload</span></p>
+                                    <div class="mt-4">
+                                        <label for="lyricsLanguageSelect" class="block text-sm font-medium mb-2">Lyrics Language</label>
+                                        <select id="lyricsLanguageSelect" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                            <option value="">Auto Detect</option>
+                                            <option value="en">English</option>
+                                            <option value="es">Spanish</option>
+                                            <option value="fr">French</option>
+                                            <option value="de">German</option>
+                                            <option value="it">Italian</option>
+                                            <option value="pt">Portuguese</option>
+                                            <option value="ru">Russian</option>
+                                            <option value="ja">Japanese</option>
+                                            <option value="ko">Korean</option>
+                                            <option value="zh">Chinese</option>
+                                            <option value="vi">Vietnamese</option>
+                                            <option value="th">Thai</option>
+                                            <option value="id">Indonesian</option>
+                                            <option value="hi">Hindi</option>
+                                            <option value="ar">Arabic</option>
+                                        </select>
+                                        <div id="lyricsLanguageWarning" class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                                            <span class="material-symbols-outlined text-sm">warning</span>
+                                            Auto Detect may return translated lyrics. Select a language to keep original wording.
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-1">Used for Whisper transcription during lyrics extraction.</p>
+                                    </div>
                                     
                                     <div class="progress-container hidden mt-4" id="progressContainer">
                                         <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
@@ -269,10 +295,28 @@
                                 
                                 <!-- Prompt Input -->
                                 <div>
-                                    <label for="promptInput" class="block text-sm font-medium mb-2">Prompt <span class="text-slate-500">(Describe the style you want)</span></label>
-                                    <textarea id="promptInput" class="form-control" rows="3" placeholder="e.g., 'A pop cover with upbeat electronic elements and catchy vocals'"></textarea>
+                                    <div class="flex justify-between items-center mb-2">
+                                        <label for="promptInput" class="block text-sm font-medium">Prompt <span class="text-slate-500">(Describe the style you want)</span></label>
+                                        <button id="expandPromptEditorBtn" type="button" class="text-xs text-primary hover:text-primary-dark font-medium flex items-center gap-1 transition-colors" title="Open in full editor">
+                                            <span class="material-symbols-outlined text-sm">open_in_full</span>
+                                            Expand Editor
+                                        </button>
+                                    </div>
+                                    <textarea id="promptInput" class="form-control" rows="10" placeholder="e.g., 'A pop cover with upbeat electronic elements and catchy vocals'"></textarea>
                                     <div class="char-counter">
                                         <span id="promptChars">0</span>/<span id="promptMax">500</span> characters
+                                    </div>
+                                </div>
+                                
+                                <!-- Extracted Lyrics Preview -->
+                                <div id="lyricsPreview" class="hidden mt-3">
+                                    <label class="block text-sm font-medium mb-1">Extracted Lyrics</label>
+                                    <div class="lyrics-container max-h-48 overflow-y-auto bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
+                                        <div class="lyrics-content text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line" id="extractedLyrics">-</div>
+                                    </div>
+                                    <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                                        <span class="material-symbols-outlined align-text-bottom text-xs mr-1">lyrics</span>
+                                        Lyrics extracted from audio, displayed line by line.
                                     </div>
                                 </div>
                                 
@@ -770,6 +814,176 @@
             // Initial state
             updatePersonaIdState();
         });
+
+        // Prompt Editor Modal functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const expandPromptEditorBtn = document.getElementById('expandPromptEditorBtn');
+            const promptInput = document.getElementById('promptInput');
+            const promptEditorModal = document.getElementById('promptEditorModal');
+            const promptEditorText = document.getElementById('promptEditorText');
+            const savePromptEdit = document.getElementById('savePromptEdit');
+            const cancelPromptEdit = document.getElementById('cancelPromptEdit');
+            const closePromptEditor = document.getElementById('closePromptEditor');
+            const clearPromptBtn = document.getElementById('clearPromptBtn');
+            const copyPromptBtn = document.getElementById('copyPromptBtn');
+
+            if (expandPromptEditorBtn && promptInput && promptEditorModal) {
+                // Open modal
+                expandPromptEditorBtn.addEventListener('click', function() {
+                    promptEditorText.value = promptInput.value;
+                    promptEditorModal.classList.remove('hidden');
+                    promptEditorModal.classList.add('flex');
+                    promptEditorModal.style.display = 'flex';
+                    promptEditorText.focus();
+                    updatePromptEditorStats();
+                });
+
+                // Save changes
+                savePromptEdit.addEventListener('click', function() {
+                    promptInput.value = promptEditorText.value;
+                    // Trigger input event to update character counter
+                    promptInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    // Auto-resize textarea
+                    autoResizeTextarea(promptInput);
+                    promptEditorModal.classList.add('hidden');
+                    promptEditorModal.classList.remove('flex');
+                    promptEditorModal.style.display = 'none';
+                });
+
+                // Auto-resize textarea function
+                function autoResizeTextarea(textarea) {
+                    textarea.style.height = 'auto';
+                    textarea.style.height = Math.min(textarea.scrollHeight, 400) + 'px';
+                }
+
+                // Add auto-resize on input
+                promptInput.addEventListener('input', function() {
+                    autoResizeTextarea(this);
+                });
+
+                // Initial resize
+                autoResizeTextarea(promptInput);
+
+                // Cancel
+                cancelPromptEdit.addEventListener('click', function() {
+                    promptEditorModal.classList.add('hidden');
+                    promptEditorModal.classList.remove('flex');
+                    promptEditorModal.style.display = 'none';
+                });
+
+                // Close button
+                closePromptEditor.addEventListener('click', function() {
+                    promptEditorModal.classList.add('hidden');
+                    promptEditorModal.classList.remove('flex');
+                    promptEditorModal.style.display = 'none';
+                });
+
+                // Clear button
+                clearPromptBtn.addEventListener('click', function() {
+                    promptEditorText.value = '';
+                    updatePromptEditorStats();
+                    promptEditorText.focus();
+                });
+
+                // Copy button
+                copyPromptBtn.addEventListener('click', function() {
+                    navigator.clipboard.writeText(promptEditorText.value).then(function() {
+                        // Show temporary success feedback
+                        const originalText = copyPromptBtn.textContent;
+                        copyPromptBtn.textContent = 'Copied!';
+                        copyPromptBtn.classList.add('text-green-600');
+                        setTimeout(() => {
+                            copyPromptBtn.textContent = originalText;
+                            copyPromptBtn.classList.remove('text-green-600');
+                        }, 2000);
+                    });
+                });
+
+                // Close on background click
+                promptEditorModal.addEventListener('click', function(e) {
+                    if (e.target === promptEditorModal) {
+                        promptEditorModal.classList.add('hidden');
+                        promptEditorModal.classList.remove('flex');
+                        promptEditorModal.style.display = 'none';
+                    }
+                });
+
+                // Close on Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && !promptEditorModal.classList.contains('hidden')) {
+                        promptEditorModal.classList.add('hidden');
+                        promptEditorModal.classList.remove('flex');
+                        promptEditorModal.style.display = 'none';
+                    }
+                });
+            }
+
+            function updatePromptEditorStats() {
+                if (promptEditorText) {
+                    const text = promptEditorText.value;
+                    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                    const chars = text.length;
+                    const lines = text.split('\n').length;
+
+                    document.getElementById('promptEditorWordCount').textContent = words + ' words';
+                    document.getElementById('promptEditorCharCount').textContent = chars + ' characters';
+                    document.getElementById('promptEditorLineCount').textContent = lines + ' lines';
+                }
+            }
+        });
     </script>
+
+    <!-- Prompt Editor Modal -->
+    <div id="promptEditorModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="promptEditorModalTitle" aria-hidden="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 transition-opacity bg-black/70" aria-hidden="true"></div>
+            <!-- Modal panel -->
+            <div class="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-surface-dark shadow-xl rounded-xl border border-slate-200 dark:border-border-dark sm:my-8 sm:align-middle">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2" id="promptEditorModalTitle">
+                        <span class="material-symbols-outlined text-primary">edit</span>
+                        Prompt Editor
+                    </h3>
+                    <button id="closePromptEditor" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors" aria-label="Close modal">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <!-- Modal content -->
+                <div class="space-y-6">
+                    <!-- Editor -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Prompt Text</label>
+                        <div class="relative border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-900">
+                            <textarea id="promptEditorText" class="w-full py-3 px-4 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white resize-none min-h-[300px]" placeholder="Describe the style you want for your cover..." rows="15"></textarea>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <div class="text-xs text-slate-500 dark:text-slate-400">
+                                <span id="promptEditorLineCount">0 lines</span>
+                                • <span id="promptEditorWordCount">0 words</span>
+                                • <span id="promptEditorCharCount">0 characters</span>
+                            </div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">
+                                <button id="clearPromptBtn" class="text-primary hover:text-primary-dark">Clear</button>
+                                <button id="copyPromptBtn" class="text-primary hover:text-primary-dark ml-3">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Actions -->
+                    <div class="flex justify-end gap-3">
+                        <button id="cancelPromptEdit" class="btn-secondary flex items-center">
+                            <span class="material-symbols-outlined mr-2">close</span>
+                            Cancel
+                        </button>
+                        <button id="savePromptEdit" class="btn-primary flex items-center">
+                            <span class="material-symbols-outlined mr-2">save</span>
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

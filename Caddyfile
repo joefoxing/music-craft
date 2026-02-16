@@ -5,12 +5,20 @@
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# PRODUCTION: joefoxing.com
+# DOMAIN CONSOLIDATION: Redirect www to non-www for both domains
 # ─────────────────────────────────────────────────────────────────────────────
 www.joefoxing.com {
     redir https://joefoxing.com{uri} permanent
 }
 
+www.vnuno.com {
+    redir https://vnuno.com{uri} permanent
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CANONICAL DOMAIN: joefoxing.com (Primary)
+# Serves the application and receives all traffic
+# ─────────────────────────────────────────────────────────────────────────────
 joefoxing.com {
     encode zstd gzip
 
@@ -18,6 +26,7 @@ joefoxing.com {
     reverse_proxy prod_app:8000 {
         header_up X-Real-IP {remote_host}
         header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-Host {host}
     }
 
     # Security Headers
@@ -43,6 +52,32 @@ joefoxing.com {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
+# DOMAIN ALIAS: vnuno.com → Redirects to canonical domain (SEO consolidation)
+# 301 permanent redirect preserves link equity and prevents duplicate content
+# ─────────────────────────────────────────────────────────────────────────────
+vnuno.com {
+    # 301 Permanent Redirect to canonical domain
+    # This consolidates SEO authority at joefoxing.com
+    redir https://joefoxing.com{uri} permanent
+
+    # Optional: If you want vnuno.com to serve content directly instead,
+    # comment out the redirect above and uncomment the configuration below:
+    #
+    # encode zstd gzip
+    # reverse_proxy prod_app:8000 {
+    #     header_up X-Real-IP {remote_host}
+    #     header_up X-Forwarded-Proto {scheme}
+    #     header_up X-Forwarded-Host {host}
+    # }
+    # header {
+    #     Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    #     X-Content-Type-Options "nosniff"
+    #     X-Frame-Options "DENY"
+    #     Referrer-Policy "strict-origin-when-cross-origin"
+    # }
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
 # STAGING: staging.joefoxing.com
 # ─────────────────────────────────────────────────────────────────────────────
 staging.joefoxing.com {
@@ -52,6 +87,7 @@ staging.joefoxing.com {
     reverse_proxy staging_app:8000 {
         header_up X-Real-IP {remote_host}
         header_up X-Forwarded-Proto {scheme}
+        header_up X-Forwarded-Host {host}
     }
 
     # Security Headers
