@@ -95,7 +95,8 @@ class LyricsTranscriber:
             "condition_on_previous_text": False,  # Better for singing
             "compression_ratio_threshold": 2.4,
             "log_prob_threshold": -1.0,
-            "no_speech_threshold": 0.4,  # Lower threshold for singing (default 0.6 is too aggressive)
+            "no_speech_threshold": 0.6,  # Increased to reduce hallucinations (was 0.4)
+            "initial_prompt": "♪ Music lyrics. No commentary or repetition.",  # Guide model
         }
         
         # Tune VAD parameters to be less aggressive for singing

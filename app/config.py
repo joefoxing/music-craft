@@ -86,6 +86,9 @@ class Config:
     LYRICS_EXTRACTION_ASYNC_ENABLED = os.environ.get('LYRICS_EXTRACTION_ASYNC_ENABLED', 'true').lower() == 'true'
     LYRICS_EXTRACTION_WORKERS = int(os.environ.get('LYRICS_EXTRACTION_WORKERS', '2'))
     
+    # LRCLIB API (Tier 2 - free, no API key required)
+    LYRICS_USE_LRCLIB = os.environ.get('LYRICS_USE_LRCLIB', 'true').lower() == 'true'
+    
     # Lyrics Microservice configuration
     LYRICS_USE_MICROSERVICE = os.environ.get('LYRICS_USE_MICROSERVICE', 'false').lower() == 'true'
     LYRICS_MICROSERVICE_URL = os.environ.get('LYRICS_MICROSERVICE_URL', 'http://localhost:8000/v1')
@@ -185,6 +188,9 @@ class Config:
         app.config['LYRICS_MAX_DOWNLOAD_MB'] = cls.LYRICS_MAX_DOWNLOAD_MB
         app.config['LYRICS_EXTRACTION_ASYNC_ENABLED'] = cls.LYRICS_EXTRACTION_ASYNC_ENABLED
         app.config['LYRICS_EXTRACTION_WORKERS'] = cls.LYRICS_EXTRACTION_WORKERS
+        
+        # LRCLIB configuration
+        app.config['LYRICS_USE_LRCLIB'] = cls.LYRICS_USE_LRCLIB
         
         # Lyrics Microservice configuration
         app.config['LYRICS_USE_MICROSERVICE'] = cls.LYRICS_USE_MICROSERVICE
