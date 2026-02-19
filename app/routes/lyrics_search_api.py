@@ -470,62 +470,105 @@ def pipeline_search():
         except Exception as e:
             logger.warning(f"Genius metadata lookup failed (non-fatal): {e}")
 
-        # Step 2: LRCLIB direct API call (search result already includes lyrics inline —
-        # avoids the SSL EOF bug in the /api/get/{id} path endpoint on this urllib3 version)
+        # Step 2: LRCLIB API call with multiple search strategies
         synced_lyrics = None
         plain_lyrics = None
-        search_term = f"{resolved_title} {resolved_artist}".strip()
-
-        try:
-            session = create_lrclib_session()
+        lrclib_metadata = None
+        
+        session = create_lrclib_session()
+        lrclib_attempts = [
+            # Strategy 1: Structured search with track_name and artist_name
+            {
+                'name': 'structured',
+                'params': {
+                    'track_name': resolved_title,
+                    'artist_name': resolved_artist
+                }
+            },
+            # Strategy 2: Generic keyword search (fallback)
+            {
+                'name': 'keyword',
+                'params': {
+                    'q': f"{resolved_title} {resolved_artist}".strip()
+                }
+            },
+            # Strategy 3: Title-only search
+            {
+                'name': 'title_only',
+                'params': {
+                    'track_name': resolved_title
+                }
+            }
+        ]
+        
+        for strategy in lrclib_attempts:
             try:
-                # First attempt with SSL verification enabled
-                lrclib_resp = session.get(
-                    'https://lrclib.net/api/search',
-                    params={'q': search_term},
-                    headers={'Connection': 'close'},
-                    timeout=10,
-                )
-            except requests.exceptions.SSLError as e:
-                # SSL error - retry with verify=False
-                logger.warning(f"LRCLIB SSL error in pipeline search: {e}. Retrying without SSL verification...")
-                lrclib_resp = session.get(
-                    'https://lrclib.net/api/search',
-                    params={'q': search_term},
-                    headers={'Connection': 'close'},
-                    timeout=10,
-                    verify=False
-                )
-            
-            if lrclib_resp.ok:
-                tracks = lrclib_resp.json()
-                if tracks:
-                    best_track = tracks[0]
-                    synced_lyrics = (best_track.get('syncedLyrics') or '').strip() or None
-                    plain_lyrics = (best_track.get('plainLyrics') or '').strip() or None
-                    logger.info(f"LRCLIB: synced={bool(synced_lyrics)}, plain={bool(plain_lyrics)}")
-        except Exception as e:
-            logger.warning(f"LRCLIB lookup failed (non-fatal): {e}")
+                logger.info(f"LRCLIB pipeline search attempt: {strategy['name']}")
+                try:
+                    # First attempt with SSL verification enabled
+                    lrclib_resp = session.get(
+                        'https://lrclib.net/api/search',
+                        params=strategy['params'],
+                        headers={'Connection': 'close'},
+                        timeout=10,
+                    )
+                except requests.exceptions.SSLError as e:
+                    # SSL error - retry with verify=False
+                    logger.warning(f"LRCLIB SSL error (attempt {strategy['name']}): {e}. Retrying without SSL verification...")
+                    lrclib_resp = session.get(
+                        'https://lrclib.net/api/search',
+                        params=strategy['params'],
+                        headers={'Connection': 'close'},
+                        timeout=10,
+                        verify=False
+                    )
+                
+                if lrclib_resp.ok:
+                    tracks = lrclib_resp.json()
+                    if tracks and isinstance(tracks, list) and len(tracks) > 0:
+                        best_track = tracks[0]
+                        synced_lyrics = (best_track.get('syncedLyrics') or '').strip() or None
+                        plain_lyrics = (best_track.get('plainLyrics') or '').strip() or None
+                        lrclib_metadata = best_track
+                        logger.info(f"LRCLIB found lyrics via {strategy['name']}: synced={bool(synced_lyrics)}, plain={bool(plain_lyrics)}")
+                        break  # Success, stop trying other strategies
+                    else:
+                        logger.debug(f"LRCLIB {strategy['name']} returned empty results")
+                else:
+                    logger.debug(f"LRCLIB {strategy['name']} returned status {lrclib_resp.status_code}")
+            except requests.exceptions.Timeout as e:
+                logger.warning(f"LRCLIB {strategy['name']} timed out: {e}")
+                continue
+            except Exception as e:
+                logger.warning(f"LRCLIB {strategy['name']} failed: {e}")
+                continue
 
         lyrics_text = synced_lyrics or plain_lyrics or ''
         has_synced = bool(synced_lyrics)
 
-        if not lyrics_text:
-            logger.info("Pipeline search: no lyrics found")
-            return jsonify({'error': 'No lyrics found via pipeline'}), 404
-
-        logger.info(
-            f"Pipeline search found lyrics for '{resolved_title}' by '{resolved_artist}'"
-            f"{' [synced]' if has_synced else ' [plain]'}"
-        )
-
+        # If LRCLIB found lyrics, return them
+        if lyrics_text:
+            logger.info(f"Pipeline search found lyrics via LRCLIB for '{resolved_title}' by '{resolved_artist}'")
+            return jsonify({
+                'track_name': resolved_title,
+                'artist_name': resolved_artist,
+                'lyrics': lyrics_text,
+                'has_synced': has_synced,
+                'genius_url': genius_url,
+            })
+        
+        # If LRCLIB had no results, try fallback strategies
+        # For now, we can't do AssemblyAI transcription without an audio file,
+        # but we can try to provide a helpful error message
+        logger.info(f"Pipeline search: no lyrics found via LRCLIB, no audio file for transcription fallback")
         return jsonify({
-            'track_name': resolved_title,
-            'artist_name': resolved_artist,
-            'lyrics': lyrics_text,
-            'has_synced': has_synced,
-            'genius_url': genius_url,
-        })
+            'error': 'No lyrics found. Try searching by a different name, or upload the audio file for AI transcription.',
+            'suggestions': {
+                'track_name': resolved_title,
+                'artist_name': resolved_artist,
+                'genius_url': genius_url
+            }
+        }), 404
 
     except Exception as e:
         logger.error(f"Pipeline search error: {e}", exc_info=True)
