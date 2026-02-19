@@ -1,0 +1,56 @@
+# Global options
+{
+    email joefoxing@gmail.com
+}
+
+# Production site
+joefoxing.com, www.joefoxing.com {
+    encode gzip zstd
+    
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Frame-Options "DENY"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+    }
+
+    reverse_proxy app-api:8000 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    log {
+        output file /data/prod-access.log {
+            roll_size 10MB
+            roll_keep 5
+        }
+        format json
+    }
+}
+
+# Staging site
+staging.joefoxing.com {
+    encode gzip zstd
+    
+    header {
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        X-Robots-Tag "noindex, nofollow"
+        X-Environment "staging"
+        -Server
+    }
+
+    reverse_proxy app-staging-api:8000 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    log {
+        output file /data/staging-access.log {
+            roll_size 10MB
+            roll_keep 5
+        }
+        format json
+    }
+}

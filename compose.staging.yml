@@ -11,6 +11,14 @@ services:
       - .env.staging
     environment:
       - WORKERS=2
+    volumes:
+      - ./app/config.py:/app/app/config.py:ro
+      - ./app/__init__.py:/app/app/__init__.py:ro
+      - ./app/routes/debug_routes.py:/app/app/routes/debug_routes.py:ro
+      - ./app/templates/cover-generator.html:/app/app/templates/cover-generator.html:ro
+      - ./app/static/js/components/lyricsSearchHandler.js:/app/app/static/js/components/lyricsSearchHandler.js:ro
+      - ./app/routes/lyrics_search_api.py:/app/app/routes/lyrics_search_api.py:ro
+      - ./app/lyrics_pipeline:/app/app/lyrics_pipeline:ro
     networks:
       proxy_net:
         aliases:
@@ -26,7 +34,7 @@ services:
       resources:
         limits:
           cpus: '1.0'
-          memory: 768M
+          memory: 2G
         reservations:
           cpus: '0.1'
           memory: 256M

@@ -691,6 +691,41 @@ class UsageEvent(db.Model):
         self.units = units
 
 
+class LyricsCache(db.Model):
+    """Cache for LRCLIB lyrics results with enhanced metadata."""
+    __tablename__ = 'lyrics_cache'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    cache_key = db.Column(db.String(32), unique=True, nullable=False, index=True)
+    artist_name = db.Column(db.String(500), nullable=False, index=True)
+    track_name = db.Column(db.String(500), nullable=False, index=True)
+    album_name = db.Column(db.String(500))
+    lyrics_text = db.Column(db.Text, nullable=False)
+    synced_lyrics = db.Column(db.Text)  # LRC format if available
+    lrclib_id = db.Column(db.Integer, index=True)
+    duration = db.Column(db.Integer)  # Duration in seconds
+    match_score = db.Column(db.Float)  # Confidence score
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+    
+    def __repr__(self):
+        return f'<LyricsCache {self.artist_name} - {self.track_name}>'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'cache_key': self.cache_key,
+            'artist_name': self.artist_name,
+            'track_name': self.track_name,
+            'album_name': self.album_name,
+            'lyrics_text': self.lyrics_text,
+            'synced_lyrics': self.synced_lyrics,
+            'lrclib_id': self.lrclib_id,
+            'duration': self.duration,
+            'match_score': self.match_score,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+
+
 def get_default_role():
     """Get or create the default 'user' role."""
     role = Role.query.filter_by(name='user').first()

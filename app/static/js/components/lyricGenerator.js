@@ -99,6 +99,99 @@ class LyricGenerator {
                         </div>
                     </div>
 
+                    <!-- Song Structure Tags Panel -->
+                    <div id="lyricTagsPanel" class="border-b border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-slate-900/40 shrink-0">
+                        <!-- Panel Header -->
+                        <div class="flex items-center gap-2 px-3 py-1.5">
+                            <span class="material-symbols-outlined text-[15px] text-primary">label</span>
+                            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 select-none">Song Structure Tags</span>
+                            <div class="flex-1"></div>
+                            <button id="viewTemplateBtn" type="button" class="px-2 py-0.5 text-xs text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded flex items-center gap-1 transition-colors" title="View full template">
+                                <span class="material-symbols-outlined text-[13px]">article</span> Template
+                            </button>
+                            <button id="insertFullTemplateBtn" type="button" class="px-2 py-0.5 bg-primary/10 text-primary hover:bg-primary/20 rounded text-xs font-medium flex items-center gap-1 transition-colors" title="Insert full template at cursor">
+                                <span class="material-symbols-outlined text-[13px]">playlist_add</span> Insert All
+                            </button>
+                            <button id="lyricTagsPanelToggle" type="button" class="p-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="Toggle tags panel">
+                                <span class="material-symbols-outlined text-[16px] text-slate-400 transition-transform" id="lyricTagsPanelIcon">expand_less</span>
+                            </button>
+                        </div>
+                        <!-- Tag Chips Body -->
+                        <div id="lyricTagsBody" class="px-3 pb-2 space-y-1.5">
+                            <!-- Template Preview (hidden by default) -->
+                            <div id="lyricTemplatePreview" class="hidden mb-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-lg p-3 text-xs font-mono text-slate-600 dark:text-slate-400 leading-relaxed overflow-y-auto max-h-40 whitespace-pre">
+[Mood: Focused]
+[Energy: Medium]
+[Instrument: Keys, Drums]
+
+[Intro]
+(quiet movement; establish palette)
+
+[Verse]
+(story lane; tight lines)
+
+[Pre-Chorus]
+[Build-Up]
+(raise anticipation; shorter phrasing)
+
+[Chorus]
+[Energy: High]
+(repeatable hook; simplest words; biggest lift)
+
+[Verse 2]
+(new angle; same pocket)
+
+[Chorus]
+(keep hook consistent)
+
+[Bridge]
+[Breakdown]
+(space + contrast)
+
+[Final Chorus]
+[Energy: High]
+(biggest version; keep hook the same)
+
+[Outro]
+(leave room for a Studio fade)</div>
+                            <!-- Metadata Tags -->
+                            <div class="flex flex-wrap gap-1 items-center">
+                                <span class="text-[10px] font-bold text-indigo-400 dark:text-indigo-400 uppercase tracking-wider w-14 shrink-0">Metadata</span>
+                                <button type="button" class="lyric-tag-btn" data-tag="[Mood: Focused]" data-newline="true">[Mood: Focused]</button>
+                                <button type="button" class="lyric-tag-btn" data-tag="[Energy: Medium]" data-newline="true">[Energy: Medium]</button>
+                                <button type="button" class="lyric-tag-btn" data-tag="[Energy: High]" data-newline="true">[Energy: High]</button>
+                                <button type="button" class="lyric-tag-btn" data-tag="[Instrument: Keys, Drums]" data-newline="true">[Instrument: Keys, Drums]</button>
+                            </div>
+                            <!-- Section Tags -->
+                            <div class="flex flex-wrap gap-1 items-center">
+                                <span class="text-[10px] font-bold text-violet-400 dark:text-violet-400 uppercase tracking-wider w-14 shrink-0">Sections</span>
+                                <button type="button" class="lyric-tag-btn lyric-tag-section" data-tag="[Intro]" data-newline="true">[Intro]</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-section" data-tag="[Verse]" data-newline="true">[Verse]</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-section" data-tag="[Pre-Chorus]" data-newline="true">[Pre-Chorus]</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-section" data-tag="[Build-Up]" data-newline="true">[Build-Up]</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-section" data-tag="[Chorus]" data-newline="true">[Chorus]</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-section" data-tag="[Verse 2]" data-newline="true">[Verse 2]</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-section" data-tag="[Bridge]" data-newline="true">[Bridge]</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-section" data-tag="[Breakdown]" data-newline="true">[Breakdown]</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-section" data-tag="[Final Chorus]" data-newline="true">[Final Chorus]</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-section" data-tag="[Outro]" data-newline="true">[Outro]</button>
+                            </div>
+                            <!-- Annotation Tags -->
+                            <div class="flex flex-wrap gap-1 items-center">
+                                <span class="text-[10px] font-bold text-amber-400 dark:text-amber-400 uppercase tracking-wider w-14 shrink-0">Notes</span>
+                                <button type="button" class="lyric-tag-btn lyric-tag-note" data-tag="(quiet movement; establish palette)" title="(quiet movement; establish palette)">(quiet movement)</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-note" data-tag="(story lane; tight lines)" title="(story lane; tight lines)">(story lane)</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-note" data-tag="(raise anticipation; shorter phrasing)" title="(raise anticipation; shorter phrasing)">(raise anticipation)</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-note" data-tag="(repeatable hook; simplest words; biggest lift)" title="(repeatable hook; simplest words; biggest lift)">(repeatable hook)</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-note" data-tag="(new angle; same pocket)" title="(new angle; same pocket)">(new angle)</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-note" data-tag="(keep hook consistent)" title="(keep hook consistent)">(keep hook)</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-note" data-tag="(space + contrast)" title="(space + contrast)">(space + contrast)</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-note" data-tag="(biggest version; keep hook the same)" title="(biggest version; keep hook the same)">(biggest version)</button>
+                                <button type="button" class="lyric-tag-btn lyric-tag-note" data-tag="(leave room for a Studio fade)" title="(leave room for a Studio fade)">(studio fade)</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Editor Area -->
                     <div class="flex-1 flex overflow-hidden relative bg-slate-50 dark:bg-black/20">
                         <!-- Line Numbers -->
@@ -784,7 +877,48 @@ class LyricGenerator {
         if (copyBtn) {
             copyBtn.addEventListener('click', () => this.copyEditorLyrics());
         }
-        
+
+        // --- Song Structure Tags Panel ---
+        this._injectTagStyles();
+
+        const tagsPanelToggle = document.getElementById('lyricTagsPanelToggle');
+        const tagsPanelIcon  = document.getElementById('lyricTagsPanelIcon');
+        const tagsBody       = document.getElementById('lyricTagsBody');
+        const templatePreview = document.getElementById('lyricTemplatePreview');
+        const viewTemplateBtn = document.getElementById('viewTemplateBtn');
+        const insertAllBtn   = document.getElementById('insertFullTemplateBtn');
+
+        if (tagsPanelToggle && tagsBody) {
+            tagsPanelToggle.addEventListener('click', () => {
+                const collapsed = tagsBody.classList.toggle('hidden');
+                if (tagsPanelIcon) {
+                    tagsPanelIcon.textContent = collapsed ? 'expand_more' : 'expand_less';
+                }
+            });
+        }
+
+        if (viewTemplateBtn && templatePreview) {
+            viewTemplateBtn.addEventListener('click', () => {
+                const hidden = templatePreview.classList.toggle('hidden');
+                viewTemplateBtn.classList.toggle('text-primary', !hidden);
+            });
+        }
+
+        if (insertAllBtn) {
+            insertAllBtn.addEventListener('click', () => this.insertFullTemplate());
+        }
+
+        // Tag chip clicks – delegate on the tags body
+        if (tagsBody) {
+            tagsBody.addEventListener('click', (e) => {
+                const btn = e.target.closest('.lyric-tag-btn');
+                if (!btn) return;
+                const tag     = btn.dataset.tag || '';
+                const newline = btn.dataset.newline === 'true';
+                this.insertTagAtCursor(tag, newline);
+            });
+        }
+
         // Close modal on ESC key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
@@ -796,6 +930,147 @@ class LyricGenerator {
         });
     }
     
+    /**
+     * Inject tag-button styles once into the document head.
+     * @private
+     */
+    _injectTagStyles() {
+        if (document.getElementById('lyric-tag-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'lyric-tag-styles';
+        style.textContent = `
+            .lyric-tag-btn {
+                display: inline-flex;
+                align-items: center;
+                padding: 2px 8px;
+                border-radius: 9999px;
+                font-size: 11px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.15s;
+                border: 1px solid;
+                white-space: nowrap;
+                background: #ede9fe;
+                border-color: #c4b5fd;
+                color: #5b21b6;
+            }
+            .lyric-tag-btn:hover {
+                background: #c4b5fd;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 6px rgba(139,92,246,0.25);
+            }
+            .lyric-tag-btn:active { transform: scale(0.96); }
+            .lyric-tag-section {
+                background: #f5f3ff;
+                border-color: #a78bfa;
+                color: #6d28d9;
+            }
+            .lyric-tag-section:hover { background: #c4b5fd; }
+            .lyric-tag-note {
+                background: #fffbeb;
+                border-color: #fcd34d;
+                color: #92400e;
+            }
+            .lyric-tag-note:hover {
+                background: #fef3c7;
+                box-shadow: 0 2px 6px rgba(245,158,11,0.25);
+            }
+            /* dark mode */
+            .dark .lyric-tag-btn {
+                background: rgba(139,92,246,0.15);
+                border-color: rgba(139,92,246,0.4);
+                color: #c4b5fd;
+            }
+            .dark .lyric-tag-btn:hover { background: rgba(139,92,246,0.3); }
+            .dark .lyric-tag-section {
+                background: rgba(124,58,237,0.15);
+                border-color: rgba(124,58,237,0.4);
+                color: #a78bfa;
+            }
+            .dark .lyric-tag-section:hover { background: rgba(124,58,237,0.3); }
+            .dark .lyric-tag-note {
+                background: rgba(245,158,11,0.12);
+                border-color: rgba(245,158,11,0.35);
+                color: #fcd34d;
+            }
+            .dark .lyric-tag-note:hover { background: rgba(245,158,11,0.25); }
+        `;
+        document.head.appendChild(style);
+    }
+
+    /**
+     * Insert a tag string at the current cursor position in the lyric editor textarea.
+     * @param {string} tag - The tag text to insert
+     * @param {boolean} [newline=false] - Whether to wrap the tag on its own line
+     */
+    insertTagAtCursor(tag, newline = false) {
+        const textArea = document.getElementById('lyricEditorText');
+        if (!textArea) return;
+        textArea.focus();
+        const start = textArea.selectionStart;
+        const end   = textArea.selectionEnd;
+        const text  = textArea.value;
+        let insert  = tag;
+        if (newline) {
+            // Add leading newline if not at start and previous char isn't newline
+            const before = start > 0 ? text[start - 1] : '';
+            const after  = end < text.length ? text[end] : '';
+            const needPre  = before !== '' && before !== '\n';
+            const needPost = after  !== '' && after  !== '\n';
+            insert = (needPre ? '\n' : '') + tag + (needPost ? '\n' : '');
+        }
+        textArea.value = text.substring(0, start) + insert + text.substring(end);
+        const newCursor = start + insert.length;
+        textArea.selectionStart = newCursor;
+        textArea.selectionEnd   = newCursor;
+        this.updateLyricEditorStats();
+        this.populateLyricStructure(textArea.value);
+        // Brief visual flash on the textarea
+        textArea.classList.add('ring-2', 'ring-primary');
+        setTimeout(() => textArea.classList.remove('ring-2', 'ring-primary'), 400);
+    }
+
+    /**
+     * Insert the full song structure template at the cursor position.
+     */
+    insertFullTemplate() {
+        const template = `[Mood: Focused]
+[Energy: Medium]
+[Instrument: Keys, Drums]
+
+[Intro]
+(quiet movement; establish palette)
+
+[Verse]
+(story lane; tight lines)
+
+[Pre-Chorus]
+[Build-Up]
+(raise anticipation; shorter phrasing)
+
+[Chorus]
+[Energy: High]
+(repeatable hook; simplest words; biggest lift)
+
+[Verse 2]
+(new angle; same pocket)
+
+[Chorus]
+(keep hook consistent)
+
+[Bridge]
+[Breakdown]
+(space + contrast)
+
+[Final Chorus]
+[Energy: High]
+(biggest version; keep hook the same)
+
+[Outro]
+(leave room for a Studio fade)`;
+        this.insertTagAtCursor(template, false);
+    }
+
     /**
      * Save edited lyric.
      */

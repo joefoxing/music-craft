@@ -18,6 +18,7 @@ class FileHandler {
         this.progressContainer = null;
         this.progressBar = null;
         this.progressText = null;
+        this.progressStage = null;
         this.uploadBtn = null;
         this.lyricsLanguageSelect = null;
         this.lyricsLanguageWarning = null;
@@ -56,6 +57,38 @@ class FileHandler {
     }
 
     /**
+     * Update visual progress for upload/lyrics extraction flow.
+     * @param {number} percent - Progress percentage
+     * @param {string} stageText - Current stage text
+     * @private
+     */
+    _updateExtractionProgress(percent, stageText) {
+        const normalizedPercent = Math.max(0, Math.min(100, Math.round(percent)));
+        console.log(`[FileHandler] Progress update: ${normalizedPercent}% - ${stageText}`);
+
+        if (this.progressContainer) {
+            console.log('[FileHandler] Showing progress container');
+            this.progressContainer.classList.remove('hidden');
+        } else {
+            console.warn('[FileHandler] progressContainer not found!');
+        }
+
+        if (this.progressBar) {
+            this.progressBar.style.width = `${normalizedPercent}%`;
+        }
+
+        if (this.progressText) {
+            this.progressText.textContent = `${normalizedPercent}%`;
+        }
+
+        if (this.progressStage) {
+            this.progressStage.textContent = stageText;
+        } else {
+            console.warn('[FileHandler] progressStage element not found!');
+        }
+    }
+
+    /**
      * Populate the cover generator prompt with extracted lyrics.
      * This runs only on the cover generator page.
      * @param {Object} audioItem - Uploaded audio library item from upload response
@@ -72,6 +105,7 @@ class FileHandler {
         }
 
         if (audioItem?.lyrics && audioItem.lyrics.trim()) {
+            this._updateExtractionProgress(100, 'Lyrics extracted');
             promptInput.value = audioItem.lyrics.trim();
             promptInput.dispatchEvent(new Event('input', { bubbles: true }));
             window.NotificationSystem?.showSuccess('Extracted lyrics populated in prompt box.');
@@ -86,6 +120,8 @@ class FileHandler {
         const maxAttempts = 300;
         const pollIntervalMs = 2000;
         let extractionStartedNotified = false;
+
+        this._updateExtractionProgress(30, 'Lyrics extraction queued...');
 
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
             try {
@@ -105,7 +141,15 @@ class FileHandler {
                     window.NotificationSystem?.showInfo('Lyrics extraction started. This may take a minute.');
                 }
 
+                if (status === 'queued') {
+                    this._updateExtractionProgress(35, 'Lyrics extraction queued...');
+                } else if (status === 'processing' || status === 'running') {
+                    const processingProgress = Math.min(90, 40 + Math.floor((attempt / maxAttempts) * 45));
+                    this._updateExtractionProgress(processingProgress, 'Extracting lyrics...');
+                }
+
                 if (status === 'completed' && lyrics && lyrics.trim()) {
+                    this._updateExtractionProgress(100, 'Lyrics extracted');
                     // First, populate in prompt box (critical functionality)
                     promptInput.value = lyrics.trim();
                     promptInput.dispatchEvent(new Event('input', { bubbles: true }));
@@ -146,17 +190,20 @@ class FileHandler {
                 }
 
                 if (status === 'completed') {
+                    this._updateExtractionProgress(100, 'Extraction completed (no lyrics detected)');
                     window.NotificationSystem?.showWarning('Lyrics extraction completed, but no lyrics were detected for this audio.');
                     return;
                 }
 
                 if (status === 'failed') {
+                    this._updateExtractionProgress(100, 'Lyrics extraction failed');
                     window.NotificationSystem?.showWarning(
                         extractionError || 'Lyrics extraction failed for this audio file.'
                     );
                     return;
                 }
             } catch (error) {
+                this._updateExtractionProgress(100, 'Unable to fetch lyrics status');
                 window.NotificationSystem?.showWarning('Could not check lyrics extraction status.');
                 return;
             }
@@ -164,6 +211,7 @@ class FileHandler {
             await this._delay(pollIntervalMs);
         }
 
+        this._updateExtractionProgress(95, 'Still processing lyrics...');
         window.NotificationSystem?.showInfo('Lyrics extraction is still running. Please wait a bit and try upload again if needed.');
     }
 
@@ -180,6 +228,7 @@ class FileHandler {
         this.progressContainer = elements.progressContainer;
         this.progressBar = elements.progressBar;
         this.progressText = elements.progressText;
+        this.progressStage = document.getElementById('progressStage');
         this.uploadBtn = elements.uploadBtn;
         this.lyricsLanguageSelect = elements.lyricsLanguageSelect;
         this.lyricsLanguageWarning = elements.lyricsLanguageWarning;
@@ -447,6 +496,7 @@ class FileHandler {
         if (this.progressContainer) this.progressContainer.classList.remove('hidden');
         if (this.uploadBtn) this.uploadBtn.disabled = true;
         if (this.uploadStatus) this.uploadStatus.textContent = 'Uploading...';
+        this._updateExtractionProgress(10, 'Uploading file...');
 
         try {
             const headers = window.csrfToken ? { 'X-CSRFToken': window.csrfToken } : {};
@@ -461,13 +511,13 @@ class FileHandler {
                 }
                 
                 this.uploadedFileUrl = fileUrl;
+
+                this._updateExtractionProgress(25, 'Upload complete. Starting lyrics extraction...');
                 
                 if (this.uploadStatus) {
-                    this.uploadStatus.textContent = 'Upload successful!';
+                    this.uploadStatus.textContent = 'Upload successful. Extracting lyrics...';
                     this.uploadStatus.style.color = '#10b981';
                 }
-                if (this.progressBar) this.progressBar.style.width = '100%';
-                if (this.progressText) this.progressText.textContent = '100%';
                 if (this.sourceType) this.sourceType.textContent = 'Uploaded File';
                 if (this.sourceUrl) this.sourceUrl.textContent = fileUrl;
                 if (this.sourceInfo) this.sourceInfo.classList.remove('hidden');
@@ -476,7 +526,19 @@ class FileHandler {
                     this.generateBtn.innerHTML = '<span class="material-symbols-outlined mr-2">play_circle</span> Generate Music Cover';
                 }
 
+                // Tier 2: Auto-extract metadata and search LRCLIB
+                if (window.lyricsSearchHandler && this.currentFile) {
+                    console.log('[Tier 2] Triggering auto-extraction for uploaded file');
+                    window.lyricsSearchHandler.autoExtractAndSearch(this.currentFile).catch(err => {
+                        console.warn('[Tier 2] Auto-extraction failed:', err);
+                    });
+                }
+
                 await this._populateCoverGeneratorLyricsPrompt(data.data?.audio_item);
+
+                if (this.uploadStatus) {
+                    this.uploadStatus.textContent = 'Upload and lyrics extraction completed';
+                }
                 
                 window.NotificationSystem?.showSuccess('File uploaded successfully! Ready to generate cover.');
             } else {
@@ -501,6 +563,9 @@ class FileHandler {
         
         if (this.fileInfo) this.fileInfo.classList.add('hidden');
         if (this.progressContainer) this.progressContainer.classList.add('hidden');
+        if (this.progressBar) this.progressBar.style.width = '0%';
+        if (this.progressText) this.progressText.textContent = '0%';
+        if (this.progressStage) this.progressStage.textContent = 'Uploading file...';
         if (this.uploadBtn) this.uploadBtn.disabled = false;
         if (this.audioFileInput) this.audioFileInput.value = '';
         if (this.audioUrlInput) this.audioUrlInput.value = '';

@@ -41,6 +41,12 @@ def cover_generator():
     return render_template('cover-generator.html', active_nav='cover-generator')
 
 
+@main_bp.route('/lyrics-extraction')
+def lyrics_extraction():
+    """Render the lyrics extraction page."""
+    return render_template('lyrics-extraction.html', active_nav='lyrics-extraction')
+
+
 @main_bp.route('/music-generator')
 @login_required
 def music_generator():

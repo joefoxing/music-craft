@@ -1649,6 +1649,18 @@ class SongLibrary {
         // Check if we are in a playlist view
         const isInPlaylist = !!this.currentFilters.playlist_id;
         const canRetryLyricsExtraction = this.canRetryLyricsExtraction(song);
+        const hasLyrics = song.lyrics && song.lyrics.trim().length > 0 && song.lyrics_extraction_status === 'completed';
+        const isProcessingLyrics = song.lyrics_extraction_status === 'queued' || song.lyrics_extraction_status === 'processing';
+
+        // Debug logging
+        console.log('[Lyrics Menu Debug]', {
+            songId: song.id,
+            title: song.title,
+            hasLyrics: hasLyrics,
+            lyricsLength: song.lyrics ? song.lyrics.length : 0,
+            lyricsStatus: song.lyrics_extraction_status,
+            lyricsSource: song.lyrics_source
+        });
 
         // Menu items
         menu.innerHTML = `
@@ -1656,6 +1668,12 @@ class SongLibrary {
                 <span class="material-symbols-outlined text-[20px]">playlist_add</span>
                 <span class="font-medium">Add to Playlist</span>
             </button>
+            ${hasLyrics ? `
+            <button class="w-full text-left px-4 py-2.5 text-sm text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 flex items-center gap-3 transition-colors" data-action="view-lyrics">
+                <span class="material-symbols-outlined text-[20px]">lyrics</span>
+                <span class="font-medium">View Lyrics</span>
+            </button>
+            ` : ''}
             ${canRetryLyricsExtraction ? `
             <button class="w-full text-left px-4 py-2.5 text-sm text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 flex items-center gap-3 transition-colors" data-action="retry-lyrics-extraction">
                 <span class="material-symbols-outlined text-[20px]">lyrics</span>
@@ -1716,6 +1734,15 @@ class SongLibrary {
             });
         }
 
+        const viewLyricsBtn = menu.querySelector('[data-action="view-lyrics"]');
+        if (viewLyricsBtn) {
+            viewLyricsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.closeActiveMenu();
+                this.showLyricsModal(song);
+            });
+        }
+
         // Close when clicking outside
         // Delay slightly to prevent the click that opened it from closing it immediately
         setTimeout(() => {
@@ -1737,7 +1764,8 @@ class SongLibrary {
         }
 
         const status = song.lyrics_extraction_status;
-        return status === 'failed' || status === 'not_requested';
+        // Allow retry for failed, not_requested, or completed (in case of incomplete transcription)
+        return status === 'failed' || status === 'not_requested' || status === 'completed';
     }
 
     async retryLyricsExtraction(song) {
@@ -2014,6 +2042,150 @@ class SongLibrary {
             console.error('Error deleting song:', error);
             this.showNotification(`Error deleting song: ${error.message}`, 'error');
         }
+    }
+
+    async showLyricsModal(song) {
+        // Get the template
+        const template = document.getElementById('lyricsModalTemplate');
+        if (!template) {
+            console.error('Lyrics modal template not found');
+            return;
+        }
+
+        // Clone and append to body
+        const modal = template.content.cloneNode(true).firstElementChild;
+        document.body.appendChild(modal);
+
+        // Get elements
+        const titleEl = modal.querySelector('[data-lyrics-title]');
+        const artistEl = modal.querySelector('[data-lyrics-artist]');
+        const sourceBadgeEl = modal.querySelector('[data-lyrics-source-badge]');
+        const loadingEl = modal.querySelector('[data-lyrics-loading]');
+        const textEl = modal.querySelector('[data-lyrics-text]');
+        const emptyEl = modal.querySelector('[data-lyrics-empty]');
+        const processingEl = modal.querySelector('[data-lyrics-processing]');
+        const errorEl = modal.querySelector('[data-lyrics-error]');
+        const errorMessageEl = modal.querySelector('[data-lyrics-error-message]');
+        const infoEl = modal.querySelector('[data-lyrics-info]');
+        const closeButtons = modal.querySelectorAll('.lyrics-modal-close-btn');
+
+        // Set song info
+        if (titleEl) titleEl.textContent = `${song.title || 'Unknown Title'}`;
+        if (artistEl) artistEl.textContent = song.artist || 'Unknown Artist';
+
+        // Close modal function
+        const closeModal = () => {
+            modal.style.opacity = '0';
+            setTimeout(() => modal.remove(), 200);
+        };
+
+        // Add close event listeners
+        closeButtons.forEach(btn => {
+            btn.addEventListener('click', closeModal);
+        });
+
+        // Close on background click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Close on Escape key
+        const escapeHandler = (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                document.removeEventListener('keydown', escapeHandler);
+            }
+        };
+        document.addEventListener('keydown', escapeHandler);
+
+        // Show appropriate state
+        const hideAllStates = () => {
+            loadingEl?.classList.add('hidden');
+            textEl?.classList.add('hidden');
+            emptyEl?.classList.add('hidden');
+            processingEl?.classList.add('hidden');
+            errorEl?.classList.add('hidden');
+        };
+
+        // Fetch lyrics data
+        try {
+            const response = await fetch(`/api/audio-library/${song.id}/lyrics-status`);
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || 'Failed to fetch lyrics');
+            }
+
+            const lyricsData = data.data;
+            const status = lyricsData.lyrics_extraction_status;
+            const lyrics = lyricsData.lyrics;
+            const source = lyricsData.lyrics_source;
+            const error = lyricsData.lyrics_extraction_error;
+
+            hideAllStates();
+
+            // Handle different states
+            if (status === 'completed' && lyrics && lyrics.trim().length > 0) {
+                // Show lyrics
+                if (sourceBadgeEl) {
+                    const sourceLabels = {
+                        'metadata': 'From Metadata',
+                        'lrclib': 'From LRCLIB',
+                        'assemblyai': 'Transcribed by AI',
+                        'whisper': 'Transcribed by Whisper',
+                        'user': 'User Added'
+                    };
+                    sourceBadgeEl.textContent = sourceLabels[source] || source || 'Source Unknown';
+                }
+
+                // Format and display lyrics
+                const lines = lyrics.split('\n').filter(line => line.trim().length > 0);
+                if (textEl) {
+                    textEl.innerHTML = lines.map(line => {
+                        return `<p class="text-slate-700 dark:text-slate-300 leading-relaxed py-1">${this.escapeHtml(line)}</p>`;
+                    }).join('');
+                    textEl.classList.remove('hidden');
+                }
+
+                // Show line count
+                if (infoEl) {
+                    infoEl.textContent = `${lines.length} ${lines.length === 1 ? 'line' : 'lines'}`;
+                }
+
+            } else if (status === 'queued' || status === 'processing') {
+                // Show processing state
+                processingEl?.classList.remove('hidden');
+                if (sourceBadgeEl) sourceBadgeEl.textContent = 'Processing...';
+
+            } else if (status === 'failed') {
+                // Show error state
+                errorEl?.classList.remove('hidden');
+                if (errorMessageEl) {
+                    errorMessageEl.textContent = error || 'An unknown error occurred during extraction.';
+                }
+                if (sourceBadgeEl) sourceBadgeEl.textContent = 'Extraction Failed';
+
+            } else {
+                // Show empty state
+                emptyEl?.classList.remove('hidden');
+                if (sourceBadgeEl) sourceBadgeEl.textContent = 'Not Available';
+            }
+
+        } catch (error) {
+            console.error('Error fetching lyrics:', error);
+            hideAllStates();
+            errorEl?.classList.remove('hidden');
+            if (errorMessageEl) {
+                errorMessageEl.textContent = error.message || 'Failed to load lyrics.';
+            }
+            if (sourceBadgeEl) sourceBadgeEl.textContent = 'Error';
+        }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     showDeletePlaylistConfirmation(playlistId, playlistName) {

@@ -1,5 +1,5 @@
 # Staging environment - HTTP only for SSH tunnel access
-:80 {
+staging.joefoxing.com {
     encode gzip
 
     # Security headers

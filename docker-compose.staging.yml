@@ -11,19 +11,70 @@ name: app-staging
 
 services:
   # ─────────────────────────────────────────────────────────────────────────────
+  # REVERSE PROXY (Caddy)
+  # ─────────────────────────────────────────────────────────────────────────────
+  proxy:
+    image: caddy:2.7.6-alpine
+    container_name: app-staging-proxy
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./Caddyfile.staging:/etc/caddy/Caddyfile:ro
+      - caddy_staging_data:/data
+      - caddy_staging_config:/config
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2019/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service,environment"
+        env: "OS_VERSION"
+
+  # ─────────────────────────────────────────────────────────────────────────────
   # API BACKEND (Python/FastAPI/Flask/Django)
   # ─────────────────────────────────────────────────────────────────────────────
   api:
     image: ${REGISTRY:-ghcr.io}/${REPO_OWNER:-owner}/${REPO_NAME:-app}/api:${IMAGE_TAG:?IMAGE_TAG is required}
     container_name: app-staging-api
     restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./staging_uploads:/app/app/static/uploads
+      - ./app/templates:/app/app/templates
+      - ./app/static:/app/app/static
+      - ./app/routes:/app/app/routes
+      - ./app/services:/app/app/services
     expose:
       - "8000"
     environment:
       - APP_ENV=staging
       - LOG_LEVEL=${LOG_LEVEL:-DEBUG}
       - LOG_FORMAT=json
-      - WORKERS=2
+      - WORKERS=1
+      - HOME=/tmp
+      - XDG_CACHE_HOME=/tmp/.cache
+      - HF_HOME=/tmp/.cache/huggingface
+      - TRANSFORMERS_CACHE=/tmp/.cache/huggingface
+      - TORCH_HOME=/tmp/.cache/torch
+      - LYRICS_WHISPER_MODEL=base
+      - LYRICS_WHISPER_FALLBACK_MODEL=base
+      - LYRICS_VOCAL_SEPARATION_ENABLED=false
+      - LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION=false
+      - LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK=false
+      - LYRICS_USE_MICROSERVICE=true
+      - LYRICS_MICROSERVICE_URL=http://lyrics-api:8000/v1
+      - LYRICS_MICROSERVICE_TIMEOUT=900
+      - LYRICS_MICROSERVICE_POLL_INTERVAL=2
       - DATABASE_URL=${DATABASE_URL:?DATABASE_URL is required}
       - SECRET_KEY=${SECRET_KEY:?SECRET_KEY is required}
       - REDIS_URL=${REDIS_URL:-}
@@ -33,6 +84,7 @@ services:
       - S3_ENDPOINT=${S3_ENDPOINT:-}
     networks:
       - backend
+      - lyrics-default
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 30s
@@ -77,6 +129,15 @@ services:
         max-file: "1"
 
 # ─────────────────────────────────────────────────────────────────────────────
+# VOLUMES
+# ─────────────────────────────────────────────────────────────────────────────
+volumes:
+  caddy_staging_data:
+    driver: local
+  caddy_staging_config:
+    driver: local
+
+# ─────────────────────────────────────────────────────────────────────────────
 # NETWORKS
 # ─────────────────────────────────────────────────────────────────────────────
 networks:
@@ -85,3 +146,6 @@ networks:
     ipam:
       config:
         - subnet: 172.21.0.0/16
+  lyrics-default:
+    external: true
+    name: lyrics_default

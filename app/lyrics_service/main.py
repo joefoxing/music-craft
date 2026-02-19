@@ -10,8 +10,10 @@ from pathlib import Path
 from typing import Optional, Literal
 
 import redis
+import json
+import time
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 from rq import Queue
 from rq.job import Job
@@ -205,28 +207,37 @@ async def get_lyrics_job_status(job_id: str):
         rq_status = job.get_status()
         
         if rq_status == "queued":
+            meta = job.meta.copy() if getattr(job, 'meta', None) else {}
+            meta.update({"queue_position": queue.job_ids.index(job_id) + 1 if job_id in queue.job_ids else None})
             return JobResponse(
                 job_id=job_id,
                 status="queued",
-                meta={"queue_position": queue.job_ids.index(job_id) + 1 if job_id in queue.job_ids else None}
+                meta=meta
             )
         
         elif rq_status == "started":
             return JobResponse(
                 job_id=job_id,
-                status="running"
+                status="running",
+                meta=job.meta or {}
             )
         
         elif rq_status == "finished":
             result = job.result
             
             if result and isinstance(result, dict):
+                # Merge worker-provided meta with job.meta (progress)
+                merged_meta = {}
+                if isinstance(result.get("meta"), dict):
+                    merged_meta.update(result.get("meta"))
+                if getattr(job, 'meta', None):
+                    merged_meta.update(job.meta)
                 # Return the full result from worker
                 return JobResponse(
                     job_id=job_id,
                     status=result.get("status", "done"),
                     result=result.get("result"),
-                    meta=result.get("meta"),
+                    meta=merged_meta,
                     error=result.get("error")
                 )
             else:
@@ -245,6 +256,7 @@ async def get_lyrics_job_status(job_id: str):
             return JobResponse(
                 job_id=job_id,
                 status="error",
+                meta=job.meta or {},
                 error={
                     "code": "job_failed",
                     "message": str(exc_info) if exc_info else "Job failed with unknown error"
@@ -272,6 +284,29 @@ async def get_lyrics_job_status(job_id: str):
                 "message": "Job not found or expired"
             }
         )
+
+
+@app.get(f"{config.API_PREFIX}/lyrics/{{job_id}}/events")
+async def lyrics_job_events(job_id: str):
+    """Server-sent events endpoint streaming job progress and status."""
+    def event_stream():
+        last_meta = None
+        while True:
+            try:
+                job = Job.fetch(job_id, connection=redis_conn)
+                status = job.get_status()
+                meta = job.meta or {}
+                payload = {"job_id": job_id, "status": status, "meta": meta}
+                if meta != last_meta:
+                    yield f"data: {json.dumps(payload)}\n\n"
+                    last_meta = dict(meta)
+                if status in ("finished", "failed"):
+                    break
+            except Exception:
+                yield f"data: {json.dumps({'job_id': job_id, 'status': 'not_found'})}\n\n"
+                break
+            time.sleep(1)
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
 @app.get("/")

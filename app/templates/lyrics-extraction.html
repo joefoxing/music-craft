@@ -1,0 +1,526 @@
+{% extends "base.html" %}
+
+{% block title %}Lyrics Extraction - Vnuno{% endblock %}
+
+{% block head %}
+<style>
+    .upload-area {
+        border: 2px dashed #FA6E4A;
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .upload-area:hover {
+        border-color: #f43f5e;
+        background-color: rgba(250, 110, 74, 0.1);
+    }
+    .upload-area.dragover {
+        border-color: #f43f5e;
+        background-color: rgba(250, 110, 74, 0.2);
+    }
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background-color: #333;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #FA6E4A, #f43f5e);
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+    .tier-section {
+        border-left: 3px solid #FA6E4A;
+        padding-left: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .tier-header {
+        font-size: 0.875rem;
+        color: #FA6E4A;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+    }
+    .search-result-item {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .search-result-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: #FA6E4A;
+    }
+    .search-result-item.selected {
+        background-color: rgba(250, 110, 74, 0.2);
+        border-color: #FA6E4A;
+    }
+    .search-result-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+    .search-result-artist {
+        font-size: 0.875rem;
+        color: #FA6E4A;
+        margin-bottom: 0.5rem;
+    }
+    .search-result-preview {
+        font-size: 0.75rem;
+        color: #888;
+        max-height: 60px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: pre-wrap;
+        line-height: 1.3;
+    }
+    .badge {
+        display: inline-block;
+        font-size: 0.625rem;
+        padding: 0.25rem 0.5rem;
+        margin-right: 0.5rem;
+        background-color: rgba(250, 110, 74, 0.3);
+        border-radius: 4px;
+        color: #FA6E4A;
+        font-weight: 600;
+    }
+    .badge.synced {
+        background-color: rgba(34, 197, 94, 0.3);
+        color: #22c55e;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-background-dark text-white">
+    <!-- Header -->
+    <header class="border-b border-white/10 px-6 py-4">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <h1 class="text-2xl font-bold">Lyrics Extraction</h1>
+            <a href="/" class="text-white/60 hover:text-white">← Back to Home</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-6 py-8">
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-2">Extract Lyrics from Audio</h2>
+            <p class="text-white/60">Upload an audio file to automatically search lyrics or transcribe using AI.</p>
+        </div>
+
+        <!-- Upload Form -->
+        <div class="bg-white/5 rounded-lg p-6 mb-6">
+            <form id="lyricsForm" enctype="multipart/form-data">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Audio File</label>
+                    <div id="uploadArea" class="upload-area">
+                        <div class="text-center">
+                            <span class="material-symbols-outlined text-4xl text-white/40 mb-2">cloud_upload</span>
+                            <p class="text-lg font-medium mb-1">Drop your audio file here</p>
+                            <p class="text-sm text-white/60">or click to browse</p>
+                            <p class="text-xs text-white/40 mt-2">Supported: MP3, WAV, FLAC, OGG, M4A, AAC, OPUS, WMA</p>
+                        </div>
+                        <input type="file" id="audioFile" name="file" accept="audio/*" class="hidden">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="languageHint" class="block text-sm font-medium mb-2">Language</label>
+                    <select id="languageHint" name="language_hint" class="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white">
+                        <option value="auto">Auto-detect</option>
+                        <option value="en">English</option>
+                        <option value="vi">Vietnamese</option>
+                    </select>
+                </div>
+
+                <div class="mb-6">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="timestamps" name="timestamps" value="word" class="mr-2">
+                        <span class="text-sm">Include word-level timestamps (Tier 3 only)</span>
+                    </label>
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-primary-orange to-suno-pink text-white font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
+                    Upload File
+                </button>
+            </form>
+        </div>
+
+        <!-- Tier 1: Metadata Extraction Status -->
+        <div id="metadataSection" class="hidden bg-white/5 rounded-lg p-6 mb-6">
+            <div class="tier-section">
+                <div class="tier-header">✓ Tier 1: Metadata Extracted</div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs text-white/60 mb-1">Artist</label>
+                        <input type="text" id="extractedArtist" readonly class="w-full bg-black/30 border border-white/20 rounded-lg px-3 py-2 text-white" value="">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-white/60 mb-1">Title</label>
+                        <input type="text" id="extractedTitle" readonly class="w-full bg-black/30 border border-white/20 rounded-lg px-3 py-2 text-white" value="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tier 2: LRCLIB Search Results -->
+        <div id="lrcLibSection" class="hidden bg-white/5 rounded-lg p-6 mb-6">
+            <div class="tier-section">
+                <div class="tier-header">⚡ Tier 2: LRCLIB Search (auto-searching...)</div>
+                <div id="lrcLibStatus" class="text-sm text-white/60 mb-4">Searching for lyrics...</div>
+                <div id="lrcLibResults" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <!-- Tier 2 Success: Show Selected Result -->
+        <div id="lrcLibSuccessSection" class="hidden bg-white/5 rounded-lg p-6 mb-6">
+            <div class="tier-section">
+                <div class="tier-header">✓ Tier 2: Lyrics Found on LRCLIB</div>
+                <div class="bg-black/30 rounded-lg p-4 mb-4 max-h-48 overflow-y-auto">
+                    <pre id="lrcLibLyricsPreview" class="whitespace-pre-wrap text-white font-mono text-sm"></pre>
+                </div>
+                <div class="flex gap-4">
+                    <button id="applyLrcLibBtn" class="flex-1 bg-gradient-to-r from-primary-orange to-suno-pink text-white font-semibold py-2 px-4 rounded-lg hover:opacity-90 transition-opacity">
+                        <span class="material-symbols-outlined text-sm mr-1" style="vertical-align: middle;">check</span>
+                        Apply These Lyrics
+                    </button>
+                    <button id="searchAgainBtn" class="flex-1 bg-white/10 hover:bg-white/20 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                        Try Transcription Instead
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Processing Section (Tier 3 Fallback) -->
+        <div id="progressSection" class="hidden bg-white/5 rounded-lg p-6 mb-6">
+            <div class="tier-section">
+                <div class="tier-header">🎯 Tier 3: Converting to Text (AI Transcription)</div>
+                <div class="progress-bar mb-4">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <p id="progressText" class="text-sm text-white/60">Initializing transcription...</p>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden bg-white/5 rounded-lg p-6">
+            <h3 class="text-lg font-semibold mb-4">Extracted Lyrics</h3>
+            <div class="bg-black/30 rounded-lg p-4 mb-4">
+                <pre id="lyricsText" class="whitespace-pre-wrap text-white font-mono text-sm"></pre>
+            </div>
+            <div class="flex gap-4">
+                <button id="copyBtn" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <span class="material-symbols-outlined text-sm mr-1">content_copy</span>
+                    Copy
+                </button>
+                <button id="downloadBtn" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <span class="material-symbols-outlined text-sm mr-1">download</span>
+                    Download
+                </button>
+            </div>
+        </div>
+
+        <!-- Error Section -->
+        <div id="errorSection" class="hidden bg-red-900/20 border border-red-500/30 rounded-lg p-6">
+            <h3 class="text-lg font-semibold mb-2 text-red-400">Error</h3>
+            <p id="errorText" class="text-red-300"></p>
+            <button id="retryBtn" class="mt-4 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                Try Again
+            </button>
+        </div>
+    </main>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadArea = document.getElementById('uploadArea');
+    const audioFile = document.getElementById('audioFile');
+    const lyricsForm = document.getElementById('lyricsForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    const metadataSection = document.getElementById('metadataSection');
+    const extractedArtist = document.getElementById('extractedArtist');
+    const extractedTitle = document.getElementById('extractedTitle');
+    
+    const lrcLibSection = document.getElementById('lrcLibSection');
+    const lrcLibStatus = document.getElementById('lrcLibStatus');
+    const lrcLibResults = document.getElementById('lrcLibResults');
+    const lrcLibSuccessSection = document.getElementById('lrcLibSuccessSection');
+    const lrcLibLyricsPreview = document.getElementById('lrcLibLyricsPreview');
+    const applyLrcLibBtn = document.getElementById('applyLrcLibBtn');
+    const searchAgainBtn = document.getElementById('searchAgainBtn');
+    
+    const progressSection = document.getElementById('progressSection');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    
+    const resultsSection = document.getElementById('resultsSection');
+    const lyricsText = document.getElementById('lyricsText');
+    const errorSection = document.getElementById('errorSection');
+    const errorText = document.getElementById('errorText');
+    const retryBtn = document.getElementById('retryBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    let currentJobId = null;
+    let pollInterval = null;
+    let selectedLrcLibLyrics = null;
+
+    // Upload area events
+    uploadArea.addEventListener('click', () => audioFile.click());
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            audioFile.files = files;
+            updateFileDisplay();
+        }
+    });
+
+    audioFile.addEventListener('change', updateFileDisplay);
+
+    function updateFileDisplay() {
+        const file = audioFile.files[0];
+        if (file) {
+            uploadArea.innerHTML = `
+                <div class="text-center">
+                    <span class="material-symbols-outlined text-4xl text-primary-orange mb-2">audio_file</span>
+                    <p class="text-lg font-medium mb-1">${file.name}</p>
+                    <p class="text-sm text-white/60">${(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                </div>
+            `;
+        }
+    }
+
+    // Form submission
+    lyricsForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const file = audioFile.files[0];
+        if (!file) {
+            showError('Please select an audio file');
+            return;
+        }
+
+        console.log('File selected:', file.name, 'Size:', file.size);
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Extracting metadata...';
+        hideSections();
+
+        try {
+            // Step 1: Extract metadata
+            const metadataForm = new FormData();
+            metadataForm.append('file', file);
+            
+            console.log('Sending metadata extraction request...');
+            const metadataResponse = await fetch('/api/lyrics-search/extract-metadata', {
+                method: 'POST',
+                body: metadataForm
+            });
+
+            console.log('Metadata response status:', metadataResponse.status);
+            if (!metadataResponse.ok) {
+                const errorText = await metadataResponse.text();
+                console.error('Metadata extraction error:', errorText);
+                throw new Error(`Failed to extract metadata: ${metadataResponse.status} - ${errorText}`);
+            }
+
+            const metadata = await metadataResponse.json();
+            console.log('Metadata extracted:', metadata);
+            
+            // Show metadata
+            metadataSection.classList.remove('hidden');
+            extractedArtist.value = metadata.artist || '(not found)';
+            extractedTitle.value = metadata.title || '(not found)';
+
+            // Step 2: Auto-search LRCLIB if we have title
+            if (metadata.title) {
+                await performLrcLibSearch(metadata.artist, metadata.title);
+            } else {
+                // No title found, show error
+                showError('Could not extract song title from metadata. Please ensure audio file has proper tags.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload File';
+            }
+        } catch (error) {
+            showError('Failed to process file: ' + error.message);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Upload File';
+        }
+    });
+
+    async function performLrcLibSearch(artist, title) {
+        lrcLibSection.classList.remove('hidden');
+        lrcLibStatus.textContent = `Searching LRCLIB for: "${title}"${artist ? ` by ${artist}` : ''}...`;
+        lrcLibResults.innerHTML = '';
+
+        try {
+            console.log('Performing LRCLIB search:', { artist, title });
+            const searchResponse = await fetch('/api/lyrics-search/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    track_name: title,
+                    artist_name: artist || ''
+                })
+            });
+
+            console.log('Search response status:', searchResponse.status);
+            if (!searchResponse.ok) {
+                const errorText = await searchResponse.text();
+                console.error('Search error:', errorText);
+                throw new Error(`Search failed: ${searchResponse.status} - ${errorText}`);
+            }
+
+            const searchData = await searchResponse.json();
+            console.log('Search results:', searchData);
+            
+            if (!searchData.results || searchData.results.length === 0) {
+                lrcLibStatus.innerHTML = '<span style="color: #fbbf24;">No results found on LRCLIB. You can try AI transcription instead.</span>';
+                return;
+            }
+
+            // Show search results
+            lrcLibStatus.innerHTML = `<span style="color: #22c55e;">Found ${searchData.results.length} result(s)</span>`;
+            
+            searchData.results.forEach((result, index) => {
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'search-result-item';
+                resultDiv.innerHTML = `
+                    <div class="search-result-title">${result.track_name}</div>
+                    <div class="search-result-artist">${result.artist_name || 'Unknown Artist'}</div>
+                    <div style="font-size: 0.75rem; margin-bottom: 0.5rem;">
+                        ${result.has_synced ? '<span class="badge synced">Synced</span>' : '<span class="badge">Plain</span>'}
+                        ${result.instrumental ? '<span class="badge">Instrumental</span>' : ''}
+                    </div>
+                    <div class="search-result-preview">${(result.lyrics || '').substring(0, 200)}...</div>
+                `;
+                
+                resultDiv.addEventListener('click', () => selectLrcLibResult(result, resultDiv));
+                lrcLibResults.appendChild(resultDiv);
+            });
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Upload File';
+            
+        } catch (error) {
+            lrcLibStatus.innerHTML = `<span style="color: #ef4444;">Search error: ${error.message}</span>`;
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Upload File';
+        }
+    }
+
+    function selectLrcLibResult(result, element) {
+        // Deselect previous
+        document.querySelectorAll('.search-result-item').forEach(el => {
+            el.classList.remove('selected');
+        });
+        
+        // Select this one
+        element.classList.add('selected');
+        selectedLrcLibLyrics = result;
+
+        // Show preview
+        lrcLibSuccessSection.classList.remove('hidden');
+        lrcLibLyricsPreview.textContent = result.lyrics.substring(0, 1000) + (result.lyrics.length > 1000 ? '\n...' : '');
+    }
+
+    applyLrcLibBtn.addEventListener('click', () => {
+        if (selectedLrcLibLyrics) {
+            showResults(selectedLrcLibLyrics.lyrics);
+        }
+    });
+
+    searchAgainBtn.addEventListener('click', () => {
+        // Fallback to Tier 3 transcription
+        lrcLibSection.classList.add('hidden');
+        lrcLibSuccessSection.classList.add('hidden');
+        startTranscription();
+    });
+
+    function startTranscription() {
+        progressSection.classList.remove('hidden');
+        updateProgress(0, 'Initializing...');
+        
+        // Simulate starting transcription via external service
+        // In a real scenario, you'd submit to the external lyrics service
+        showError('Tier 3 transcription requires integration with external service. Please contact support.');
+    }
+
+    function updateProgress(progress, stage) {
+        progressFill.style.width = `${progress}%`;
+        progressText.textContent = `Stage: ${stage} (${progress}%)`;
+    }
+
+    function showResults(lyrics) {
+        hideSections();
+        resultsSection.classList.remove('hidden');
+        lyricsText.textContent = lyrics;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Upload File';
+    }
+
+    function showError(message) {
+        hideSections();
+        errorSection.classList.remove('hidden');
+        errorText.textContent = message;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Upload File';
+    }
+
+    function hideSections() {
+        metadataSection.classList.add('hidden');
+        lrcLibSection.classList.add('hidden');
+        lrcLibSuccessSection.classList.add('hidden');
+        progressSection.classList.add('hidden');
+        resultsSection.classList.add('hidden');
+        errorSection.classList.add('hidden');
+    }
+
+    retryBtn.addEventListener('click', () => {
+        hideSections();
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Upload File';
+    });
+
+    // Copy button
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(lyricsText.textContent).then(() => {
+            const originalText = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<span class="material-symbols-outlined text-sm mr-1">check</span> Copied!';
+            setTimeout(() => {
+                copyBtn.innerHTML = originalText;
+            }, 2000);
+        });
+    });
+
+    // Download button
+    downloadBtn.addEventListener('click', () => {
+        const blob = new Blob([lyricsText.textContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'extracted_lyrics.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+});
+</script>
+{% endblock %}

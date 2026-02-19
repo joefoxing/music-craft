@@ -601,6 +601,83 @@
                     </div>
                 </div>
             </template>
+            
+            <!-- Lyrics Modal Template -->
+            <template id="lyricsModalTemplate">
+                <div class="fixed inset-0 z-50 overflow-y-auto" id="lyricsModal">
+                    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        <!-- Background overlay -->
+                        <div class="fixed inset-0 transition-opacity bg-black/70" aria-hidden="true"></div>
+                        
+                        <!-- Modal panel -->
+                        <div class="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-surface-dark shadow-xl rounded-xl border border-slate-200 dark:border-border-dark sm:my-8 sm:align-middle">
+                            <!-- Modal header -->
+                            <div class="flex items-start justify-between mb-6">
+                                <div class="flex-1">
+                                    <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2 mb-1">
+                                        <span class="material-symbols-outlined text-primary">lyrics</span>
+                                        <span data-lyrics-title>Lyrics</span>
+                                    </h3>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400" data-lyrics-artist></p>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300" data-lyrics-source-badge></span>
+                                    </div>
+                                </div>
+                                <button class="lyrics-modal-close-btn text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors" aria-label="Close modal">
+                                    <span class="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Modal content -->
+                            <div class="lyrics-content max-h-[60vh] overflow-y-auto">
+                                <!-- Loading state -->
+                                <div class="lyrics-loading text-center py-12" data-lyrics-loading>
+                                    <div class="animate-spin inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
+                                    <p class="text-slate-600 dark:text-slate-400">Loading lyrics...</p>
+                                </div>
+                                
+                                <!-- Lyrics display -->
+                                <div class="lyrics-text hidden space-y-2" data-lyrics-text>
+                                    <!-- Lyrics will be inserted here -->
+                                </div>
+                                
+                                <!-- Empty state -->
+                                <div class="lyrics-empty hidden text-center py-12" data-lyrics-empty>
+                                    <span class="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600 mb-4">music_off</span>
+                                    <p class="text-slate-600 dark:text-slate-400 font-medium mb-2">No Lyrics Available</p>
+                                    <p class="text-sm text-slate-500 dark:text-slate-500">Lyrics could not be found for this track.</p>
+                                </div>
+                                
+                                <!-- Processing state -->
+                                <div class="lyrics-processing hidden text-center py-12" data-lyrics-processing>
+                                    <div class="animate-pulse inline-block">
+                                        <span class="material-symbols-outlined text-6xl text-primary mb-4">autorenew</span>
+                                    </div>
+                                    <p class="text-slate-600 dark:text-slate-400 font-medium mb-2">Extracting Lyrics...</p>
+                                    <p class="text-sm text-slate-500 dark:text-slate-500">This may take a few moments.</p>
+                                </div>
+                                
+                                <!-- Error state -->
+                                <div class="lyrics-error hidden text-center py-12" data-lyrics-error>
+                                    <span class="material-symbols-outlined text-6xl text-red-400 dark:text-red-500 mb-4">error</span>
+                                    <p class="text-slate-600 dark:text-slate-400 font-medium mb-2">Extraction Failed</p>
+                                    <p class="text-sm text-slate-500 dark:text-slate-500" data-lyrics-error-message></p>
+                                </div>
+                            </div>
+                            
+                            <!-- Modal footer -->
+                            <div class="mt-6 flex justify-between items-center">
+                                <div class="text-xs text-slate-500 dark:text-slate-400" data-lyrics-info>
+                                    <!-- Info like number of lines will go here -->
+                                </div>
+                                <button class="lyrics-modal-close-btn px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors border border-slate-300 dark:border-slate-700">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
         </main>
     </div>
     
@@ -609,7 +686,7 @@
     <script src="{{ url_for('static', filename='js/components/unifiedCard.js') }}?v=2"></script>
     <script src="{{ url_for('static', filename='js/components/specializedCards.js') }}?v=2"></script>
     <script src="{{ url_for('static', filename='js/components/addButton.js') }}?v=2"></script>
-    <script src="{{ url_for('static', filename='js/components/audioLibrary.js') }}?v=2"></script>
+    <script src="{{ url_for('static', filename='js/components/audioLibrary.js') }}?v=4"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Initializing template gallery on library page...');

@@ -63,21 +63,9 @@ class Config:
 
     # Lyrics extraction configuration
     LYRICS_EXTRACTION_ENABLED = os.environ.get('LYRICS_EXTRACTION_ENABLED', 'true').lower() == 'true'
-    LYRICS_WHISPER_MODEL = os.environ.get('LYRICS_WHISPER_MODEL', 'base')
-    LYRICS_WHISPER_FALLBACK_MODEL = os.environ.get('LYRICS_WHISPER_FALLBACK_MODEL', 'small')
     LYRICS_WHISPER_LANGUAGE = os.environ.get('LYRICS_WHISPER_LANGUAGE')
-    LYRICS_WHISPER_TEMPERATURE = float(os.environ.get('LYRICS_WHISPER_TEMPERATURE', '0'))
-    LYRICS_WHISPER_BEAM_SIZE = int(os.environ.get('LYRICS_WHISPER_BEAM_SIZE', '5'))
-    LYRICS_WHISPER_BEST_OF = int(os.environ.get('LYRICS_WHISPER_BEST_OF', '5'))
-    LYRICS_WHISPER_PATIENCE = float(os.environ.get('LYRICS_WHISPER_PATIENCE', '1.0'))
-    LYRICS_WHISPER_CONDITION_ON_PREVIOUS_TEXT = os.environ.get('LYRICS_WHISPER_CONDITION_ON_PREVIOUS_TEXT', 'false').lower() == 'true'
-    LYRICS_WHISPER_COMPRESSION_RATIO_THRESHOLD = float(os.environ.get('LYRICS_WHISPER_COMPRESSION_RATIO_THRESHOLD', '2.2'))
-    LYRICS_WHISPER_LOGPROB_THRESHOLD = float(os.environ.get('LYRICS_WHISPER_LOGPROB_THRESHOLD', '-1.0'))
-    LYRICS_WHISPER_NO_SPEECH_THRESHOLD = float(os.environ.get('LYRICS_WHISPER_NO_SPEECH_THRESHOLD', '0.6'))
     LYRICS_ENFORCE_ORIGINAL_LANGUAGE = os.environ.get('LYRICS_ENFORCE_ORIGINAL_LANGUAGE', 'true').lower() == 'true'
     LYRICS_VI_CUSTOM_CORRECTIONS_JSON = os.environ.get('LYRICS_VI_CUSTOM_CORRECTIONS_JSON', '')
-    LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK = os.environ.get('LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK', 'false').lower() == 'true'
-    LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION = os.environ.get('LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION', 'true').lower() == 'true'
     LYRICS_MIN_UNIQUE_WORD_RATIO = float(os.environ.get('LYRICS_MIN_UNIQUE_WORD_RATIO', '0.22'))
     LYRICS_MAX_REPEATED_NGRAM_RATIO = float(os.environ.get('LYRICS_MAX_REPEATED_NGRAM_RATIO', '0.08'))
     LYRICS_MAX_SAME_CHUNK_REPEATS = int(os.environ.get('LYRICS_MAX_SAME_CHUNK_REPEATS', '2'))
@@ -86,11 +74,16 @@ class Config:
     LYRICS_EXTRACTION_ASYNC_ENABLED = os.environ.get('LYRICS_EXTRACTION_ASYNC_ENABLED', 'true').lower() == 'true'
     LYRICS_EXTRACTION_WORKERS = int(os.environ.get('LYRICS_EXTRACTION_WORKERS', '2'))
     
-    # Lyrics Microservice configuration
-    LYRICS_USE_MICROSERVICE = os.environ.get('LYRICS_USE_MICROSERVICE', 'false').lower() == 'true'
-    LYRICS_MICROSERVICE_URL = os.environ.get('LYRICS_MICROSERVICE_URL', 'http://localhost:8000/v1')
-    LYRICS_MICROSERVICE_TIMEOUT = int(os.environ.get('LYRICS_MICROSERVICE_TIMEOUT', '600'))  # 10 minutes
-    LYRICS_MICROSERVICE_POLL_INTERVAL = int(os.environ.get('LYRICS_MICROSERVICE_POLL_INTERVAL', '2'))  # seconds
+    # AssemblyAI (Tier 3)
+    ASSEMBLYAI_API_KEY = os.environ.get('ASSEMBLYAI_API_KEY', '')
+    LYRICS_USE_ASSEMBLYAI = os.environ.get('LYRICS_USE_ASSEMBLYAI', 'true').lower() == 'true'
+    
+    # LRCLIB API (Tier 2 - free, no API key required)
+    LYRICS_USE_LRCLIB = os.environ.get('LYRICS_USE_LRCLIB', 'true').lower() == 'true'
+    
+    # Musixmatch API (legacy, deprecated - replaced by LRCLIB)
+    MUSIXMATCH_API_KEY = os.environ.get('MUSIXMATCH_API_KEY', '')
+    LYRICS_USE_MUSIXMATCH = os.environ.get('LYRICS_USE_MUSIXMATCH', 'false').lower() == 'true'
     
     # Authentication configuration
     SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT', 'password-salt')
@@ -163,21 +156,9 @@ class Config:
         app.config['USE_MOCK'] = cls.USE_MOCK
         app.config['PREFERRED_URL_SCHEME'] = cls.PREFERRED_URL_SCHEME
         app.config['LYRICS_EXTRACTION_ENABLED'] = cls.LYRICS_EXTRACTION_ENABLED
-        app.config['LYRICS_WHISPER_MODEL'] = cls.LYRICS_WHISPER_MODEL
-        app.config['LYRICS_WHISPER_FALLBACK_MODEL'] = cls.LYRICS_WHISPER_FALLBACK_MODEL
         app.config['LYRICS_WHISPER_LANGUAGE'] = cls.LYRICS_WHISPER_LANGUAGE
-        app.config['LYRICS_WHISPER_TEMPERATURE'] = cls.LYRICS_WHISPER_TEMPERATURE
-        app.config['LYRICS_WHISPER_BEAM_SIZE'] = cls.LYRICS_WHISPER_BEAM_SIZE
-        app.config['LYRICS_WHISPER_BEST_OF'] = cls.LYRICS_WHISPER_BEST_OF
-        app.config['LYRICS_WHISPER_PATIENCE'] = cls.LYRICS_WHISPER_PATIENCE
-        app.config['LYRICS_WHISPER_CONDITION_ON_PREVIOUS_TEXT'] = cls.LYRICS_WHISPER_CONDITION_ON_PREVIOUS_TEXT
-        app.config['LYRICS_WHISPER_COMPRESSION_RATIO_THRESHOLD'] = cls.LYRICS_WHISPER_COMPRESSION_RATIO_THRESHOLD
-        app.config['LYRICS_WHISPER_LOGPROB_THRESHOLD'] = cls.LYRICS_WHISPER_LOGPROB_THRESHOLD
-        app.config['LYRICS_WHISPER_NO_SPEECH_THRESHOLD'] = cls.LYRICS_WHISPER_NO_SPEECH_THRESHOLD
         app.config['LYRICS_ENFORCE_ORIGINAL_LANGUAGE'] = cls.LYRICS_ENFORCE_ORIGINAL_LANGUAGE
         app.config['LYRICS_VI_CUSTOM_CORRECTIONS_JSON'] = cls.LYRICS_VI_CUSTOM_CORRECTIONS_JSON
-        app.config['LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK'] = cls.LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK
-        app.config['LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION'] = cls.LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION
         app.config['LYRICS_MIN_UNIQUE_WORD_RATIO'] = cls.LYRICS_MIN_UNIQUE_WORD_RATIO
         app.config['LYRICS_MAX_REPEATED_NGRAM_RATIO'] = cls.LYRICS_MAX_REPEATED_NGRAM_RATIO
         app.config['LYRICS_MAX_SAME_CHUNK_REPEATS'] = cls.LYRICS_MAX_SAME_CHUNK_REPEATS
@@ -186,11 +167,16 @@ class Config:
         app.config['LYRICS_EXTRACTION_ASYNC_ENABLED'] = cls.LYRICS_EXTRACTION_ASYNC_ENABLED
         app.config['LYRICS_EXTRACTION_WORKERS'] = cls.LYRICS_EXTRACTION_WORKERS
         
-        # Lyrics Microservice configuration
-        app.config['LYRICS_USE_MICROSERVICE'] = cls.LYRICS_USE_MICROSERVICE
-        app.config['LYRICS_MICROSERVICE_URL'] = cls.LYRICS_MICROSERVICE_URL
-        app.config['LYRICS_MICROSERVICE_TIMEOUT'] = cls.LYRICS_MICROSERVICE_TIMEOUT
-        app.config['LYRICS_MICROSERVICE_POLL_INTERVAL'] = cls.LYRICS_MICROSERVICE_POLL_INTERVAL
+        # AssemblyAI configuration
+        app.config['ASSEMBLYAI_API_KEY'] = cls.ASSEMBLYAI_API_KEY
+        app.config['LYRICS_USE_ASSEMBLYAI'] = cls.LYRICS_USE_ASSEMBLYAI
+        
+        # LRCLIB configuration
+        app.config['LYRICS_USE_LRCLIB'] = cls.LYRICS_USE_LRCLIB
+        
+        # Musixmatch configuration (legacy)
+        app.config['MUSIXMATCH_API_KEY'] = cls.MUSIXMATCH_API_KEY
+        app.config['LYRICS_USE_MUSIXMATCH'] = cls.LYRICS_USE_MUSIXMATCH
         
         # Authentication configuration
         app.config['SECURITY_PASSWORD_SALT'] = cls.SECURITY_PASSWORD_SALT

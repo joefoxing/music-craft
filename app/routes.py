@@ -58,6 +58,11 @@ def cover_generator():
     """Render the cover generator page."""
     return render_template('cover-generator.html')
 
+@main_bp.route('/lyrics-extraction')
+def lyrics_extraction():
+    """Render the lyrics extraction page."""
+    return render_template('lyrics-extraction.html')
+
 @main_bp.route('/history')
 def history():
     """Render the callback history page."""

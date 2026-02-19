@@ -140,6 +140,13 @@ def create_app(test_config=None):
     from app.routes.vc_api import vc_bp
     from app.routes.pricing import pricing_bp
     
+    # Force reload lyrics_search_api module to pick up latest endpoints
+    import sys
+    import importlib
+    if 'app.routes.lyrics_search_api' in sys.modules:
+        importlib.reload(sys.modules['app.routes.lyrics_search_api'])
+    from app.routes.lyrics_search_api import lyrics_search_bp
+    
     # Import and register auth blueprint
     # (Forces reload)
     from app.routes.auth import auth_bp
@@ -153,6 +160,7 @@ def create_app(test_config=None):
     # api_auth_bp is NOT exempted to protect login/register/profile endpoints
     csrf.exempt(api_admin_bp)
     csrf.exempt(vc_bp)
+    csrf.exempt(lyrics_search_bp)
 
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp)
@@ -164,7 +172,14 @@ def create_app(test_config=None):
     app.register_blueprint(pricing_bp)
     app.register_blueprint(api_auth_bp, url_prefix='/api/auth')
     app.register_blueprint(api_admin_bp, url_prefix='/api/admin')
+    app.register_blueprint(lyrics_search_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
+    
+    # Debug routes (only in non-production)
+    if app.config.get('FLASK_ENV') != 'production':
+        from app.routes.debug_routes import debug_bp
+        app.register_blueprint(debug_bp)
+        csrf.exempt(debug_bp)
     
     # Initialize OAuth
     from app.routes.auth import init_oauth

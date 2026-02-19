@@ -5,8 +5,6 @@ services:
   redis:
     image: redis:7-alpine
     container_name: lyrics-redis
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
@@ -15,6 +13,8 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
+    networks:
+      - lyrics_default
 
   # FastAPI service
   lyrics-api:
@@ -31,7 +31,8 @@ services:
       - LYRICS_DEVICE=cpu
       - LYRICS_COMPUTE_TYPE=int8
       - LYRICS_WHISPER_MODEL=large-v3
-      - LYRICS_ENABLE_SEPARATION=true
+      - LYRICS_ENABLE_SEPARATION=false
+      - LYRICS_VAD_FILTER=false
       - LYRICS_MAX_UPLOAD_SIZE_MB=50
     volumes:
       - ./app/lyrics_service:/app/app/lyrics_service
@@ -40,6 +41,8 @@ services:
       redis:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - lyrics_default
 
   # RQ Worker (CPU)
   lyrics-worker:
@@ -55,7 +58,8 @@ services:
       - LYRICS_DEVICE=cpu
       - LYRICS_COMPUTE_TYPE=int8
       - LYRICS_WHISPER_MODEL=large-v3
-      - LYRICS_ENABLE_SEPARATION=true
+      - LYRICS_ENABLE_SEPARATION=false
+      - LYRICS_VAD_FILTER=false
       - LYRICS_PREPROCESS_AUDIO=true
     volumes:
       - ./app/lyrics_service:/app/app/lyrics_service
@@ -70,8 +74,18 @@ services:
         limits:
           cpus: '4'
           memory: 8G
+    networks:
+      - lyrics_default
 
 volumes:
   redis_data:
   lyrics_temp:
+    external: true
+    name: lyrics_temp
   whisper_cache:
+    external: true
+    name: lyrics_whisper_cache
+
+networks:
+  lyrics_default:
+    external: true

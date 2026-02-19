@@ -58,26 +58,33 @@ class LyricsJobService:
         """Run one extraction task in background."""
         try:
             with app.app_context():
+                # Mark as processing and gather info needed for extraction
                 audio_item = AudioLibrary.query.get(audio_item_id)
                 if not audio_item:
                     return
 
+                audio_url = audio_item.audio_url
                 audio_item.lyrics_extraction_status = 'processing'
                 audio_item.lyrics_extraction_error = None
                 db.session.commit()
 
+                # Close the DB session before the long-running extraction
+                # to avoid idle-in-transaction timeouts from PostgreSQL.
+                db.session.remove()
+
                 extractor = LyricsExtractionService()
                 language_override = cls._job_language_overrides.get(audio_item_id)
                 local_file_path = cls._resolve_local_audio_path(
-                    audio_item.audio_url,
+                    audio_url,
                     app.config.get('UPLOAD_FOLDER')
                 )
                 lyrics, source, error = extractor.extract_lyrics(
-                    audio_url=audio_item.audio_url,
+                    audio_url=audio_url,
                     local_file_path=local_file_path,
                     whisper_language_override=language_override
                 )
 
+                # Open a fresh DB session to save the result
                 audio_item = AudioLibrary.query.get(audio_item_id)
                 if not audio_item:
                     return
@@ -94,12 +101,17 @@ class LyricsJobService:
                 db.session.commit()
 
         except Exception as exc:
+            try:
+                with app.app_context():
+                    db.session.remove()
+                    audio_item = AudioLibrary.query.get(audio_item_id)
+                    if audio_item:
+                        audio_item.lyrics_extraction_status = 'failed'
+                        audio_item.lyrics_extraction_error = str(exc)[:500]
+                        db.session.commit()
+            except Exception:
+                pass
             with app.app_context():
-                audio_item = AudioLibrary.query.get(audio_item_id)
-                if audio_item:
-                    audio_item.lyrics_extraction_status = 'failed'
-                    audio_item.lyrics_extraction_error = str(exc)
-                    db.session.commit()
                 app.logger.error(f'Async lyrics extraction failed for {audio_item_id}: {exc}')
         finally:
             with cls._lock:

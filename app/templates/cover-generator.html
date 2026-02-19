@@ -171,7 +171,7 @@
                                             <div class="progress-bar bg-primary h-2.5 rounded-full" id="progressBar" style="width: 0%"></div>
                                         </div>
                                         <div class="flex justify-between mt-1">
-                                            <span class="text-sm text-slate-500">Uploading...</span>
+                                            <span id="progressStage" class="text-sm text-slate-500">Uploading file...</span>
                                             <span id="progressText" class="text-sm font-medium">0%</span>
                                         </div>
                                     </div>
@@ -308,18 +308,78 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Extracted Lyrics Preview -->
-                                <div id="lyricsPreview" class="hidden mt-3">
-                                    <label class="block text-sm font-medium mb-1">Extracted Lyrics</label>
-                                    <div class="lyrics-container max-h-48 overflow-y-auto bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
-                                        <div class="lyrics-content text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line" id="extractedLyrics">-</div>
+                                <!-- Lyrics pipeline – replaces old manual search -->
+                                <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 space-y-4" id="lyricsPipelinePanel">
+                                    <!-- Header + manual search inputs -->
+                                    <div>
+                                        <div class="flex justify-between items-center mb-3">
+                                            <label class="block text-sm font-semibold flex items-center gap-2">
+                                                <span class="material-symbols-outlined text-primary text-sm">lyrics</span>
+                                                Lyrics Search
+                                            </label>
+                                            <span class="text-xs text-slate-500 dark:text-slate-400">LRCLIB · Genius pipeline</span>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <input type="text" id="lyricsSearchTrack" class="form-control text-sm" placeholder="Song title (required)">
+                                            <input type="text" id="lyricsSearchArtist" class="form-control text-sm" placeholder="Artist name (optional)">
+                                            <button type="button" id="searchLyricsBtn" class="btn btn-secondary w-full text-sm py-2 flex items-center justify-center gap-1">
+                                                <span class="material-symbols-outlined text-sm">search</span>
+                                                Search Lyrics
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                                        <span class="material-symbols-outlined align-text-bottom text-xs mr-1">lyrics</span>
-                                        Lyrics extracted from audio, displayed line by line.
+
+                                    <!-- Tier 1: Metadata -->
+                                    <div id="tier1Section" class="hidden border-l-2 border-primary pl-3">
+                                        <div class="text-xs font-semibold uppercase tracking-wide text-primary mb-2">✓ Tier 1 — Metadata</div>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div>
+                                                <label class="block text-xs text-slate-500 mb-1">Artist</label>
+                                                <input type="text" id="tier1Artist" readonly class="form-control text-sm bg-slate-100 dark:bg-slate-900/50" value="">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs text-slate-500 mb-1">Title</label>
+                                                <input type="text" id="tier1Title" readonly class="form-control text-sm bg-slate-100 dark:bg-slate-900/50" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tier 2: LRCLIB results -->
+                                    <div id="tier2Section" class="hidden border-l-2 border-yellow-400 pl-3">
+                                        <div class="text-xs font-semibold uppercase tracking-wide text-yellow-500 mb-2" id="tier2Header">⚡ Tier 2 — LRCLIB Search</div>
+                                        <div id="tier2Results" class="space-y-2 max-h-64 overflow-y-auto pr-1"></div>
+                                    </div>
+
+                                    <!-- Tier 3: Genius pipeline -->
+                                    <div id="tier3Section" class="hidden border-l-2 border-slate-400 pl-3">
+                                        <div class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Tier 3 — Genius Pipeline</div>
+                                        <button type="button" id="pipelineSearchBtn" class="btn btn-secondary w-full text-sm py-2 flex items-center justify-center gap-1">
+                                            <span class="material-symbols-outlined text-sm">hub</span>
+                                            Search via Genius Pipeline
+                                        </button>
+                                        <div id="tier3Result" class="hidden mt-3 space-y-2">
+                                            <div class="text-xs text-slate-500" id="tier3Meta"></div>
+                                            <div class="max-h-40 overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded p-2 text-xs font-mono whitespace-pre-wrap" id="tier3Preview"></div>
+                                            <button type="button" id="applyPipelineBtn" class="w-full bg-primary hover:bg-primary-dark text-white text-sm font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-1">
+                                                <span class="material-symbols-outlined text-sm">check</span>
+                                                Apply These Lyrics
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                                
+
+                                <!-- Lyrics applied preview -->
+                                <div id="lyricsPreview" class="hidden mt-3">
+                                    <label class="block text-sm font-medium mb-1">Applied Lyrics</label>
+                                    <div class="lyrics-container max-h-48 overflow-y-auto bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-green-300 dark:border-green-700">
+                                        <div class="lyrics-content text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line" id="extractedLyrics">-</div>
+                                    </div>
+                                    <div class="mt-2 text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-xs">check_circle</span>
+                                        Lyrics inserted into prompt above.
+                                    </div>
+                                </div>
+
                                 <!-- Custom Fields (Hidden by default) -->
                                 <div id="customFields" class="hidden space-y-6">
                                     <!-- Style Input -->
@@ -626,7 +686,7 @@
     </div>
     
     <!-- Component JavaScript -->
-    <script src="{{ url_for('static', filename='js/utils/fileHandler.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/fileHandler.js') }}?v=20260217c"></script>
     <script src="{{ url_for('static', filename='js/utils/modeManager.js') }}"></script>
     <script src="{{ url_for('static', filename='js/utils/taskManager.js') }}"></script>
     <script src="{{ url_for('static', filename='js/utils/notification.js') }}"></script>
@@ -637,7 +697,7 @@
     <script src="{{ url_for('static', filename='js/utils/templateDataLoader.js') }}"></script>
     
     <!-- Main Application JavaScript -->
-    <script src="{{ url_for('static', filename='js/app-modular.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app-modular.js') }}?v=20260217c"></script>
     
     <!-- Initialize template data loader for cover generator -->
     <script>
@@ -918,6 +978,95 @@
                 });
             }
 
+            // --- Song Structure Tags for Prompt Editor ---
+            (function() {
+                // Inject styles once
+                if (!document.getElementById('prompt-tag-styles')) {
+                    const style = document.createElement('style');
+                    style.id = 'prompt-tag-styles';
+                    style.textContent = `
+                        .prompt-tag-btn {
+                            display: inline-flex; align-items: center;
+                            padding: 2px 8px; border-radius: 9999px;
+                            font-size: 11px; font-weight: 500;
+                            cursor: pointer; transition: all 0.15s;
+                            border: 1px solid; white-space: nowrap;
+                            background: #ede9fe; border-color: #c4b5fd; color: #5b21b6;
+                        }
+                        .prompt-tag-btn:hover { background: #c4b5fd; transform: translateY(-1px); box-shadow: 0 2px 6px rgba(139,92,246,0.25); }
+                        .prompt-tag-btn:active { transform: scale(0.96); }
+                        .prompt-tag-section { background: #f5f3ff; border-color: #a78bfa; color: #6d28d9; }
+                        .prompt-tag-section:hover { background: #c4b5fd; }
+                        .prompt-tag-note { background: #fffbeb; border-color: #fcd34d; color: #92400e; }
+                        .prompt-tag-note:hover { background: #fef3c7; box-shadow: 0 2px 6px rgba(245,158,11,0.25); }
+                        .dark .prompt-tag-btn { background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.4); color: #c4b5fd; }
+                        .dark .prompt-tag-btn:hover { background: rgba(139,92,246,0.3); }
+                        .dark .prompt-tag-section { background: rgba(124,58,237,0.15); border-color: rgba(124,58,237,0.4); color: #a78bfa; }
+                        .dark .prompt-tag-section:hover { background: rgba(124,58,237,0.3); }
+                        .dark .prompt-tag-note { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.35); color: #fcd34d; }
+                        .dark .prompt-tag-note:hover { background: rgba(245,158,11,0.25); }
+                    `;
+                    document.head.appendChild(style);
+                }
+
+                function insertPromptTag(tag, newline) {
+                    const ta = document.getElementById('promptEditorText');
+                    if (!ta) return;
+                    ta.focus();
+                    const start = ta.selectionStart, end = ta.selectionEnd, text = ta.value;
+                    let insert = tag;
+                    if (newline) {
+                        const before = start > 0 ? text[start - 1] : '';
+                        const after  = end < text.length ? text[end] : '';
+                        insert = (before !== '' && before !== '\n' ? '\n' : '') + tag + (after !== '' && after !== '\n' ? '\n' : '');
+                    }
+                    ta.value = text.substring(0, start) + insert + text.substring(end);
+                    const cur = start + insert.length;
+                    ta.selectionStart = ta.selectionEnd = cur;
+                    updatePromptEditorStats();
+                    ta.classList.add('ring-2', 'ring-primary');
+                    setTimeout(() => ta.classList.remove('ring-2', 'ring-primary'), 400);
+                }
+
+                const tagsBody        = document.getElementById('promptTagsBody');
+                const panelToggle     = document.getElementById('promptTagsPanelToggle');
+                const panelIcon       = document.getElementById('promptTagsPanelIcon');
+                const templatePreview = document.getElementById('promptTemplatePreview');
+                const viewTplBtn      = document.getElementById('promptViewTemplateBtn');
+                const insertAllBtn    = document.getElementById('promptInsertAllBtn');
+
+                if (panelToggle && tagsBody) {
+                    panelToggle.addEventListener('click', function() {
+                        const collapsed = tagsBody.classList.toggle('hidden');
+                        if (panelIcon) panelIcon.textContent = collapsed ? 'expand_more' : 'expand_less';
+                    });
+                }
+
+                if (viewTplBtn && templatePreview) {
+                    viewTplBtn.addEventListener('click', function() {
+                        const hidden = templatePreview.classList.toggle('hidden');
+                        viewTplBtn.classList.toggle('text-primary', !hidden);
+                    });
+                }
+
+                const FULL_TEMPLATE = `[Mood: Focused]\n[Energy: Medium]\n[Instrument: Keys, Drums]\n\n[Intro]\n(quiet movement; establish palette)\n\n[Verse]\n(story lane; tight lines)\n\n[Pre-Chorus]\n[Build-Up]\n(raise anticipation; shorter phrasing)\n\n[Chorus]\n[Energy: High]\n(repeatable hook; simplest words; biggest lift)\n\n[Verse 2]\n(new angle; same pocket)\n\n[Chorus]\n(keep hook consistent)\n\n[Bridge]\n[Breakdown]\n(space + contrast)\n\n[Final Chorus]\n[Energy: High]\n(biggest version; keep hook the same)\n\n[Outro]\n(leave room for a Studio fade)`;
+
+                if (insertAllBtn) {
+                    insertAllBtn.addEventListener('click', function() {
+                        insertPromptTag(FULL_TEMPLATE, false);
+                    });
+                }
+
+                if (tagsBody) {
+                    tagsBody.addEventListener('click', function(e) {
+                        const btn = e.target.closest('.prompt-tag-btn');
+                        if (!btn) return;
+                        insertPromptTag(btn.dataset.tag || '', btn.dataset.newline === 'true');
+                    });
+                }
+            })();
+            // --- End Song Structure Tags ---
+
             function updatePromptEditorStats() {
                 if (promptEditorText) {
                     const text = promptEditorText.value;
@@ -952,6 +1101,97 @@
                 </div>
                 <!-- Modal content -->
                 <div class="space-y-6">
+                    <!-- Song Structure Tags Panel -->
+                    <div id="promptTagsPanel" class="border border-slate-200 dark:border-border-dark rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+                        <!-- Panel Header -->
+                        <div class="flex items-center gap-2 px-3 py-2 border-b border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark">
+                            <span class="material-symbols-outlined text-[15px] text-primary">label</span>
+                            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 select-none">Song Structure Tags</span>
+                            <div class="flex-1"></div>
+                            <button id="promptViewTemplateBtn" type="button" class="px-2 py-0.5 text-xs text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded flex items-center gap-1 transition-colors" title="View full template">
+                                <span class="material-symbols-outlined text-[13px]">article</span> Template
+                            </button>
+                            <button id="promptInsertAllBtn" type="button" class="px-2 py-0.5 bg-primary/10 text-primary hover:bg-primary/20 rounded text-xs font-medium flex items-center gap-1 transition-colors" title="Insert full template at cursor">
+                                <span class="material-symbols-outlined text-[13px]">playlist_add</span> Insert All
+                            </button>
+                            <button id="promptTagsPanelToggle" type="button" class="p-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="Toggle tags panel">
+                                <span class="material-symbols-outlined text-[16px] text-slate-400" id="promptTagsPanelIcon">expand_less</span>
+                            </button>
+                        </div>
+                        <!-- Tag Chips Body -->
+                        <div id="promptTagsBody" class="px-3 py-2 space-y-1.5">
+                            <!-- Template Preview (hidden by default) -->
+                            <div id="promptTemplatePreview" class="hidden mb-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-lg p-3 text-xs font-mono text-slate-600 dark:text-slate-400 leading-relaxed overflow-y-auto max-h-40 whitespace-pre">[Mood: Focused]
+[Energy: Medium]
+[Instrument: Keys, Drums]
+
+[Intro]
+(quiet movement; establish palette)
+
+[Verse]
+(story lane; tight lines)
+
+[Pre-Chorus]
+[Build-Up]
+(raise anticipation; shorter phrasing)
+
+[Chorus]
+[Energy: High]
+(repeatable hook; simplest words; biggest lift)
+
+[Verse 2]
+(new angle; same pocket)
+
+[Chorus]
+(keep hook consistent)
+
+[Bridge]
+[Breakdown]
+(space + contrast)
+
+[Final Chorus]
+[Energy: High]
+(biggest version; keep hook the same)
+
+[Outro]
+(leave room for a Studio fade)</div>
+                            <!-- Metadata Tags -->
+                            <div class="flex flex-wrap gap-1 items-center">
+                                <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider w-14 shrink-0">Metadata</span>
+                                <button type="button" class="prompt-tag-btn" data-tag="[Mood: Focused]" data-newline="true">[Mood: Focused]</button>
+                                <button type="button" class="prompt-tag-btn" data-tag="[Energy: Medium]" data-newline="true">[Energy: Medium]</button>
+                                <button type="button" class="prompt-tag-btn" data-tag="[Energy: High]" data-newline="true">[Energy: High]</button>
+                                <button type="button" class="prompt-tag-btn" data-tag="[Instrument: Keys, Drums]" data-newline="true">[Instrument: Keys, Drums]</button>
+                            </div>
+                            <!-- Section Tags -->
+                            <div class="flex flex-wrap gap-1 items-center">
+                                <span class="text-[10px] font-bold text-violet-400 uppercase tracking-wider w-14 shrink-0">Sections</span>
+                                <button type="button" class="prompt-tag-btn prompt-tag-section" data-tag="[Intro]" data-newline="true">[Intro]</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-section" data-tag="[Verse]" data-newline="true">[Verse]</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-section" data-tag="[Pre-Chorus]" data-newline="true">[Pre-Chorus]</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-section" data-tag="[Build-Up]" data-newline="true">[Build-Up]</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-section" data-tag="[Chorus]" data-newline="true">[Chorus]</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-section" data-tag="[Verse 2]" data-newline="true">[Verse 2]</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-section" data-tag="[Bridge]" data-newline="true">[Bridge]</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-section" data-tag="[Breakdown]" data-newline="true">[Breakdown]</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-section" data-tag="[Final Chorus]" data-newline="true">[Final Chorus]</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-section" data-tag="[Outro]" data-newline="true">[Outro]</button>
+                            </div>
+                            <!-- Annotation Tags -->
+                            <div class="flex flex-wrap gap-1 items-center">
+                                <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider w-14 shrink-0">Notes</span>
+                                <button type="button" class="prompt-tag-btn prompt-tag-note" data-tag="(quiet movement; establish palette)" title="(quiet movement; establish palette)">(quiet movement)</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-note" data-tag="(story lane; tight lines)" title="(story lane; tight lines)">(story lane)</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-note" data-tag="(raise anticipation; shorter phrasing)" title="(raise anticipation; shorter phrasing)">(raise anticipation)</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-note" data-tag="(repeatable hook; simplest words; biggest lift)" title="(repeatable hook; simplest words; biggest lift)">(repeatable hook)</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-note" data-tag="(new angle; same pocket)" title="(new angle; same pocket)">(new angle)</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-note" data-tag="(keep hook consistent)" title="(keep hook consistent)">(keep hook)</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-note" data-tag="(space + contrast)" title="(space + contrast)">(space + contrast)</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-note" data-tag="(biggest version; keep hook the same)" title="(biggest version; keep hook the same)">(biggest version)</button>
+                                <button type="button" class="prompt-tag-btn prompt-tag-note" data-tag="(leave room for a Studio fade)" title="(leave room for a Studio fade)">(studio fade)</button>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Editor -->
                     <div>
                         <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Prompt Text</label>
@@ -985,5 +1225,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Lyrics Search Results Modal (kept for backward compatibility, now hidden inline) -->
+    <div id="lyricsSearchModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-lg font-semibold">Lyrics Search Results</h3>
+                <button id="closeLyricsModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div id="lyricsSearchResults" class="flex-1 overflow-y-auto p-4">
+                <!-- Results will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/components/lyricsSearchHandler.js') }}?v=20260218a"></script>
 </body>
 </html>
