@@ -4,14 +4,36 @@ API endpoints for manual lyrics search using LRCLIB and the lyricsdb pipeline.
 import logging
 import tempfile
 import os
+import time
 from flask import Blueprint, jsonify, request, current_app
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from flask_login import login_required, current_user
 
 from app.models import AudioLibrary
 from app import db
 
 logger = logging.getLogger(__name__)
+
+# Create a session with retry strategy for LRCLIB
+def create_lrclib_session():
+    """Create a requests session with retry strategy for LRCLIB API calls."""
+    session = requests.Session()
+    
+    # Retry strategy: retry on connection errors and timeouts
+    retry_strategy = Retry(
+        total=3,  # Total retries
+        backoff_factor=1,  # Wait 1s, 2s, 4s between retries
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=["GET", "POST"]
+    )
+    
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    
+    return session
 
 lyrics_search_bp = Blueprint('lyrics_search', __name__, url_prefix='/api/lyrics-search')
 
@@ -229,29 +251,34 @@ def search_lyrics():
         
         logger.info(f"Searching LRCLIB: track='{track_name}', artist='{artist_name}'")
         
-        # Query LRCLIB API with retry logic
-        max_retries = 2
+        # Query LRCLIB API with robust error handling
+        session = create_lrclib_session()
         timeout = 30
-        last_error = None
+        response = None
         
-        for attempt in range(max_retries):
+        try:
+            # First attempt with SSL verification enabled
+            response = session.get(lrclib_url, params=params, timeout=timeout,
+                                  headers={'Connection': 'close'})
+            response.raise_for_status()
+            logger.info(f"LRCLIB search successful on first attempt")
+        except requests.exceptions.SSLError as e:
+            # SSL error - try with verify=False as fallback
+            logger.warning(f"LRCLIB SSL error: {e}. Retrying without SSL verification...")
             try:
-                response = requests.get(lrclib_url, params=params, timeout=timeout,
-                                        headers={'Connection': 'close'})
+                response = session.get(lrclib_url, params=params, timeout=timeout,
+                                      headers={'Connection': 'close'}, verify=False)
                 response.raise_for_status()
-                break
-            except requests.exceptions.Timeout as e:
-                last_error = e
-                if attempt < max_retries - 1:
-                    logger.warning(f"LRCLIB timeout on attempt {attempt + 1}, retrying...")
-                    continue
-                else:
-                    logger.error(f"LRCLIB timed out after {max_retries} attempts")
-                    return jsonify({'error': 'Lyrics search service is slow to respond. Please try again.'}), 504
-            except requests.exceptions.RequestException as e:
-                last_error = e
-                logger.error(f"LRCLIB request failed: {e}")
-                raise
+                logger.info(f"LRCLIB search successful with verify=False")
+            except Exception as e2:
+                logger.error(f"LRCLIB search failed even without SSL verification: {e2}")
+                return jsonify({'error': 'Failed to search lyrics: SSL connection issue. Please try again.'}), 503
+        except requests.exceptions.Timeout as e:
+            logger.error(f"LRCLIB search timed out: {e}")
+            return jsonify({'error': 'Lyrics search service is slow to respond. Please try again.'}), 504
+        except requests.exceptions.RequestException as e:
+            logger.error(f"LRCLIB request failed: {e}")
+            return jsonify({'error': f'Failed to search lyrics: {str(e)}'}), 503
         
         results = response.json()
         
@@ -450,12 +477,26 @@ def pipeline_search():
         search_term = f"{resolved_title} {resolved_artist}".strip()
 
         try:
-            lrclib_resp = requests.get(
-                'https://lrclib.net/api/search',
-                params={'q': search_term},
-                headers={'Connection': 'close'},
-                timeout=10,
-            )
+            session = create_lrclib_session()
+            try:
+                # First attempt with SSL verification enabled
+                lrclib_resp = session.get(
+                    'https://lrclib.net/api/search',
+                    params={'q': search_term},
+                    headers={'Connection': 'close'},
+                    timeout=10,
+                )
+            except requests.exceptions.SSLError as e:
+                # SSL error - retry with verify=False
+                logger.warning(f"LRCLIB SSL error in pipeline search: {e}. Retrying without SSL verification...")
+                lrclib_resp = session.get(
+                    'https://lrclib.net/api/search',
+                    params={'q': search_term},
+                    headers={'Connection': 'close'},
+                    timeout=10,
+                    verify=False
+                )
+            
             if lrclib_resp.ok:
                 tracks = lrclib_resp.json()
                 if tracks:
