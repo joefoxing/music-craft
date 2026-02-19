@@ -2333,10 +2333,402 @@ class SongLibrary {
     }
     
     showEditModal(song) {
-        // Placeholder for edit modal
-        this.showNotification('Edit metadata feature coming soon!', 'info');
+        const template = document.getElementById('editMetadataModalTemplate');
+        if (!template) {
+            this.showNotification('Edit modal not available', 'error');
+            return;
+        }
+
+        // Clone template and attach to DOM
+        document.body.appendChild(template.content.cloneNode(true));
+        const m = document.getElementById('editMetadataModal');
+
+        // ── Form field references ─────────────────────────────────────────
+        const titleInput  = m.querySelector('#editTitleInput');
+        const artistInput = m.querySelector('#editArtistInput');
+        const albumInput  = m.querySelector('#editAlbumInput');
+        const genreInput  = m.querySelector('#editGenreInput');
+        const yearInput   = m.querySelector('#editYearInput');
+        const tagsInput   = m.querySelector('#editTagsInput');
+
+        // ── Pre-fill from existing song data ──────────────────────────────
+        if (titleInput)  titleInput.value  = song.title  || '';
+        if (artistInput) artistInput.value = song.artist || '';
+        if (albumInput)  albumInput.value  = song.album  || '';
+        if (genreInput)  genreInput.value  = song.genre  || '';
+        if (yearInput)   yearInput.value   = song.year   || '';
+        if (tagsInput)   tagsInput.value   = Array.isArray(song.tags) ? song.tags.join(', ') : (song.tags || '');
+
+        // ── Pipeline search input references ─────────────────────────────
+        const trackInput  = m.querySelector('#pipelineTrackInput');
+        const artistSrch  = m.querySelector('#pipelineArtistInput');
+        if (trackInput) trackInput.value  = song.title  || '';
+        if (artistSrch) artistSrch.value  = song.artist || '';
+
+        // ── Lyrics textarea ───────────────────────────────────────────────
+        const lyricsInput       = m.querySelector('#editLyricsInput');
+        const lyricsSourceBadge = m.querySelector('#editLyricsSourceBadge');
+        const clearLyricsBtn    = m.querySelector('#editClearLyricsBtn');
+        const lyricsPopBadge    = m.querySelector('#editLyricsPopulatedBadge');
+        const lyricsPopLabel    = m.querySelector('#editLyricsPopulatedLabel');
+
+        // Pre-fill with existing lyrics
+        if (lyricsInput && song.lyrics) {
+            lyricsInput.value = song.lyrics;
+        }
+        if (lyricsSourceBadge && song.lyrics_source) {
+            lyricsSourceBadge.textContent = `source: ${song.lyrics_source}`;
+            lyricsSourceBadge.classList.remove('hidden');
+        }
+        if (clearLyricsBtn && song.lyrics) {
+            clearLyricsBtn.classList.remove('hidden');
+        }
+
+        const populateLyricsTextarea = (rawLyrics, label) => {
+            if (!lyricsInput) return;
+            lyricsInput.value = rawLyrics || '';
+            if (clearLyricsBtn) clearLyricsBtn.classList.remove('hidden');
+            if (lyricsSourceBadge) {
+                lyricsSourceBadge.textContent = 'source: lrclib/genius';
+                lyricsSourceBadge.classList.remove('hidden');
+            }
+            if (lyricsPopBadge) lyricsPopBadge.classList.remove('hidden');
+            if (lyricsPopLabel) lyricsPopLabel.textContent = `Lyrics loaded — ${label}`;
+            // Scroll textarea into view
+            lyricsInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+
+        // ── Helpers ───────────────────────────────────────────────────────
+        const escHtml = (s) => {
+            const d = document.createElement('div');
+            d.textContent = String(s || '');
+            return d.innerHTML;
+        };
+
+        const stripTs = (txt) => {
+            if (!txt) return '';
+            return txt.split('\n')
+                .map(l => l.replace(/^\s*\[[\d:.]+\]\s*/g, '').replace(/<[\d:.]+>/g, ''))
+                .join('\n').trim();
+        };
+
+        // ── Close logic ───────────────────────────────────────────────────
+        const closeModal = () => {
+            document.getElementById('editMetadataModal')?.remove();
+        };
+        m.querySelector('.edit-modal-close-btn')?.addEventListener('click', closeModal);
+        m.querySelector('.edit-modal-cancel-btn')?.addEventListener('click', closeModal);
+        m.querySelector('.edit-modal-overlay')?.addEventListener('click', closeModal);
+
+        // ── Clear lyrics button ───────────────────────────────────────────
+        clearLyricsBtn?.addEventListener('click', () => {
+            if (lyricsInput) lyricsInput.value = '';
+            clearLyricsBtn.classList.add('hidden');
+            if (lyricsSourceBadge) lyricsSourceBadge.classList.add('hidden');
+            if (lyricsPopBadge) lyricsPopBadge.classList.add('hidden');
+        });
+
+        // ── Tier 2 – LRCLIB search ────────────────────────────────────────
+        const tier2Section  = m.querySelector('#editTier2Section');
+        const tier2Header   = m.querySelector('#editTier2Header');
+        const tier2Results  = m.querySelector('#editTier2Results');
+        const tier3Section  = m.querySelector('#editTier3Section');
+        const lrcSearchBtn  = m.querySelector('#pipelineLrcSearchBtn');
+
+        const renderTier2Card = (result) => {
+            const duration = result.duration
+                ? `${Math.floor(result.duration / 60)}:${String(result.duration % 60).padStart(2, '0')}`
+                : '—';
+            const badge = result.has_synced
+                ? '<span class="text-green-600 dark:text-green-400 font-medium">Synced</span>'
+                : '<span class="text-slate-500">Plain</span>';
+
+            const div = document.createElement('div');
+            div.className = 'flex items-start justify-between gap-2 p-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary dark:hover:border-primary transition-colors';
+            div.innerHTML = `
+                <div class="flex-1 min-w-0">
+                    <div class="text-sm font-medium truncate dark:text-white">${escHtml(result.track_name)}</div>
+                    <div class="text-xs text-slate-500 mt-0.5 truncate">
+                        ${result.artist_name ? escHtml(result.artist_name) : 'Unknown artist'}
+                        ${result.album_name  ? ` · ${escHtml(result.album_name)}`  : ''}
+                        · ${duration} · ${badge}
+                    </div>
+                </div>
+                <button class="flex-shrink-0 bg-primary hover:bg-primary-dark text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+                    Use This
+                </button>`;
+            div.querySelector('button').addEventListener('click', () => {
+                // Fill form fields
+                if (titleInput  && result.track_name)  titleInput.value  = result.track_name;
+                if (artistInput && result.artist_name) artistInput.value = result.artist_name;
+                if (albumInput  && result.album_name)  albumInput.value  = result.album_name;
+                // Populate lyrics textarea
+                if (result.lyrics) {
+                    populateLyricsTextarea(
+                        result.lyrics,
+                        `${result.track_name || ''}${result.artist_name ? ' – ' + result.artist_name : ''} (${result.has_synced ? 'synced' : 'plain'})`
+                    );
+                }
+                this.showNotification('Metadata and lyrics applied', 'success');
+            });
+            return div;
+        };
+
+        const runLrcSearch = async () => {
+            const track  = (trackInput?.value || '').trim();
+            const artist = (artistSrch?.value || '').trim();
+
+            if (!track) {
+                this.showNotification('Enter a track title to search', 'warning');
+                trackInput?.focus();
+                return;
+            }
+
+            // Show loading
+            tier2Section.classList.remove('hidden');
+            tier2Header.textContent = `⚡ LRCLIB: searching "${track}"${artist ? ` by ${artist}` : ''}…`;
+            tier2Results.innerHTML  = '<p class="text-xs text-slate-500 animate-pulse px-1">Searching…</p>';
+            tier3Section.classList.add('hidden');
+            lrcSearchBtn.disabled = true;
+
+            try {
+                const resp = await fetch('/api/lyrics-search/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ track_name: track, artist_name: artist })
+                });
+                const data = await resp.json();
+
+                if (!resp.ok) throw new Error(data.error || 'LRCLIB search failed');
+
+                const results = data.results || [];
+                tier2Results.innerHTML = '';
+
+                if (results.length > 0) {
+                    tier2Header.innerHTML = `<span class="text-green-600 dark:text-green-400">✓ LRCLIB: ${results.length} result(s)</span>`;
+                    results.forEach(r => tier2Results.appendChild(renderTier2Card(r)));
+                } else {
+                    tier2Header.innerHTML = `<span class="text-yellow-600 dark:text-yellow-400">⚡ LRCLIB: no results found</span>`;
+                    tier2Results.innerHTML = '<p class="text-xs text-slate-500 px-1">No results on LRCLIB — try Genius pipeline below.</p>';
+                }
+            } catch (err) {
+                tier2Header.innerHTML = `<span class="text-red-500">⚡ LRCLIB error</span>`;
+                tier2Results.innerHTML = `<p class="text-xs text-red-500 px-1">${escHtml(err.message)}</p>`;
+            } finally {
+                lrcSearchBtn.disabled = false;
+                tier3Section.classList.remove('hidden');
+            }
+        };
+
+        lrcSearchBtn?.addEventListener('click', runLrcSearch);
+        [trackInput, artistSrch].forEach(el => {
+            el?.addEventListener('keypress', e => { if (e.key === 'Enter') runLrcSearch(); });
+        });
+
+        // ── Tier 3 – Genius pipeline ──────────────────────────────────────
+        const geniusBtn    = m.querySelector('#editGeniusPipelineBtn');
+        const tier3Result  = m.querySelector('#editTier3Result');
+        const tier3Title   = m.querySelector('#editTier3Title');
+        const tier3Artist  = m.querySelector('#editTier3Artist');
+        const tier3Badge   = m.querySelector('#editTier3Badge');
+        const tier3Url     = m.querySelector('#editTier3Url');
+        const tier3UseBtn  = m.querySelector('#editTier3UseBtn');
+
+        let geniusData = null;
+
+        const runGeniusPipeline = async () => {
+            const track  = (trackInput?.value || '').trim();
+            const artist = (artistSrch?.value  || '').trim();
+
+            if (!track) {
+                this.showNotification('Enter a track title first', 'warning');
+                trackInput?.focus();
+                return;
+            }
+
+            geniusBtn.disabled = true;
+            geniusBtn.innerHTML = '<span class="material-symbols-outlined text-xs animate-spin">progress_activity</span> Searching…';
+            tier3Result.classList.add('hidden');
+
+            try {
+                const resp = await fetch('/api/lyrics-search/pipeline-search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ track_name: track, artist_name: artist })
+                });
+                const data = await resp.json();
+
+                // Build result regardless of HTTP status (404 may still have suggestions)
+                let resultData = null;
+                if (resp.ok) {
+                    resultData = data;
+                } else if (data.suggestions) {
+                    resultData = {
+                        track_name:  data.suggestions.track_name  || track,
+                        artist_name: data.suggestions.artist_name || artist,
+                        genius_url:  data.suggestions.genius_url  || null,
+                        lyrics: null, has_synced: false
+                    };
+                } else {
+                    throw new Error(data.error || 'No results from Genius pipeline');
+                }
+
+                geniusData = resultData;
+
+                // Populate result card
+                if (tier3Title)  tier3Title.textContent  = resultData.track_name  || '--';
+                if (tier3Artist) tier3Artist.textContent = resultData.artist_name ? `by ${resultData.artist_name}` : '';
+
+                if (tier3Badge) {
+                    if (!resultData.lyrics) {
+                        tier3Badge.textContent = 'Metadata only – no lyrics';
+                        tier3Badge.className = 'text-xs px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400';
+                    } else if (resultData.has_synced) {
+                        tier3Badge.textContent = '✓ Synced lyrics';
+                        tier3Badge.className = 'text-xs px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400';
+                    } else {
+                        tier3Badge.textContent = '✓ Plain lyrics';
+                        tier3Badge.className = 'text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400';
+                    }
+                }
+
+                if (tier3Url) {
+                    if (resultData.genius_url) {
+                        tier3Url.href = resultData.genius_url;
+                        tier3Url.classList.remove('hidden');
+                    } else {
+                        tier3Url.classList.add('hidden');
+                    }
+                }
+
+                tier3Result.classList.remove('hidden');
+
+            } catch (err) {
+                this.showNotification('Genius pipeline: ' + err.message, 'error');
+            } finally {
+                geniusBtn.disabled = false;
+                geniusBtn.innerHTML = '<span class="material-symbols-outlined text-xs">auto_awesome</span> Search Genius';
+            }
+        };
+
+        geniusBtn?.addEventListener('click', runGeniusPipeline);
+
+        // "Use This" for Tier 3 result
+        tier3UseBtn?.addEventListener('click', () => {
+            if (!geniusData) return;
+            if (titleInput  && geniusData.track_name)  titleInput.value  = geniusData.track_name;
+            if (artistInput && geniusData.artist_name) artistInput.value = geniusData.artist_name;
+            if (geniusData.lyrics) {
+                populateLyricsTextarea(
+                    geniusData.lyrics,
+                    `${geniusData.track_name || ''}${geniusData.artist_name ? ' – ' + geniusData.artist_name : ''} (${geniusData.has_synced ? 'synced' : 'plain'}) via Genius`
+                );
+            }
+            this.showNotification(
+                geniusData.lyrics ? 'Genius metadata & lyrics applied' : 'Genius metadata applied (no lyrics found)',
+                'success'
+            );
+        });
+
+        // ── Save ──────────────────────────────────────────────────────────
+        const saveBtn = m.querySelector('#editMetadataSaveBtn');
+        saveBtn?.addEventListener('click', async () => {
+            const title = titleInput?.value.trim();
+            if (!title) {
+                this.showNotification('Title is required', 'error');
+                titleInput?.focus();
+                return;
+            }
+
+            const tagsRaw = tagsInput?.value.trim() || '';
+            const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+            const yearVal = yearInput?.value ? parseInt(yearInput.value, 10) : null;
+
+            const payload = {
+                title,
+                artist: artistInput?.value.trim() || null,
+                album:  albumInput?.value.trim()  || null,
+                genre:  genreInput?.value.trim()  || null,
+                year:   (yearVal && !isNaN(yearVal)) ? yearVal : null,
+                tags
+            };
+
+            // Always save lyrics from the textarea (empty string = clear lyrics)
+            const lyricsValue = lyricsInput?.value.trim() || null;
+            payload.lyrics                   = lyricsValue;
+            payload.lyrics_source            = lyricsValue ? 'lrclib' : null;
+            payload.lyrics_extraction_status = lyricsValue ? 'completed' : 'not_requested';
+            payload.lyrics_extraction_error  = null;
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<span class="material-symbols-outlined text-sm animate-spin">sync</span> Saving…';
+
+            try {
+                const resp = await fetch(`/api/audio-library/${song.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await resp.json();
+
+                if (!resp.ok) throw new Error((data && (data.message || data.error)) || 'Save failed');
+
+                this.showNotification('Metadata saved successfully!', 'success');
+                closeModal();
+                setTimeout(() => this.refreshLibrary(), 400);
+
+            } catch (err) {
+                this.showNotification(`Error saving: ${err.message}`, 'error');
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<span class="material-symbols-outlined text-sm">save</span> Save Changes';
+            }
+        });
+
+        setTimeout(() => titleInput?.focus(), 100);
     }
-    
+
+    /**
+     * @deprecated — replaced by full pipeline in showEditModal; kept to avoid call errors.
+     */
+    _populateGeniusResult(modalElement, data, noLyrics) {
+        const titleEl  = modalElement.querySelector('#geniusResultTitle');
+        const artistEl = modalElement.querySelector('#geniusResultArtist');
+        const statusEl = modalElement.querySelector('#geniusResultLyricsStatus');
+        const urlEl    = modalElement.querySelector('#geniusResultUrl');
+
+        if (titleEl)  titleEl.textContent  = data.track_name  || '--';
+        if (artistEl) artistEl.textContent = data.artist_name ? `by ${data.artist_name}` : '';
+
+        if (statusEl) {
+            if (noLyrics) {
+                statusEl.textContent = 'Metadata only – no lyrics found';
+                statusEl.className =
+                    'text-xs px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400';
+            } else if (data.has_synced) {
+                statusEl.textContent = '✓ Synced lyrics found';
+                statusEl.className =
+                    'text-xs px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400';
+            } else if (data.lyrics) {
+                statusEl.textContent = '✓ Plain lyrics found';
+                statusEl.className =
+                    'text-xs px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400';
+            } else {
+                statusEl.textContent = 'No lyrics';
+                statusEl.className =
+                    'text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500';
+            }
+        }
+
+        if (urlEl) {
+            if (data.genius_url) {
+                urlEl.href = data.genius_url;
+                urlEl.classList.remove('hidden');
+            } else {
+                urlEl.classList.add('hidden');
+            }
+        }
+    }
+
     // Utility methods
     formatDuration(seconds) {
         if (!seconds) return '--:--';
