@@ -23,7 +23,7 @@ services:
       dockerfile: Dockerfile.lyrics
     container_name: lyrics-api
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8002:8000"
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
