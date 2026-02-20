@@ -105,13 +105,18 @@ jobs:
         env:
           DEPLOY_SHA: ${{ github.event.inputs.image_tag }}
         run: |
+          if [ -z "$DEPLOY_SHA" ] || [ ${#DEPLOY_SHA} -lt 12 ]; then
+            echo "Error: image_tag must be at least 12 characters (provide a full or 12-char commit SHA)"
+            exit 1
+          fi
+          SHORT_SHA=${DEPLOY_SHA:0:12}
           ssh ${{ vars.PROD_USER }}@${{ vars.PROD_HOST }} "bash -s" << EOF
             set -e
             cd ~/app
             echo "Pulling latest code..."
             git pull origin main
             echo "Updating IMAGE_TAG in .env.prod..."
-            sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=sha-${DEPLOY_SHA}/" .env.prod || echo "IMAGE_TAG=sha-${DEPLOY_SHA}" >> .env.prod
+            sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=sha-${SHORT_SHA}/" .env.prod || echo "IMAGE_TAG=sha-${SHORT_SHA}" >> .env.prod
             echo "Starting deployment..."
-            bash scripts/deploy.sh ${DEPLOY_SHA}
+            bash scripts/deploy.sh ${SHORT_SHA}
           EOF
