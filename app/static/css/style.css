@@ -31,6 +31,42 @@ body {
     background: rgba(79, 70, 229, 0.7);
 }
 
+/* ================================================
+   Sidebar Collapse
+   ================================================ */
+#main-sidebar {
+    transition: width 0.25s ease;
+}
+
+#main-sidebar.sidebar-collapsed {
+    width: 5rem !important;
+    min-width: 5rem !important;
+    max-width: 5rem !important;
+}
+
+#main-sidebar.sidebar-collapsed h1,
+#main-sidebar.sidebar-collapsed p.text-xs,
+#main-sidebar.sidebar-collapsed .p-7 > div,
+#main-sidebar.sidebar-collapsed #your-playlists-container,
+#main-sidebar.sidebar-collapsed .sidebar-playlists-title,
+#main-sidebar.sidebar-collapsed nav button span:last-child,
+#main-sidebar.sidebar-collapsed nav a span:last-child,
+#main-sidebar.sidebar-collapsed .p-6 > div:not(:first-child) {
+    display: none !important;
+}
+
+#main-sidebar.sidebar-collapsed nav button,
+#main-sidebar.sidebar-collapsed nav a.flex {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+#main-sidebar.sidebar-collapsed .p-7 {
+    padding: 1rem;
+    justify-content: center;
+}
+
 /* Source Tabs */
 .source-tabs {
     display: flex;

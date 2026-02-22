@@ -149,7 +149,7 @@ class ActivityFeed {
         }
 
         try {
-            const response = await fetch(`/api/user-activity?page=${this.currentPage}&limit=${this.pageSize}`);
+            const response = await fetch(`/api/user-activity?offset=${(this.currentPage - 1) * this.pageSize}&limit=${this.pageSize}`);
             console.log('Activity API response status:', response.status);
             const data = await response.json();
             console.log('Activity API response data:', data);
@@ -206,11 +206,11 @@ class ActivityFeed {
         }).length;
         
         const templateCount = this.allActivities.filter(activity => 
-            activity.type === 'template_used'
+            activity.type === 'generation_complete'
         ).length;
         
         const successCount = this.allActivities.filter(activity => 
-            activity.status === 'success'
+            activity.type === 'generation_complete' || activity.type === 'video_processing'
         ).length;
         
         if (this.statsTotal) this.statsTotal.textContent = this.allActivities.length;
@@ -329,25 +329,30 @@ class ActivityFeed {
      */
     getActivityTypeInfo(type) {
         const types = {
-            'cover_generated': {
+            'generation_complete': {
                 icon: 'music_note',
                 colorClass: 'text-purple-600 dark:text-purple-400',
                 bgColorClass: 'bg-purple-100 dark:bg-purple-900/30'
             },
-            'template_used': {
-                icon: 'content_copy',
+            'video_processing': {
+                icon: 'movie',
                 colorClass: 'text-blue-600 dark:text-blue-400',
                 bgColorClass: 'bg-blue-100 dark:bg-blue-900/30'
             },
-            'history_entry': {
-                icon: 'history',
-                colorClass: 'text-green-600 dark:text-green-400',
-                bgColorClass: 'bg-green-100 dark:bg-green-900/30'
+            'processing': {
+                icon: 'sync',
+                colorClass: 'text-amber-600 dark:text-amber-400',
+                bgColorClass: 'bg-amber-100 dark:bg-amber-900/30'
             },
-            'error_occurred': {
-                icon: 'error',
-                colorClass: 'text-red-600 dark:text-red-400',
-                bgColorClass: 'bg-red-100 dark:bg-red-900/30'
+            'upload': {
+                icon: 'upload',
+                colorClass: 'text-indigo-600 dark:text-indigo-400',
+                bgColorClass: 'bg-indigo-100 dark:bg-indigo-900/30'
+            },
+            'system': {
+                icon: 'info',
+                colorClass: 'text-slate-600 dark:text-slate-400',
+                bgColorClass: 'bg-slate-100 dark:bg-slate-800'
             },
             'default': {
                 icon: 'notifications',
@@ -501,11 +506,11 @@ class ActivityFeed {
             this.filteredActivities = [...this.allActivities];
         } else if (filterValue === 'templates') {
             this.filteredActivities = this.allActivities.filter(activity => 
-                activity.type === 'template_used'
+                activity.type === 'generation_complete'
             );
         } else if (filterValue === 'covers') {
             this.filteredActivities = this.allActivities.filter(activity => 
-                activity.type === 'cover_generated'
+                activity.type === 'video_processing'
             );
         } else if (filterValue === 'today') {
             const today = new Date().toISOString().split('T')[0];

@@ -943,3 +943,46 @@ function toggleMobileMenu() {
     // and called from the initialization section
 
 })();
+// ============================================
+// Sidebar Collapse Toggle
+// ============================================
+
+(function() {
+    'use strict';
+
+    const STORAGE_KEY = 'sidebar_collapsed';
+    const sidebar = document.getElementById('main-sidebar');
+    const btn = document.getElementById('sidebar-collapse-btn');
+    const icon = document.getElementById('sidebar-collapse-icon');
+
+    if (!sidebar || !btn) return;
+
+    const collapseLabels = sidebar.querySelectorAll(
+        'h1, p.text-xs.text-slate-500, .text-sm.font-semibold, ' +
+        '.text-sm.font-medium, .sidebar-playlists-title, ' +
+        '#your-playlists-container h3, #your-playlists-container a.sidebar-playlists-view-all, ' +
+        'button span:not(.material-symbols-outlined), a span:not(.material-symbols-outlined)'
+    );
+
+    function applyCollapsed(collapsed, animate) {
+        if (collapsed) {
+            sidebar.classList.add('sidebar-collapsed');
+            if (icon) icon.textContent = 'chevron_right';
+            btn.title = 'Expand sidebar';
+        } else {
+            sidebar.classList.remove('sidebar-collapsed');
+            if (icon) icon.textContent = 'chevron_left';
+            btn.title = 'Collapse sidebar';
+        }
+    }
+
+    // Restore saved state
+    const saved = localStorage.getItem(STORAGE_KEY) === 'true';
+    applyCollapsed(saved);
+
+    btn.addEventListener('click', function() {
+        const isNowCollapsed = !sidebar.classList.contains('sidebar-collapsed');
+        applyCollapsed(isNowCollapsed);
+        localStorage.setItem(STORAGE_KEY, isNowCollapsed ? 'true' : 'false');
+    });
+})();

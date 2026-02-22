@@ -119,6 +119,7 @@ def create_app(test_config=None):
         from app.models import User, OAuthConnection, AuthAuditLog, Role, Permission, RolePermission, UserRole
         from app.models import AdminSetting, UsageEvent
         from app.models import Project, AudioLibrary, Playlist, PlaylistAudioLibrary
+        from app.models import WebhookEvent
         
         if app.config.get('AUTO_CREATE_DB', False):
             db.create_all()
@@ -139,6 +140,7 @@ def create_app(test_config=None):
     from app.routes.api_admin import api_admin_bp
     from app.routes.vc_api import vc_bp
     from app.routes.pricing import pricing_bp
+    from app.routes.billing import billing_bp
     
     # Force reload lyrics_search_api module to pick up latest endpoints
     import sys
@@ -161,6 +163,7 @@ def create_app(test_config=None):
     csrf.exempt(api_admin_bp)
     csrf.exempt(vc_bp)
     csrf.exempt(lyrics_search_bp)
+    csrf.exempt(billing_bp)  # webhook endpoint needs raw body without CSRF token
 
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp)
@@ -170,6 +173,7 @@ def create_app(test_config=None):
     app.register_blueprint(playlist_api_bp)
     app.register_blueprint(vc_bp)
     app.register_blueprint(pricing_bp)
+    app.register_blueprint(billing_bp)
     app.register_blueprint(api_auth_bp, url_prefix='/api/auth')
     app.register_blueprint(api_admin_bp, url_prefix='/api/admin')
     app.register_blueprint(lyrics_search_bp)

@@ -1,0 +1,45 @@
+<!-- Shared Tailwind config for pages using the AudioCraft pink/fuchsia design system.
+     Include this partial in any template that uses the primary:#f20df2 color vocabulary.
+     Note: base.html uses a separate orange-primary theme for other pages. -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary":           "#f20df2",
+          "primary-dark":      "#c20ac2",
+          "background-light":  "#f8f5f8",
+          "background-dark":   "#181118",
+          "surface-dark":      "#271b27",
+          "border-dark":       "#392839",
+        },
+        fontFamily: {
+          "display": ["Space Grotesk", "sans-serif"],
+          "body":    ["Space Grotesk", "sans-serif"],
+        },
+        borderRadius: {
+          "DEFAULT": "0.5rem",
+          "lg":      "0.75rem",
+          "xl":      "1rem",
+          "full":    "9999px"
+        },
+        animation: {
+          "slide-in": "slideIn 0.3s ease-out",
+          "fade-in":  "fadeIn 0.5s ease-out",
+        },
+        keyframes: {
+          slideIn: {
+            from: { opacity: 0, transform: "translateY(-10px)" },
+            to:   { opacity: 1, transform: "translateY(0)" }
+          },
+          fadeIn: {
+            from: { opacity: 0 },
+            to:   { opacity: 1 }
+          }
+        }
+      },
+    },
+  }
+</script>

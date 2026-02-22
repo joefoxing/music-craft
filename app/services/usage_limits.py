@@ -9,6 +9,23 @@ from app import db
 from app.models import UsageEvent
 
 
+def consume_token(user) -> bool:
+    """Deduct one token from the user's balance. Returns True if successful."""
+    if (user.token_balance or 0) <= 0:
+        return False
+    user.token_balance -= 1
+    db.session.flush()
+    return True
+
+
+def _is_paid_active(user) -> bool:
+    """Return True if the user has an active paid subscription."""
+    return (
+        getattr(user, 'subscription_status', 'free') == 'active'
+        and getattr(user, 'subscription_tier', 'free') == 'pro'
+    )
+
+
 def _window_start_daily(now: datetime) -> datetime:
     return datetime(now.year, now.month, now.day)
 
@@ -52,33 +69,34 @@ def check_allowed(units: int = 1) -> Tuple[bool, Dict[str, Any], int]:
     user_id = current_user.id if is_auth else None
     ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
 
+    # --- Paid subscription: unlimited usage ---
+    if is_auth and _is_paid_active(current_user):
+        return True, {'remaining': None, 'plan': 'pro'}, 200
+
     daily_limit, monthly_limit = _limits_for_actor(is_auth)
 
     daily_used = _usage_sum(user_id=user_id, ip_address=None if is_auth else ip_address, since=_window_start_daily(now))
     monthly_used = _usage_sum(user_id=user_id, ip_address=None if is_auth else ip_address, since=_window_start_monthly(now))
 
-    if daily_limit is not None and daily_used + units > daily_limit:
-        return (
-            False,
-            {
-                'error': 'Usage limit exceeded',
-                'limit_type': 'daily',
-                'limit': daily_limit,
-                'used': daily_used,
-                'remaining': max(daily_limit - daily_used, 0),
-            },
-            429,
-        )
+    daily_exceeded   = daily_limit   is not None and daily_used   + units > daily_limit
+    monthly_exceeded = monthly_limit is not None and monthly_used + units > monthly_limit
 
-    if monthly_limit is not None and monthly_used + units > monthly_limit:
+    if daily_exceeded or monthly_exceeded:
+        # --- Token spend fallback ---
+        if is_auth and consume_token(current_user):
+            return True, {'remaining': None, 'plan': 'token'}, 200
+
+        limit_type = 'daily' if daily_exceeded else 'monthly'
+        limit      = daily_limit if daily_exceeded else monthly_limit
+        used       = daily_used  if daily_exceeded else monthly_used
         return (
             False,
             {
                 'error': 'Usage limit exceeded',
-                'limit_type': 'monthly',
-                'limit': monthly_limit,
-                'used': monthly_used,
-                'remaining': max(monthly_limit - monthly_used, 0),
+                'limit_type': limit_type,
+                'limit': limit,
+                'used': used,
+                'remaining': max(limit - used, 0),
             },
             429,
         )

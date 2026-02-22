@@ -1337,7 +1337,7 @@ def get_user_activity():
         limit = int(request.args.get('limit', 10))
         offset = int(request.args.get('offset', 0))
         activity_type = request.args.get('type')
-        days_back = int(request.args.get('days', 1))
+        days_back = int(request.args.get('days', 30))
         
         # Initialize history service
         history_service = HistoryService()
@@ -1416,12 +1416,35 @@ def get_user_activity():
             if activity_type and entry_type != activity_type:
                 continue
             
+            # Derive human-readable title
+            type_titles = {
+                'generation_complete': 'Music Generated',
+                'video_processing': 'Video Created',
+                'processing': 'Task Processing',
+                'upload': 'Audio Uploaded',
+                'system': 'System Event',
+            }
+            entry_title = type_titles.get(entry_type, 'Activity')
+            
+            # Derive status string
+            type_statuses = {
+                'generation_complete': 'success',
+                'video_processing': 'success',
+                'upload': 'success',
+                'processing': 'processing',
+                'system': 'info',
+            }
+            entry_status = type_statuses.get(entry_type, 'info')
+            
             # Create activity object
             activity = {
                 'id': entry.get('id', ''),
                 'type': entry_type,
+                'title': entry_title,
+                'status': entry_status,
                 'description': get_activity_description(entry, entry_type),
                 'timestamp': timestamp,
+                'task_id': entry.get('task_id'),
                 'metadata': {
                     'task_id': entry.get('task_id'),
                     'status_code': entry.get('status_code'),
@@ -1462,6 +1485,77 @@ def get_user_activity():
         
     except Exception as e:
         current_app.logger.error(f"Error getting user activity: {e}")
+        return jsonify(ResponseUtils.create_error_response(str(e))), 500
+
+
+@api_bp.route('/recent-creations', methods=['GET'])
+def get_recent_creations():
+    """Get the current user's most recent track creations for the dashboard gallery."""
+    try:
+        from flask_login import current_user
+        from app.services.history_service import HistoryService
+        from app.core.utils import DateTimeUtils
+
+        if not current_user.is_authenticated:
+            return jsonify(ResponseUtils.create_error_response('Authentication required')), 401
+
+        limit = int(request.args.get('limit', 6))
+
+        history_service = HistoryService()
+        history = history_service.load_history()
+
+        # Collect the most recent successful generation entries for this user
+        creations = []
+        for entry in history:
+            if str(entry.get('user_id', '')) != str(current_user.id):
+                continue
+            if entry.get('status_code') != 200:
+                continue
+            processed_data = entry.get('processed_data') or {}
+            tracks = processed_data.get('tracks', [])
+            if not tracks:
+                continue
+            timestamp = entry.get('timestamp', '')
+            for track in tracks:
+                image_urls = track.get('image_urls') or {}
+                image_url = (
+                    image_urls.get('default') or
+                    image_urls.get('small') or
+                    image_urls.get('large') or
+                    track.get('image_url') or
+                    None
+                )
+                audio_urls = track.get('audio_urls') or {}
+                audio_url = (
+                    audio_urls.get('mp3_128') or
+                    audio_urls.get('mp3_64') or
+                    audio_urls.get('default') or
+                    track.get('audio_url') or
+                    None
+                )
+                creations.append({
+                    'id': track.get('id', entry.get('id', '')),
+                    'title': track.get('title') or 'Untitled',
+                    'artist': track.get('model_name') or 'AI Generated',
+                    'duration': track.get('duration') or 0,
+                    'image_url': image_url,
+                    'audio_url': audio_url,
+                    'timestamp': timestamp,
+                    'time_ago': DateTimeUtils.format_time_ago(timestamp) if timestamp else '',
+                    'tags': track.get('tags', ''),
+                })
+
+        # Sort newest first and limit
+        creations.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+        creations = creations[:limit]
+
+        return jsonify(ResponseUtils.create_success_response({
+            'creations': creations,
+            'total': len(creations)
+        }))
+
+    except Exception as e:
+        current_app.logger.error(f"Error getting recent creations: {e}")
         return jsonify(ResponseUtils.create_error_response(str(e))), 500
 
 

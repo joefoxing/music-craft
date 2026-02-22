@@ -9,51 +9,8 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<!-- Tailwind Config -->
-<script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "primary": "#f20df2",
-              "primary-dark": "#c20ac2",
-              "background-light": "#f8f5f8",
-              "background-dark": "#181118",
-              "surface-dark": "#271b27",
-              "border-dark": "#392839",
-            },
-            fontFamily: {
-              "display": ["Space Grotesk", "sans-serif"],
-              "body": ["Space Grotesk", "sans-serif"],
-            },
-            borderRadius: {
-              "DEFAULT": "0.5rem",
-              "lg": "0.75rem",
-              "xl": "1rem",
-              "full": "9999px"
-            },
-            animation: {
-              "slide-in": "slideIn 0.3s ease-out",
-              "fade-in": "fadeIn 0.5s ease-out",
-            },
-            keyframes: {
-              slideIn: {
-                from: { opacity: 0, transform: "translateY(-10px)" },
-                to: { opacity: 1, transform: "translateY(0)" }
-              },
-              fadeIn: {
-                from: { opacity: 0 },
-                to: { opacity: 1 }
-              }
-            }
-          },
-        },
-      }
-    </script>
+<!-- Tailwind CSS + Config -->
+{% include "partials/_tailwind_config.html" %}
 <!-- Custom CSS -->
 <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
 </head>
@@ -62,159 +19,328 @@
 {% include "partials/_sidebar.html" %}
 <!-- Main Content -->
 <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark relative overflow-hidden">
-<!-- Header -->
-<header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
-<div class="flex items-center gap-4 text-white md:hidden">
-<button id="mobileMenuBtn" class="text-slate-400 hover:text-white">
-<span class="material-symbols-outlined">menu</span>
-</button>
-<h2 class="text-lg font-bold">Create</h2>
-</div>
-<div class="hidden md:block">
-<h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Studio Dashboard</h2>
-</div>
-<div class="flex items-center gap-4">
-  <div class="flex items-center bg-surface-dark rounded-full px-3 py-1.5 border border-border-dark">
-    <span class="material-symbols-outlined text-primary text-sm mr-2">bolt</span>
-    <span class="text-white text-xs font-bold font-mono">
+
+  <!-- Header -->
+  <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+    <div class="flex items-center gap-4 text-white md:hidden">
+      <button id="mobileMenuBtn" class="text-slate-400 hover:text-white">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <h2 class="text-lg font-bold">Studio</h2>
+    </div>
+    <div class="hidden md:block">
+      <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Studio Dashboard</h2>
+    </div>
+    <div class="flex items-center gap-4">
       {% if current_user.is_authenticated %}
-      500 CREDITS
-      {% else %}
-      0 CREDITS
+      <a href="{{ url_for('auth.profile') }}" class="p-2 text-slate-400 hover:text-white relative" title="Profile">
+        <span class="material-symbols-outlined">account_circle</span>
+      </a>
       {% endif %}
-    </span>
-  </div>
-  {% if current_user.is_authenticated %}
-  <a href="{{ url_for('auth.profile') }}" class="p-2 text-slate-400 hover:text-white relative" title="Profile">
-    <span class="material-symbols-outlined">account_circle</span>
-  </a>
-  {% endif %}
-  <button class="p-2 text-slate-400 hover:text-white relative">
-    <span class="material-symbols-outlined">notifications</span>
-    <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
-  </button>
-</div>
-</header>
-<!-- Scrollable Content -->
-<div class="flex-1 overflow-y-auto custom-scrollbar p-6 pb-32">
-<div class="max-w-7xl mx-auto space-y-8">
-<!-- Unified Activity Dashboard -->
-<section class="flex flex-col gap-6">
-<div class="flex flex-col gap-2">
-<h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Activity Dashboard</h2>
-<p class="text-slate-500 dark:text-slate-400">Track your recent music generation activities and template usage.</p>
-</div>
+      <button class="p-2 text-slate-400 hover:text-white relative">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
+      </button>
+    </div>
+  </header>
 
-<!-- Activity Feed -->
-<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-lg">
-<div class="flex items-center justify-between mb-6">
-<div>
-<h3 class="text-xl font-bold dark:text-white text-slate-900">Recent Activities</h3>
-<p class="text-sm text-slate-500 dark:text-slate-400">Your music generation history and template applications</p>
-</div>
-<div class="flex items-center gap-3">
-<button id="activityRefreshBtn" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
-<span class="material-symbols-outlined text-sm">refresh</span>
-<span class="text-sm font-medium">Refresh</span>
-</button>
-<select id="activityFilter" class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary">
-<option value="all">All Activities</option>
-<option value="templates">Template Usage</option>
-<option value="covers">Cover Generations</option>
-<option value="today">Today Only</option>
-</select>
-</div>
-</div>
+  <!-- Scrollable Content -->
+  <div class="flex-1 overflow-y-auto custom-scrollbar p-6 pb-32">
+    <div class="max-w-7xl mx-auto space-y-8">
 
-<!-- Activity Stats -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-<div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-sm text-slate-500 dark:text-slate-400">Total Activities</p>
-<p id="statsTotal" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
-</div>
-<span class="material-symbols-outlined text-primary text-2xl">timeline</span>
-</div>
-</div>
-<div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-sm text-slate-500 dark:text-slate-400">Today</p>
-<p id="statsToday" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
-</div>
-<span class="material-symbols-outlined text-green-500 text-2xl">today</span>
-</div>
-</div>
-<div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-sm text-slate-500 dark:text-slate-400">Templates Used</p>
-<p id="statsTemplates" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
-</div>
-<span class="material-symbols-outlined text-blue-500 text-2xl">content_copy</span>
-</div>
-</div>
-<div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
-<div class="flex items-center justify-between">
-<div>
-<p class="text-sm text-slate-500 dark:text-slate-400">Successful</p>
-<p id="statsSuccess" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
-</div>
-<span class="material-symbols-outlined text-green-500 text-2xl">check_circle</span>
-</div>
-</div>
-</div>
+      <!-- ── Hero Welcome Row ── -->
+      <section class="flex flex-col gap-4 animate-fade-in">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">
+            {% if greeting_hour is defined %}
+              {% if greeting_hour >= 5 and greeting_hour < 12 %}Good morning{% elif greeting_hour >= 12 and greeting_hour < 18 %}Good afternoon{% elif greeting_hour >= 18 and greeting_hour < 23 %}Good evening{% else %}Welcome back{% endif %}
+            {% else %}Welcome back{% endif %}{% if current_user.is_authenticated and current_user.display_name %}, {{ current_user.display_name }}{% endif %} 👋
+          </h1>
+          <p class="mt-1 text-slate-500 dark:text-slate-400 text-base">What would you like to create today?</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href="{{ url_for('main.music_generator') }}"
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-dark text-white font-semibold text-sm transition-colors shadow-lg shadow-primary/20">
+            <span class="material-symbols-outlined text-base">music_note</span>
+            Generate Music
+          </a>
+          <a href="{{ url_for('main.cover_generator') }}"
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border-dark dark:text-white text-slate-700 hover:bg-surface-dark hover:text-white font-semibold text-sm transition-colors">
+            <span class="material-symbols-outlined text-base">image</span>
+            Create Cover
+          </a>
+          <a href="{{ url_for('main.history') }}"
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border-dark dark:text-white text-slate-700 hover:bg-surface-dark hover:text-white font-semibold text-sm transition-colors">
+            <span class="material-symbols-outlined text-base">history</span>
+            View History
+          </a>
+        </div>
+      </section>
 
-<!-- Activity Feed Container -->
-<div id="activityLoading" class="text-center py-8">
-<div class="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400">
-<span class="material-symbols-outlined animate-spin">sync</span>
-<span>Loading activities...</span>
-</div>
-</div>
+      <!-- ── Two-Column Main Grid ── -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-<div id="activityEmpty" class="text-center py-8 hidden">
-<div class="flex flex-col items-center gap-3">
-<span class="material-symbols-outlined text-slate-400 text-4xl">notifications_off</span>
-<h4 class="text-lg font-medium text-slate-700 dark:text-slate-300">No activities yet</h4>
-<p class="text-slate-500 dark:text-slate-400">Your music generation activities will appear here.</p>
-</div>
-</div>
+        <!-- LEFT COLUMN: Stats + Activity Feed (span 2) -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
 
-<div id="activityError" class="text-center py-8 hidden">
-<div class="flex flex-col items-center gap-3">
-<span class="material-symbols-outlined text-red-500 text-4xl">error</span>
-<h4 class="text-lg font-medium text-slate-700 dark:text-slate-300">Failed to load activities</h4>
-<p class="text-slate-500 dark:text-slate-400 error-message"></p>
-<button class="mt-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
-Try Again
-</button>
-</div>
-</div>
+          <!-- Stat Cards (4-up) -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white dark:bg-surface-dark rounded-xl border-l-4 border-indigo-500 border-t border-r border-b border-slate-200 dark:border-border-dark p-4 shadow-sm">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Total Activities</p>
+              <p id="statsTotal" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+              <div class="flex items-center justify-between mt-2">
+                <span class="text-xs text-slate-400">last 30 days</span>
+                <span class="material-symbols-outlined text-indigo-400 text-xl">bar_chart</span>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-surface-dark rounded-xl border-l-4 border-primary border-t border-r border-b border-slate-200 dark:border-border-dark p-4 shadow-sm">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Today</p>
+              <p id="statsToday" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+              <div class="flex items-center justify-between mt-2">
+                <span class="text-xs text-slate-400">since midnight</span>
+                <span class="material-symbols-outlined text-primary text-xl">today</span>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-surface-dark rounded-xl border-l-4 border-blue-500 border-t border-r border-b border-slate-200 dark:border-border-dark p-4 shadow-sm">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Generated</p>
+              <p id="statsTemplates" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+              <div class="flex items-center justify-between mt-2">
+                <span class="text-xs text-slate-400">music tracks</span>
+                <span class="material-symbols-outlined text-blue-400 text-xl">grid_view</span>
+              </div>
+            </div>
+            <div class="bg-white dark:bg-surface-dark rounded-xl border-l-4 border-green-500 border-t border-r border-b border-slate-200 dark:border-border-dark p-4 shadow-sm">
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Successful</p>
+              <p id="statsSuccess" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+              <div class="flex items-center justify-between mt-2">
+                <span class="text-xs text-slate-400">completions</span>
+                <span class="material-symbols-outlined text-green-400 text-xl">check_circle</span>
+              </div>
+            </div>
+          </div>
 
-<div id="activityFeedContainer" class="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar hidden">
-<!-- Activity cards will be inserted here by JavaScript -->
-</div>
+          <!-- Activity Feed Card -->
+          <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-lg flex-1">
+            <div class="flex items-center justify-between mb-5">
+              <div>
+                <h3 class="text-lg font-bold dark:text-white text-slate-900">Recent Activity</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Your music generations and processing history</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <button id="activityRefreshBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm font-medium">
+                  <span class="material-symbols-outlined text-sm">refresh</span>
+                  Refresh
+                </button>
+                <select id="activityFilter" class="bg-surface-dark border border-border-dark rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                  <option value="all">All Activities</option>
+                  <option value="templates">Music Generations</option>
+                  <option value="covers">Video Processing</option>
+                  <option value="today">Today Only</option>
+                </select>
+              </div>
+            </div>
 
-<div class="mt-4 pt-4 border-t border-slate-100 dark:border-border-dark">
-<div class="flex items-center justify-between">
-<div class="text-sm text-slate-500 dark:text-slate-400">
-<span id="activityCount">0</span> activities loaded
+            <!-- Feed Loading State -->
+            <div id="activityLoading" class="text-center py-10">
+              <div class="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                <span class="material-symbols-outlined animate-spin">sync</span>
+                <span>Loading activities…</span>
+              </div>
+            </div>
+
+            <!-- Feed Empty State -->
+            <div id="activityEmpty" class="py-12 hidden">
+              <div class="flex flex-col items-center gap-4 text-center">
+                <div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-primary text-3xl opacity-60">music_note</span>
+                </div>
+                <div>
+                  <h4 class="text-base font-semibold dark:text-white text-slate-700">No activity yet</h4>
+                  <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Your music generations and processing events will appear here.</p>
+                </div>
+                <a href="{{ url_for('main.music_generator') }}"
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-semibold transition-colors">
+                  <span class="material-symbols-outlined text-sm">add</span>
+                  Start Creating
+                </a>
+              </div>
+            </div>
+
+            <!-- Feed Error State -->
+            <div id="activityError" class="text-center py-10 hidden">
+              <div class="flex flex-col items-center gap-3">
+                <span class="material-symbols-outlined text-red-500 text-4xl">error</span>
+                <h4 class="text-base font-medium text-slate-700 dark:text-slate-300">Failed to load activities</h4>
+                <p class="text-sm text-slate-500 dark:text-slate-400 error-message"></p>
+                <button id="activityRetryBtn" class="mt-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark text-sm transition-colors">Try Again</button>
+              </div>
+            </div>
+
+            <!-- Feed Content -->
+            <div id="activityFeedContainer" class="space-y-4 max-h-[420px] overflow-y-auto custom-scrollbar hidden"></div>
+
+            <!-- Footer Controls -->
+            <div class="mt-4 pt-4 border-t border-slate-100 dark:border-border-dark flex items-center justify-between gap-4 flex-wrap">
+              <span class="text-xs text-slate-500 dark:text-slate-400">
+                <span id="activityCount">0</span> activities loaded
+              </span>
+              <input id="activitySearch" type="text" placeholder="Search activities…"
+                class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary w-56"/>
+            </div>
+          </div>
+        </div><!-- /LEFT COLUMN -->
+
+        <!-- RIGHT COLUMN: Subscription + Recent Creations + Playlists link -->
+        <div class="lg:col-span-1 flex flex-col gap-6">
+
+          <!-- Subscription Status Widget -->
+          {% if current_user.is_authenticated %}
+          <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-5 shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-bold dark:text-white text-slate-900">Your Plan</h3>
+              <a href="{{ url_for('pricing.index') }}" class="text-xs text-primary hover:text-primary-dark font-medium">View Plans</a>
+            </div>
+
+            {% if current_user.subscription_tier == 'pro' %}
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-9 h-9 rounded-full bg-primary-orange/15 flex items-center justify-center flex-shrink-0">
+                  <span class="material-symbols-outlined text-primary-orange text-xl">star</span>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold dark:text-white text-slate-900">Pro Creator</p>
+                  <p class="text-xs text-slate-400">
+                    {% if current_user.subscription_status == 'active' %}Active
+                    {% elif current_user.subscription_status == 'past_due' %}<span class="text-yellow-400">⚠ Payment past due</span>
+                    {% elif current_user.subscription_status == 'canceled' %}Canceled
+                    {% else %}{{ current_user.subscription_status | capitalize }}{% endif %}
+                  </p>
+                </div>
+              </div>
+              {% if current_user.subscription_period_end %}
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                Renews {{ current_user.subscription_period_end.strftime('%b %d, %Y') }}
+              </p>
+              {% endif %}
+              <form method="POST" action="{{ url_for('billing.customer_portal') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit"
+                        class="w-full py-2 px-4 rounded-lg border border-border-dark text-sm font-semibold dark:text-white text-slate-700 hover:bg-surface-dark hover:text-white transition-colors flex items-center justify-center gap-2">
+                  <span class="material-symbols-outlined text-base">manage_accounts</span>
+                  Manage Subscription
+                </button>
+              </form>
+            {% else %}
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-9 h-9 rounded-full bg-slate-500/10 flex items-center justify-center flex-shrink-0">
+                  <span class="material-symbols-outlined text-slate-400 text-xl">person</span>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold dark:text-white text-slate-900">Free Plan</p>
+                  <p class="text-xs text-slate-400">Limited generations</p>
+                </div>
+              </div>
+              <a href="{{ url_for('pricing.index') }}"
+                 class="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-primary-orange to-suno-pink text-white text-sm font-semibold text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                 style="text-decoration:none">
+                <span class="material-symbols-outlined text-base">star</span>
+                Upgrade to Pro – $15/mo
+              </a>
+            {% endif %}
+
+            <!-- Token balance -->
+            {% if (current_user.token_balance or 0) > 0 %}
+            <div class="mt-4 pt-4 border-t border-slate-100 dark:border-border-dark flex items-center justify-between">
+              <span class="text-xs text-slate-500 dark:text-slate-400">Token credits</span>
+              <span class="text-xs font-bold dark:text-white text-slate-900 flex items-center gap-1">
+                <span class="material-symbols-outlined text-primary text-sm">bolt</span>
+                {{ current_user.token_balance }} tokens
+              </span>
+            </div>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          <!-- Recent Creations Widget -->
+          <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-5 shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-base font-bold dark:text-white text-slate-900">Recent Creations</h3>
+              <a href="{{ url_for('main.history') }}" class="text-xs text-primary hover:text-primary-dark font-medium flex items-center gap-1">
+                View all <span class="material-symbols-outlined text-sm">arrow_forward</span>
+              </a>
+            </div>
+
+            <!-- Loading skeleton -->
+            <div id="recentCreationsLoading" class="space-y-3">
+              {% for _ in range(3) %}
+              <div class="flex items-center gap-3 animate-pulse">
+                <div class="w-12 h-12 rounded-md bg-slate-200 dark:bg-slate-700 flex-shrink-0"></div>
+                <div class="flex-1 space-y-2">
+                  <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-3/4"></div>
+                  <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-1/2"></div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+
+            <!-- Empty state -->
+            <div id="recentCreationsEmpty" class="hidden py-6 text-center">
+              <span class="material-symbols-outlined text-slate-400 text-3xl">music_off</span>
+              <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">No creations yet</p>
+              <a href="{{ url_for('main.music_generator') }}" class="mt-3 inline-flex items-center gap-1 text-xs text-primary hover:text-primary-dark font-medium">
+                <span class="material-symbols-outlined text-sm">add</span>Generate your first track
+              </a>
+            </div>
+
+            <!-- Error state -->
+            <div id="recentCreationsError" class="hidden py-4 text-center text-sm text-slate-500 dark:text-slate-400">
+              Could not load creations.
+            </div>
+
+            <!-- Content list -->
+            <div id="recentCreationsContainer" class="hidden space-y-1"></div>
+          </div>
+
+          <!-- Quick Links Widget -->
+          <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-5 shadow-lg">
+            <h3 class="text-base font-bold dark:text-white text-slate-900 mb-4">Quick Links</h3>
+            <nav class="flex flex-col gap-1">
+              <a href="{{ url_for('main.music_generator') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-primary/10 group transition-colors">
+                <span class="material-symbols-outlined text-slate-400 group-hover:text-primary text-xl transition-colors">music_note</span>
+                <span class="text-sm font-medium dark:text-slate-300 text-slate-700 group-hover:text-primary transition-colors">Music Generator</span>
+              </a>
+              <a href="{{ url_for('main.cover_generator') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-primary/10 group transition-colors">
+                <span class="material-symbols-outlined text-slate-400 group-hover:text-primary text-xl transition-colors">image</span>
+                <span class="text-sm font-medium dark:text-slate-300 text-slate-700 group-hover:text-primary transition-colors">Cover Generator</span>
+              </a>
+              <a href="{{ url_for('main.library') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-primary/10 group transition-colors">
+                <span class="material-symbols-outlined text-slate-400 group-hover:text-primary text-xl transition-colors">library_music</span>
+                <span class="text-sm font-medium dark:text-slate-300 text-slate-700 group-hover:text-primary transition-colors">My Library</span>
+              </a>
+              <a href="{{ url_for('main.history') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-primary/10 group transition-colors">
+                <span class="material-symbols-outlined text-slate-400 group-hover:text-primary text-xl transition-colors">history</span>
+                <span class="text-sm font-medium dark:text-slate-300 text-slate-700 group-hover:text-primary transition-colors">Generation History</span>
+              </a>
+              {% if current_user.is_authenticated %}
+              <a href="{{ url_for('auth.profile') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-primary/10 group transition-colors">
+                <span class="material-symbols-outlined text-slate-400 group-hover:text-primary text-xl transition-colors">manage_accounts</span>
+                <span class="text-sm font-medium dark:text-slate-300 text-slate-700 group-hover:text-primary transition-colors">Account Settings</span>
+              </a>
+              {% endif %}
+            </nav>
+          </div>
+
+        </div><!-- /RIGHT COLUMN -->
+      </div><!-- /grid -->
+
+    </div>
+  </div><!-- /scrollable content -->
+
+</main>
 </div>
-<input id="activitySearch" type="text" placeholder="Search activities..." class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary w-64"/>
-</div>
-</div>
-</div>
-</section>
 
 <!-- JavaScript Includes -->
 <script src="{{ url_for('static', filename='js/components/activityFeed.js') }}"></script>
 <script src="{{ url_for('static', filename='js/enhanced-dashboard.js') }}"></script>
 
-</div>
-</div>
-</main>
-</div>
 </body>
 </html>

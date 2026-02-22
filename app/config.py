@@ -108,6 +108,14 @@ class Config:
     GITHUB_OAUTH_CLIENT_ID = os.environ.get('GITHUB_OAUTH_CLIENT_ID', '')
     GITHUB_OAUTH_CLIENT_SECRET = os.environ.get('GITHUB_OAUTH_CLIENT_SECRET', '')
     
+    # Stripe / Billing configuration
+    STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
+    STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
+    STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
+    STRIPE_PRO_MONTHLY_PRICE_ID = os.environ.get('STRIPE_PRO_MONTHLY_PRICE_ID', '')
+    STRIPE_PRO_ANNUAL_PRICE_ID = os.environ.get('STRIPE_PRO_ANNUAL_PRICE_ID', '')
+    STRIPE_TOKEN_PACK_PRICE_ID = os.environ.get('STRIPE_TOKEN_PACK_PRICE_ID', '')
+
     # Security configuration
     LOGIN_RATE_LIMIT = os.environ.get('LOGIN_RATE_LIMIT', '5 per minute')
     REGISTER_RATE_LIMIT = os.environ.get('REGISTER_RATE_LIMIT', '50 per hour')
@@ -208,7 +216,15 @@ class Config:
         app.config['SESSION_COOKIE_HTTPONLY'] = cls.SESSION_COOKIE_HTTPONLY
         app.config['SESSION_COOKIE_SAMESITE'] = cls.SESSION_COOKIE_SAMESITE
         app.config['WTF_CSRF_ENABLED'] = cls.WTF_CSRF_ENABLED
-        
+
+        # Stripe / Billing configuration
+        app.config['STRIPE_SECRET_KEY'] = cls.STRIPE_SECRET_KEY
+        app.config['STRIPE_PUBLISHABLE_KEY'] = cls.STRIPE_PUBLISHABLE_KEY
+        app.config['STRIPE_WEBHOOK_SECRET'] = cls.STRIPE_WEBHOOK_SECRET
+        app.config['STRIPE_PRO_MONTHLY_PRICE_ID'] = cls.STRIPE_PRO_MONTHLY_PRICE_ID
+        app.config['STRIPE_PRO_ANNUAL_PRICE_ID'] = cls.STRIPE_PRO_ANNUAL_PRICE_ID
+        app.config['STRIPE_TOKEN_PACK_PRICE_ID'] = cls.STRIPE_TOKEN_PACK_PRICE_ID
+
         # Ensure upload folder exists
         os.makedirs(cls.UPLOAD_FOLDER, exist_ok=True)
     

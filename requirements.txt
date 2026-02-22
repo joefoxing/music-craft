@@ -34,5 +34,8 @@ demucs==4.0.1
 lyricsgenius>=3.0.1
 syncedlyrics>=0.10.0
 
+# Payments
+stripe>=9.0.0
+
 # Production server
 gunicorn==21.2.0

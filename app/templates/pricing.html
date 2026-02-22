@@ -64,75 +64,222 @@
 </header>
 
 <div class="max-w-6xl w-full z-10 pb-20">
-<div class="text-center mb-16">
-<h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">Simple, transparent pricing</h1>
-<p class="text-white/60 text-lg max-w-2xl mx-auto">
-                    Unlock the full potential of AI music generation. Choose the plan that fits your creative workflow.
-                </p>
+  <div class="text-center mb-12">
+    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">Simple, transparent pricing</h1>
+    <p class="text-white/60 text-lg max-w-2xl mx-auto">
+      Unlock the full potential of AI music generation. Choose the plan that fits your creative workflow.
+    </p>
+
+    <!-- Billing cycle toggle -->
+    <div class="mt-8 inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-2 py-1.5">
+      <button id="toggleMonthly"
+              onclick="setBilling('monthly')"
+              class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all bg-white text-black">
+        Monthly
+      </button>
+      <button id="toggleAnnual"
+              onclick="setBilling('annual')"
+              class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all text-white/60 hover:text-white">
+        Annual
+        <span class="ml-1.5 text-xs bg-green-500/20 text-green-400 border border-green-500/30 px-1.5 py-0.5 rounded-full">Save 20%</span>
+      </button>
+    </div>
+  </div>
+
+  {% if subscription_tier == 'pro' %}
+  <div class="mb-8 mx-auto max-w-lg p-4 rounded-xl border border-primary-orange/30 bg-primary-orange/10 text-center text-sm text-white/80">
+    <span class="material-symbols-outlined text-primary-orange align-middle text-base mr-1">star</span>
+    You're on <strong class="text-primary-orange">Pro Creator</strong>.
+    {% if subscription_status == 'past_due' %}
+      <span class="text-yellow-400 font-medium"> Payment past due — please update your payment method.</span>
+    {% endif %}
+    <form method="POST" action="{{ url_for('billing.customer_portal') }}" class="inline ml-2">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="underline text-primary-orange hover:opacity-80">Manage subscription →</button>
+    </form>
+  </div>
+  {% endif %}
+
+  <div class="grid md:grid-cols-3 gap-8">
+
+    <!-- Free Tier -->
+    <div class="bg-black/30 backdrop-blur-xl border border-white/10 rounded-2xl p-8 flex flex-col hover:border-white/20 transition-colors">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold mb-2">Starter</h3>
+        <div class="flex items-baseline gap-1">
+          <span class="text-4xl font-bold">$0</span>
+          <span class="text-white/60">/mo</span>
+        </div>
+      </div>
+      <p class="text-white/60 text-sm mb-8">Perfect for hobbyists exploring AI music.</p>
+      <a href="{{ url_for('auth.register') }}"
+         class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-white/5 transition-colors mb-8">
+        Get Started
+      </a>
+      <ul class="space-y-4 text-sm flex-1 text-white/80">
+        <li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> 5 generations per day</li>
+        <li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Standard quality</li>
+        <li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Public library access</li>
+      </ul>
+    </div>
+
+    <!-- Pro Tier -->
+    <div class="bg-black/40 backdrop-blur-xl border-2 border-primary-orange rounded-2xl p-8 flex flex-col relative shadow-2xl shadow-primary-orange/10 transform md:-translate-y-4">
+      <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary-orange to-suno-pink text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Most Popular</div>
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold mb-2 text-primary-orange">Pro Creator</h3>
+        <div class="flex items-baseline gap-1">
+          <!-- Monthly price (shown by default) -->
+          <span id="proPrice" class="text-4xl font-bold">$15</span>
+          <span id="proPeriod" class="text-white/60">/mo</span>
+        </div>
+        <p id="annualNote" class="hidden text-xs text-green-400 mt-1">$144 billed annually — save $36/yr</p>
+      </div>
+      <p class="text-white/60 text-sm mb-8">For serious artists and content creators.</p>
+
+      {% if subscription_tier == 'pro' %}
+        <form method="POST" action="{{ url_for('billing.customer_portal') }}" class="mb-8">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit"
+                  class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-primary-orange to-suno-pink font-semibold text-center hover:opacity-90 transition-opacity">
+            Manage Plan
+          </button>
+        </form>
+      {% else %}
+        <button id="proCheckoutBtn"
+                onclick="startCheckout()"
+                class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-primary-orange to-suno-pink font-semibold text-center hover:opacity-90 transition-opacity mb-8 flex items-center justify-center gap-2">
+          <span id="proCheckoutLabel">Upgrade to Pro</span>
+          <svg id="proCheckoutSpinner" class="hidden w-4 h-4 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+        </button>
+        <!-- Token top-up -->
+        <button onclick="startCheckout('tokens')"
+                class="w-full mb-8 py-2 px-4 rounded-xl border border-white/10 text-xs font-semibold text-white/60 hover:bg-white/5 transition-colors">
+          Just need more credits? Buy 100 tokens for $5
+        </button>
+      {% endif %}
+
+      <ul class="space-y-4 text-sm flex-1 text-white/80">
+        <li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Unlimited generations</li>
+        <li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> High fidelity (320kbps)</li>
+        <li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Commercial usage rights</li>
+        <li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Priority processing</li>
+        <li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Token top-up credits</li>
+      </ul>
+    </div>
+
+    <!-- Studio Tier -->
+    <div class="bg-black/30 backdrop-blur-xl border border-white/10 rounded-2xl p-8 flex flex-col hover:border-white/20 transition-colors">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold mb-2">Studio</h3>
+        <div class="flex items-baseline gap-1">
+          <span class="text-4xl font-bold">$49</span>
+          <span class="text-white/60">/mo</span>
+        </div>
+      </div>
+      <p class="text-white/60 text-sm mb-8">For production houses and teams.</p>
+      <a href="/contact"
+         class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-white/5 transition-colors mb-8">
+        Contact Sales
+      </a>
+      <ul class="space-y-4 text-sm flex-1 text-white/80">
+        <li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Everything in Pro</li>
+        <li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> 5 Team seats included</li>
+        <li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> API Access</li>
+      </ul>
+    </div>
+
+  </div><!-- /grid -->
+
+  <div class="text-center mt-16 border-t border-white/10 pt-8">
+    <p class="text-white/40 text-sm">Trusted by over 10,000 creators worldwide. Need help? <a href="/contact" class="text-primary-orange hover:underline">Contact Support</a></p>
+  </div>
 </div>
 
-<div class="grid md:grid-cols-3 gap-8">
-<!-- Free Tier -->
-<div class="bg-black/30 backdrop-blur-xl border border-white/10 rounded-2xl p-8 flex flex-col hover:border-white/20 transition-colors">
-<div class="mb-4">
-<h3 class="text-lg font-semibold mb-2">Starter</h3>
-<div class="flex items-baseline gap-1">
-<span class="text-4xl font-bold">$0</span>
-<span class="text-white/60">/mo</span>
-</div>
-</div>
-<p class="text-white/60 text-sm mb-8">Perfect for hobbyists exploring AI music.</p>
-<a href="{{ url_for('auth.register') }}" class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-white/5 transition-colors mb-8">Get Started</a>
-<ul class="space-y-4 text-sm flex-1 text-white/80">
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> 5 generations per day</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Standard quality</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Public library access</li>
-</ul>
-</div>
+<script>
+  // ── Billing cycle toggle ──────────────────────────────────────────────────
+  var billingCycle = 'monthly';
 
-<!-- Pro Tier -->
-<div class="bg-black/40 backdrop-blur-xl border-2 border-primary-orange rounded-2xl p-8 flex flex-col relative shadow-2xl shadow-primary-orange/10 transform md:-translate-y-4">
-<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary-orange to-suno-pink text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Most Popular</div>
-<div class="mb-4">
-<h3 class="text-lg font-semibold mb-2 text-primary-orange">Pro Creator</h3>
-<div class="flex items-baseline gap-1">
-<span class="text-4xl font-bold">$19</span>
-<span class="text-white/60">/mo</span>
-</div>
-</div>
-<p class="text-white/60 text-sm mb-8">For serious artists and content creators.</p>
-<a href="/checkout?plan=pro" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-primary-orange to-suno-pink font-semibold text-center hover:opacity-90 transition-opacity mb-8">Upgrade to Pro</a>
-<ul class="space-y-4 text-sm flex-1 text-white/80">
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Unlimited generations</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> High fidelity (320kbps)</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Commercial usage rights</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Priority processing</li>
-</ul>
-</div>
+  function setBilling(cycle) {
+    billingCycle = cycle;
+    var monthlyBtn = document.getElementById('toggleMonthly');
+    var annualBtn  = document.getElementById('toggleAnnual');
+    var priceEl    = document.getElementById('proPrice');
+    var periodEl   = document.getElementById('proPeriod');
+    var noteEl     = document.getElementById('annualNote');
 
-<!-- Team Tier -->
-<div class="bg-black/30 backdrop-blur-xl border border-white/10 rounded-2xl p-8 flex flex-col hover:border-white/20 transition-colors">
-<div class="mb-4">
-<h3 class="text-lg font-semibold mb-2">Studio</h3>
-<div class="flex items-baseline gap-1">
-<span class="text-4xl font-bold">$49</span>
-<span class="text-white/60">/mo</span>
-</div>
-</div>
-<p class="text-white/60 text-sm mb-8">For production houses and teams.</p>
-<a href="/contact" class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-white/5 transition-colors mb-8">Contact Sales</a>
-<ul class="space-y-4 text-sm flex-1 text-white/80">
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Everything in Pro</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> 5 Team seats included</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> API Access</li>
-</ul>
-</div>
-</div>
+    if (cycle === 'annual') {
+      monthlyBtn.classList.remove('bg-white', 'text-black');
+      monthlyBtn.classList.add('text-white/60', 'hover:text-white');
+      annualBtn.classList.add('bg-white', 'text-black');
+      annualBtn.classList.remove('text-white/60', 'hover:text-white');
+      if (priceEl)  priceEl.textContent  = '$12';
+      if (periodEl) periodEl.textContent = '/mo';
+      if (noteEl)   noteEl.classList.remove('hidden');
+    } else {
+      annualBtn.classList.remove('bg-white', 'text-black');
+      annualBtn.classList.add('text-white/60', 'hover:text-white');
+      monthlyBtn.classList.add('bg-white', 'text-black');
+      monthlyBtn.classList.remove('text-white/60', 'hover:text-white');
+      if (priceEl)  priceEl.textContent  = '$15';
+      if (periodEl) periodEl.textContent = '/mo';
+      if (noteEl)   noteEl.classList.add('hidden');
+    }
+  }
 
-<div class="text-center mt-16 border-t border-white/10 pt-8">
-<p class="text-white/40 text-sm">Trusted by over 10,000 creators worldwide. Need help? <a href="/contact" class="text-primary-orange hover:underline">Contact Support</a></p>
-</div>
-</div>
+  // ── Checkout ──────────────────────────────────────────────────────────────
+  function startCheckout(forceType) {
+    var plan = forceType || (billingCycle === 'annual' ? 'pro_annual' : 'pro_monthly');
+    var btn   = document.getElementById('proCheckoutBtn');
+    var label = document.getElementById('proCheckoutLabel');
+    var spinner = document.getElementById('proCheckoutSpinner');
+
+    if (btn && !forceType) {
+      btn.disabled = true;
+      if (label)   label.textContent = 'Loading…';
+      if (spinner) spinner.classList.remove('hidden');
+    }
+
+    fetch('/billing/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: plan }),
+      credentials: 'same-origin',
+    })
+    .then(function(res) {
+      if (res.status === 401) {
+        // Not logged in – redirect to login then pricing
+        window.location.href = '/auth/login?next=/pricing';
+        return null;
+      }
+      return res.json();
+    })
+    .then(function(data) {
+      if (!data) return;
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Something went wrong. Please try again.');
+        if (btn) {
+          btn.disabled = false;
+          if (label)   label.textContent = 'Upgrade to Pro';
+          if (spinner) spinner.classList.add('hidden');
+        }
+      }
+    })
+    .catch(function() {
+      alert('Network error. Please try again.');
+      if (btn) {
+        btn.disabled = false;
+        if (label)   label.textContent = 'Upgrade to Pro';
+        if (spinner) spinner.classList.add('hidden');
+      }
+    });
+  }
+</script>
 </section>
 
 <nav class="fixed bottom-0 inset-x-0 h-20 bg-black/80 backdrop-blur-md border-t border-white/10 flex items-center justify-around px-6 z-50">

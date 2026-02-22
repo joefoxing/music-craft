@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from datetime import datetime
 
-from flask import Blueprint, current_app, jsonify, request, url_for
+from flask import Blueprint, current_app, flash, jsonify, redirect, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf.csrf import generate_csrf
 
@@ -193,10 +193,20 @@ def verify_email_get(token: str):
 
     user = User.query.filter_by(verification_token=token).first()
     if not user:
-        return jsonify({"error": "Invalid or expired token"}), 400
+        # Token not found – may have been used or replaced by a newer resend.
+        if current_user.is_authenticated and current_user.email_verified:
+            flash("Your email is already verified.", "success")
+            return redirect(url_for("main.dashboard"))
+        flash("Invalid or expired verification token.", "danger")
+        if current_user.is_authenticated:
+            return redirect(url_for("main.dashboard"))
+        return redirect(url_for("auth.login"))
 
     if not user.verify_email(token):
-        return jsonify({"error": "Invalid or expired token"}), 400
+        flash("Invalid or expired verification token.", "danger")
+        if current_user.is_authenticated:
+            return redirect(url_for("main.dashboard"))
+        return redirect(url_for("auth.login"))
 
     db.session.commit()
     _log_auth_event(user_id=user.id, event_type="email_verified", success=True)
@@ -204,7 +214,8 @@ def verify_email_get(token: str):
     if not current_user.is_authenticated:
         login_user(user, remember=True)
 
-    return jsonify({"success": True}), 200
+    flash("Email verified successfully!", "success")
+    return redirect(url_for("main.dashboard"))
 
 
 @api_auth_bp.route("/verify", methods=["POST"])

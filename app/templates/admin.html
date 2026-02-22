@@ -1,48 +1,250 @@
 {% extends "base.html" %}
 
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}Admin — AudioCraft{% endblock %}
+
+{% block head %}
+<script>
+    /* Extend tailwind config for admin page */
+    document.getElementById('tailwind-config') && (function() {
+        tailwind.config = Object.assign(tailwind.config || {}, {
+            darkMode: 'class',
+            theme: {
+                extend: Object.assign((tailwind.config.theme || {}).extend || {}, {
+                    keyframes: {
+                        shimmer: { '0%': { backgroundPosition: '200% 0' }, '100%': { backgroundPosition: '-200% 0' } },
+                        'fade-in': { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        'slide-right': { '0%': { opacity: '0', transform: 'translateX(1rem)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
+                    },
+                    animation: {
+                        shimmer: 'shimmer 1.8s infinite linear',
+                        'fade-in': 'fade-in 0.2s ease-out both',
+                        'slide-right': 'slide-right 0.25s ease-out both',
+                    },
+                }),
+            },
+        });
+    })();
+</script>
+<style>
+    .admin-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
+    .admin-scroll::-webkit-scrollbar-track { background: transparent; }
+    .admin-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+    .admin-scroll::-webkit-scrollbar-thumb:hover { background: #475569; }
+    .skeleton { background: linear-gradient(90deg, #1e293b 25%, #2d3f55 50%, #1e293b 75%); background-size: 200% 100%; animation: shimmer 1.8s infinite linear; }
+    @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+    @keyframes fade-in  { from { opacity: 0 } to { opacity: 1 } }
+    @keyframes slide-right { from { opacity: 0; transform: translateX(1rem) } to { opacity: 1; transform: translateX(0) } }
+    .animate-fade-in   { animation: fade-in 0.2s ease-out both; }
+    .animate-slide-right { animation: slide-right 0.25s ease-out both; }
+    @keyframes spin { to { transform: rotate(360deg) } }
+    .spin { animation: spin 0.7s linear infinite; }
+    .msf { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+</style>
+{% endblock %}
+
+{% block body_class %}bg-slate-950 overflow-hidden{% endblock %}
 
 {% block content %}
-<div class="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
-    <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-        
-        <!-- Header / Toolbar -->
-        <header class="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
-            <h1 class="text-xl font-bold text-slate-900 dark:text-white">Admin Dashboard</h1>
-            
-            <!-- ACTION AREA: The JS will inject the menu here -->
-            <div id="admin-toolbar" class="flex items-center gap-2">
-                <!-- Legacy buttons (will be auto-hidden by admin.js) -->
-                <!-- These are preserved so existing form handlers continue to work -->
-                <button id="btn-save" type="submit" form="admin-form" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
-                    Save Changes
-                </button>
-                <button id="btn-delete" type="button" class="px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors">
-                    Delete User
+<div class="flex h-screen w-full overflow-hidden">
+    {% include "partials/_sidebar.html" %}
+
+    <main class="flex-1 flex flex-col min-w-0 bg-slate-950 overflow-hidden">
+
+        <!-- ── Header ── -->
+        <header class="flex items-center justify-between gap-4 border-b border-slate-800 px-6 py-3 bg-slate-950/90 backdrop-blur-md sticky top-0 z-10 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-base text-blue-400 msf">admin_panel_settings</span>
+                </div>
+                <div>
+                    <h1 class="text-slate-100 text-base font-semibold leading-tight tracking-tight">Admin Dashboard</h1>
+                    <p class="text-slate-500 text-xs leading-tight">User management &amp; system overview</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <p id="lastUpdated" class="hidden text-xs text-slate-600">
+                    Updated <span id="lastUpdatedTime" class="text-slate-500 tabular-nums"></span>
+                </p>
+                <button id="adminRefreshBtn"
+                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white hover:border-slate-600 transition-all text-sm font-medium">
+                    <span class="material-symbols-outlined text-sm" id="refreshIcon">refresh</span>
+                    <span>Refresh</span>
                 </button>
             </div>
         </header>
 
-        <!-- Scrollable Content -->
-        <main class="flex-1 overflow-y-auto p-6">
-            <div class="max-w-3xl mx-auto">
-                <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-                    <h2 class="text-lg font-semibold mb-6 text-slate-900 dark:text-white">User Details</h2>
-                    
-                    <form id="admin-form" method="POST" action="/admin/save">
-                        <!-- Hidden ID for Password Reset functionality -->
-                        <input type="hidden" id="user-id" name="user_id" value="{{ user.id if user else '' }}">
-                        
-                        <!-- Your existing form fields would go here -->
-                    </form>
+        <!-- ── Scrollable Content ── -->
+        <div class="flex-1 overflow-y-auto admin-scroll p-6 space-y-5 pb-10">
+
+            <!-- Error Banner -->
+            <div id="adminError" class="hidden flex items-start gap-3 p-4 rounded-xl border border-red-500/20 bg-red-500/5 animate-fade-in">
+                <span class="material-symbols-outlined text-base text-red-400 shrink-0 mt-0.5 msf">error</span>
+                <p id="adminErrorText" class="text-sm text-red-300 leading-relaxed flex-1"></p>
+                <button onclick="document.getElementById('adminError').classList.add('hidden')" class="text-red-500 hover:text-red-300 transition-colors shrink-0">
+                    <span class="material-symbols-outlined text-base">close</span>
+                </button>
+            </div>
+
+            <!-- ── Stats Row ── -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/5 transition-all">
+                    <div>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">Total Users</p>
+                        <p id="statTotalUsers" class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">—</p>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center group-hover:bg-blue-500/15 transition-colors shrink-0">
+                        <span class="material-symbols-outlined text-xl text-blue-400 msf">group</span>
+                    </div>
+                </div>
+                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-violet-500/30 hover:shadow-lg hover:shadow-violet-500/5 transition-all">
+                    <div>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">Admins</p>
+                        <p id="statAdmins" class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">—</p>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center group-hover:bg-violet-500/15 transition-colors shrink-0">
+                        <span class="material-symbols-outlined text-xl text-violet-400 msf">shield_person</span>
+                    </div>
+                </div>
+                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
+                    <div>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">Roles Available</p>
+                        <p id="statRoles" class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">—</p>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500/15 transition-colors shrink-0">
+                        <span class="material-symbols-outlined text-xl text-emerald-400 msf">badge</span>
+                    </div>
                 </div>
             </div>
-        </main>
-    </div>
-</div>
 
-<!-- Required Scripts -->
+            <!-- ── Subscription Stats Row ── -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-primary/30 transition-all">
+                    <div>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">Active Pro</p>
+                        <p class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">{{ active_pro_count }}</p>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-xl text-primary msf">star</span>
+                    </div>
+                </div>
+                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-yellow-500/30 transition-all">
+                    <div>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">Past Due</p>
+                        <p class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">{{ past_due_count }}</p>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-xl text-yellow-400 msf">warning</span>
+                    </div>
+                </div>
+                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-slate-500/30 transition-all">
+                    <div>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">Free Users</p>
+                        <p class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">{{ free_user_count }}</p>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-slate-500/10 border border-slate-500/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-xl text-slate-400 msf">person</span>
+                    </div>
+                </div>
+                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-green-500/30 transition-all">
+                    <div>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">With Tokens</p>
+                        <p class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">{{ users_with_tokens }}</p>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-xl text-green-400 msf">bolt</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── System Status ── -->
+            <div class="bg-slate-900 rounded-xl border border-slate-800 p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-slate-300 text-sm font-semibold">System Status</h2>
+                    <span id="overallStatusBadge"
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-500">
+                        <span id="overallStatusDot" class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+                        <span id="overallStatusText">Checking…</span>
+                    </span>
+                </div>
+                <div id="statusChecks" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div class="skeleton h-14 rounded-lg"></div>
+                    <div class="skeleton h-14 rounded-lg" style="animation-delay:.15s"></div>
+                    <div class="skeleton h-14 rounded-lg" style="animation-delay:.3s"></div>
+                    <div class="skeleton h-14 rounded-lg" style="animation-delay:.45s"></div>
+                </div>
+            </div>
+
+            <!-- ── User Management ── -->
+            <div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-slate-800">
+                    <div>
+                        <h2 class="text-slate-200 text-sm font-semibold">User Management</h2>
+                        <p class="text-slate-500 text-xs mt-0.5">Manage accounts and assign permissions</p>
+                    </div>
+                    <div class="relative flex items-center shrink-0">
+                        <span class="material-symbols-outlined absolute left-3 text-base text-slate-500 pointer-events-none select-none">search</span>
+                        <input id="adminUserSearch" type="search"
+                            class="pl-9 pr-4 py-2 w-64 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all"
+                            placeholder="Search by email or name…" autocomplete="off" />
+                    </div>
+                </div>
+                <div id="adminUsersTable" class="overflow-x-auto admin-scroll"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ── Delete User Modal ── -->
+    <div id="deleteUserModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden"
+        aria-modal="true" role="dialog">
+        <div class="bg-slate-900 rounded-2xl border border-slate-700 shadow-2xl w-full max-w-md animate-fade-in">
+            <div class="flex items-center gap-3 px-6 pt-6 pb-4 border-b border-slate-800">
+                <div class="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-base text-red-400 msf">delete_forever</span>
+                </div>
+                <div>
+                    <h3 class="text-slate-100 font-semibold text-base leading-tight">Delete User</h3>
+                    <p class="text-slate-500 text-xs mt-0.5">This action is irreversible</p>
+                </div>
+            </div>
+            <div class="px-6 py-5 space-y-4">
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    You are about to permanently delete
+                    <span id="deleteModalUserEmail" class="font-semibold text-slate-200 font-mono break-all"></span>.
+                    <span class="text-red-400 font-medium">This cannot be undone.</span>
+                </p>
+                <div class="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50">
+                    <p class="text-xs text-slate-500 mb-2.5">
+                        Type <kbd class="px-1.5 py-0.5 rounded bg-slate-700 text-slate-200 font-mono text-xs border border-slate-600">DELETE</kbd> to confirm
+                    </p>
+                    <input type="text" id="deleteConfirmationInput"
+                        class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:ring-2 focus:ring-red-500/25 focus:border-red-500/40 outline-none transition-all font-mono tracking-widest"
+                        placeholder="DELETE" autocomplete="off" />
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 px-6 pb-6">
+                <button id="cancelDeleteBtn"
+                    class="px-4 py-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors text-sm font-medium">
+                    Cancel
+                </button>
+                <button id="confirmDeleteBtn" disabled
+                    class="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold hover:bg-red-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                    <span class="material-symbols-outlined text-base msf">delete</span>
+                    <span>Delete User</span>
+                    <div id="deleteSpinner" class="hidden w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full spin"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Toast Container ── -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-[200] flex flex-col gap-2 pointer-events-none w-80"></div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/components/adminActions.js') }}"></script>
 <script src="{{ url_for('static', filename='js/pages/admin.js') }}"></script>
 {% endblock %}

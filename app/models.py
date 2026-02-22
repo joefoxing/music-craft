@@ -57,6 +57,13 @@ class User(UserMixin, db.Model):
     is_deleted = db.Column(db.Boolean, default=False, nullable=False)
     deleted_at = db.Column(db.DateTime)
     
+    # Stripe / Billing
+    stripe_customer_id = db.Column(db.String(100), nullable=True, index=True)
+    subscription_status = db.Column(db.String(50), nullable=False, default='free')  # free | active | past_due | canceled
+    subscription_tier = db.Column(db.String(50), nullable=False, default='free')   # free | pro
+    subscription_period_end = db.Column(db.DateTime, nullable=True)
+    token_balance = db.Column(db.Integer, nullable=False, default=0)
+
     # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

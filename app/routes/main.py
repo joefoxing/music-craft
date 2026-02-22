@@ -80,7 +80,39 @@ def view_playlist(playlist_id):
 def admin_dashboard():
     if not current_user.has_permission('view_admin'):
         abort(403)
-    return render_template('admin/dashboard.html', active_nav='admin')
+    from app.models import User
+    active_pro_count  = User.query.filter_by(subscription_status='active',  subscription_tier='pro').count()
+    past_due_count    = User.query.filter_by(subscription_status='past_due').count()
+    free_user_count   = User.query.filter_by(subscription_tier='free').count()
+    users_with_tokens = User.query.filter(User.token_balance > 0).count()
+    return render_template(
+        'admin.html',
+        active_nav='admin',
+        active_pro_count=active_pro_count,
+        past_due_count=past_due_count,
+        free_user_count=free_user_count,
+        users_with_tokens=users_with_tokens,
+    )
+
+
+@main_bp.route('/admin/dashboard')
+@login_required
+def admin_billing_dashboard():
+    if not current_user.has_permission('view_admin'):
+        abort(403)
+    from app.models import User
+    active_pro_count  = User.query.filter_by(subscription_status='active',  subscription_tier='pro').count()
+    past_due_count    = User.query.filter_by(subscription_status='past_due').count()
+    free_user_count   = User.query.filter_by(subscription_tier='free').count()
+    users_with_tokens = User.query.filter(User.token_balance > 0).count()
+    return render_template(
+        'admin/dashboard.html',
+        active_nav='admin',
+        active_pro_count=active_pro_count,
+        past_due_count=past_due_count,
+        free_user_count=free_user_count,
+        users_with_tokens=users_with_tokens,
+    )
 
 
 @main_bp.route('/add-instrumental')
@@ -263,4 +295,6 @@ def profile_redirect():
 @login_required
 def dashboard():
     """User dashboard page."""
-    return render_template('dashboard.html', active_nav='dashboard')
+    from datetime import datetime
+    hour = datetime.now().hour
+    return render_template('dashboard.html', active_nav='dashboard', greeting_hour=hour)

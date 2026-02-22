@@ -13,7 +13,7 @@ services:
       - FLASK_APP=wsgi.py
       - FLASK_DEBUG=1
       - APP_ENV=development
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/music_craft_db
+      - DATABASE_URL=postgresql://postgres:a6fbee7ff9e8255dbc0d93771b7edd21c03cc79f@db:5432/music_craft_db
       # Defaults that can be overridden by .env
       - SECRET_KEY=dev-secret-key
       - LYRICS_EXTRACTION_ENABLED=true
@@ -44,14 +44,16 @@ services:
   db:
     image: postgres:15-alpine
     container_name: music-craft-db
+    entrypoint: ["/docker/entrypoint.sh"]
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=a6fbee7ff9e8255dbc0d93771b7edd21c03cc79f
       - POSTGRES_DB=music_craft_db
-    ports:
-      - "5432:5432"
+    # NOTE: port 5432 is intentionally NOT exposed to the host.
+    # Postgres should only be reachable inside the Docker network.
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/entrypoint.sh:/docker/entrypoint.sh:ro
     networks:
       - app-network
     healthcheck:

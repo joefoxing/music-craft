@@ -504,19 +504,27 @@ def logout():
 @auth_bp.route('/verify-email/<token>')
 def verify_email(token):
     """Email verification endpoint."""
-    if current_user.is_authenticated:
-        user = current_user
-    else:
-        # Find user by verification token
-        user = User.query.filter_by(verification_token=token).first()
-    
+    # Always look up by token regardless of auth state.
+    # Using current_user directly caused a mismatch when the user had
+    # requested a fresh token (resend) and then clicked an older link.
+    user = User.query.filter_by(verification_token=token).first()
+
     if not user:
+        # Token not found – it may already have been used or invalidated.
+        if current_user.is_authenticated and current_user.email_verified:
+            flash('Your email is already verified.', 'success')
+            return redirect(url_for('main.dashboard'))
         flash('Invalid or expired verification token.', 'danger')
+        # Redirect authenticated users to dashboard (not login) so the
+        # flash message is actually shown instead of being swallowed by
+        # the login → dashboard double-redirect.
+        if current_user.is_authenticated:
+            return redirect(url_for('main.dashboard'))
         return redirect(url_for('auth.login'))
-    
+
     if user.verify_email(token):
         db.session.commit()
-        
+
         # Log verification event
         log_auth_event(
             user_id=user.id,
@@ -525,15 +533,17 @@ def verify_email(token):
             user_agent=request.user_agent.string,
             success=True
         )
-        
+
         flash('Email verified successfully!', 'success')
-        
+
         if not current_user.is_authenticated:
             login_user(user, remember=True)
-        
+
         return redirect(url_for('main.dashboard'))
     else:
         flash('Invalid or expired verification token.', 'danger')
+        if current_user.is_authenticated:
+            return redirect(url_for('main.dashboard'))
         return redirect(url_for('auth.login'))
 
 

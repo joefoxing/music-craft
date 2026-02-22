@@ -56,6 +56,42 @@
                 <div class="max-w-7xl mx-auto space-y-6">
                     <div id="adminError" class="hidden p-4 rounded-lg border border-red-700/30 bg-red-900/20 text-red-200"></div>
 
+                    <!-- Subscription Stats Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border-l-4 border-primary border-t border-r border-b border-slate-200 dark:border-border-dark p-4 shadow-sm">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Active Pro Subscribers</p>
+                            <p class="text-2xl font-bold dark:text-white text-slate-900">{{ active_pro_count }}</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-slate-400">paying users</span>
+                                <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border-l-4 border-yellow-500 border-t border-r border-b border-slate-200 dark:border-border-dark p-4 shadow-sm">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Past Due</p>
+                            <p class="text-2xl font-bold dark:text-white text-slate-900">{{ past_due_count }}</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-slate-400">payment failed</span>
+                                <span class="material-symbols-outlined text-yellow-400 text-xl">warning</span>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border-l-4 border-slate-500 border-t border-r border-b border-slate-200 dark:border-border-dark p-4 shadow-sm">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Free Tier Users</p>
+                            <p class="text-2xl font-bold dark:text-white text-slate-900">{{ free_user_count }}</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-slate-400">registered</span>
+                                <span class="material-symbols-outlined text-slate-400 text-xl">person</span>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border-l-4 border-green-500 border-t border-r border-b border-slate-200 dark:border-border-dark p-4 shadow-sm">
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Token Balances > 0</p>
+                            <p class="text-2xl font-bold dark:text-white text-slate-900">{{ users_with_tokens }}</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-slate-400">with credits</span>
+                                <span class="material-symbols-outlined text-green-400 text-xl">bolt</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-lg">
                         <div class="flex items-center justify-between gap-4 mb-4">
                             <div>

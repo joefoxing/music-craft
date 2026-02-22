@@ -13,7 +13,7 @@ on:
         options:
           - production
       image_tag:
-        description: 'Image tag (SHA) to deploy (required for production)'
+        description: 'Full 12-char image SHA to deploy (copy from DEPLOYED_SHA_STAGING.txt, e.g. e115fe873dda)'
         required: true
 
 env:
@@ -96,6 +96,16 @@ jobs:
       url: https://${{ vars.DOMAIN }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Validate image_tag length
+        run: |
+          TAG="${{ github.event.inputs.image_tag }}"
+          if [ ${#TAG} -ne 12 ]; then
+            echo "ERROR: image_tag must be exactly 12 characters (got ${#TAG}: '$TAG')"
+            echo "Copy the value from DEPLOYED_SHA_STAGING.txt on the staging server."
+            exit 1
+          fi
+
       - uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}

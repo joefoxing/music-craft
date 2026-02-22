@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize Template Gallery
     initializeTemplateGallery();
     
+    // Load Recent Creations gallery
+    loadRecentCreations();
+    
     console.log('Enhanced dashboard components initialized.');
 });
 
@@ -80,6 +83,12 @@ function initializeActivityFeed() {
     // Load activities
     activityFeed.loadActivities();
     
+    // Wire up retry button
+    const retryBtn = document.getElementById('activityRetryBtn');
+    if (retryBtn) {
+        retryBtn.addEventListener('click', () => activityFeed.loadActivities());
+    }
+    
     // Store instance globally for debugging/access
     window.activityFeed = activityFeed;
     
@@ -100,35 +109,25 @@ function initializeTemplateGallery() {
     
     // Get DOM elements (these IDs need to exist in the HTML)
     const galleryContainer = document.getElementById('templateGalleryContainer');
+    
+    if (!galleryContainer) {
+        console.log('Template gallery container not present on this page — skipping init.');
+        return;
+    }
+    
     const loadingState = document.getElementById('templateLoading');
     const emptyState = document.getElementById('templateEmpty');
     const errorState = document.getElementById('templateError');
     const refreshBtn = document.getElementById('templateRefreshBtn');
     const searchInput = document.getElementById('templateSearch');
     const categoryFilter = document.getElementById('templateCategoryFilter');
-    const subcategoryFilter = document.getElementById('templateSubcategoryFilter'); // This element doesn't exist in HTML
+    const subcategoryFilter = document.getElementById('templateSubcategoryFilter');
     const difficultyFilter = document.getElementById('templateDifficultyFilter');
     const sortSelect = document.getElementById('templateSortSelect');
     const statsTotal = document.getElementById('templateStatsTotal');
     const statsPopular = document.getElementById('templateStatsPopular');
     const statsEasy = document.getElementById('templateStatsEasy');
     const statsAdvanced = document.getElementById('templateStatsAdvanced');
-    
-    if (!galleryContainer) {
-        console.error('Template gallery container not found. Checking for alternative selectors...');
-        
-        // Try to find the gallery container by class or other means
-        const possibleContainers = document.querySelectorAll('[id*="template"], [id*="gallery"]');
-        console.log('Possible containers:', possibleContainers);
-        
-        // If still not found, we can't initialize
-        if (!possibleContainers.length) {
-            console.error('Template gallery container not found in DOM.');
-            return;
-        }
-    }
-    
-    // Create TemplateGallery instance
     const templateGallery = new TemplateGallery();
     
     // Initialize with DOM elements (some may be null if not found)
@@ -254,8 +253,68 @@ function applyTemplateToMusicGenerator(template) {
 }
 
 /**
+ * Load recent creations from the API and render the gallery widget.
+ */
+async function loadRecentCreations() {
+    const container = document.getElementById('recentCreationsContainer');
+    const loading = document.getElementById('recentCreationsLoading');
+    const empty = document.getElementById('recentCreationsEmpty');
+    const error = document.getElementById('recentCreationsError');
+
+    if (!container) return; // widget not present on this page
+
+    try {
+        const response = await fetch('/api/recent-creations?limit=6');
+        const data = await response.json();
+
+        if (loading) loading.classList.add('hidden');
+
+        if (!response.ok || !data.success) throw new Error(data.error || 'Failed to load');
+
+        const creations = data.data?.creations || [];
+
+        if (creations.length === 0) {
+            if (empty) empty.classList.remove('hidden');
+            return;
+        }
+
+        container.innerHTML = '';
+        creations.forEach(creation => {
+            const item = document.createElement('div');
+            item.className = 'flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors group';
+
+            const imgSrc = creation.image_url || '';
+            const imgEl = imgSrc
+                ? `<img src="${imgSrc}" alt="${creation.title}" class="w-12 h-12 rounded-md object-cover flex-shrink-0 bg-surface-dark">`
+                : `<div class="w-12 h-12 rounded-md flex-shrink-0 bg-gradient-to-br from-fuchsia-600 to-indigo-600 flex items-center justify-center">
+                     <span class="material-symbols-outlined text-white text-sm">music_note</span>
+                   </div>`;
+
+            item.innerHTML = `
+                ${imgEl}
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-white truncate">${creation.title}</p>
+                    <p class="text-xs text-slate-400">${creation.time_ago}</p>
+                </div>
+                ${creation.audio_url ? `
+                <button onclick="window.open('${creation.audio_url}','_blank')"
+                    class="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-slate-400 hover:text-primary">
+                    <span class="material-symbols-outlined text-base">play_circle</span>
+                </button>` : ''}
+            `;
+            container.appendChild(item);
+        });
+
+        container.classList.remove('hidden');
+    } catch (err) {
+        console.error('Error loading recent creations:', err);
+        if (loading) loading.classList.add('hidden');
+        if (error) error.classList.remove('hidden');
+    }
+}
+
+/**
  * Fallback initialization if DOM elements are missing.
- * This creates missing elements and sets up basic functionality.
  */
 function initializeFallbackComponents() {
     console.log('Setting up fallback components...');
