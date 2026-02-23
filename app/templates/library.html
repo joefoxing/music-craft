@@ -90,11 +90,11 @@
                     <section class="flex flex-col gap-6">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-1 bg-surface-dark rounded-xl p-1 border border-border-dark">
-                                <button id="templateTabBtn" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 tab-btn active" data-tab="template-library" aria-controls="template-library-content" aria-selected="true">
+                                <button id="templateTabBtn" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 tab-btn" data-tab="template-library" aria-controls="template-library-content" aria-selected="false">
                                     <span class="material-symbols-outlined text-lg">content_copy</span>
                                     <span>Template Library</span>
                                 </button>
-                                <button id="songLibraryTabBtn" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 tab-btn" data-tab="song-library" aria-controls="song-library-content" aria-selected="false">
+                                <button id="songLibraryTabBtn" class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 tab-btn active" data-tab="song-library" aria-controls="song-library-content" aria-selected="true">
                                     <span class="material-symbols-outlined text-lg">library_music</span>
                                     <span>Song Library</span>
                                 </button>
@@ -109,7 +109,7 @@
                     </section>
                     
                     <!-- Template Library Content -->
-                    <section id="template-library-content" class="tab-content">
+                    <section id="template-library-content" class="tab-content hidden">
                         <div class="flex flex-col gap-6">
                         <div class="flex flex-col gap-2">
                             <div class="flex items-center justify-between">
@@ -251,7 +251,7 @@
                     </section>
                     
                     <!-- Song Library Content -->
-                    <section id="song-library-content" class="tab-content hidden" aria-labelledby="songLibraryTabBtn">
+                    <section id="song-library-content" class="tab-content" aria-labelledby="songLibraryTabBtn">
                         <div class="flex flex-col gap-6">
                             <!-- Header -->
                             <div class="flex flex-col gap-2">
@@ -450,32 +450,8 @@
                     </div>
                     
                     <!-- Audio Player -->
-                    <div class="mb-4">
-                        <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-800 rounded-lg p-3">
-                            <button class="song-play-btn p-2 bg-primary hover:bg-primary-dark text-white rounded-full transition-colors" aria-label="Play song">
-                                <span class="material-symbols-outlined play-icon" data-play-icon>play_arrow</span>
-                                <span class="material-symbols-outlined pause-icon hidden" data-pause-icon>pause</span>
-                            </button>
-                            <div class="flex-1">
-                                <div class="song-progress-bar h-1 bg-slate-300 dark:bg-slate-700 rounded-full overflow-hidden cursor-pointer">
-                                    <div class="song-progress h-full bg-primary" style="width: 0%" data-progress></div>
-                                </div>
-                                <div class="flex justify-between text-xs text-slate-500 mt-1">
-                                    <span class="song-current-time">0:00</span>
-                                    <span class="song-duration" data-duration>0:00</span>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button class="volume-btn p-1 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300" aria-label="Volume">
-                                    <span class="material-symbols-outlined text-sm">volume_up</span>
-                                </button>
-                                <input type="range" min="0" max="100" value="80" class="volume-slider w-16 accent-primary" aria-label="Volume slider">
-                            </div>
-                        </div>
-                        <audio class="hidden" data-audio-element>
-                            <source src="" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                        </audio>
+                    <div class="mb-4" data-ws-player-container>
+                        <!-- WaveSurfer player will be rendered here -->
                     </div>
                     
                     <!-- Metadata -->
@@ -850,12 +826,16 @@
         </main>
     </div>
     
+    <!-- WaveSurfer.js Audio Player -->
+    <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+    <script src="{{ url_for('static', filename='js/components/wavesurferPlayer.js') }}"></script>
+
     <!-- JavaScript Includes -->
-    <script src="{{ url_for('static', filename='js/components/templateGallery.js') }}?v=2"></script>
+    <script src="{{ url_for('static', filename='js/components/templateGallery.js') }}?v=20260223a"></script>
     <script src="{{ url_for('static', filename='js/components/unifiedCard.js') }}?v=2"></script>
     <script src="{{ url_for('static', filename='js/components/specializedCards.js') }}?v=2"></script>
     <script src="{{ url_for('static', filename='js/components/addButton.js') }}?v=2"></script>
-    <script src="{{ url_for('static', filename='js/components/audioLibrary.js') }}?v=20260219c"></script>
+    <script src="{{ url_for('static', filename='js/components/audioLibrary.js') }}?v=20260223a"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Initializing template gallery on library page...');
@@ -1048,11 +1028,13 @@
             
             // Check for initial playlist from server-side route
             const initialPlaylistId = "{{ playlist_id if playlist_id else '' }}";
+
+            // Default to Song Library tab when opening Library page
+            switchTab('song-library');
+
             if (initialPlaylistId) {
                 console.log('Initializing with playlist:', initialPlaylistId);
-                // Switch to song library tab
-                switchTab('song-library');
-                
+
                 // Load the playlist
                 // Small delay to ensure everything is ready
                 setTimeout(() => {

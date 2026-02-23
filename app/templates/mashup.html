@@ -439,8 +439,8 @@
                                                 <span class="material-symbols-outlined mr-2">download</span>Download MP3
                                             </button>
                                         </div>
-                                        <div class="audio-player-container mb-3">
-                                            <audio controls class="w-full" data-audio>Your browser does not support the audio element.</audio>
+                                        <div class="audio-player-container mb-3" data-ws-player-container>
+                                            <!-- WaveSurfer player will be rendered here -->
                                         </div>
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                             <div>
@@ -473,6 +473,10 @@
             </div>
         </main>
     </div>
+
+    <!-- WaveSurfer.js Audio Player -->
+    <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+    <script src="{{ url_for('static', filename='js/components/wavesurferPlayer.js') }}"></script>
 
     <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/utils/notification.js') }}"></script>
@@ -630,6 +634,10 @@
             if (!container || !template) return;
 
             container.innerHTML = '';
+            // Unhide results BEFORE creating audio players
+            // (WaveSurfer needs visible containers to render correctly)
+            results.classList.remove('hidden');
+
             const items = Array.isArray(audioList) ? audioList : [audioList];
             items.forEach(item => {
                 if (!item?.audio_url) return;
@@ -639,7 +647,6 @@
                 el.querySelector('[data-title]').textContent   = item.title  || 'Mashup';
                 el.querySelector('[data-model]').textContent   = item.model_name || 'V4';
                 el.querySelector('[data-duration]').textContent= item.duration ? `${Math.round(item.duration)}s` : '';
-                el.querySelector('[data-audio]').src           = item.audio_url;
                 const audioUrlEl = el.querySelector('[data-audio-url]');
                 audioUrlEl.href        = item.audio_url;
                 audioUrlEl.textContent = item.audio_url;
@@ -657,9 +664,18 @@
                 }
                 el.querySelector('[data-lyrics]').textContent  = item.lyric || '-';
                 container.appendChild(frag);
+
+                // Initialize WaveSurfer player
+                const wsContainer = el.querySelector('[data-ws-player-container]');
+                if (wsContainer && item.audio_url && typeof UnifiedAudioPlayer !== 'undefined') {
+                    new UnifiedAudioPlayer(wsContainer, item.audio_url, {
+                        height: 48,
+                        progressColor: '#6366f1',
+                        waveColor: '#94a3b8',
+                    });
+                }
             });
 
-            results.classList.remove('hidden');
             results.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 

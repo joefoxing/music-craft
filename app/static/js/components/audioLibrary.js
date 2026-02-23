@@ -191,11 +191,16 @@ class SongLibrary {
         
         try {
             // Build query parameters
+            // Sort values like "created_at_desc" need the last segment as order
+            // and everything before it as the field name
+            const sortParts = this.currentSort.split('_');
+            const sortOrder = sortParts.pop();
+            const sortBy = sortParts.join('_');
             const params = new URLSearchParams({
                 page: this.currentPage,
                 per_page: this.itemsPerPage,
-                sort_by: this.currentSort.split('_')[0],
-                sort_order: this.currentSort.split('_')[1]
+                sort_by: sortBy,
+                sort_order: sortOrder
             });
             
             // Add search query
@@ -241,17 +246,29 @@ class SongLibrary {
             return;
         }
         
+        // Make container visible BEFORE initializing WaveSurfer
+        // so that containers have non-zero dimensions for waveform rendering
+        this.elements.container.classList.remove('hidden');
+        
         // Create song cards
+        const cardsToInit = [];
         songs.forEach(song => {
             const songCard = this.createSongCard(song);
             this.elements.container.appendChild(songCard);
+            cardsToInit.push({ songCard, song });
 
             if (this.shouldPollLyricsStatus(song)) {
                 this.startLyricsStatusPolling(song.id);
             }
         });
         
-        this.elements.container.classList.remove('hidden');
+        // Initialize WaveSurfer after all cards are in the visible DOM
+        // Use requestAnimationFrame to ensure layout is calculated
+        requestAnimationFrame(() => {
+            cardsToInit.forEach(({ songCard, song }) => {
+                this.setupSongCardEventListeners(songCard, song);
+            });
+        });
     }
 
     addSongToDOM(song) {
@@ -270,6 +287,11 @@ class SongLibrary {
         // If the library was empty, hide the empty state message
         this.hideAllStates();
         this.elements.container.classList.remove('hidden');
+
+        // Initialize WaveSurfer after layout is calculated
+        requestAnimationFrame(() => {
+            this.setupSongCardEventListeners(card, song);
+        });
 
         if (this.shouldPollLyricsStatus(song)) {
             this.startLyricsStatusPolling(song.id);
@@ -375,12 +397,8 @@ class SongLibrary {
      */
     handlePlayPause(song, event) {
         const cardElement = event.target.closest('.song-card');
-        const audioElement = cardElement?.querySelector('[data-audio-element]');
-        const playIcon = cardElement?.querySelector('[data-play-icon]');
-        const pauseIcon = cardElement?.querySelector('[data-pause-icon]');
-        
-        if (audioElement) {
-            this.togglePlayPause(song, audioElement, playIcon, pauseIcon);
+        if (cardElement && cardElement._wsPlayer) {
+            cardElement._wsPlayer.togglePlayPause();
         }
     }
     
@@ -397,76 +415,43 @@ class SongLibrary {
     }
     
     setupSongCardEventListeners(card, song) {
-        // Play/pause button
-        const playBtn = card.querySelector('.song-play-btn');
-        const playIcon = card.querySelector('[data-play-icon]');
-        const pauseIcon = card.querySelector('[data-pause-icon]');
-        const audioElement = card.querySelector('[data-audio-element]');
+        // WaveSurfer player setup
+        const wsContainer = card.querySelector('[data-ws-player-container]');
+        const audioUrl = song.audio_url || '';
         
-        if (playBtn && audioElement) {
-            playBtn.setAttribute('aria-label', `Play ${song.title || 'song'}`);
-            playBtn.setAttribute('aria-describedby', `song-info-${song.id}`);
-            
-            playBtn.addEventListener('click', async () => {
-                await this.togglePlayPause(song, audioElement, playIcon, pauseIcon);
-                
-                // Update aria-label based on state
-                const isPlaying = !audioElement.paused;
-                playBtn.setAttribute('aria-label', `${isPlaying ? 'Pause' : 'Play'} ${song.title || 'song'}`);
-            });
-            
-            // Audio event listeners
-            audioElement.addEventListener('loadedmetadata', () => {
-                const durationEl = card.querySelector('[data-duration]');
-                if (durationEl) {
-                    durationEl.textContent = this.formatDuration(audioElement.duration);
-                }
-            });
-            
-            audioElement.addEventListener('timeupdate', () => {
-                const progressEl = card.querySelector('[data-progress]');
-                const currentTimeEl = card.querySelector('.song-current-time');
-                
-                if (progressEl && audioElement.duration) {
-                    const progress = (audioElement.currentTime / audioElement.duration) * 100;
-                    progressEl.style.width = `${progress}%`;
-                }
-                
-                if (currentTimeEl) {
-                    currentTimeEl.textContent = this.formatDuration(audioElement.currentTime);
-                }
-            });
-            
-            audioElement.addEventListener('ended', () => {
-                if (playIcon && pauseIcon) {
-                    playIcon.classList.remove('hidden');
-                    pauseIcon.classList.add('hidden');
-                }
-                playBtn.setAttribute('aria-label', `Play ${song.title || 'song'}`);
-            });
-            
-            // Progress bar click
-            const progressBar = card.querySelector('.song-progress-bar');
-            if (progressBar) {
-                progressBar.setAttribute('role', 'slider');
-                progressBar.setAttribute('aria-label', `Seek in ${song.title || 'song'}`);
-                progressBar.setAttribute('aria-valuemin', '0');
-                progressBar.setAttribute('aria-valuemax', '100');
-                
-                progressBar.addEventListener('click', (e) => {
-                    if (audioElement.duration) {
-                        const rect = progressBar.getBoundingClientRect();
-                        const clickX = e.clientX - rect.left;
-                        const width = rect.width;
-                        const newTime = (clickX / width) * audioElement.duration;
-                        audioElement.currentTime = newTime;
-                        
-                        // Update aria-valuenow
-                        const progress = (newTime / audioElement.duration) * 100;
-                        progressBar.setAttribute('aria-valuenow', Math.round(progress));
+        if (wsContainer && audioUrl) {
+            const wsPlayer = new UnifiedAudioPlayer(wsContainer, audioUrl, {
+                height: 40,
+                barWidth: 2,
+                barGap: 1,
+                progressColor: '#6366f1',
+                waveColor: '#94a3b8',
+                onReady: (player) => {
+                    const durationEl = card.querySelector('[data-duration]');
+                    if (durationEl) {
+                        durationEl.textContent = this.formatDuration(player.getDuration());
                     }
-                });
-            }
+                },
+                onPlay: () => {
+                    // Pause any other playing song via our tracking
+                    if (this.currentPlayingId && this.currentPlayingId !== song.id) {
+                        this.resetPlayButton(this.currentPlayingId);
+                    }
+                    this.currentPlayingId = song.id;
+                    this.incrementPlayCount(song.id);
+                },
+                onPause: () => {
+                    if (this.currentPlayingId === song.id) {
+                        this.currentPlayingId = null;
+                    }
+                },
+                onFinish: () => {
+                    this.currentPlayingId = null;
+                },
+            });
+            // Store reference on card element for external access
+            card._wsPlayer = wsPlayer;
+            card.setAttribute('data-song-id', song.id);
         }
         
         // Favorite button
@@ -574,14 +559,10 @@ class SongLibrary {
     }
     
     resetPlayButton(songId) {
-        const card = document.querySelector(`[data-song-id="${songId}"]`)?.closest('.song-card');
-        if (card) {
-            const playIcon = card.querySelector('[data-play-icon]');
-            const pauseIcon = card.querySelector('[data-pause-icon]');
-            if (playIcon && pauseIcon) {
-                playIcon.classList.remove('hidden');
-                pauseIcon.classList.add('hidden');
-            }
+        const card = document.querySelector(`[data-song-id="${songId}"]`)?.closest('.song-card') ||
+                     document.querySelector(`[data-song-id="${songId}"]`);
+        if (card && card._wsPlayer) {
+            card._wsPlayer.pause();
         }
     }
     
@@ -1651,6 +1632,10 @@ class SongLibrary {
         const canRetryLyricsExtraction = this.canRetryLyricsExtraction(song);
         const hasLyrics = song.lyrics && song.lyrics.trim().length > 0 && song.lyrics_extraction_status === 'completed';
         const isProcessingLyrics = song.lyrics_extraction_status === 'queued' || song.lyrics_extraction_status === 'processing';
+        // Kie-generated tracks have source_reference (taskId) and kie_audio_id populated
+        const kieTaskId  = song.source_reference || null;
+        const kieAudioId = song.kie_audio_id     || null;
+        const hasKieIds  = !!(kieTaskId && kieAudioId);
 
         // Debug logging
         console.log('[Lyrics Menu Debug]', {
@@ -1671,6 +1656,11 @@ class SongLibrary {
             <button class="w-full text-left px-4 py-2.5 text-sm text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 flex items-center gap-3 transition-colors" data-action="replace-section">
                 <span class="material-symbols-outlined text-[20px]">content_cut</span>
                 <span class="font-medium">Replace Section</span>
+            </button>
+            <button class="w-full text-left px-4 py-2.5 text-sm ${hasKieIds ? 'text-fuchsia-600 dark:text-fuchsia-400 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-900/20' : 'text-slate-400 dark:text-slate-500 cursor-not-allowed'} flex items-center gap-3 transition-colors" data-action="create-persona" ${hasKieIds ? '' : 'disabled title="Only available for AI-generated tracks with Kie IDs"'}>
+                <span class="material-symbols-outlined text-[20px]">face</span>
+                <span class="font-medium">Create Persona</span>
+                ${!hasKieIds ? '<span class="ml-auto text-[10px] font-normal opacity-60">AI only</span>' : ''}
             </button>
             ${hasLyrics ? `
             <button class="w-full text-left px-4 py-2.5 text-sm text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 flex items-center gap-3 transition-colors" data-action="view-lyrics">
@@ -1757,6 +1747,30 @@ class SongLibrary {
                 if (song.source_reference) params.set('taskId', song.source_reference);
                 if (song.kie_audio_id)    params.set('audioId', song.kie_audio_id);
                 window.location.href = '/replace-section' + (params.toString() ? '?' + params.toString() : '');
+            });
+        }
+
+        const createPersonaBtn = menu.querySelector('[data-action="create-persona"]');
+        if (createPersonaBtn) {
+            createPersonaBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.closeActiveMenu();
+
+                if (!hasKieIds) {
+                    if (window.NotificationSystem) {
+                        NotificationSystem.showWarning(
+                            'This track is missing Kie IDs. Only AI-generated tracks can pre-fill the Persona form. You can still open the page and enter the IDs manually.'
+                        );
+                    }
+                    // Still navigate — user can fill in manually
+                    window.location.href = '/persona';
+                    return;
+                }
+
+                const params = new URLSearchParams();
+                params.set('taskId',  kieTaskId);
+                params.set('audioId', kieAudioId);
+                window.location.href = '/persona?' + params.toString();
             });
         }
 

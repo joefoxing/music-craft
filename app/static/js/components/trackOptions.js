@@ -53,6 +53,12 @@ class TrackOptions {
                 class: 'text-violet-600 dark:text-violet-400'
             },
             {
+                icon: 'face',
+                text: 'Create Persona',
+                action: () => this.goToPersona(track),
+                class: 'text-fuchsia-600 dark:text-fuchsia-400'
+            },
+            {
                 icon: 'settings',
                 text: 'Studio Settings',
                 action: () => window.location.href = '/' // Assuming root is studio
@@ -265,6 +271,19 @@ class TrackOptions {
         if (taskId)  params.set('taskId',  taskId);
         if (audioId) params.set('audioId', audioId);
         window.location.href = '/replace-section' + (params.toString() ? '?' + params.toString() : '');
+    }
+
+    /**
+     * Navigate to the Persona page, pre-filling task + audio IDs when available.
+     * @param {Object} track 
+     */
+    goToPersona(track) {
+        const params = new URLSearchParams();
+        const taskId  = track.task_id  || track.taskId;
+        const audioId = track.id       || track.audio_id || track.audioId;
+        if (taskId)  params.set('taskId',  taskId);
+        if (audioId) params.set('audioId', audioId);
+        window.location.href = '/persona' + (params.toString() ? '?' + params.toString() : '');
     }
 }
 

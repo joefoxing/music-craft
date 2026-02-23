@@ -33,10 +33,14 @@
         }
     </script>
     
+    <!-- WaveSurfer.js Audio Player -->
+    <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+
     {% block head %}{% endblock %}
 </head>
 <body class="min-h-screen {% block body_class %}{% endblock %}">
     {% block content %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/components/wavesurferPlayer.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

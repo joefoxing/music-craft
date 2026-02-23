@@ -376,11 +376,6 @@ function createHistoryCard(entry) {
                             <span class="material-symbols-outlined">more_vert</span>
                         </button>
                         <div class="card-menu hidden absolute right-0 mt-2 w-56 bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-lg shadow-lg overflow-hidden z-20">
-                            <button class="card-menu-replace-section w-full text-left px-4 py-2 text-sm text-violet-700 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 flex items-center gap-2">
-                                <span class="material-symbols-outlined text-base">content_cut</span>
-                                Replace Section
-                            </button>
-                            <div class="h-px bg-slate-100 dark:bg-slate-700 my-1"></div>
                             <button class="card-menu-select w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800">
                                 ${isSelectedForDeletion ? 'Unselect' : 'Select for deletion'}
                             </button>
@@ -468,17 +463,6 @@ function createHistoryCard(entry) {
         });
     }
 
-    const menuReplaceSectionBtn = card.querySelector('.card-menu-replace-section');
-    if (menuReplaceSectionBtn) {
-        menuReplaceSectionBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            closeOpenMenu();
-            const params = new URLSearchParams();
-            if (entry.task_id) params.set('taskId', entry.task_id);
-            window.location.href = '/replace-section' + (params.toString() ? '?' + params.toString() : '');
-        });
-    }
     
     card.addEventListener('click', () => {
         showEntryDetails(entry);
@@ -859,6 +843,24 @@ function showEntryDetails(entry) {
                     const audioPlayer = createAudioPlayer(trackWithTaskId, index + 1);
                     if (audioPlayer && audioPlayersContainer) {
                         audioPlayersContainer.appendChild(audioPlayer);
+                        // Initialize WaveSurfer now that element is in the DOM
+                        if (audioPlayer._wsContainer && audioPlayer._wsAudioUrl) {
+                            const wsPlayer = new UnifiedAudioPlayer(audioPlayer._wsContainer, audioPlayer._wsAudioUrl, {
+                                height: 48,
+                                progressColor: '#6366f1',
+                                waveColor: '#94a3b8',
+                                onReady: (player) => {
+                                    const durationDataEl = audioPlayer.querySelector('[data-track-duration]');
+                                    if (durationDataEl) {
+                                        const duration = player.getDuration();
+                                        const minutes = Math.floor(duration / 60);
+                                        const seconds = Math.floor(duration % 60);
+                                        durationDataEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                                    }
+                                },
+                            });
+                            audioPlayer._wsPlayer = wsPlayer;
+                        }
                     } else {
                         console.error('Failed to create audio player or container not found');
                     }
@@ -887,6 +889,13 @@ function showEntryDetails(entry) {
     // Show modal
     console.log('Showing modal');
     historyModal.classList.remove('hidden');
+
+    // Re-initialize any WaveSurfer players that were created in the hidden modal.
+    // The IntersectionObserver in UnifiedAudioPlayer handles this automatically,
+    // but trigger a resize event as a backup for immediate rendering.
+    requestAnimationFrame(() => {
+        window.dispatchEvent(new Event('resize'));
+    });
 }
 
 // Create an audio player element for a track
@@ -984,110 +993,18 @@ function createAudioPlayer(track, trackNumber) {
         sourceAudioUrlElement.parentElement.classList.add('hidden');
     }
     
-    // Set up audio player controls
-    const audioElement = playerElement.querySelector('[data-audio-element]');
-    const playPauseBtn = playerElement.querySelector('.play-pause-btn');
-    const progressBar = playerElement.querySelector('.audio-progress');
-    const currentTimeEl = playerElement.querySelector('.current-time');
-    const durationEl = playerElement.querySelector('.duration');
-    const volumeSlider = playerElement.querySelector('.volume-slider');
-    const volumeBtn = playerElement.querySelector('.volume-btn');
+    // Store WaveSurfer data for deferred initialization (after DOM append)
+    const wsContainer = playerElement.querySelector('[data-ws-player-container]');
+    console.log('Audio player WaveSurfer container found:', !!wsContainer);
     
-    console.log('Audio player elements found:', {
-        audioElement: !!audioElement,
-        playPauseBtn: !!playPauseBtn,
-        progressBar: !!progressBar,
-        currentTimeEl: !!currentTimeEl,
-        durationEl: !!durationEl,
-        volumeSlider: !!volumeSlider,
-        volumeBtn: !!volumeBtn
-    });
-    
-    if (generatedAudioUrl && audioElement) {
-        audioElement.src = generatedAudioUrl;
-        
-        // Set up audio event listeners
-        audioElement.addEventListener('loadedmetadata', () => {
-            const duration = audioElement.duration;
-            const minutes = Math.floor(duration / 60);
-            const seconds = Math.floor(duration % 60);
-            if (durationEl) durationEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-            const durationDataEl = playerElement.querySelector('[data-track-duration]');
-            if (durationDataEl) durationDataEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        });
-        
-        audioElement.addEventListener('timeupdate', () => {
-            const currentTime = audioElement.currentTime;
-            const duration = audioElement.duration;
-            const progress = (currentTime / duration) * 100;
-            if (progressBar) progressBar.style.width = `${progress}%`;
-            
-            const minutes = Math.floor(currentTime / 60);
-            const seconds = Math.floor(currentTime % 60);
-            if (currentTimeEl) currentTimeEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        });
-        
-        // Play/pause button
-        if (playPauseBtn) {
-            playPauseBtn.addEventListener('click', () => {
-                if (audioElement.paused) {
-                    audioElement.play();
-                    playPauseBtn.innerHTML = '<span class="material-symbols-outlined">pause</span>';
-                } else {
-                    audioElement.pause();
-                    playPauseBtn.innerHTML = '<span class="material-symbols-outlined">play_arrow</span>';
-                }
-            });
-        }
-        
-        // Volume controls
-        if (volumeSlider) {
-            volumeSlider.addEventListener('input', () => {
-                audioElement.volume = volumeSlider.value / 100;
-            });
-        }
-        
-        if (volumeBtn) {
-            volumeBtn.addEventListener('click', () => {
-                if (audioElement.volume > 0) {
-                    audioElement.volume = 0;
-                    if (volumeSlider) volumeSlider.value = 0;
-                    volumeBtn.innerHTML = '<span class="material-symbols-outlined">volume_off</span>';
-                } else {
-                    audioElement.volume = 0.8;
-                    if (volumeSlider) volumeSlider.value = 80;
-                    volumeBtn.innerHTML = '<span class="material-symbols-outlined">volume_up</span>';
-                }
-            });
-        }
-        
-        // Progress bar click
-        const progressContainer = playerElement.querySelector('.audio-progress-bar');
-        if (progressContainer) {
-            progressContainer.addEventListener('click', (e) => {
-                const rect = progressContainer.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const width = rect.width;
-                const percentage = clickX / width;
-                audioElement.currentTime = percentage * audioElement.duration;
-            });
-        }
-        
-        // Audio ended
-        audioElement.addEventListener('ended', () => {
-            if (playPauseBtn) playPauseBtn.innerHTML = '<span class="material-symbols-outlined">play_arrow</span>';
-            if (progressBar) progressBar.style.width = '0%';
-            if (currentTimeEl) currentTimeEl.textContent = '0:00';
-        });
+    if (generatedAudioUrl && wsContainer) {
+        // Defer WaveSurfer init — store URL & container reference on element
+        playerElement._wsContainer = wsContainer;
+        playerElement._wsAudioUrl = generatedAudioUrl;
     } else {
         // No audio URL available
-        if (playPauseBtn) {
-            playPauseBtn.disabled = true;
-            playPauseBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
         const durationDataEl = playerElement.querySelector('[data-track-duration]');
         if (durationDataEl) durationDataEl.textContent = 'N/A';
-        if (durationEl) durationEl.textContent = 'N/A';
     }
     
     // Set up download button

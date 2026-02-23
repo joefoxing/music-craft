@@ -1006,12 +1006,10 @@ function displayAllAudioPlayers(sunoData) {
         const duration = song.duration ? `${Math.floor(song.duration)} seconds` : 'Unknown';
         clone.querySelector('[data-duration]').textContent = duration;
         
-        // Set audio source - try multiple URL sources
-        const audioElement = clone.querySelector('[data-audio]');
-        const audioUrl = song.audioUrl || song.sourceAudioUrl || song.streamAudioUrl || song.sourceStreamAudioUrl;
-        if (audioUrl) {
-            audioElement.src = audioUrl;
-        }
+        // Set audio source - resolve URL from multiple sources
+        const audioUrl = (typeof UnifiedAudioPlayer !== 'undefined')
+            ? UnifiedAudioPlayer.resolveAudioUrl(song)
+            : (song.audioUrl || song.sourceAudioUrl || song.streamAudioUrl || song.sourceStreamAudioUrl);
         
         // Set audio URL link
         const audioUrlLink = clone.querySelector('[data-audio-url]');
@@ -1156,6 +1154,18 @@ function displayAllAudioPlayers(sunoData) {
         }
         
         container.appendChild(clone);
+        
+        // Initialize WaveSurfer player for this song
+        if (typeof UnifiedAudioPlayer !== 'undefined' && audioUrl) {
+            const wsContainer = container.lastElementChild?.querySelector('[data-ws-player-container]');
+            if (wsContainer) {
+                new UnifiedAudioPlayer(wsContainer, audioUrl, {
+                    height: 48,
+                    progressColor: '#6366f1',
+                    waveColor: '#94a3b8',
+                });
+            }
+        }
     });
     
     // Show results section

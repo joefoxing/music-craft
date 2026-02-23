@@ -600,10 +600,8 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="audio-player-container mb-3">
-                                            <audio controls class="w-full" data-audio>
-                                                Your browser does not support the audio element.
-                                            </audio>
+                                        <div class="audio-player-container mb-3" data-ws-player-container>
+                                            <!-- WaveSurfer player will be rendered here -->
                                         </div>
                                         
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
@@ -692,6 +690,10 @@
     </div>
     
     <!-- Component JavaScript -->
+    <!-- WaveSurfer.js Audio Player -->
+    <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+    <script src="{{ url_for('static', filename='js/components/wavesurferPlayer.js') }}"></script>
+
     <script src="{{ url_for('static', filename='js/utils/fileHandler.js') }}?v=20260217c"></script>
     <script src="{{ url_for('static', filename='js/utils/modeManager.js') }}"></script>
     <script src="{{ url_for('static', filename='js/utils/taskManager.js') }}"></script>

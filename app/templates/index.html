@@ -845,8 +845,11 @@
                 <p class="font-bold text-sm truncate text-white" data-sticky-player-title>Neon Rain</p>
                 <span class="text-[9px] bg-white/10 text-white px-1.5 py-0.5 rounded font-bold uppercase">Pro</span>
             </div>
-            <div class="w-full bg-white/5 h-1 mt-2 rounded-full overflow-hidden">
-                <div class="bg-primary-orange h-full w-0" data-sticky-progress-bar></div>
+            <div class="mt-1" data-sticky-ws-container>
+                <!-- WaveSurfer compact player will be rendered here -->
+                <div class="w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                    <div class="bg-primary-orange h-full w-0" data-sticky-progress-bar></div>
+                </div>
             </div>
         </div>
         <div class="flex items-center gap-1">
@@ -861,8 +864,6 @@
             </button>
         </div>
     </div>
-    <!-- Hidden audio element for playback -->
-    <audio data-sticky-audio-element class="hidden"></audio>
 </div>
 <nav class="fixed bottom-0 inset-x-0 h-20 bg-black/80 backdrop-blur-md border-t border-white/10 flex items-center justify-around px-6 z-50">
 <button class="flex flex-col items-center gap-1 text-white">
@@ -1087,53 +1088,23 @@ function initializeHeroGenerator() {
 // Sticky Player Controls
 function initializeStickyPlayer() {
     const playBtn = document.querySelector('[data-sticky-play-btn]');
-    const audioElement = document.querySelector('[data-sticky-audio-element]');
-    const progressBar = document.querySelector('[data-sticky-progress-bar]');
-    const progressContainer = document.querySelector('.w-full.bg-white\\/5.h-1');
+    const wsContainer = document.querySelector('[data-sticky-ws-container]');
     
-    if (!playBtn || !audioElement) {
+    if (!playBtn) {
         console.warn('Sticky player elements not found');
         return;
     }
 
-    // Play/pause button click
+    // Store reference to the WaveSurfer player on the window for promotedSongs.js to access
+    window.stickyWsPlayer = null;
+    
+    // The sticky player will be initialized when a song is played via promotedSongs.js
+    // Play/pause button delegates to the WaveSurfer instance
     playBtn.addEventListener('click', () => {
-        if (audioElement.src) {
-            if (audioElement.paused) {
-                audioElement.play().catch(error => console.error('Play error:', error));
-                playBtn.innerHTML = '<span class="material-symbols-outlined font-fill text-xl">pause</span>';
-            } else {
-                audioElement.pause();
-                playBtn.innerHTML = '<span class="material-symbols-outlined font-fill text-xl">play_arrow</span>';
-            }
+        if (window.stickyWsPlayer) {
+            window.stickyWsPlayer.togglePlayPause();
         }
     });
-
-    // Update progress bar while playing
-    audioElement.addEventListener('timeupdate', () => {
-        if (progressBar && audioElement.duration) {
-            const progress = (audioElement.currentTime / audioElement.duration) * 100;
-            progressBar.style.width = progress + '%';
-        }
-    });
-
-    // Reset when audio ends
-    audioElement.addEventListener('ended', () => {
-        playBtn.innerHTML = '<span class="material-symbols-outlined font-fill text-xl">play_arrow</span>';
-        if (progressBar) {
-            progressBar.style.width = '0%';
-        }
-    });
-
-    // Click on progress bar to seek
-    if (progressContainer) {
-        progressContainer.addEventListener('click', (e) => {
-            if (!audioElement.duration) return;
-            const rect = progressContainer.getBoundingClientRect();
-            const percentage = (e.clientX - rect.left) / rect.width;
-            audioElement.currentTime = percentage * audioElement.duration;
-        });
-    }
 }
 
 // Template Dropdown Menu Component

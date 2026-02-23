@@ -199,11 +199,11 @@ class PromotedSongs {
         // Update sticky player elements
         const playerTitle = document.querySelector('[data-sticky-player-title]');
         const playerImage = document.querySelector('[data-sticky-player-image]');
-        const audioElement = document.querySelector('[data-sticky-audio-element]');
+        const wsContainer = document.querySelector('[data-sticky-ws-container]');
         const playBtn = document.querySelector('[data-sticky-play-btn]');
 
-        if (!audioElement) {
-            console.error('Sticky player audio element not found');
+        if (!wsContainer) {
+            console.error('Sticky player WaveSurfer container not found');
             return;
         }
 
@@ -218,44 +218,42 @@ class PromotedSongs {
             playerImage.alt = song.title || 'Song cover';
         }
 
-        // Update audio source and play
-        audioElement.src = audioUrl;
-        audioElement.play().catch(error => {
-            console.error('Error playing audio:', error);
-            alert('Could not play the audio. Please check your connection.');
-        });
-
-        // Update play button state
-        if (playBtn) {
-            playBtn.innerHTML = '<span class="material-symbols-outlined font-fill text-xl">pause</span>';
+        // Destroy previous WaveSurfer instance if exists
+        if (window.stickyWsPlayer) {
+            window.stickyWsPlayer.destroy();
         }
 
-        // Update progress bar when audio loads
-        audioElement.addEventListener('loadedmetadata', () => {
-            const progressContainer = document.querySelector('[data-sticky-progress-bar]');
-            if (progressContainer) {
-                progressContainer.style.width = '0%';
-            }
-        });
-
-        // Update progress bar as audio plays
-        audioElement.addEventListener('timeupdate', () => {
-            const progressContainer = document.querySelector('[data-sticky-progress-bar]');
-            if (progressContainer && audioElement.duration) {
-                const progress = (audioElement.currentTime / audioElement.duration) * 100;
-                progressContainer.style.width = progress + '%';
-            }
-        });
-
-        // Reset play button when audio ends
-        audioElement.addEventListener('ended', () => {
-            if (playBtn) {
-                playBtn.innerHTML = '<span class="material-symbols-outlined font-fill text-xl">play_arrow</span>';
-            }
-            const progressContainer = document.querySelector('[data-sticky-progress-bar]');
-            if (progressContainer) {
-                progressContainer.style.width = '0%';
-            }
+        // Create new WaveSurfer player in the sticky container
+        window.stickyWsPlayer = new UnifiedAudioPlayer(wsContainer, audioUrl, {
+            height: 20,
+            barWidth: 1,
+            barGap: 1,
+            barRadius: 1,
+            waveColor: 'rgba(255,255,255,0.2)',
+            progressColor: '#FA6E4A',
+            cursorWidth: 0,
+            compact: true,
+            showVolume: false,
+            showTime: false,
+            onPlay: () => {
+                if (playBtn) {
+                    playBtn.innerHTML = '<span class="material-symbols-outlined font-fill text-xl">pause</span>';
+                }
+            },
+            onPause: () => {
+                if (playBtn) {
+                    playBtn.innerHTML = '<span class="material-symbols-outlined font-fill text-xl">play_arrow</span>';
+                }
+            },
+            onFinish: () => {
+                if (playBtn) {
+                    playBtn.innerHTML = '<span class="material-symbols-outlined font-fill text-xl">play_arrow</span>';
+                }
+            },
+            onReady: (player) => {
+                // Auto-play when ready
+                player.play();
+            },
         });
     }
 

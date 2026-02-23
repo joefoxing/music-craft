@@ -296,6 +296,24 @@ function showEntryDetails(entry) {
                     const audioPlayer = createAudioPlayerForHistory(trackWithTaskId, index + 1);
                     if (audioPlayer) {
                         audioPlayersContainer.appendChild(audioPlayer);
+                        // Initialize WaveSurfer now that element is in the DOM
+                        if (audioPlayer._wsContainer && audioPlayer._wsAudioUrl) {
+                            const wsPlayer = new UnifiedAudioPlayer(audioPlayer._wsContainer, audioPlayer._wsAudioUrl, {
+                                height: 48,
+                                progressColor: '#6366f1',
+                                waveColor: '#94a3b8',
+                                onReady: (player) => {
+                                    const durationDataEl = audioPlayer.querySelector('[data-track-duration]');
+                                    if (durationDataEl) {
+                                        const duration = player.getDuration();
+                                        const minutes = Math.floor(duration / 60);
+                                        const seconds = Math.floor(duration % 60);
+                                        durationDataEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                                    }
+                                },
+                            });
+                            audioPlayer._wsPlayer = wsPlayer;
+                        }
                     }
                 });
             }
@@ -317,6 +335,11 @@ function showEntryDetails(entry) {
     
     // Show modal
     DOM.historyModal.classList.remove('hidden');
+
+    // Trigger resize to help any deferred WaveSurfer instances render
+    requestAnimationFrame(() => {
+        window.dispatchEvent(new Event('resize'));
+    });
 }
 
 /**
@@ -388,60 +411,16 @@ function createAudioPlayerForHistory(track, trackNumber) {
     }
     if (createdEl) createdEl.textContent = created;
     
-    // Set up audio player controls
-    const audioElement = playerElement.querySelector('[data-audio-element]');
-    const playPauseBtn = playerElement.querySelector('.play-pause-btn');
-    const progressBar = playerElement.querySelector('.audio-progress');
-    const currentTimeEl = playerElement.querySelector('.current-time');
-    const durationEl = playerElement.querySelector('.duration');
+    // Store WaveSurfer data for deferred initialization (after DOM append)
+    const wsContainer = playerElement.querySelector('[data-ws-player-container]');
+    const durationEl = playerElement.querySelector('[data-track-duration]');
     
-    if (generatedAudioUrl && audioElement) {
-        audioElement.src = generatedAudioUrl;
-        
-        // Set up audio event listeners
-        audioElement.addEventListener('loadedmetadata', () => {
-            const duration = audioElement.duration;
-            const minutes = Math.floor(duration / 60);
-            const seconds = Math.floor(duration % 60);
-            if (durationEl) durationEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        });
-        
-        audioElement.addEventListener('timeupdate', () => {
-            const currentTime = audioElement.currentTime;
-            const duration = audioElement.duration;
-            const progress = (currentTime / duration) * 100;
-            if (progressBar) progressBar.style.width = `${progress}%`;
-            
-            const minutes = Math.floor(currentTime / 60);
-            const seconds = Math.floor(currentTime % 60);
-            if (currentTimeEl) currentTimeEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        });
-        
-        // Play/pause button
-        if (playPauseBtn) {
-            playPauseBtn.addEventListener('click', () => {
-                if (audioElement.paused) {
-                    audioElement.play();
-                    playPauseBtn.innerHTML = '<span class="material-symbols-outlined">pause</span>';
-                } else {
-                    audioElement.pause();
-                    playPauseBtn.innerHTML = '<span class="material-symbols-outlined">play_arrow</span>';
-                }
-            });
-        }
-        
-        // Audio ended
-        audioElement.addEventListener('ended', () => {
-            if (playPauseBtn) playPauseBtn.innerHTML = '<span class="material-symbols-outlined">play_arrow</span>';
-            if (progressBar) progressBar.style.width = '0%';
-            if (currentTimeEl) currentTimeEl.textContent = '0:00';
-        });
+    if (generatedAudioUrl && wsContainer) {
+        // Defer WaveSurfer init — store URL & container reference on element
+        playerElement._wsContainer = wsContainer;
+        playerElement._wsAudioUrl = generatedAudioUrl;
     } else {
         // No audio URL available
-        if (playPauseBtn) {
-            playPauseBtn.disabled = true;
-            playPauseBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
         if (durationEl) durationEl.textContent = 'N/A';
     }
     

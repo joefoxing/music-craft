@@ -332,11 +332,6 @@ class SongCard extends BaseCard {
                 </div>
             </div>
             
-            <!-- Hidden audio element -->
-            <audio class="hidden" data-audio-element>
-                <source src="${data.audio_url || ''}" type="audio/mpeg">
-                Your browser does not support the audio element.
-            </audio>
         `;
         
         card.innerHTML = cardHTML;
@@ -352,29 +347,8 @@ class SongCard extends BaseCard {
     buildAudioPlayer() {
         const player = document.createElement('div');
         player.className = 'mb-4';
-        player.innerHTML = `
-            <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-800 rounded-lg p-3">
-                <button class="song-play-btn p-2 bg-primary hover:bg-primary-dark text-white rounded-full transition-colors" aria-label="Play song">
-                    <span class="material-symbols-outlined play-icon" data-play-icon>play_arrow</span>
-                    <span class="material-symbols-outlined pause-icon hidden" data-pause-icon>pause</span>
-                </button>
-                <div class="flex-1">
-                    <div class="song-progress-bar h-1 bg-slate-300 dark:bg-slate-700 rounded-full overflow-hidden cursor-pointer">
-                        <div class="song-progress h-full bg-primary" style="width: 0%" data-progress></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-slate-500 mt-1">
-                        <span class="song-current-time">0:00</span>
-                        <span class="song-duration" data-duration>0:00</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button class="volume-btn p-1 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300" aria-label="Volume">
-                        <span class="material-symbols-outlined text-sm">volume_up</span>
-                    </button>
-                    <input type="range" min="0" max="100" value="80" class="volume-slider w-16 accent-primary" aria-label="Volume slider">
-                </div>
-            </div>
-        `;
+        player.setAttribute('data-ws-player-container', '');
+        // WaveSurfer player will be initialized by audioLibrary.js setupSongCardEventListeners
         return player;
     }
     
@@ -428,11 +402,9 @@ class SongCard extends BaseCard {
      * @param {HTMLElement} card - Card element
      */
     setupEventListeners(card) {
-        // Play/pause button
+        // Play/pause button (handled by WaveSurfer via audioLibrary.js)
         const playBtn = card.querySelector('.song-play-btn');
-        const audioElement = card.querySelector('[data-audio-element]');
-        
-        if (playBtn && audioElement) {
+        if (playBtn) {
             playBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (this.callbacks.onAction) {

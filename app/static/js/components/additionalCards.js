@@ -304,11 +304,6 @@ class AudioPlayerCard extends BaseCard {
             </div>
             ` : ''}
             
-            <!-- Hidden audio element -->
-            <audio class="hidden" data-audio-element>
-                <source src="${data.audio_url || ''}" type="audio/mpeg">
-                Your browser does not support the audio element.
-            </audio>
         `;
         
         card.innerHTML = cardHTML;
@@ -326,25 +321,8 @@ class AudioPlayerCard extends BaseCard {
         controls.className = 'mt-4';
         controls.innerHTML = `
             <p class="text-slate-500 text-sm mb-2">Audio Preview</p>
-            <div class="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 p-3 rounded-lg">
-                <button class="play-pause-btn p-2 bg-primary hover:bg-primary-dark text-white rounded-full">
-                    <span class="material-symbols-outlined">play_arrow</span>
-                </button>
-                <div class="flex-1">
-                    <div class="audio-progress-bar h-2 bg-slate-300 dark:bg-slate-700 rounded-full overflow-hidden">
-                        <div class="audio-progress h-full bg-primary" style="width: 0%"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-slate-500 mt-1">
-                        <span class="current-time">0:00</span>
-                        <span class="duration">0:00</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button class="volume-btn p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white">
-                        <span class="material-symbols-outlined">volume_up</span>
-                    </button>
-                    <input type="range" min="0" max="100" value="80" class="volume-slider w-20 accent-primary">
-                </div>
+            <div data-ws-player-container>
+                <!-- WaveSurfer player will be rendered here -->
             </div>
         `;
         return controls;
@@ -355,15 +333,21 @@ class AudioPlayerCard extends BaseCard {
      * @param {HTMLElement} card - Card element
      */
     setupEventListeners(card) {
-        // Play/pause button
-        const playBtn = card.querySelector('.play-pause-btn');
-        const audioElement = card.querySelector('[data-audio-element]');
-        
-        if (playBtn && audioElement) {
-            playBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (this.callbacks.onAction) {
-                    this.callbacks.onAction('play-pause', this.data, e);
+        // Defer WaveSurfer init until element is in the DOM
+        const wsContainer = card.querySelector('[data-ws-player-container]');
+        const audioUrl = this.data.audio_url || '';
+        if (wsContainer && audioUrl) {
+            card._wsContainer = wsContainer;
+            card._wsAudioUrl = audioUrl;
+            // Use rAF to wait for DOM insertion before initializing WaveSurfer
+            requestAnimationFrame(() => {
+                if (card._wsContainer && card._wsAudioUrl && card.isConnected) {
+                    this._wsPlayer = new UnifiedAudioPlayer(card._wsContainer, card._wsAudioUrl, {
+                        height: 48,
+                        progressColor: '#6366f1',
+                        waveColor: '#94a3b8',
+                    });
+                    card._wsPlayer = this._wsPlayer;
                 }
             });
         }
@@ -379,16 +363,6 @@ class AudioPlayerCard extends BaseCard {
                 }
             });
         });
-        
-        // Progress bar
-        const progressBar = card.querySelector('.audio-progress-bar');
-        if (progressBar) {
-            progressBar.addEventListener('click', (e) => {
-                if (this.callbacks.onAction) {
-                    this.callbacks.onAction('seek', this.data, e);
-                }
-            });
-        }
     }
 }
 

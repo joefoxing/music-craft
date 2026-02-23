@@ -448,30 +448,9 @@
                             <!-- Audio Player -->
                             <div class="mt-4">
                                 <p class="text-slate-500 text-sm mb-2">Audio Preview</p>
-                                <div class="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 p-3 rounded-lg">
-                                    <button class="play-pause-btn p-2 bg-primary hover:bg-primary-dark text-white rounded-full">
-                                        <span class="material-symbols-outlined">play_arrow</span>
-                                    </button>
-                                    <div class="flex-1">
-                                        <div class="audio-progress-bar h-2 bg-slate-300 dark:bg-slate-700 rounded-full overflow-hidden">
-                                            <div class="audio-progress h-full bg-primary" style="width: 0%"></div>
-                                        </div>
-                                        <div class="flex justify-between text-xs text-slate-500 mt-1">
-                                            <span class="current-time">0:00</span>
-                                            <span class="duration">0:00</span>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <button class="volume-btn p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white">
-                                            <span class="material-symbols-outlined">volume_up</span>
-                                        </button>
-                                        <input type="range" min="0" max="100" value="80" class="volume-slider w-20 accent-primary">
-                                    </div>
+                                <div data-ws-player-container>
+                                    <!-- WaveSurfer player will be rendered here -->
                                 </div>
-                                <audio class="hidden" data-audio-element>
-                                    <source src="" type="audio/mpeg">
-                                    Your browser does not support the audio element.
-                                </audio>
                             </div>
                             
                             <!-- Audio URLs -->
@@ -556,6 +535,10 @@
         </main>
     </div>
     
+    <!-- WaveSurfer.js Audio Player -->
+    <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+    <script src="{{ url_for('static', filename='js/components/wavesurferPlayer.js') }}"></script>
+
     <!-- JavaScript -->
     <script src="{{ url_for('static', filename='js/components/trackOptions.js') }}?v=3"></script>
     <script src="{{ url_for('static', filename='js/history.js') }}"></script>

@@ -61,6 +61,20 @@ def music_generator():
     return render_template('music_generator.html', active_nav='music-generator')
 
 
+@main_bp.route('/persona')
+@login_required
+def persona():
+    """Render the persona builder page."""
+    prefill_task_id  = request.args.get('taskId', '')
+    prefill_audio_id = request.args.get('audioId', '')
+    return render_template(
+        'persona.html',
+        active_nav='persona',
+        prefill_task_id=prefill_task_id,
+        prefill_audio_id=prefill_audio_id,
+    )
+
+
 @main_bp.route('/history')
 @login_required
 def history():

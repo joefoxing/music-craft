@@ -38,6 +38,15 @@ class AudioPlayerComponent {
         sunoData.forEach((song, index) => {
             const player = this.createAudioPlayer(song, index, currentTaskId, onVideoCreate);
             this.container.appendChild(player);
+
+            // Initialize WaveSurfer now that the element is in the DOM
+            if (player._wsContainer && player._wsAudioUrl) {
+                new UnifiedAudioPlayer(player._wsContainer, player._wsAudioUrl, {
+                    height: 48,
+                    progressColor: '#6366f1',
+                    waveColor: '#94a3b8',
+                });
+            }
         });
     }
 
@@ -64,25 +73,23 @@ class AudioPlayerComponent {
         const duration = song.duration ? `${Math.floor(song.duration)} seconds` : 'Unknown';
         clone.querySelector('[data-duration]').textContent = duration;
 
-        // Set audio source - try multiple URL sources
-        const audioElement = clone.querySelector('[data-audio]');
-        const audioUrl = song.audioUrl || song.audio_url ||
-                         (song.audio_urls && song.audio_urls.generated) ||
-                         song.sourceAudioUrl || song.source_audio_url ||
-                         (song.audio_urls && song.audio_urls.source) ||
-                         song.streamAudioUrl || song.stream_audio_url ||
-                         (song.audio_urls && song.audio_urls.stream) ||
-                         song.sourceStreamAudioUrl || song.source_stream_audio_url ||
-                         (song.audio_urls && song.audio_urls.source_stream);
-        if (audioUrl) {
-            audioElement.src = audioUrl;
-        }
+        // Resolve audio URL using unified helper
+        const audioUrl = UnifiedAudioPlayer.resolveAudioUrl(song);
 
         // Set audio URL link
         const audioUrlLink = clone.querySelector('[data-audio-url]');
         if (audioUrl) {
             audioUrlLink.href = audioUrl;
             audioUrlLink.textContent = audioUrl;
+        }
+
+        // Initialize WaveSurfer player in the container
+        const wsContainer = clone.querySelector('[data-ws-player-container]');
+        if (wsContainer && audioUrl) {
+            // We need to defer WaveSurfer init until the element is in the DOM
+            // Store the URL and init after appending
+            audioPlayerDiv._wsAudioUrl = audioUrl;
+            audioPlayerDiv._wsContainer = wsContainer;
         }
 
         // Handle image display

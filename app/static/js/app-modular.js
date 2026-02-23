@@ -552,17 +552,18 @@ async function generateCover() {
  * @param {Array} sunoData - Array of generated song data
  */
 function handleGenerationComplete(sunoData) {
+    // Show results section BEFORE initializing audio players
+    // (WaveSurfer needs visible containers to render correctly)
+    if (DOM.results) {
+        DOM.results.classList.remove('hidden');
+    }
+
     // Display audio players with video buttons
     audioPlayerComponent.displayAllAudioPlayers(
         sunoData, 
         taskManager.getCurrentTaskId(), 
         handleCreateMusicVideo
     );
-    
-    // Show results section
-    if (DOM.results) {
-        DOM.results.classList.remove('hidden');
-    }
     
     notificationSystem.showSuccess(`Cover generation completed! ${sunoData.length} song(s) generated.`);
 }
