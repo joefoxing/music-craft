@@ -1668,6 +1668,10 @@ class SongLibrary {
                 <span class="material-symbols-outlined text-[20px]">playlist_add</span>
                 <span class="font-medium">Add to Playlist</span>
             </button>
+            <button class="w-full text-left px-4 py-2.5 text-sm text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 flex items-center gap-3 transition-colors" data-action="replace-section">
+                <span class="material-symbols-outlined text-[20px]">content_cut</span>
+                <span class="font-medium">Replace Section</span>
+            </button>
             ${hasLyrics ? `
             <button class="w-full text-left px-4 py-2.5 text-sm text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 flex items-center gap-3 transition-colors" data-action="view-lyrics">
                 <span class="material-symbols-outlined text-[20px]">lyrics</span>
@@ -1740,6 +1744,19 @@ class SongLibrary {
                 e.stopPropagation();
                 this.closeActiveMenu();
                 this.showLyricsModal(song);
+            });
+        }
+
+        const replaceSectionBtn = menu.querySelector('[data-action="replace-section"]');
+        if (replaceSectionBtn) {
+            replaceSectionBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.closeActiveMenu();
+                const params = new URLSearchParams();
+                // source_reference holds the Kie task_id; kie_audio_id holds the Kie track UUID
+                if (song.source_reference) params.set('taskId', song.source_reference);
+                if (song.kie_audio_id)    params.set('audioId', song.kie_audio_id);
+                window.location.href = '/replace-section' + (params.toString() ? '?' + params.toString() : '');
             });
         }
 

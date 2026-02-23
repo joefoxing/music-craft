@@ -14,10 +14,14 @@ services:
     volumes:
       - ./app/config.py:/app/app/config.py:ro
       - ./app/__init__.py:/app/app/__init__.py:ro
-      - ./app/routes/debug_routes.py:/app/app/routes/debug_routes.py:ro
-      - ./app/templates/cover-generator.html:/app/app/templates/cover-generator.html:ro
-      - ./app/static/js/components/lyricsSearchHandler.js:/app/app/static/js/components/lyricsSearchHandler.js:ro
-      - ./app/routes/lyrics_search_api.py:/app/app/routes/lyrics_search_api.py:ro
+      - ./app/templates:/app/app/templates:ro
+      - ./app/routes:/app/app/routes:ro
+      - ./app/static:/app/app/static:ro
+      - ./app/services:/app/app/services:ro
+      - ./app/models.py:/app/app/models.py:ro
+      - ./migrations:/app/migrations:ro
+      - ./staging_history:/app/app/static/history
+      - ./staging_uploads:/app/app/static/uploads
       - ./app/lyrics_pipeline:/app/app/lyrics_pipeline:ro
     networks:
       proxy_net:

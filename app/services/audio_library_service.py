@@ -101,6 +101,7 @@ class AudioLibraryService:
                 lyrics_extraction_error=lyrics_extraction_error,
                 source_type=source_type,
                 source_reference=audio_data.get('source_reference'),
+                kie_audio_id=audio_data.get('kie_audio_id'),
                 processing_status=audio_data.get('processing_status', 'ready')
             )
             
@@ -510,6 +511,7 @@ class AudioLibraryService:
                 'lyrics_source': 'metadata' if track.get('lyrics') else ('user' if track.get('prompt') else None),
                 'source_type': 'generated',
                 'source_reference': history_entry.get('task_id'),
+                'kie_audio_id': track.get('id'),
                 'processing_status': 'ready',
                 'tags': [track.get('tags', 'ai-generated')] if track.get('tags') else ['ai-generated']
             }

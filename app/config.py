@@ -28,7 +28,7 @@ class Config:
     
     # Flask configuration
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key')
-    PREFERRED_URL_SCHEME = 'https'
+    PREFERRED_URL_SCHEME = os.environ.get('PREFERRED_URL_SCHEME', 'https' if os.environ.get('APP_ENV', 'development') != 'development' else 'http')
     TEMPLATES_AUTO_RELOAD = True
     
     # Database configuration

@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mashup Generator - AudioCraft</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
+    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f20df2",
+                        "primary-dark": "#c20ac2",
+                        "background-light": "#f8f5f8",
+                        "background-dark": "#070403",
+                        "surface-dark": "#271b27",
+                        "border-dark": "#392839",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body":    ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        /* Track slot card */
+        .track-slot {
+            @apply bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700 p-4 transition-all;
+        }
+        .track-slot.is-ready {
+            @apply border-green-400 dark:border-green-600;
+        }
+        /* Sub-tabs inside each slot */
+        .slot-tab { @apply flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer; }
+        .slot-tab.active { @apply bg-primary/10 text-primary; }
+        /* Upload drop area inside slot */
+        .slot-upload-area {
+            @apply border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-4 text-center cursor-pointer transition-colors hover:border-primary hover:bg-primary/5;
+        }
+        .slot-upload-area.drag-over { @apply border-primary bg-primary/10; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+    <div class="flex h-screen w-full">
+        {% include "partials/_sidebar.html" %}
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-gradient-to-b dark:from-[#181118] dark:to-background-dark relative overflow-hidden">
+
+            <!-- Header -->
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-[#181118]/50 backdrop-blur-md sticky top-0 z-10">
+                <div class="flex items-center gap-4 text-white md:hidden">
+                    <button class="text-slate-400 hover:text-white" id="mobileMenuBtn">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <h2 class="text-lg font-bold">Mashup</h2>
+                </div>
+
+                <div class="hidden md:block">
+                    <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Mashup Generator</h2>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center bg-surface-dark rounded-full px-3 py-1.5 border border-border-dark">
+                        <span class="material-symbols-outlined text-primary text-sm mr-2">bolt</span>
+                        <span class="text-white text-xs font-bold font-mono">
+                            {% if current_user.is_authenticated %}500 CREDITS{% else %}0 CREDITS{% endif %}
+                        </span>
+                    </div>
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('auth.profile') }}" class="p-2 text-slate-400 hover:text-white relative" title="Profile">
+                        <span class="material-symbols-outlined">account_circle</span>
+                    </a>
+                    {% endif %}
+                    <button class="p-2 text-slate-400 hover:text-white relative" id="themeToggle">
+                        <span class="material-symbols-outlined">dark_mode</span>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar p-6 pb-32">
+                <div class="max-w-3xl mx-auto space-y-8">
+
+                    <section class="flex flex-col gap-6">
+                        <!-- Page headline -->
+                        <div class="flex flex-col gap-2">
+                            <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Blend Multiple Tracks</h2>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2">
+                                Combine 2–5 audio sources into a single AI-generated mashup. Upload files or provide direct URLs.
+                            </p>
+                        </div>
+
+                        <!-- ── STEP 1 · Audio Tracks ───────────────────── -->
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
+                            <div class="flex items-center justify-between mb-5">
+                                <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary">merge</span>
+                                    1. Audio Tracks
+                                </h3>
+                                <!-- Add Track button -->
+                                <button id="addMashupTrackBtn"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                                    <span class="material-symbols-outlined text-sm">add</span>
+                                    Add Track
+                                    <span class="ml-1 text-xs opacity-75">(<span data-track-count>2/5</span>)</span>
+                                </button>
+                            </div>
+
+                            <!-- Track slot list — populated by MashupHandler -->
+                            <div id="mashupTrackList" class="space-y-4"></div>
+
+                            <!-- Template for a single track slot -->
+                            <template id="mashupTrackTemplate">
+                                <div data-track-slot class="track-slot">
+                                    <!-- Slot header -->
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-sm font-semibold text-slate-700 dark:text-white flex items-center gap-2" data-track-label>Track 1</span>
+                                        <div class="flex items-center gap-2">
+                                            <!-- Ready badge -->
+                                            <span data-ready-badge class="hidden inline-flex items-center gap-1 text-xs font-medium text-green-600 dark:text-green-400">
+                                                <span class="material-symbols-outlined text-sm">check_circle</span> Ready
+                                            </span>
+                                            <!-- Clear -->
+                                            <button data-clear-btn class="hidden text-xs text-amber-500 hover:text-amber-600 flex items-center gap-1">
+                                                <span class="material-symbols-outlined text-sm">close</span>Clear
+                                            </button>
+                                            <!-- Remove -->
+                                            <button data-remove-btn
+                                                    class="p-1 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                                    title="Remove track">
+                                                <span class="material-symbols-outlined text-sm">delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Source sub-tabs -->
+                                    <div class="flex gap-1 mb-3">
+                                        <button data-upload-tab class="slot-tab active">
+                                            <span class="material-symbols-outlined text-sm">upload</span> Upload
+                                        </button>
+                                        <button data-url-tab class="slot-tab">
+                                            <span class="material-symbols-outlined text-sm">link</span> URL
+                                        </button>
+                                    </div>
+
+                                    <!-- Upload section -->
+                                    <div data-upload-section>
+                                        <div data-upload-area class="slot-upload-area">
+                                            <span class="material-symbols-outlined text-primary text-3xl mb-1">file_upload</span>
+                                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-2">Drag &amp; drop or click to browse</p>
+                                            <p class="text-xs text-slate-400">MP3, WAV, OGG, M4A, FLAC · max 100 MB</p>
+                                            <input data-file-input type="file" accept=".mp3,.wav,.ogg,.m4a,.flac" class="hidden">
+                                            <button data-browse-btn type="button"
+                                                    class="mt-3 px-4 py-1.5 text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                                                Browse Files
+                                            </button>
+                                        </div>
+
+                                        <!-- Progress -->
+                                        <div class="mt-2 flex items-center gap-2">
+                                            <div class="flex-1 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                                <div data-progress-bar class="h-full bg-primary rounded-full transition-all" style="width:0%"></div>
+                                            </div>
+                                            <span data-progress-text class="text-xs text-slate-500 w-8 text-right">0%</span>
+                                        </div>
+
+                                        <!-- Upload button -->
+                                        <button data-upload-btn type="button" disabled
+                                                class="mt-2 w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                                            <span class="material-symbols-outlined text-sm">cloud_upload</span>
+                                            Upload File
+                                        </button>
+                                    </div>
+
+                                    <!-- URL section (hidden by default) -->
+                                    <div data-url-section class="hidden space-y-2">
+                                        <input data-url-input type="url"
+                                               class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                               placeholder="https://example.com/audio.mp3">
+                                        <div class="flex gap-2">
+                                            <button data-test-btn type="button"
+                                                    class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                                                <span class="material-symbols-outlined text-sm">wifi_tethering</span> Test
+                                            </button>
+                                            <button data-use-url-btn type="button"
+                                                    class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                                                <span class="material-symbols-outlined text-sm">check</span> Use URL
+                                            </button>
+                                        </div>
+                                        <p data-url-status class="text-xs text-slate-500 mt-1"></p>
+                                    </div>
+
+                                    <!-- Slot status label -->
+                                    <p data-slot-status class="text-sm text-slate-500 mt-2 truncate">No file selected</p>
+                                </div>
+                            </template>
+
+                            <!-- Hint when < 2 ready -->
+                            <p id="tracksHint" class="text-xs text-slate-400 mt-3 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">info</span>
+                                Add at least 2 tracks with audio sources before generating.
+                            </p>
+                        </div>
+
+                        <!-- ── STEP 2 · Generation Settings ───────────── -->
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-5 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">tune</span>
+                                2. Generation Settings
+                            </h3>
+
+                            <div class="space-y-6">
+                                <!-- Model -->
+                                <div>
+                                    <label for="mashupModelSelect" class="block text-sm font-medium mb-2">Model Version</label>
+                                    <select id="mashupModelSelect" class="form-control">
+                                        <option value="V5">V5 — Superior musical expression, faster generation</option>
+                                        <option value="V4_5PLUS">V4.5+ — Richer sound, max 8 min</option>
+                                        <option value="V4_5">V4.5 — Smarter prompts, max 8 min</option>
+                                        <option value="V4_5ALL">V4.5ALL — Max 8 min</option>
+                                        <option value="V4" selected>V4 — Improved vocal quality, max 4 min</option>
+                                    </select>
+                                </div>
+
+                                <!-- Mode toggle -->
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Generation Mode</label>
+                                    <div class="toggle-group">
+                                        <button type="button" class="toggle-btn active" id="mashupSimpleBtn">Simple Mode</button>
+                                        <button type="button" class="toggle-btn" id="mashupCustomBtn">Custom Mode</button>
+                                    </div>
+                                    <p id="mashupModeHelp" class="text-sm text-slate-500 mt-2">Simple: Just provide a prompt.</p>
+                                </div>
+
+                                <!-- Prompt -->
+                                <div>
+                                    <label for="mashupPrompt" class="block text-sm font-medium mb-2">
+                                        Prompt <span class="text-slate-500">(describe the mashup style)</span>
+                                    </label>
+                                    <textarea id="mashupPrompt" class="form-control" rows="5"
+                                              placeholder="e.g. 'A chill lo-fi blend with jazz elements and smooth transitions'"></textarea>
+                                    <div class="char-counter">
+                                        <span id="mashupPromptChars">0</span>/<span id="mashupPromptMax">5000</span> characters
+                                    </div>
+                                </div>
+
+                                <!-- Custom Mode Fields (hidden by default) -->
+                                <div id="mashupCustomFields" class="hidden space-y-5">
+
+                                    <!-- Style -->
+                                    <div>
+                                        <label for="mashupStyle" class="block text-sm font-medium mb-2">Style</label>
+                                        <textarea id="mashupStyle" class="form-control" rows="2"
+                                                  placeholder="e.g. 'Jazz, Lo-Fi, 90 BPM'"></textarea>
+                                        <div class="char-counter">
+                                            <span id="mashupStyleChars">0</span>/<span id="mashupStyleMax">1000</span> characters
+                                        </div>
+                                    </div>
+
+                                    <!-- Title -->
+                                    <div>
+                                        <label for="mashupTitle" class="block text-sm font-medium mb-2">Track Title</label>
+                                        <input type="text" id="mashupTitle" class="form-control" placeholder="e.g. 'Summer Mashup'">
+                                        <div class="char-counter">
+                                            <span id="mashupTitleChars">0</span>/<span id="mashupTitleMax">100</span> characters
+                                        </div>
+                                    </div>
+
+                                    <!-- Advanced params -->
+                                    <div class="border-t border-slate-200 dark:border-slate-700 pt-4 space-y-4">
+                                        <label class="block text-sm font-medium">Advanced Parameters</label>
+
+                                        <!-- Vocal Gender -->
+                                        <div>
+                                            <label for="mashupVocalGender" class="block text-sm font-medium mb-1">Vocal Gender</label>
+                                            <select id="mashupVocalGender" class="form-control">
+                                                <option value="">Auto</option>
+                                                <option value="female">Female</option>
+                                                <option value="male">Male</option>
+                                                <option value="mixed">Mixed</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Style Weight -->
+                                        <div>
+                                            <label for="mashupStyleWeight" class="block text-sm font-medium mb-1">Style Weight (0–1)</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="range" id="mashupStyleWeight" min="0" max="1" step="0.01" value="0.5" class="flex-1">
+                                                <input type="number" id="mashupStyleWeightNum" min="0" max="1" step="0.01" value="0.5" class="w-20 form-control">
+                                            </div>
+                                        </div>
+
+                                        <!-- Weirdness -->
+                                        <div>
+                                            <label for="mashupWeirdness" class="block text-sm font-medium mb-1">Weirdness Constraint (0–1)</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="range" id="mashupWeirdness" min="0" max="1" step="0.01" value="0.5" class="flex-1">
+                                                <input type="number" id="mashupWeirdnessNum" min="0" max="1" step="0.01" value="0.5" class="w-20 form-control">
+                                            </div>
+                                        </div>
+
+                                        <!-- Audio Weight -->
+                                        <div>
+                                            <label for="mashupAudioWeight" class="block text-sm font-medium mb-1">Audio Weight (0–1)</label>
+                                            <div class="flex items-center gap-3">
+                                                <input type="range" id="mashupAudioWeight" min="0" max="1" step="0.01" value="0.5" class="flex-1">
+                                                <input type="number" id="mashupAudioWeightNum" min="0" max="1" step="0.01" value="0.5" class="w-20 form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Instrumental -->
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">Instrumental Only</label>
+                                        <p class="text-sm text-slate-500">Generate without vocals</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="mashupInstrumental" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-primary"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── STEP 3 · Generate ───────────────────────── -->
+                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">play_circle</span>
+                                3. Generate Mashup
+                            </h3>
+                            <p class="text-slate-500 dark:text-slate-400 mb-6">
+                                Upload all tracks and configure settings, then hit Generate.
+                            </p>
+
+                            <button id="mashupGenerateBtn" disabled
+                                    class="btn-generate flex items-center justify-center w-full disabled:opacity-40 disabled:cursor-not-allowed">
+                                <span class="material-symbols-outlined mr-2">merge</span>
+                                Generate Mashup
+                            </button>
+
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-4 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">info</span>
+                                Generation typically takes 2–5 minutes. Status updates appear below.
+                            </p>
+                        </div>
+
+                        <!-- ── Task Status (hidden until submitted) ──── -->
+                        <div id="mashupTaskStatus" class="task-status hidden">
+                            <div class="status-card">
+                                <div class="status-header">
+                                    <h4 class="text-lg font-bold dark:text-white text-slate-900">Generation Status</h4>
+                                    <div class="flex items-center gap-3">
+                                        <span id="mashupStatusBadge" class="status-badge">Processing</span>
+                                        <button id="mashupRefreshBtn" class="refresh-btn">
+                                            <span class="material-symbols-outlined mr-1">refresh</span>Refresh
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">Task ID</label>
+                                        <code id="mashupTaskId" class="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-sm">-</code>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">Progress</label>
+                                        <progress id="mashupStatusProgress" value="0" max="100" class="w-full h-2 rounded-full"></progress>
+                                        <p id="mashupStatusText" class="text-sm text-slate-500 mt-1">Starting generation…</p>
+                                    </div>
+                                    <div class="status-details">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div><p class="text-sm font-medium">Started</p><p id="mashupStartTime" class="text-sm">-</p></div>
+                                            <div><p class="text-sm font-medium">Status Code</p><p id="mashupStatusCode" class="text-sm">-</p></div>
+                                            <div><p class="text-sm font-medium">Audio ID</p><p id="mashupAudioId" class="text-sm">-</p></div>
+                                            <div><p class="text-sm font-medium">Callback Type</p><p id="mashupCallbackType" class="text-sm">-</p></div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <p class="text-sm font-medium">Message</p>
+                                            <p id="mashupStatusMessage" class="text-sm text-slate-600 dark:text-slate-400">-</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ── Results (hidden until complete) ────────── -->
+                        <div id="mashupResults" class="results hidden">
+                            <div class="result-card">
+                                <h4 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-green-500">check_circle</span>
+                                    Mashup Generated Successfully!
+                                </h4>
+                                <p class="text-slate-500 dark:text-slate-400 mb-4">Your mashup is ready to play and download.</p>
+                                <div id="mashupAudioPlayersContainer" class="space-y-6"></div>
+
+                                <!-- Audio player template -->
+                                <template id="mashupAudioPlayerTemplate">
+                                    <div class="audio-player border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-900/50">
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div>
+                                                <h5 class="font-bold text-slate-900 dark:text-white text-lg" data-title>Mashup</h5>
+                                                <div class="flex items-center gap-3 mt-1">
+                                                    <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full" data-model>Model</span>
+                                                    <span class="text-xs text-slate-500" data-duration>Duration</span>
+                                                </div>
+                                            </div>
+                                            <button class="btn-download" data-download-btn>
+                                                <span class="material-symbols-outlined mr-2">download</span>Download MP3
+                                            </button>
+                                        </div>
+                                        <div class="audio-player-container mb-3">
+                                            <audio controls class="w-full" data-audio>Your browser does not support the audio element.</audio>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                            <div>
+                                                <label class="block text-sm font-medium mb-1">Audio URL</label>
+                                                <a href="#" target="_blank" class="text-primary hover:underline break-all" data-audio-url>-</a>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium mb-1">Generated Image</label>
+                                                <div class="relative bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                                                    <img src="" alt="Cover image" class="w-full h-32 object-contain bg-white" data-image-display style="display:none;">
+                                                    <div class="image-placeholder h-32 flex items-center justify-center" data-image-placeholder>
+                                                        <span class="material-symbols-outlined text-slate-400 text-4xl">image</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <label class="block text-sm font-medium mb-1">Lyrics</label>
+                                            <div class="lyrics-container max-h-48 overflow-y-auto bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
+                                                <div class="lyrics-content text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line" data-lyrics>-</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/utils/notification.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/mashupHandler.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/audioPlayer.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+
+    <script>
+    // ── CSRF ────────────────────────────────────────────────────────────────
+    fetch('/auth/csrf-token')
+        .then(r => r.json())
+        .then(d => { window.csrfToken = d.csrf_token; })
+        .catch(() => {});
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // ── Theme toggle ──────────────────────────────────────────────────
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+            });
+        }
+
+        // ── MashupHandler init ────────────────────────────────────────────
+        const mashupHandler = new MashupHandler();
+        mashupHandler.initialize({
+            container: document.getElementById('mashupTrackList'),
+            template:  document.getElementById('mashupTrackTemplate'),
+            addBtn:    document.getElementById('addMashupTrackBtn'),
+        });
+
+        const generateBtn = document.getElementById('mashupGenerateBtn');
+
+        // Unlock generate button when all tracks are ready
+        mashupHandler.onReadyChange = function () {
+            generateBtn.disabled = !mashupHandler.isReady();
+        };
+
+        // ── Mode toggle ───────────────────────────────────────────────────
+        const simpleBtn     = document.getElementById('mashupSimpleBtn');
+        const customBtn     = document.getElementById('mashupCustomBtn');
+        const customFields  = document.getElementById('mashupCustomFields');
+        const modeHelp      = document.getElementById('mashupModeHelp');
+        let   isCustomMode  = false;
+
+        simpleBtn.addEventListener('click', () => {
+            isCustomMode = false;
+            simpleBtn.classList.add('active');
+            customBtn.classList.remove('active');
+            customFields.classList.add('hidden');
+            modeHelp.textContent = 'Simple: Just provide a prompt.';
+        });
+        customBtn.addEventListener('click', () => {
+            isCustomMode = true;
+            customBtn.classList.add('active');
+            simpleBtn.classList.remove('active');
+            customFields.classList.remove('hidden');
+            modeHelp.textContent = 'Custom: Full control over style, title, and advanced parameters.';
+        });
+
+        // ── Character counters ────────────────────────────────────────────
+        function bindCounter(inputId, counterId, maxId) {
+            const input   = document.getElementById(inputId);
+            const counter = document.getElementById(counterId);
+            const maxEl   = document.getElementById(maxId);
+            if (!input || !counter) return;
+            const limit = maxEl ? parseInt(maxEl.textContent, 10) : Infinity;
+            input.addEventListener('input', () => {
+                const len = input.value.length;
+                counter.textContent = len;
+                if (len > limit * 0.9) counter.classList.add('text-amber-500');
+                else                    counter.classList.remove('text-amber-500');
+            });
+        }
+        bindCounter('mashupPrompt',  'mashupPromptChars',  'mashupPromptMax');
+        bindCounter('mashupStyle',   'mashupStyleChars',   'mashupStyleMax');
+        bindCounter('mashupTitle',   'mashupTitleChars',   'mashupTitleMax');
+
+        // ── Range ↔ number sync ───────────────────────────────────────────
+        function syncSlider(sliderId, numId) {
+            const slider = document.getElementById(sliderId);
+            const num    = document.getElementById(numId);
+            if (!slider || !num) return;
+            slider.addEventListener('input', () => { num.value = slider.value; });
+            num.addEventListener('input', () => {
+                let v = parseFloat(num.value);
+                if (isNaN(v)) v = 0.5;
+                v = Math.min(1, Math.max(0, v));
+                num.value = v.toFixed(2);
+                slider.value = v;
+            });
+        }
+        syncSlider('mashupStyleWeight',  'mashupStyleWeightNum');
+        syncSlider('mashupWeirdness',    'mashupWeirdnessNum');
+        syncSlider('mashupAudioWeight',  'mashupAudioWeightNum');
+
+        // ── Status polling ────────────────────────────────────────────────
+        let pollingTimer = null;
+
+        function startPolling(taskId) {
+            document.getElementById('mashupTaskId').textContent     = taskId;
+            document.getElementById('mashupStartTime').textContent  = new Date().toLocaleTimeString();
+            document.getElementById('mashupTaskStatus').classList.remove('hidden');
+            document.getElementById('mashupTaskStatus').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            if (pollingTimer) clearInterval(pollingTimer);
+            pollingTimer = setInterval(() => pollStatus(taskId), 5000);
+            pollStatus(taskId);
+        }
+
+        async function pollStatus(taskId) {
+            try {
+                const res  = await fetch(`/api/task/${encodeURIComponent(taskId)}`);
+                const data = await res.json();
+                updateStatusUI(data);
+                const code = data?.data?.status ?? data?.status ?? '';
+                if (['complete', 'completed', 'error', 'failed'].includes(String(code).toLowerCase())) {
+                    clearInterval(pollingTimer);
+                    if (String(code).toLowerCase().includes('complete')) {
+                        showResults(data);
+                    }
+                }
+            } catch (err) {
+                console.warn('Poll error:', err);
+            }
+        }
+
+        function updateStatusUI(data) {
+            const d       = data?.data || data || {};
+            const status  = d.status ?? '';
+            const pct     = typeof d.progress === 'number' ? d.progress : 0;
+            const badge   = document.getElementById('mashupStatusBadge');
+            const prog    = document.getElementById('mashupStatusProgress');
+            const txt     = document.getElementById('mashupStatusText');
+
+            if (badge)  badge.textContent = status || 'Processing';
+            if (prog)   prog.value = pct;
+            if (txt)    txt.textContent = d.message || status || 'Working…';
+            const codeEl = document.getElementById('mashupStatusCode');
+            const audioEl= document.getElementById('mashupAudioId');
+            const cbEl   = document.getElementById('mashupCallbackType');
+            const msgEl  = document.getElementById('mashupStatusMessage');
+            if (codeEl)  codeEl.textContent  = d.status ?? '-';
+            if (audioEl) audioEl.textContent = d.audio_id ?? '-';
+            if (cbEl)    cbEl.textContent    = d.callback_type ?? '-';
+            if (msgEl)   msgEl.textContent   = d.message ?? '-';
+        }
+
+        function showResults(data) {
+            const audioList = data?.data?.data ?? data?.data ?? [];
+            const container = document.getElementById('mashupAudioPlayersContainer');
+            const template  = document.getElementById('mashupAudioPlayerTemplate');
+            const results   = document.getElementById('mashupResults');
+            if (!container || !template) return;
+
+            container.innerHTML = '';
+            const items = Array.isArray(audioList) ? audioList : [audioList];
+            items.forEach(item => {
+                if (!item?.audio_url) return;
+                const frag = template.content.cloneNode(true);
+                const el   = frag.firstElementChild;
+
+                el.querySelector('[data-title]').textContent   = item.title  || 'Mashup';
+                el.querySelector('[data-model]').textContent   = item.model_name || 'V4';
+                el.querySelector('[data-duration]').textContent= item.duration ? `${Math.round(item.duration)}s` : '';
+                el.querySelector('[data-audio]').src           = item.audio_url;
+                const audioUrlEl = el.querySelector('[data-audio-url]');
+                audioUrlEl.href        = item.audio_url;
+                audioUrlEl.textContent = item.audio_url;
+                const dlBtn = el.querySelector('[data-download-btn]');
+                dlBtn.addEventListener('click', () => {
+                    const a = document.createElement('a');
+                    a.href = item.audio_url; a.download = (item.title || 'mashup') + '.mp3';
+                    a.click();
+                });
+                if (item.image_url) {
+                    const img = el.querySelector('[data-image-display]');
+                    const placeholder = el.querySelector('[data-image-placeholder]');
+                    img.src = item.image_url; img.style.display = 'block';
+                    if (placeholder) placeholder.style.display = 'none';
+                }
+                el.querySelector('[data-lyrics]').textContent  = item.lyric || '-';
+                container.appendChild(frag);
+            });
+
+            results.classList.remove('hidden');
+            results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ── Refresh button ────────────────────────────────────────────────
+        document.getElementById('mashupRefreshBtn').addEventListener('click', () => {
+            const taskId = document.getElementById('mashupTaskId').textContent.trim();
+            if (taskId && taskId !== '-') pollStatus(taskId);
+        });
+
+        // ── Generate ──────────────────────────────────────────────────────
+        generateBtn.addEventListener('click', async () => {
+            const urlList = mashupHandler.getUploadUrlList();
+            if (!urlList) {
+                if (typeof showNotification === 'function') {
+                    showNotification('Please set an audio source for every track before generating.', 'error');
+                } else {
+                    alert('Please set an audio source for every track before generating.');
+                }
+                return;
+            }
+
+            const prompt       = document.getElementById('mashupPrompt').value.trim();
+            const model        = document.getElementById('mashupModelSelect').value;
+            const instrumental = document.getElementById('mashupInstrumental').checked;
+            const style        = isCustomMode ? (document.getElementById('mashupStyle').value.trim()  || undefined) : undefined;
+            const title        = isCustomMode ? (document.getElementById('mashupTitle').value.trim() || undefined) : undefined;
+            const vocalGender  = isCustomMode ? (document.getElementById('mashupVocalGender').value  || undefined) : undefined;
+            const styleWeight  = isCustomMode ? parseFloat(document.getElementById('mashupStyleWeightNum').value)  : undefined;
+            const weirdness    = isCustomMode ? parseFloat(document.getElementById('mashupWeirdnessNum').value)    : undefined;
+            const audioWeight  = isCustomMode ? parseFloat(document.getElementById('mashupAudioWeightNum').value)  : undefined;
+
+            const payload = {
+                uploadUrlList: urlList,
+                model,
+                customMode: isCustomMode,
+                prompt,
+                instrumental,
+                ...(style       !== undefined && { style }),
+                ...(title       !== undefined && { title }),
+                ...(vocalGender !== undefined && { vocalGender }),
+                ...(styleWeight !== undefined && { styleWeight }),
+                ...(weirdness   !== undefined && { weirdnessConstraint: weirdness }),
+                ...(audioWeight !== undefined && { audioWeight }),
+            };
+
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<span class="material-symbols-outlined mr-2 animate-spin">sync</span> Generating…';
+
+            try {
+                const res  = await fetch('/api/mashup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': window.csrfToken || '',
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const data = await res.json();
+
+                if (data?.code === 200 || data?.data?.taskId) {
+                    const taskId = data?.data?.taskId;
+                    startPolling(taskId);
+                } else {
+                    const msg = data?.msg || data?.error || 'Request failed';
+                    if (typeof showNotification === 'function') {
+                        showNotification(msg, 'error');
+                    } else {
+                        alert('Error: ' + msg);
+                    }
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = '<span class="material-symbols-outlined mr-2">merge</span> Generate Mashup';
+                }
+            } catch (err) {
+                if (typeof showNotification === 'function') {
+                    showNotification('Network error: ' + err.message, 'error');
+                } else {
+                    alert('Network error: ' + err.message);
+                }
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<span class="material-symbols-outlined mr-2">merge</span> Generate Mashup';
+            }
+        });
+
+    }); // DOMContentLoaded
+    </script>
+</body>
+</html>

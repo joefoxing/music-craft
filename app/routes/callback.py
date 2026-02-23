@@ -158,20 +158,30 @@ def callback_handler():
                     )
                 }
             
-            # Add to history
+            # Add to history, reusing any existing pending entry for this task
             history_service = HistoryService()
             try:
-                history_service.add_to_history(history_entry)
-                current_app.logger.info(f"Callback stored in history for task: {task_id}")
-                
-                # Also update existing entry if this is a progress update
-                if callback_type in ['text', 'first', 'complete', 'video_complete']:
-                    history_service.update_history_entry(task_id, {
-                        'last_callback_type': callback_type,
-                        'last_callback_time': DateTimeUtils.get_current_iso_timestamp(),
-                        'callback_progress': callback_type,
-                        'processed_data': processed_data
-                    })
+                existing = history_service.get_history_by_task_id(task_id)
+                pending_entry = next(
+                    (e for e in existing if e.get('callback_type') == 'pending'),
+                    None
+                )
+                if pending_entry:
+                    # Preserve metadata from the pending placeholder
+                    history_entry['id'] = pending_entry['id']
+                    history_entry['params'] = pending_entry.get('params')
+                    history_entry['generation_type'] = pending_entry.get('generation_type')
+                    # Update the entry in place using its id
+                    all_history = history_service.load_history()
+                    for idx, e in enumerate(all_history):
+                        if e.get('id') == pending_entry['id']:
+                            all_history[idx] = history_entry
+                            break
+                    history_service.save_history(all_history)
+                    current_app.logger.info(f"Updated pending entry for task: {task_id}")
+                else:
+                    history_service.add_to_history(history_entry)
+                    current_app.logger.info(f"Callback stored in history for task: {task_id}")
                     
             except Exception as history_error:
                 current_app.logger.error(f"Failed to store callback in history: {history_error}")

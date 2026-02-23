@@ -41,6 +41,13 @@ def cover_generator():
     return render_template('cover-generator.html', active_nav='cover-generator')
 
 
+@main_bp.route('/mashup')
+@login_required
+def mashup_page():
+    """Render the mashup generator page."""
+    return render_template('mashup.html', active_nav='mashup')
+
+
 @main_bp.route('/lyrics-extraction')
 def lyrics_extraction():
     """Render the lyrics extraction page."""
@@ -137,6 +144,22 @@ def vocal_removal():
     """Render the vocal removal page."""
     public_base_url = Config.get_public_base_url(request)
     return render_template('vocal-removal.html', active_nav='vocal-removal', public_base_url=public_base_url)
+
+
+@main_bp.route('/replace-section')
+@login_required
+def replace_section_page():
+    """Render the Replace Music Section page."""
+    public_base_url = Config.get_public_base_url(request)
+    prefill_task_id  = request.args.get('taskId', '')
+    prefill_audio_id = request.args.get('audioId', '')
+    return render_template(
+        'replace-section.html',
+        active_nav='replace-section',
+        public_base_url=public_base_url,
+        prefill_task_id=prefill_task_id,
+        prefill_audio_id=prefill_audio_id,
+    )
 
 
 @main_bp.route('/voice')

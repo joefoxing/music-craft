@@ -112,7 +112,15 @@ def create_app(test_config=None):
             return jsonify({'error': 'Authentication required'}), 401
         # Default behavior: redirect to login page
         return redirect(url_for(login_manager.login_view))
-    
+
+    @app.after_request
+    def prevent_redirect_caching(response):
+        """Ensure redirect responses are never cached by the browser."""
+        if response.status_code in (301, 302, 303, 307, 308):
+            response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate'
+            response.headers['Pragma'] = 'no-cache'
+        return response
+
     # Create database tables
     with app.app_context():
         # Import models to ensure they're registered with SQLAlchemy

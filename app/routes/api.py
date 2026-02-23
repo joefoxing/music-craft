@@ -4,6 +4,7 @@ Contains API endpoints for music generation, status checking, and downloads.
 """
 from flask import Blueprint, request, jsonify, current_app, Response
 import requests
+import uuid
 
 from app import limiter
 from app.config import Config
@@ -11,6 +12,31 @@ from app.core.api_client import KieAPIClient
 from app.core.utils import ResponseUtils, DateTimeUtils, URLUtils, FileUtils
 from app.core.validation import ModelValidator, ParameterValidator
 from app.services.usage_limits import check_allowed, is_successful_kie_response, record_usage
+from app.services.history_service import HistoryService
+
+
+def _save_pending_history(task_id: str, generation_type: str, params: dict) -> None:
+    """Save a pending history entry when a generation job is submitted."""
+    try:
+        history_service = HistoryService()
+        entry = {
+            'id': str(uuid.uuid4()),
+            'task_id': task_id,
+            'callback_type': 'pending',
+            'timestamp': DateTimeUtils.get_current_iso_timestamp(),
+            'status_code': None,
+            'status_message': 'Generation in progress',
+            'status': 'pending',
+            'generation_type': generation_type,
+            'params': params,
+            'is_video_callback': False,
+            'tracks_count': 0,
+            'has_audio_urls': False,
+            'has_image_urls': False,
+        }
+        history_service.add_to_history(entry)
+    except Exception as e:
+        current_app.logger.warning(f"Failed to save pending history entry: {e}")
 
 
 api_bp = Blueprint('api', __name__, url_prefix='/api')
@@ -112,6 +138,13 @@ def generate_music():
         if is_successful_kie_response(response):
             record_usage('generate_music', units=1)
             response['usage'] = usage_meta
+            task_id = response.get('data', {}).get('taskId')
+            if task_id:
+                _save_pending_history(task_id, 'generate_music', {
+                    'prompt': prompt, 'model': model,
+                    'custom_mode': custom_mode, 'instrumental': instrumental,
+                    'style': style, 'title': title
+                })
         else:
             _, usage_meta_now, _ = check_allowed(units=0)
             response['usage'] = usage_meta_now
@@ -208,6 +241,13 @@ def generate_music_direct():
         if is_successful_kie_response(response):
             record_usage('generate_music_direct', units=1)
             response['usage'] = usage_meta
+            task_id = response.get('data', {}).get('taskId')
+            if task_id:
+                _save_pending_history(task_id, 'generate_music_direct', {
+                    'prompt': prompt, 'model': model,
+                    'custom_mode': custom_mode, 'instrumental': instrumental,
+                    'style': style, 'title': title
+                })
         else:
             _, usage_meta_now, _ = check_allowed(units=0)
             response['usage'] = usage_meta_now
@@ -435,6 +475,11 @@ def generate_cover():
         title = data.get('title')
         call_back_url = data.get('call_back_url')
         
+        # If no callback URL provided, construct default from public base URL
+        if not call_back_url:
+            public_base_url = Config.get_public_base_url(request)
+            call_back_url = f"{public_base_url}/callback"
+        
         # Optional advanced parameters
         optional_params = {
             'negativeTags': data.get('negative_tags'),
@@ -486,6 +531,14 @@ def generate_cover():
         if is_successful_kie_response(response):
             record_usage('generate_cover', units=1)
             response['usage'] = usage_meta
+            task_id = response.get('data', {}).get('taskId')
+            if task_id:
+                _save_pending_history(task_id, 'generate_cover', {
+                    'prompt': prompt, 'model': model,
+                    'custom_mode': custom_mode, 'instrumental': instrumental,
+                    'style': style, 'title': title,
+                    'upload_url': upload_url
+                })
         else:
             _, usage_meta_now, _ = check_allowed(units=0)
             response['usage'] = usage_meta_now
@@ -539,6 +592,11 @@ def generate_extend():
         title = data.get('title')
         call_back_url = data.get('call_back_url')
         default_param_flag = data.get('default_param_flag', True)
+        
+        # If no callback URL provided, construct default from public base URL
+        if not call_back_url:
+            public_base_url = Config.get_public_base_url(request)
+            call_back_url = f"{public_base_url}/callback"
         
         # Optional advanced parameters
         optional_params = {
@@ -937,6 +995,323 @@ def vocal_removal():
         
     except Exception as e:
         current_app.logger.error(f"Error in vocal removal: {e}")
+        return jsonify(ResponseUtils.create_error_response(str(e))), 500
+
+
+@api_bp.route('/style-boost', methods=['POST'])
+@limiter.limit("20 per minute")
+def style_boost():
+    """Generate a music style description from keywords using Kie Style Boost API."""
+    try:
+        data = request.json
+        if not data:
+            return jsonify(ResponseUtils.create_error_response('No JSON data provided')), 400
+
+        content = data.get('content')
+        if not content:
+            return jsonify(ResponseUtils.create_error_response('content is required (e.g. "Pop, Mysterious")')), 400
+
+        allowed, usage_meta, status_code = check_allowed(units=1)
+        if not allowed:
+            payload = ResponseUtils.create_error_response(usage_meta.get('error', 'Usage limit exceeded'), status_code)
+            payload.update(usage_meta)
+            return jsonify(payload), status_code
+
+        client = KieAPIClient()
+        response = client.style_boost(content=content)
+
+        if is_successful_kie_response(response):
+            record_usage('style_boost', units=1)
+            response['usage'] = usage_meta
+        else:
+            _, usage_meta_now, _ = check_allowed(units=0)
+            response['usage'] = usage_meta_now
+
+        return jsonify(response)
+
+    except Exception as e:
+        current_app.logger.error(f"Error in style boost: {e}")
+        return jsonify(ResponseUtils.create_error_response(str(e))), 500
+
+
+@api_bp.route('/mashup', methods=['POST'])
+@limiter.limit("10 per minute")
+def mashup():
+    """Create a mashup from multiple audio files using Kie API."""
+    try:
+        data = request.json
+        if not data:
+            return jsonify(ResponseUtils.create_error_response('No JSON data provided')), 400
+
+        upload_url_list = data.get('uploadUrlList') or data.get('upload_url_list')
+        if not upload_url_list or not isinstance(upload_url_list, list) or len(upload_url_list) < 2:
+            return jsonify(ResponseUtils.create_error_response(
+                'uploadUrlList is required and must contain at least 2 URLs'
+            )), 400
+
+        prompt = data.get('prompt', '')
+        custom_mode = data.get('customMode', data.get('custom_mode', True))
+        model = data.get('model', 'V4')
+        instrumental = data.get('instrumental', False)
+        style = data.get('style')
+        title = data.get('title')
+        call_back_url = data.get('callBackUrl') or data.get('call_back_url')
+        vocal_gender = data.get('vocalGender') or data.get('vocal_gender')
+        style_weight = data.get('styleWeight') or data.get('style_weight')
+        weirdness_constraint = data.get('weirdnessConstraint') or data.get('weirdness_constraint')
+        audio_weight = data.get('audioWeight') or data.get('audio_weight')
+
+        if not call_back_url:
+            public_base_url = Config.get_public_base_url(request)
+            call_back_url = f"{public_base_url}/callback"
+
+        allowed, usage_meta, status_code = check_allowed(units=1)
+        if not allowed:
+            payload = ResponseUtils.create_error_response(usage_meta.get('error', 'Usage limit exceeded'), status_code)
+            payload.update(usage_meta)
+            return jsonify(payload), status_code
+
+        client = KieAPIClient()
+        response = client.mashup(
+            upload_url_list=upload_url_list,
+            model=model,
+            custom_mode=custom_mode,
+            prompt=prompt,
+            instrumental=instrumental,
+            call_back_url=call_back_url,
+            style=style,
+            title=title,
+            vocal_gender=vocal_gender,
+            style_weight=style_weight,
+            weirdness_constraint=weirdness_constraint,
+            audio_weight=audio_weight
+        )
+
+        if is_successful_kie_response(response):
+            record_usage('mashup', units=1)
+            response['usage'] = usage_meta
+        else:
+            _, usage_meta_now, _ = check_allowed(units=0)
+            response['usage'] = usage_meta_now
+
+        return jsonify(response)
+
+    except Exception as e:
+        current_app.logger.error(f"Error in mashup: {e}")
+        return jsonify(ResponseUtils.create_error_response(str(e))), 500
+
+
+@api_bp.route('/replace-section', methods=['POST'])
+@limiter.limit("10 per minute")
+def replace_section():
+    """Replace a section of a music track using Kie API."""
+    try:
+        data = request.json
+        if not data:
+            return jsonify(ResponseUtils.create_error_response('No JSON data provided')), 400
+
+        task_id = data.get('taskId') or data.get('task_id')
+        audio_id = data.get('audioId') or data.get('audio_id')
+        prompt = data.get('prompt')
+        infill_start_s = data.get('infillStartS') if data.get('infillStartS') is not None else data.get('infill_start_s')
+        infill_end_s = data.get('infillEndS') if data.get('infillEndS') is not None else data.get('infill_end_s')
+
+        if not task_id:
+            return jsonify(ResponseUtils.create_error_response('taskId is required')), 400
+        if not audio_id:
+            return jsonify(ResponseUtils.create_error_response('audioId is required')), 400
+        if not prompt:
+            return jsonify(ResponseUtils.create_error_response('prompt is required')), 400
+        if infill_start_s is None:
+            return jsonify(ResponseUtils.create_error_response('infillStartS is required')), 400
+        if infill_end_s is None:
+            return jsonify(ResponseUtils.create_error_response('infillEndS is required')), 400
+
+        try:
+            infill_start_s = float(infill_start_s)
+            infill_end_s = float(infill_end_s)
+        except (ValueError, TypeError):
+            return jsonify(ResponseUtils.create_error_response(
+                'infillStartS and infillEndS must be numeric (seconds)'
+            )), 400
+
+        if infill_start_s >= infill_end_s:
+            return jsonify(ResponseUtils.create_error_response(
+                'infillStartS must be less than infillEndS'
+            )), 400
+
+        tags = data.get('tags')
+        title = data.get('title')
+        negative_tags = data.get('negativeTags') or data.get('negative_tags')
+        full_lyrics = data.get('fullLyrics') or data.get('full_lyrics')
+        call_back_url = data.get('callBackUrl') or data.get('call_back_url')
+
+        if not call_back_url:
+            public_base_url = Config.get_public_base_url(request)
+            call_back_url = f"{public_base_url}/callback"
+
+        allowed, usage_meta, status_code = check_allowed(units=1)
+        if not allowed:
+            payload = ResponseUtils.create_error_response(usage_meta.get('error', 'Usage limit exceeded'), status_code)
+            payload.update(usage_meta)
+            return jsonify(payload), status_code
+
+        client = KieAPIClient()
+        response = client.replace_section(
+            task_id=task_id,
+            audio_id=audio_id,
+            prompt=prompt,
+            infill_start_s=infill_start_s,
+            infill_end_s=infill_end_s,
+            call_back_url=call_back_url,
+            tags=tags,
+            title=title,
+            negative_tags=negative_tags,
+            full_lyrics=full_lyrics
+        )
+
+        if is_successful_kie_response(response):
+            record_usage('replace_section', units=1)
+            response['usage'] = usage_meta
+        else:
+            _, usage_meta_now, _ = check_allowed(units=0)
+            response['usage'] = usage_meta_now
+
+        return jsonify(response)
+
+    except Exception as e:
+        current_app.logger.error(f"Error in replace section: {e}")
+        return jsonify(ResponseUtils.create_error_response(str(e))), 500
+
+
+@api_bp.route('/multi-stem-separation', methods=['POST'])
+@limiter.limit("5 per minute")
+def multi_stem_separation():
+    """Separate a track into multiple stems (vocals, drums, bass, etc.) using Kie API."""
+    try:
+        data = request.json
+        if not data:
+            return jsonify(ResponseUtils.create_error_response('No JSON data provided')), 400
+
+        task_id = data.get('taskId') or data.get('task_id')
+        audio_id = data.get('audioId') or data.get('audio_id')
+        separation_type = data.get('type', 'split_stem')
+
+        if not task_id:
+            return jsonify(ResponseUtils.create_error_response('taskId is required')), 400
+        if not audio_id:
+            return jsonify(ResponseUtils.create_error_response('audioId is required')), 400
+
+        valid_types = ('separate_vocal', 'split_stem')
+        if separation_type not in valid_types:
+            return jsonify(ResponseUtils.create_error_response(
+                f'type must be one of: {", ".join(valid_types)}'
+            )), 400
+
+        call_back_url = data.get('callBackUrl') or data.get('call_back_url')
+        if not call_back_url:
+            public_base_url = Config.get_public_base_url(request)
+            call_back_url = f"{public_base_url}/callback"
+
+        allowed, usage_meta, status_code = check_allowed(units=1)
+        if not allowed:
+            payload = ResponseUtils.create_error_response(usage_meta.get('error', 'Usage limit exceeded'), status_code)
+            payload.update(usage_meta)
+            return jsonify(payload), status_code
+
+        client = KieAPIClient()
+        response = client.multi_stem_separation(
+            task_id=task_id,
+            audio_id=audio_id,
+            separation_type=separation_type,
+            call_back_url=call_back_url
+        )
+
+        if is_successful_kie_response(response):
+            record_usage('multi_stem_separation', units=1)
+            response['usage'] = usage_meta
+        else:
+            _, usage_meta_now, _ = check_allowed(units=0)
+            response['usage'] = usage_meta_now
+
+        return jsonify(response)
+
+    except Exception as e:
+        current_app.logger.error(f"Error in multi-stem separation: {e}")
+        return jsonify(ResponseUtils.create_error_response(str(e))), 500
+
+
+@api_bp.route('/generate-persona', methods=['POST'])
+@limiter.limit("5 per minute")
+def generate_persona():
+    """Generate an AI singer persona from an existing track using Kie API."""
+    try:
+        data = request.json
+        if not data:
+            return jsonify(ResponseUtils.create_error_response('No JSON data provided')), 400
+
+        task_id = data.get('taskId') or data.get('task_id')
+        audio_id = data.get('audioId') or data.get('audio_id')
+        name = data.get('name')
+        description = data.get('description')
+        vocal_start = data.get('vocalStart') if data.get('vocalStart') is not None else data.get('vocal_start')
+        vocal_end = data.get('vocalEnd') if data.get('vocalEnd') is not None else data.get('vocal_end')
+        style = data.get('style')
+
+        if not task_id:
+            return jsonify(ResponseUtils.create_error_response('taskId is required')), 400
+        if not audio_id:
+            return jsonify(ResponseUtils.create_error_response('audioId is required')), 400
+        if not name:
+            return jsonify(ResponseUtils.create_error_response('name is required')), 400
+        if not description:
+            return jsonify(ResponseUtils.create_error_response('description is required')), 400
+        if vocal_start is None:
+            return jsonify(ResponseUtils.create_error_response('vocalStart is required')), 400
+        if vocal_end is None:
+            return jsonify(ResponseUtils.create_error_response('vocalEnd is required')), 400
+
+        try:
+            vocal_start = float(vocal_start)
+            vocal_end = float(vocal_end)
+        except (ValueError, TypeError):
+            return jsonify(ResponseUtils.create_error_response(
+                'vocalStart and vocalEnd must be numeric (seconds)'
+            )), 400
+
+        if vocal_start >= vocal_end:
+            return jsonify(ResponseUtils.create_error_response(
+                'vocalStart must be less than vocalEnd'
+            )), 400
+
+        allowed, usage_meta, status_code = check_allowed(units=1)
+        if not allowed:
+            payload = ResponseUtils.create_error_response(usage_meta.get('error', 'Usage limit exceeded'), status_code)
+            payload.update(usage_meta)
+            return jsonify(payload), status_code
+
+        client = KieAPIClient()
+        response = client.generate_persona(
+            task_id=task_id,
+            audio_id=audio_id,
+            name=name,
+            description=description,
+            vocal_start=vocal_start,
+            vocal_end=vocal_end,
+            style=style
+        )
+
+        if is_successful_kie_response(response):
+            record_usage('generate_persona', units=1)
+            response['usage'] = usage_meta
+        else:
+            _, usage_meta_now, _ = check_allowed(units=0)
+            response['usage'] = usage_meta_now
+
+        return jsonify(response)
+
+    except Exception as e:
+        current_app.logger.error(f"Error in generate persona: {e}")
         return jsonify(ResponseUtils.create_error_response(str(e))), 500
 
 

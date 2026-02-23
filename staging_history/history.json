@@ -1,0 +1,1186 @@
+[
+  {
+    "id": "b26c0d57-5e4e-434e-b47d-079e12c39795",
+    "task_id": "54f040ee4e5ba8da55c5f9eb5ef0a6d8",
+    "callback_type": "complete",
+    "timestamp": "2026-02-23T02:50:04.209954",
+    "status_code": 200,
+    "status_message": "All generated successfully.",
+    "status": "success",
+    "processed_data": {
+      "raw_data": {
+        "code": 200,
+        "data": {
+          "callbackType": "complete",
+          "data": [
+            {
+              "audio_url": "https://tempfile.aiquickdraw.com/r/d0ccd0217d9645b5b315a780740ff348.mp3",
+              "createTime": 1771815004029,
+              "duration": 246.4,
+              "id": "c8ce598e-2ef5-4e77-bb26-37827b9d4bab",
+              "image_url": "https://musicfile.kie.ai/YzhjZTU5OGUtMmVmNS00ZTc3LWJiMjYtMzc4MjdiOWQ0YmFi.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "D\u00ecu em \u0111\u1ebfn \u0111em cho \u0111\u1eddi anh th\u00f4i hoang v\u1eafng\nTim ta say \u0111\u1eafm \u0111\u00e3 y\u00eau em tr\u1ecdn cu\u1ed9c t\u00ecnh\nD\u00f2ng th\u00e1ng n\u0103m \u0111\u00f3 \u0111\u00e3 cho t\u00ecnh y\u00eau em tha thi\u1ebft\nNh\u1eefng \u00e1i \u00e2n \u0111\u1ec3 ph\u00f4i pha\n\u0110\u00e0nh v\u1edbi duy\u00ean ki\u1ebfp, em b\u01b0\u1edbc \u0111i trong chi\u1ec1u m\u01b0a r\u01a1i\nL\u1eb7ng \u0111\u1ee9ng tr\u00ean b\u1ebfn, anh v\u1edbi tr\u00f4ng thuy\u1ec1n ra kh\u01a1i\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfm l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb ri\u00eang m\u00ecnh anh l\u1ea1c m\u1ea5t m\u00f9a xu\u00e2n\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n b\u00e2ng khu\u00e2ng\nB\u00ean song anh tr\u00f4ng \u0111\u1ea7u non tr\u0103ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo s\u00f4ng n\u01b0\u1edbc\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nT\u01b0\u01a1ng t\u01b0 v\u1ec1 th\u01b0\u01a1ng \u0111\u00f4i m\u1eaft n\u00e2u\n\u0110\u00eam \u0111\u00eam t\u00ecm trong m\u00e0n t\u1ed1i mu\u00f4n sao\n\nNg\u1ed3i su\u1ed1t canh v\u1eafng l\u00e3ng qu\u00ean s\u1ea7u th\u01b0\u01a1ng trong men \u0111\u1eafng\nC\u01a1n say m\u00ea \u0111\u1eafm s\u00f3ng d\u00e2ng cao ng\u1ecdn th\u1ee7y tri\u1ec1u\nR\u1ed3i th\u1ea5y th\u1ea5p tho\u00e1ng b\u00f3ng em v\u1ec1 ch\u00ecm trong \u0111\u00e1y c\u1ed1c\n\u0110\u00f4i m\u1eaft \u01b0u bu\u1ed3n thi\u00ean thu\nR\u1ed3i n\u1eafng mai \u0111\u1ebfn m\u00e2y tr\u1eafng bay khi t\u00e0n c\u01a1n say\nT\u00ecnh \u0111\u00e3 xa v\u1eafng n\u1ed7i nh\u1edb v\u1eabn c\u00f2n \u0111\u00e2u \u0111\u00e2y\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfn l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau\n\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau",
+              "source_audio_url": "https://tempfile.aiquickdraw.com/r/d0ccd0217d9645b5b315a780740ff348.mp3",
+              "source_image_url": "https://cdn2.suno.ai/image_c8ce598e-2ef5-4e77-bb26-37827b9d4bab.jpeg",
+              "source_stream_audio_url": "https://cdn1.suno.ai/c8ce598e-2ef5-4e77-bb26-37827b9d4bab.mp3",
+              "stream_audio_url": "https://musicfile.kie.ai/YzhjZTU5OGUtMmVmNS00ZTc3LWJiMjYtMzc4MjdiOWQ0YmFi",
+              "tags": "Electronic House, Trance, Pop",
+              "title": "Lac Mat Mua Xuan (House Remix)"
+            },
+            {
+              "audio_url": "https://tempfile.aiquickdraw.com/r/cda2cbfe9f13404c814feb958707a7ad.mp3",
+              "createTime": 1771815004029,
+              "duration": 242.2,
+              "id": "a93de5f8-c6ab-435b-85f0-82cbd61d9114",
+              "image_url": "https://musicfile.kie.ai/YTkzZGU1ZjgtYzZhYi00MzViLTg1ZjAtODJjYmQ2MWQ5MTE0.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "D\u00ecu em \u0111\u1ebfn \u0111em cho \u0111\u1eddi anh th\u00f4i hoang v\u1eafng\nTim ta say \u0111\u1eafm \u0111\u00e3 y\u00eau em tr\u1ecdn cu\u1ed9c t\u00ecnh\nD\u00f2ng th\u00e1ng n\u0103m \u0111\u00f3 \u0111\u00e3 cho t\u00ecnh y\u00eau em tha thi\u1ebft\nNh\u1eefng \u00e1i \u00e2n \u0111\u1ec3 ph\u00f4i pha\n\u0110\u00e0nh v\u1edbi duy\u00ean ki\u1ebfp, em b\u01b0\u1edbc \u0111i trong chi\u1ec1u m\u01b0a r\u01a1i\nL\u1eb7ng \u0111\u1ee9ng tr\u00ean b\u1ebfn, anh v\u1edbi tr\u00f4ng thuy\u1ec1n ra kh\u01a1i\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfm l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb ri\u00eang m\u00ecnh anh l\u1ea1c m\u1ea5t m\u00f9a xu\u00e2n\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n b\u00e2ng khu\u00e2ng\nB\u00ean song anh tr\u00f4ng \u0111\u1ea7u non tr\u0103ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo s\u00f4ng n\u01b0\u1edbc\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nT\u01b0\u01a1ng t\u01b0 v\u1ec1 th\u01b0\u01a1ng \u0111\u00f4i m\u1eaft n\u00e2u\n\u0110\u00eam \u0111\u00eam t\u00ecm trong m\u00e0n t\u1ed1i mu\u00f4n sao\n\nNg\u1ed3i su\u1ed1t canh v\u1eafng l\u00e3ng qu\u00ean s\u1ea7u th\u01b0\u01a1ng trong men \u0111\u1eafng\nC\u01a1n say m\u00ea \u0111\u1eafm s\u00f3ng d\u00e2ng cao ng\u1ecdn th\u1ee7y tri\u1ec1u\nR\u1ed3i th\u1ea5y th\u1ea5p tho\u00e1ng b\u00f3ng em v\u1ec1 ch\u00ecm trong \u0111\u00e1y c\u1ed1c\n\u0110\u00f4i m\u1eaft \u01b0u bu\u1ed3n thi\u00ean thu\nR\u1ed3i n\u1eafng mai \u0111\u1ebfn m\u00e2y tr\u1eafng bay khi t\u00e0n c\u01a1n say\nT\u00ecnh \u0111\u00e3 xa v\u1eafng n\u1ed7i nh\u1edb v\u1eabn c\u00f2n \u0111\u00e2u \u0111\u00e2y\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfn l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau\n\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau",
+              "source_audio_url": "https://tempfile.aiquickdraw.com/r/cda2cbfe9f13404c814feb958707a7ad.mp3",
+              "source_image_url": "https://cdn2.suno.ai/image_a93de5f8-c6ab-435b-85f0-82cbd61d9114.jpeg",
+              "source_stream_audio_url": "https://cdn1.suno.ai/a93de5f8-c6ab-435b-85f0-82cbd61d9114.mp3",
+              "stream_audio_url": "https://musicfile.kie.ai/YTkzZGU1ZjgtYzZhYi00MzViLTg1ZjAtODJjYmQ2MWQ5MTE0",
+              "tags": "Electronic House, Trance, Pop",
+              "title": "Lac Mat Mua Xuan (House Remix)"
+            }
+          ],
+          "task_id": "54f040ee4e5ba8da55c5f9eb5ef0a6d8"
+        },
+        "msg": "All generated successfully."
+      },
+      "code": 200,
+      "message": "All generated successfully.",
+      "timestamp": "2026-02-23T02:50:04.209636",
+      "callback_type": "complete",
+      "task_id": "54f040ee4e5ba8da55c5f9eb5ef0a6d8",
+      "tracks": [
+        {
+          "track_number": 1,
+          "id": "c8ce598e-2ef5-4e77-bb26-37827b9d4bab",
+          "title": "Lac Mat Mua Xuan (House Remix)",
+          "model_name": "chirp-crow",
+          "tags": "Electronic House, Trance, Pop",
+          "duration": 246.4,
+          "create_time": 1771815004029,
+          "prompt": "D\u00ecu em \u0111\u1ebfn \u0111em cho \u0111\u1eddi anh th\u00f4i hoang v\u1eafng\nTim ta say \u0111\u1eafm \u0111\u00e3 y\u00eau em tr\u1ecdn cu\u1ed9c t\u00ecnh\nD\u00f2ng th\u00e1ng n\u0103m \u0111\u00f3 \u0111\u00e3 cho t\u00ecnh y\u00eau em tha thi\u1ebft\nNh\u1eefng \u00e1i \u00e2n \u0111\u1ec3 ph\u00f4i pha\n\u0110\u00e0nh v\u1edbi duy\u00ean ki\u1ebfp, em b\u01b0\u1edbc \u0111i trong chi\u1ec1u m\u01b0a r\u01a1i\nL\u1eb7ng \u0111\u1ee9ng tr\u00ean b\u1ebfn, anh v\u1edbi tr\u00f4ng thuy\u1ec1n ra kh\u01a1i\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfm l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb ri\u00eang m\u00ecnh anh l\u1ea1c m\u1ea5t m\u00f9a xu\u00e2n\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n b\u00e2ng khu\u00e2ng\nB\u00ean song anh tr\u00f4ng \u0111\u1ea7u non tr\u0103ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo s\u00f4ng n\u01b0\u1edbc\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nT\u01b0\u01a1ng t\u01b0 v\u1ec1 th\u01b0\u01a1ng \u0111\u00f4i m\u1eaft n\u00e2u\n\u0110\u00eam \u0111\u00eam t\u00ecm trong m\u00e0n t\u1ed1i mu\u00f4n sao\n\nNg\u1ed3i su\u1ed1t canh v\u1eafng l\u00e3ng qu\u00ean s\u1ea7u th\u01b0\u01a1ng trong men \u0111\u1eafng\nC\u01a1n say m\u00ea \u0111\u1eafm s\u00f3ng d\u00e2ng cao ng\u1ecdn th\u1ee7y tri\u1ec1u\nR\u1ed3i th\u1ea5y th\u1ea5p tho\u00e1ng b\u00f3ng em v\u1ec1 ch\u00ecm trong \u0111\u00e1y c\u1ed1c\n\u0110\u00f4i m\u1eaft \u01b0u bu\u1ed3n thi\u00ean thu\nR\u1ed3i n\u1eafng mai \u0111\u1ebfn m\u00e2y tr\u1eafng bay khi t\u00e0n c\u01a1n say\nT\u00ecnh \u0111\u00e3 xa v\u1eafng n\u1ed7i nh\u1edb v\u1eabn c\u00f2n \u0111\u00e2u \u0111\u00e2y\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfn l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau\n\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau",
+          "audio_urls": {
+            "generated": "https://tempfile.aiquickdraw.com/r/d0ccd0217d9645b5b315a780740ff348.mp3",
+            "source": "https://tempfile.aiquickdraw.com/r/d0ccd0217d9645b5b315a780740ff348.mp3",
+            "stream": "https://musicfile.kie.ai/YzhjZTU5OGUtMmVmNS00ZTc3LWJiMjYtMzc4MjdiOWQ0YmFi",
+            "source_stream": "https://cdn1.suno.ai/c8ce598e-2ef5-4e77-bb26-37827b9d4bab.mp3"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/YzhjZTU5OGUtMmVmNS00ZTc3LWJiMjYtMzc4MjdiOWQ0YmFi.jpeg",
+            "source": "https://cdn2.suno.ai/image_c8ce598e-2ef5-4e77-bb26-37827b9d4bab.jpeg"
+          }
+        },
+        {
+          "track_number": 2,
+          "id": "a93de5f8-c6ab-435b-85f0-82cbd61d9114",
+          "title": "Lac Mat Mua Xuan (House Remix)",
+          "model_name": "chirp-crow",
+          "tags": "Electronic House, Trance, Pop",
+          "duration": 242.2,
+          "create_time": 1771815004029,
+          "prompt": "D\u00ecu em \u0111\u1ebfn \u0111em cho \u0111\u1eddi anh th\u00f4i hoang v\u1eafng\nTim ta say \u0111\u1eafm \u0111\u00e3 y\u00eau em tr\u1ecdn cu\u1ed9c t\u00ecnh\nD\u00f2ng th\u00e1ng n\u0103m \u0111\u00f3 \u0111\u00e3 cho t\u00ecnh y\u00eau em tha thi\u1ebft\nNh\u1eefng \u00e1i \u00e2n \u0111\u1ec3 ph\u00f4i pha\n\u0110\u00e0nh v\u1edbi duy\u00ean ki\u1ebfp, em b\u01b0\u1edbc \u0111i trong chi\u1ec1u m\u01b0a r\u01a1i\nL\u1eb7ng \u0111\u1ee9ng tr\u00ean b\u1ebfn, anh v\u1edbi tr\u00f4ng thuy\u1ec1n ra kh\u01a1i\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfm l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb ri\u00eang m\u00ecnh anh l\u1ea1c m\u1ea5t m\u00f9a xu\u00e2n\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n b\u00e2ng khu\u00e2ng\nB\u00ean song anh tr\u00f4ng \u0111\u1ea7u non tr\u0103ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo s\u00f4ng n\u01b0\u1edbc\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nT\u01b0\u01a1ng t\u01b0 v\u1ec1 th\u01b0\u01a1ng \u0111\u00f4i m\u1eaft n\u00e2u\n\u0110\u00eam \u0111\u00eam t\u00ecm trong m\u00e0n t\u1ed1i mu\u00f4n sao\n\nNg\u1ed3i su\u1ed1t canh v\u1eafng l\u00e3ng qu\u00ean s\u1ea7u th\u01b0\u01a1ng trong men \u0111\u1eafng\nC\u01a1n say m\u00ea \u0111\u1eafm s\u00f3ng d\u00e2ng cao ng\u1ecdn th\u1ee7y tri\u1ec1u\nR\u1ed3i th\u1ea5y th\u1ea5p tho\u00e1ng b\u00f3ng em v\u1ec1 ch\u00ecm trong \u0111\u00e1y c\u1ed1c\n\u0110\u00f4i m\u1eaft \u01b0u bu\u1ed3n thi\u00ean thu\nR\u1ed3i n\u1eafng mai \u0111\u1ebfn m\u00e2y tr\u1eafng bay khi t\u00e0n c\u01a1n say\nT\u00ecnh \u0111\u00e3 xa v\u1eafng n\u1ed7i nh\u1edb v\u1eabn c\u00f2n \u0111\u00e2u \u0111\u00e2y\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfn l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau\n\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau",
+          "audio_urls": {
+            "generated": "https://tempfile.aiquickdraw.com/r/cda2cbfe9f13404c814feb958707a7ad.mp3",
+            "source": "https://tempfile.aiquickdraw.com/r/cda2cbfe9f13404c814feb958707a7ad.mp3",
+            "stream": "https://musicfile.kie.ai/YTkzZGU1ZjgtYzZhYi00MzViLTg1ZjAtODJjYmQ2MWQ5MTE0",
+            "source_stream": "https://cdn1.suno.ai/a93de5f8-c6ab-435b-85f0-82cbd61d9114.mp3"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/YTkzZGU1ZjgtYzZhYi00MzViLTg1ZjAtODJjYmQ2MWQ5MTE0.jpeg",
+            "source": "https://cdn2.suno.ai/image_a93de5f8-c6ab-435b-85f0-82cbd61d9114.jpeg"
+          }
+        }
+      ],
+      "is_video_callback": false,
+      "status": "success"
+    },
+    "raw_data": {
+      "code": 200,
+      "data": {
+        "callbackType": "complete",
+        "data": [
+          {
+            "audio_url": "https://tempfile.aiquickdraw.com/r/d0ccd0217d9645b5b315a780740ff348.mp3",
+            "createTime": 1771815004029,
+            "duration": 246.4,
+            "id": "c8ce598e-2ef5-4e77-bb26-37827b9d4bab",
+            "image_url": "https://musicfile.kie.ai/YzhjZTU5OGUtMmVmNS00ZTc3LWJiMjYtMzc4MjdiOWQ0YmFi.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "D\u00ecu em \u0111\u1ebfn \u0111em cho \u0111\u1eddi anh th\u00f4i hoang v\u1eafng\nTim ta say \u0111\u1eafm \u0111\u00e3 y\u00eau em tr\u1ecdn cu\u1ed9c t\u00ecnh\nD\u00f2ng th\u00e1ng n\u0103m \u0111\u00f3 \u0111\u00e3 cho t\u00ecnh y\u00eau em tha thi\u1ebft\nNh\u1eefng \u00e1i \u00e2n \u0111\u1ec3 ph\u00f4i pha\n\u0110\u00e0nh v\u1edbi duy\u00ean ki\u1ebfp, em b\u01b0\u1edbc \u0111i trong chi\u1ec1u m\u01b0a r\u01a1i\nL\u1eb7ng \u0111\u1ee9ng tr\u00ean b\u1ebfn, anh v\u1edbi tr\u00f4ng thuy\u1ec1n ra kh\u01a1i\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfm l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb ri\u00eang m\u00ecnh anh l\u1ea1c m\u1ea5t m\u00f9a xu\u00e2n\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n b\u00e2ng khu\u00e2ng\nB\u00ean song anh tr\u00f4ng \u0111\u1ea7u non tr\u0103ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo s\u00f4ng n\u01b0\u1edbc\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nT\u01b0\u01a1ng t\u01b0 v\u1ec1 th\u01b0\u01a1ng \u0111\u00f4i m\u1eaft n\u00e2u\n\u0110\u00eam \u0111\u00eam t\u00ecm trong m\u00e0n t\u1ed1i mu\u00f4n sao\n\nNg\u1ed3i su\u1ed1t canh v\u1eafng l\u00e3ng qu\u00ean s\u1ea7u th\u01b0\u01a1ng trong men \u0111\u1eafng\nC\u01a1n say m\u00ea \u0111\u1eafm s\u00f3ng d\u00e2ng cao ng\u1ecdn th\u1ee7y tri\u1ec1u\nR\u1ed3i th\u1ea5y th\u1ea5p tho\u00e1ng b\u00f3ng em v\u1ec1 ch\u00ecm trong \u0111\u00e1y c\u1ed1c\n\u0110\u00f4i m\u1eaft \u01b0u bu\u1ed3n thi\u00ean thu\nR\u1ed3i n\u1eafng mai \u0111\u1ebfn m\u00e2y tr\u1eafng bay khi t\u00e0n c\u01a1n say\nT\u00ecnh \u0111\u00e3 xa v\u1eafng n\u1ed7i nh\u1edb v\u1eabn c\u00f2n \u0111\u00e2u \u0111\u00e2y\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfn l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau\n\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau",
+            "source_audio_url": "https://tempfile.aiquickdraw.com/r/d0ccd0217d9645b5b315a780740ff348.mp3",
+            "source_image_url": "https://cdn2.suno.ai/image_c8ce598e-2ef5-4e77-bb26-37827b9d4bab.jpeg",
+            "source_stream_audio_url": "https://cdn1.suno.ai/c8ce598e-2ef5-4e77-bb26-37827b9d4bab.mp3",
+            "stream_audio_url": "https://musicfile.kie.ai/YzhjZTU5OGUtMmVmNS00ZTc3LWJiMjYtMzc4MjdiOWQ0YmFi",
+            "tags": "Electronic House, Trance, Pop",
+            "title": "Lac Mat Mua Xuan (House Remix)"
+          },
+          {
+            "audio_url": "https://tempfile.aiquickdraw.com/r/cda2cbfe9f13404c814feb958707a7ad.mp3",
+            "createTime": 1771815004029,
+            "duration": 242.2,
+            "id": "a93de5f8-c6ab-435b-85f0-82cbd61d9114",
+            "image_url": "https://musicfile.kie.ai/YTkzZGU1ZjgtYzZhYi00MzViLTg1ZjAtODJjYmQ2MWQ5MTE0.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "D\u00ecu em \u0111\u1ebfn \u0111em cho \u0111\u1eddi anh th\u00f4i hoang v\u1eafng\nTim ta say \u0111\u1eafm \u0111\u00e3 y\u00eau em tr\u1ecdn cu\u1ed9c t\u00ecnh\nD\u00f2ng th\u00e1ng n\u0103m \u0111\u00f3 \u0111\u00e3 cho t\u00ecnh y\u00eau em tha thi\u1ebft\nNh\u1eefng \u00e1i \u00e2n \u0111\u1ec3 ph\u00f4i pha\n\u0110\u00e0nh v\u1edbi duy\u00ean ki\u1ebfp, em b\u01b0\u1edbc \u0111i trong chi\u1ec1u m\u01b0a r\u01a1i\nL\u1eb7ng \u0111\u1ee9ng tr\u00ean b\u1ebfn, anh v\u1edbi tr\u00f4ng thuy\u1ec1n ra kh\u01a1i\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfm l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb ri\u00eang m\u00ecnh anh l\u1ea1c m\u1ea5t m\u00f9a xu\u00e2n\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n b\u00e2ng khu\u00e2ng\nB\u00ean song anh tr\u00f4ng \u0111\u1ea7u non tr\u0103ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo s\u00f4ng n\u01b0\u1edbc\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nT\u01b0\u01a1ng t\u01b0 v\u1ec1 th\u01b0\u01a1ng \u0111\u00f4i m\u1eaft n\u00e2u\n\u0110\u00eam \u0111\u00eam t\u00ecm trong m\u00e0n t\u1ed1i mu\u00f4n sao\n\nNg\u1ed3i su\u1ed1t canh v\u1eafng l\u00e3ng qu\u00ean s\u1ea7u th\u01b0\u01a1ng trong men \u0111\u1eafng\nC\u01a1n say m\u00ea \u0111\u1eafm s\u00f3ng d\u00e2ng cao ng\u1ecdn th\u1ee7y tri\u1ec1u\nR\u1ed3i th\u1ea5y th\u1ea5p tho\u00e1ng b\u00f3ng em v\u1ec1 ch\u00ecm trong \u0111\u00e1y c\u1ed1c\n\u0110\u00f4i m\u1eaft \u01b0u bu\u1ed3n thi\u00ean thu\nR\u1ed3i n\u1eafng mai \u0111\u1ebfn m\u00e2y tr\u1eafng bay khi t\u00e0n c\u01a1n say\nT\u00ecnh \u0111\u00e3 xa v\u1eafng n\u1ed7i nh\u1edb v\u1eabn c\u00f2n \u0111\u00e2u \u0111\u00e2y\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfn l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau\n\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau",
+            "source_audio_url": "https://tempfile.aiquickdraw.com/r/cda2cbfe9f13404c814feb958707a7ad.mp3",
+            "source_image_url": "https://cdn2.suno.ai/image_a93de5f8-c6ab-435b-85f0-82cbd61d9114.jpeg",
+            "source_stream_audio_url": "https://cdn1.suno.ai/a93de5f8-c6ab-435b-85f0-82cbd61d9114.mp3",
+            "stream_audio_url": "https://musicfile.kie.ai/YTkzZGU1ZjgtYzZhYi00MzViLTg1ZjAtODJjYmQ2MWQ5MTE0",
+            "tags": "Electronic House, Trance, Pop",
+            "title": "Lac Mat Mua Xuan (House Remix)"
+          }
+        ],
+        "task_id": "54f040ee4e5ba8da55c5f9eb5ef0a6d8"
+      },
+      "msg": "All generated successfully."
+    },
+    "is_video_callback": false,
+    "tracks_count": 2,
+    "has_audio_urls": true,
+    "has_image_urls": true,
+    "last_callback_type": "complete",
+    "last_callback_time": "2026-02-23T02:50:04.214762",
+    "callback_progress": "complete",
+    "last_updated": "2026-02-23T02:50:04.215436"
+  },
+  {
+    "id": "bfdad207-891f-4418-b00c-5440d37e7188",
+    "task_id": "54f040ee4e5ba8da55c5f9eb5ef0a6d8",
+    "callback_type": "text",
+    "timestamp": "2026-02-23T02:47:48.168274",
+    "status_code": 200,
+    "status_message": "Text generated successfully.",
+    "status": "success",
+    "processed_data": {
+      "raw_data": {
+        "code": 200,
+        "data": {
+          "callbackType": "text",
+          "data": [
+            {
+              "audio_url": "",
+              "createTime": 1771814867980,
+              "id": "c8ce598e-2ef5-4e77-bb26-37827b9d4bab",
+              "image_url": "https://musicfile.kie.ai/YzhjZTU5OGUtMmVmNS00ZTc3LWJiMjYtMzc4MjdiOWQ0YmFi.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "D\u00ecu em \u0111\u1ebfn \u0111em cho \u0111\u1eddi anh th\u00f4i hoang v\u1eafng\nTim ta say \u0111\u1eafm \u0111\u00e3 y\u00eau em tr\u1ecdn cu\u1ed9c t\u00ecnh\nD\u00f2ng th\u00e1ng n\u0103m \u0111\u00f3 \u0111\u00e3 cho t\u00ecnh y\u00eau em tha thi\u1ebft\nNh\u1eefng \u00e1i \u00e2n \u0111\u1ec3 ph\u00f4i pha\n\u0110\u00e0nh v\u1edbi duy\u00ean ki\u1ebfp, em b\u01b0\u1edbc \u0111i trong chi\u1ec1u m\u01b0a r\u01a1i\nL\u1eb7ng \u0111\u1ee9ng tr\u00ean b\u1ebfn, anh v\u1edbi tr\u00f4ng thuy\u1ec1n ra kh\u01a1i\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfm l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb ri\u00eang m\u00ecnh anh l\u1ea1c m\u1ea5t m\u00f9a xu\u00e2n\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n b\u00e2ng khu\u00e2ng\nB\u00ean song anh tr\u00f4ng \u0111\u1ea7u non tr\u0103ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo s\u00f4ng n\u01b0\u1edbc\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nT\u01b0\u01a1ng t\u01b0 v\u1ec1 th\u01b0\u01a1ng \u0111\u00f4i m\u1eaft n\u00e2u\n\u0110\u00eam \u0111\u00eam t\u00ecm trong m\u00e0n t\u1ed1i mu\u00f4n sao\n\nNg\u1ed3i su\u1ed1t canh v\u1eafng l\u00e3ng qu\u00ean s\u1ea7u th\u01b0\u01a1ng trong men \u0111\u1eafng\nC\u01a1n say m\u00ea \u0111\u1eafm s\u00f3ng d\u00e2ng cao ng\u1ecdn th\u1ee7y tri\u1ec1u\nR\u1ed3i th\u1ea5y th\u1ea5p tho\u00e1ng b\u00f3ng em v\u1ec1 ch\u00ecm trong \u0111\u00e1y c\u1ed1c\n\u0110\u00f4i m\u1eaft \u01b0u bu\u1ed3n thi\u00ean thu\nR\u1ed3i n\u1eafng mai \u0111\u1ebfn m\u00e2y tr\u1eafng bay khi t\u00e0n c\u01a1n say\nT\u00ecnh \u0111\u00e3 xa v\u1eafng n\u1ed7i nh\u1edb v\u1eabn c\u00f2n \u0111\u00e2u \u0111\u00e2y\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfn l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau\n\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau",
+              "source_image_url": "https://cdn2.suno.ai/image_c8ce598e-2ef5-4e77-bb26-37827b9d4bab.jpeg",
+              "source_stream_audio_url": "https://audiopipe.suno.ai/?item_id=c8ce598e-2ef5-4e77-bb26-37827b9d4bab",
+              "stream_audio_url": "https://musicfile.kie.ai/YzhjZTU5OGUtMmVmNS00ZTc3LWJiMjYtMzc4MjdiOWQ0YmFi",
+              "tags": "Electronic House, Trance, Pop",
+              "title": "Lac Mat Mua Xuan (House Remix)"
+            },
+            {
+              "audio_url": "",
+              "createTime": 1771814867980,
+              "id": "a93de5f8-c6ab-435b-85f0-82cbd61d9114",
+              "image_url": "https://musicfile.kie.ai/YTkzZGU1ZjgtYzZhYi00MzViLTg1ZjAtODJjYmQ2MWQ5MTE0.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "D\u00ecu em \u0111\u1ebfn \u0111em cho \u0111\u1eddi anh th\u00f4i hoang v\u1eafng\nTim ta say \u0111\u1eafm \u0111\u00e3 y\u00eau em tr\u1ecdn cu\u1ed9c t\u00ecnh\nD\u00f2ng th\u00e1ng n\u0103m \u0111\u00f3 \u0111\u00e3 cho t\u00ecnh y\u00eau em tha thi\u1ebft\nNh\u1eefng \u00e1i \u00e2n \u0111\u1ec3 ph\u00f4i pha\n\u0110\u00e0nh v\u1edbi duy\u00ean ki\u1ebfp, em b\u01b0\u1edbc \u0111i trong chi\u1ec1u m\u01b0a r\u01a1i\nL\u1eb7ng \u0111\u1ee9ng tr\u00ean b\u1ebfn, anh v\u1edbi tr\u00f4ng thuy\u1ec1n ra kh\u01a1i\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfm l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb ri\u00eang m\u00ecnh anh l\u1ea1c m\u1ea5t m\u00f9a xu\u00e2n\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n b\u00e2ng khu\u00e2ng\nB\u00ean song anh tr\u00f4ng \u0111\u1ea7u non tr\u0103ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo s\u00f4ng n\u01b0\u1edbc\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nT\u01b0\u01a1ng t\u01b0 v\u1ec1 th\u01b0\u01a1ng \u0111\u00f4i m\u1eaft n\u00e2u\n\u0110\u00eam \u0111\u00eam t\u00ecm trong m\u00e0n t\u1ed1i mu\u00f4n sao\n\nNg\u1ed3i su\u1ed1t canh v\u1eafng l\u00e3ng qu\u00ean s\u1ea7u th\u01b0\u01a1ng trong men \u0111\u1eafng\nC\u01a1n say m\u00ea \u0111\u1eafm s\u00f3ng d\u00e2ng cao ng\u1ecdn th\u1ee7y tri\u1ec1u\nR\u1ed3i th\u1ea5y th\u1ea5p tho\u00e1ng b\u00f3ng em v\u1ec1 ch\u00ecm trong \u0111\u00e1y c\u1ed1c\n\u0110\u00f4i m\u1eaft \u01b0u bu\u1ed3n thi\u00ean thu\nR\u1ed3i n\u1eafng mai \u0111\u1ebfn m\u00e2y tr\u1eafng bay khi t\u00e0n c\u01a1n say\nT\u00ecnh \u0111\u00e3 xa v\u1eafng n\u1ed7i nh\u1edb v\u1eabn c\u00f2n \u0111\u00e2u \u0111\u00e2y\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfn l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau\n\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau",
+              "source_image_url": "https://cdn2.suno.ai/image_a93de5f8-c6ab-435b-85f0-82cbd61d9114.jpeg",
+              "source_stream_audio_url": "https://audiopipe.suno.ai/?item_id=a93de5f8-c6ab-435b-85f0-82cbd61d9114",
+              "stream_audio_url": "https://musicfile.kie.ai/YTkzZGU1ZjgtYzZhYi00MzViLTg1ZjAtODJjYmQ2MWQ5MTE0",
+              "tags": "Electronic House, Trance, Pop",
+              "title": "Lac Mat Mua Xuan (House Remix)"
+            }
+          ],
+          "task_id": "54f040ee4e5ba8da55c5f9eb5ef0a6d8"
+        },
+        "msg": "Text generated successfully."
+      },
+      "code": 200,
+      "message": "Text generated successfully.",
+      "timestamp": "2026-02-23T02:47:48.167927",
+      "callback_type": "text",
+      "task_id": "54f040ee4e5ba8da55c5f9eb5ef0a6d8",
+      "tracks": [
+        {
+          "track_number": 1,
+          "id": "c8ce598e-2ef5-4e77-bb26-37827b9d4bab",
+          "title": "Lac Mat Mua Xuan (House Remix)",
+          "model_name": "chirp-crow",
+          "tags": "Electronic House, Trance, Pop",
+          "duration": null,
+          "create_time": 1771814867980,
+          "prompt": "D\u00ecu em \u0111\u1ebfn \u0111em cho \u0111\u1eddi anh th\u00f4i hoang v\u1eafng\nTim ta say \u0111\u1eafm \u0111\u00e3 y\u00eau em tr\u1ecdn cu\u1ed9c t\u00ecnh\nD\u00f2ng th\u00e1ng n\u0103m \u0111\u00f3 \u0111\u00e3 cho t\u00ecnh y\u00eau em tha thi\u1ebft\nNh\u1eefng \u00e1i \u00e2n \u0111\u1ec3 ph\u00f4i pha\n\u0110\u00e0nh v\u1edbi duy\u00ean ki\u1ebfp, em b\u01b0\u1edbc \u0111i trong chi\u1ec1u m\u01b0a r\u01a1i\nL\u1eb7ng \u0111\u1ee9ng tr\u00ean b\u1ebfn, anh v\u1edbi tr\u00f4ng thuy\u1ec1n ra kh\u01a1i\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfm l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb ri\u00eang m\u00ecnh anh l\u1ea1c m\u1ea5t m\u00f9a xu\u00e2n\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n b\u00e2ng khu\u00e2ng\nB\u00ean song anh tr\u00f4ng \u0111\u1ea7u non tr\u0103ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo s\u00f4ng n\u01b0\u1edbc\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nT\u01b0\u01a1ng t\u01b0 v\u1ec1 th\u01b0\u01a1ng \u0111\u00f4i m\u1eaft n\u00e2u\n\u0110\u00eam \u0111\u00eam t\u00ecm trong m\u00e0n t\u1ed1i mu\u00f4n sao\n\nNg\u1ed3i su\u1ed1t canh v\u1eafng l\u00e3ng qu\u00ean s\u1ea7u th\u01b0\u01a1ng trong men \u0111\u1eafng\nC\u01a1n say m\u00ea \u0111\u1eafm s\u00f3ng d\u00e2ng cao ng\u1ecdn th\u1ee7y tri\u1ec1u\nR\u1ed3i th\u1ea5y th\u1ea5p tho\u00e1ng b\u00f3ng em v\u1ec1 ch\u00ecm trong \u0111\u00e1y c\u1ed1c\n\u0110\u00f4i m\u1eaft \u01b0u bu\u1ed3n thi\u00ean thu\nR\u1ed3i n\u1eafng mai \u0111\u1ebfn m\u00e2y tr\u1eafng bay khi t\u00e0n c\u01a1n say\nT\u00ecnh \u0111\u00e3 xa v\u1eafng n\u1ed7i nh\u1edb v\u1eabn c\u00f2n \u0111\u00e2u \u0111\u00e2y\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfn l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau\n\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau",
+          "audio_urls": {
+            "generated": "",
+            "source": null,
+            "stream": "https://musicfile.kie.ai/YzhjZTU5OGUtMmVmNS00ZTc3LWJiMjYtMzc4MjdiOWQ0YmFi",
+            "source_stream": "https://audiopipe.suno.ai/?item_id=c8ce598e-2ef5-4e77-bb26-37827b9d4bab"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/YzhjZTU5OGUtMmVmNS00ZTc3LWJiMjYtMzc4MjdiOWQ0YmFi.jpeg",
+            "source": "https://cdn2.suno.ai/image_c8ce598e-2ef5-4e77-bb26-37827b9d4bab.jpeg"
+          }
+        },
+        {
+          "track_number": 2,
+          "id": "a93de5f8-c6ab-435b-85f0-82cbd61d9114",
+          "title": "Lac Mat Mua Xuan (House Remix)",
+          "model_name": "chirp-crow",
+          "tags": "Electronic House, Trance, Pop",
+          "duration": null,
+          "create_time": 1771814867980,
+          "prompt": "D\u00ecu em \u0111\u1ebfn \u0111em cho \u0111\u1eddi anh th\u00f4i hoang v\u1eafng\nTim ta say \u0111\u1eafm \u0111\u00e3 y\u00eau em tr\u1ecdn cu\u1ed9c t\u00ecnh\nD\u00f2ng th\u00e1ng n\u0103m \u0111\u00f3 \u0111\u00e3 cho t\u00ecnh y\u00eau em tha thi\u1ebft\nNh\u1eefng \u00e1i \u00e2n \u0111\u1ec3 ph\u00f4i pha\n\u0110\u00e0nh v\u1edbi duy\u00ean ki\u1ebfp, em b\u01b0\u1edbc \u0111i trong chi\u1ec1u m\u01b0a r\u01a1i\nL\u1eb7ng \u0111\u1ee9ng tr\u00ean b\u1ebfn, anh v\u1edbi tr\u00f4ng thuy\u1ec1n ra kh\u01a1i\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfm l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb ri\u00eang m\u00ecnh anh l\u1ea1c m\u1ea5t m\u00f9a xu\u00e2n\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n b\u00e2ng khu\u00e2ng\nB\u00ean song anh tr\u00f4ng \u0111\u1ea7u non tr\u0103ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo s\u00f4ng n\u01b0\u1edbc\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nT\u01b0\u01a1ng t\u01b0 v\u1ec1 th\u01b0\u01a1ng \u0111\u00f4i m\u1eaft n\u00e2u\n\u0110\u00eam \u0111\u00eam t\u00ecm trong m\u00e0n t\u1ed1i mu\u00f4n sao\n\nNg\u1ed3i su\u1ed1t canh v\u1eafng l\u00e3ng qu\u00ean s\u1ea7u th\u01b0\u01a1ng trong men \u0111\u1eafng\nC\u01a1n say m\u00ea \u0111\u1eafm s\u00f3ng d\u00e2ng cao ng\u1ecdn th\u1ee7y tri\u1ec1u\nR\u1ed3i th\u1ea5y th\u1ea5p tho\u00e1ng b\u00f3ng em v\u1ec1 ch\u00ecm trong \u0111\u00e1y c\u1ed1c\n\u0110\u00f4i m\u1eaft \u01b0u bu\u1ed3n thi\u00ean thu\nR\u1ed3i n\u1eafng mai \u0111\u1ebfn m\u00e2y tr\u1eafng bay khi t\u00e0n c\u01a1n say\nT\u00ecnh \u0111\u00e3 xa v\u1eafng n\u1ed7i nh\u1edb v\u1eabn c\u00f2n \u0111\u00e2u \u0111\u00e2y\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfn l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau\n\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau",
+          "audio_urls": {
+            "generated": "",
+            "source": null,
+            "stream": "https://musicfile.kie.ai/YTkzZGU1ZjgtYzZhYi00MzViLTg1ZjAtODJjYmQ2MWQ5MTE0",
+            "source_stream": "https://audiopipe.suno.ai/?item_id=a93de5f8-c6ab-435b-85f0-82cbd61d9114"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/YTkzZGU1ZjgtYzZhYi00MzViLTg1ZjAtODJjYmQ2MWQ5MTE0.jpeg",
+            "source": "https://cdn2.suno.ai/image_a93de5f8-c6ab-435b-85f0-82cbd61d9114.jpeg"
+          }
+        }
+      ],
+      "is_video_callback": false,
+      "status": "success"
+    },
+    "raw_data": {
+      "code": 200,
+      "data": {
+        "callbackType": "text",
+        "data": [
+          {
+            "audio_url": "",
+            "createTime": 1771814867980,
+            "id": "c8ce598e-2ef5-4e77-bb26-37827b9d4bab",
+            "image_url": "https://musicfile.kie.ai/YzhjZTU5OGUtMmVmNS00ZTc3LWJiMjYtMzc4MjdiOWQ0YmFi.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "D\u00ecu em \u0111\u1ebfn \u0111em cho \u0111\u1eddi anh th\u00f4i hoang v\u1eafng\nTim ta say \u0111\u1eafm \u0111\u00e3 y\u00eau em tr\u1ecdn cu\u1ed9c t\u00ecnh\nD\u00f2ng th\u00e1ng n\u0103m \u0111\u00f3 \u0111\u00e3 cho t\u00ecnh y\u00eau em tha thi\u1ebft\nNh\u1eefng \u00e1i \u00e2n \u0111\u1ec3 ph\u00f4i pha\n\u0110\u00e0nh v\u1edbi duy\u00ean ki\u1ebfp, em b\u01b0\u1edbc \u0111i trong chi\u1ec1u m\u01b0a r\u01a1i\nL\u1eb7ng \u0111\u1ee9ng tr\u00ean b\u1ebfn, anh v\u1edbi tr\u00f4ng thuy\u1ec1n ra kh\u01a1i\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfm l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb ri\u00eang m\u00ecnh anh l\u1ea1c m\u1ea5t m\u00f9a xu\u00e2n\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n b\u00e2ng khu\u00e2ng\nB\u00ean song anh tr\u00f4ng \u0111\u1ea7u non tr\u0103ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo s\u00f4ng n\u01b0\u1edbc\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nT\u01b0\u01a1ng t\u01b0 v\u1ec1 th\u01b0\u01a1ng \u0111\u00f4i m\u1eaft n\u00e2u\n\u0110\u00eam \u0111\u00eam t\u00ecm trong m\u00e0n t\u1ed1i mu\u00f4n sao\n\nNg\u1ed3i su\u1ed1t canh v\u1eafng l\u00e3ng qu\u00ean s\u1ea7u th\u01b0\u01a1ng trong men \u0111\u1eafng\nC\u01a1n say m\u00ea \u0111\u1eafm s\u00f3ng d\u00e2ng cao ng\u1ecdn th\u1ee7y tri\u1ec1u\nR\u1ed3i th\u1ea5y th\u1ea5p tho\u00e1ng b\u00f3ng em v\u1ec1 ch\u00ecm trong \u0111\u00e1y c\u1ed1c\n\u0110\u00f4i m\u1eaft \u01b0u bu\u1ed3n thi\u00ean thu\nR\u1ed3i n\u1eafng mai \u0111\u1ebfn m\u00e2y tr\u1eafng bay khi t\u00e0n c\u01a1n say\nT\u00ecnh \u0111\u00e3 xa v\u1eafng n\u1ed7i nh\u1edb v\u1eabn c\u00f2n \u0111\u00e2u \u0111\u00e2y\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfn l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau\n\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau",
+            "source_image_url": "https://cdn2.suno.ai/image_c8ce598e-2ef5-4e77-bb26-37827b9d4bab.jpeg",
+            "source_stream_audio_url": "https://audiopipe.suno.ai/?item_id=c8ce598e-2ef5-4e77-bb26-37827b9d4bab",
+            "stream_audio_url": "https://musicfile.kie.ai/YzhjZTU5OGUtMmVmNS00ZTc3LWJiMjYtMzc4MjdiOWQ0YmFi",
+            "tags": "Electronic House, Trance, Pop",
+            "title": "Lac Mat Mua Xuan (House Remix)"
+          },
+          {
+            "audio_url": "",
+            "createTime": 1771814867980,
+            "id": "a93de5f8-c6ab-435b-85f0-82cbd61d9114",
+            "image_url": "https://musicfile.kie.ai/YTkzZGU1ZjgtYzZhYi00MzViLTg1ZjAtODJjYmQ2MWQ5MTE0.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "D\u00ecu em \u0111\u1ebfn \u0111em cho \u0111\u1eddi anh th\u00f4i hoang v\u1eafng\nTim ta say \u0111\u1eafm \u0111\u00e3 y\u00eau em tr\u1ecdn cu\u1ed9c t\u00ecnh\nD\u00f2ng th\u00e1ng n\u0103m \u0111\u00f3 \u0111\u00e3 cho t\u00ecnh y\u00eau em tha thi\u1ebft\nNh\u1eefng \u00e1i \u00e2n \u0111\u1ec3 ph\u00f4i pha\n\u0110\u00e0nh v\u1edbi duy\u00ean ki\u1ebfp, em b\u01b0\u1edbc \u0111i trong chi\u1ec1u m\u01b0a r\u01a1i\nL\u1eb7ng \u0111\u1ee9ng tr\u00ean b\u1ebfn, anh v\u1edbi tr\u00f4ng thuy\u1ec1n ra kh\u01a1i\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfm l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb ri\u00eang m\u00ecnh anh l\u1ea1c m\u1ea5t m\u00f9a xu\u00e2n\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n b\u00e2ng khu\u00e2ng\nB\u00ean song anh tr\u00f4ng \u0111\u1ea7u non tr\u0103ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo s\u00f4ng n\u01b0\u1edbc\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nT\u01b0\u01a1ng t\u01b0 v\u1ec1 th\u01b0\u01a1ng \u0111\u00f4i m\u1eaft n\u00e2u\n\u0110\u00eam \u0111\u00eam t\u00ecm trong m\u00e0n t\u1ed1i mu\u00f4n sao\n\nNg\u1ed3i su\u1ed1t canh v\u1eafng l\u00e3ng qu\u00ean s\u1ea7u th\u01b0\u01a1ng trong men \u0111\u1eafng\nC\u01a1n say m\u00ea \u0111\u1eafm s\u00f3ng d\u00e2ng cao ng\u1ecdn th\u1ee7y tri\u1ec1u\nR\u1ed3i th\u1ea5y th\u1ea5p tho\u00e1ng b\u00f3ng em v\u1ec1 ch\u00ecm trong \u0111\u00e1y c\u1ed1c\n\u0110\u00f4i m\u1eaft \u01b0u bu\u1ed3n thi\u00ean thu\nR\u1ed3i n\u1eafng mai \u0111\u1ebfn m\u00e2y tr\u1eafng bay khi t\u00e0n c\u01a1n say\nT\u00ecnh \u0111\u00e3 xa v\u1eafng n\u1ed7i nh\u1edb v\u1eabn c\u00f2n \u0111\u00e2u \u0111\u00e2y\nNh\u1eefng th\u00e1ng n\u0103m \u0111\u1ebfn l\u00e1 theo m\u00f9a thu ch\u1ebft, nh\u1eefng thu ch\u1ebft\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau\n\nXu\u00e2n v\u1ec1 cho c\u00e2y xanh l\u00e1\nC\u1edb sao t\u00ecnh ta ch\u1ec9 c\u00f3 m\u00f9a thu\n\u0110\u00eam \u0111\u00eam n\u1eb1m nghe h\u1ed3n t\u01b0\u01a1ng t\u01b0\nB\u00ean song \u0111\u1ea7u non t\u00e0n canh b\u00f3ng x\u1ebf\nTh\u01b0\u01a1ng b\u00e8o tr\u00f4i theo mu\u00f4n h\u01b0\u1edbng\nBi\u1ebft b\u00e2y gi\u1edd em l\u1ea1c b\u01b0\u1edbc v\u1ec1 \u0111\u00e2u\nEm \u01a1i, ch\u1edd em \u0111\u1ebfn ki\u1ebfp n\u00e0o\nXin cho ng\u00e0y sau m\u00ecnh m\u00e3i b\u00ean nhau",
+            "source_image_url": "https://cdn2.suno.ai/image_a93de5f8-c6ab-435b-85f0-82cbd61d9114.jpeg",
+            "source_stream_audio_url": "https://audiopipe.suno.ai/?item_id=a93de5f8-c6ab-435b-85f0-82cbd61d9114",
+            "stream_audio_url": "https://musicfile.kie.ai/YTkzZGU1ZjgtYzZhYi00MzViLTg1ZjAtODJjYmQ2MWQ5MTE0",
+            "tags": "Electronic House, Trance, Pop",
+            "title": "Lac Mat Mua Xuan (House Remix)"
+          }
+        ],
+        "task_id": "54f040ee4e5ba8da55c5f9eb5ef0a6d8"
+      },
+      "msg": "Text generated successfully."
+    },
+    "is_video_callback": false,
+    "tracks_count": 2,
+    "has_audio_urls": false,
+    "has_image_urls": true,
+    "last_callback_type": "text",
+    "last_callback_time": "2026-02-23T02:47:48.171786",
+    "callback_progress": "text",
+    "last_updated": "2026-02-23T02:47:48.172334"
+  },
+  {
+    "id": "6ef85c50-d387-43ad-8356-204d2dd0cf65",
+    "task_id": "ea0450cb69e04244f5e8edce302a2b97",
+    "callback_type": "complete",
+    "timestamp": "2026-01-23T22:56:27.193074",
+    "status_code": 200,
+    "status_message": "All generated successfully.",
+    "status": "success",
+    "processed_data": {
+      "raw_data": {
+        "code": 200,
+        "data": {
+          "callbackType": "complete",
+          "data": [
+            {
+              "audio_url": "https://musicfile.kie.ai/NTE0OTZkZDMtMGIyZS00MDdkLWE1OTMtNGVjNjdjZDRiYTk3.mp3",
+              "createTime": 1769208986250,
+              "duration": 294.36,
+              "id": "51496dd3-0b2e-407d-a593-4ec67cd4ba97",
+              "image_url": "https://musicfile.kie.ai/NTE0OTZkZDMtMGIyZS00MDdkLWE1OTMtNGVjNjdjZDRiYTk3.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "[Instrumental]",
+              "source_audio_url": "https://cdn1.suno.ai/51496dd3-0b2e-407d-a593-4ec67cd4ba97.mp3",
+              "source_image_url": "https://cdn2.suno.ai/image_51496dd3-0b2e-407d-a593-4ec67cd4ba97.jpeg",
+              "source_stream_audio_url": "https://cdn1.suno.ai/51496dd3-0b2e-407d-a593-4ec67cd4ba97.mp3",
+              "stream_audio_url": "https://musicfile.kie.ai/NTE0OTZkZDMtMGIyZS00MDdkLWE1OTMtNGVjNjdjZDRiYTk3",
+              "tags": "pop, Uplifting melodic house-trance hybrid with bright synth plucks, sidechained pads, and a driving four-on-the-floor kick; verses stay filtered and intimate, pre-chorus adds rising white-noise sweeps and tom fills, chorus explodes with a wide supersaw lead, stacked female vocals, and a bouncing pop bassline, trance, electronic",
+              "title": "Glow Till Morning"
+            },
+            {
+              "audio_url": "https://musicfile.kie.ai/ODc0MzQzYzEtMjhiMS00YjQxLTgyNWEtMTBlMDk5MTBlNTE1.mp3",
+              "createTime": 1769208986250,
+              "duration": 231.68,
+              "id": "874343c1-28b1-4b41-825a-10e09910e515",
+              "image_url": "https://musicfile.kie.ai/ODc0MzQzYzEtMjhiMS00YjQxLTgyNWEtMTBlMDk5MTBlNTE1.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "[Instrumental]",
+              "source_audio_url": "https://cdn1.suno.ai/874343c1-28b1-4b41-825a-10e09910e515.mp3",
+              "source_image_url": "https://cdn2.suno.ai/image_874343c1-28b1-4b41-825a-10e09910e515.jpeg",
+              "source_stream_audio_url": "https://cdn1.suno.ai/874343c1-28b1-4b41-825a-10e09910e515.mp3",
+              "stream_audio_url": "https://musicfile.kie.ai/ODc0MzQzYzEtMjhiMS00YjQxLTgyNWEtMTBlMDk5MTBlNTE1",
+              "tags": "pop, Uplifting melodic house-trance hybrid with bright synth plucks, sidechained pads, and a driving four-on-the-floor kick; verses stay filtered and intimate, pre-chorus adds rising white-noise sweeps and tom fills, chorus explodes with a wide supersaw lead, stacked female vocals, and a bouncing pop bassline, trance, electronic",
+              "title": "Glow Till Morning"
+            }
+          ],
+          "task_id": "ea0450cb69e04244f5e8edce302a2b97"
+        },
+        "msg": "All generated successfully."
+      },
+      "code": 200,
+      "message": "All generated successfully.",
+      "timestamp": "2026-01-23T22:56:27.191742",
+      "callback_type": "complete",
+      "task_id": "ea0450cb69e04244f5e8edce302a2b97",
+      "tracks": [
+        {
+          "track_number": 1,
+          "id": "51496dd3-0b2e-407d-a593-4ec67cd4ba97",
+          "title": "Glow Till Morning",
+          "model_name": "chirp-crow",
+          "tags": "pop, Uplifting melodic house-trance hybrid with bright synth plucks, sidechained pads, and a driving four-on-the-floor kick; verses stay filtered and intimate, pre-chorus adds rising white-noise sweeps and tom fills, chorus explodes with a wide supersaw lead, stacked female vocals, and a bouncing pop bassline, trance, electronic",
+          "duration": 294.36,
+          "create_time": 1769208986250,
+          "prompt": "[Instrumental]",
+          "audio_urls": {
+            "generated": "https://musicfile.kie.ai/NTE0OTZkZDMtMGIyZS00MDdkLWE1OTMtNGVjNjdjZDRiYTk3.mp3",
+            "source": "https://cdn1.suno.ai/51496dd3-0b2e-407d-a593-4ec67cd4ba97.mp3",
+            "stream": "https://musicfile.kie.ai/NTE0OTZkZDMtMGIyZS00MDdkLWE1OTMtNGVjNjdjZDRiYTk3",
+            "source_stream": "https://cdn1.suno.ai/51496dd3-0b2e-407d-a593-4ec67cd4ba97.mp3"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/NTE0OTZkZDMtMGIyZS00MDdkLWE1OTMtNGVjNjdjZDRiYTk3.jpeg",
+            "source": "https://cdn2.suno.ai/image_51496dd3-0b2e-407d-a593-4ec67cd4ba97.jpeg"
+          }
+        },
+        {
+          "track_number": 2,
+          "id": "874343c1-28b1-4b41-825a-10e09910e515",
+          "title": "Glow Till Morning",
+          "model_name": "chirp-crow",
+          "tags": "pop, Uplifting melodic house-trance hybrid with bright synth plucks, sidechained pads, and a driving four-on-the-floor kick; verses stay filtered and intimate, pre-chorus adds rising white-noise sweeps and tom fills, chorus explodes with a wide supersaw lead, stacked female vocals, and a bouncing pop bassline, trance, electronic",
+          "duration": 231.68,
+          "create_time": 1769208986250,
+          "prompt": "[Instrumental]",
+          "audio_urls": {
+            "generated": "https://musicfile.kie.ai/ODc0MzQzYzEtMjhiMS00YjQxLTgyNWEtMTBlMDk5MTBlNTE1.mp3",
+            "source": "https://cdn1.suno.ai/874343c1-28b1-4b41-825a-10e09910e515.mp3",
+            "stream": "https://musicfile.kie.ai/ODc0MzQzYzEtMjhiMS00YjQxLTgyNWEtMTBlMDk5MTBlNTE1",
+            "source_stream": "https://cdn1.suno.ai/874343c1-28b1-4b41-825a-10e09910e515.mp3"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/ODc0MzQzYzEtMjhiMS00YjQxLTgyNWEtMTBlMDk5MTBlNTE1.jpeg",
+            "source": "https://cdn2.suno.ai/image_874343c1-28b1-4b41-825a-10e09910e515.jpeg"
+          }
+        }
+      ],
+      "is_video_callback": false,
+      "status": "success"
+    },
+    "raw_data": {
+      "code": 200,
+      "data": {
+        "callbackType": "complete",
+        "data": [
+          {
+            "audio_url": "https://musicfile.kie.ai/NTE0OTZkZDMtMGIyZS00MDdkLWE1OTMtNGVjNjdjZDRiYTk3.mp3",
+            "createTime": 1769208986250,
+            "duration": 294.36,
+            "id": "51496dd3-0b2e-407d-a593-4ec67cd4ba97",
+            "image_url": "https://musicfile.kie.ai/NTE0OTZkZDMtMGIyZS00MDdkLWE1OTMtNGVjNjdjZDRiYTk3.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "[Instrumental]",
+            "source_audio_url": "https://cdn1.suno.ai/51496dd3-0b2e-407d-a593-4ec67cd4ba97.mp3",
+            "source_image_url": "https://cdn2.suno.ai/image_51496dd3-0b2e-407d-a593-4ec67cd4ba97.jpeg",
+            "source_stream_audio_url": "https://cdn1.suno.ai/51496dd3-0b2e-407d-a593-4ec67cd4ba97.mp3",
+            "stream_audio_url": "https://musicfile.kie.ai/NTE0OTZkZDMtMGIyZS00MDdkLWE1OTMtNGVjNjdjZDRiYTk3",
+            "tags": "pop, Uplifting melodic house-trance hybrid with bright synth plucks, sidechained pads, and a driving four-on-the-floor kick; verses stay filtered and intimate, pre-chorus adds rising white-noise sweeps and tom fills, chorus explodes with a wide supersaw lead, stacked female vocals, and a bouncing pop bassline, trance, electronic",
+            "title": "Glow Till Morning"
+          },
+          {
+            "audio_url": "https://musicfile.kie.ai/ODc0MzQzYzEtMjhiMS00YjQxLTgyNWEtMTBlMDk5MTBlNTE1.mp3",
+            "createTime": 1769208986250,
+            "duration": 231.68,
+            "id": "874343c1-28b1-4b41-825a-10e09910e515",
+            "image_url": "https://musicfile.kie.ai/ODc0MzQzYzEtMjhiMS00YjQxLTgyNWEtMTBlMDk5MTBlNTE1.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "[Instrumental]",
+            "source_audio_url": "https://cdn1.suno.ai/874343c1-28b1-4b41-825a-10e09910e515.mp3",
+            "source_image_url": "https://cdn2.suno.ai/image_874343c1-28b1-4b41-825a-10e09910e515.jpeg",
+            "source_stream_audio_url": "https://cdn1.suno.ai/874343c1-28b1-4b41-825a-10e09910e515.mp3",
+            "stream_audio_url": "https://musicfile.kie.ai/ODc0MzQzYzEtMjhiMS00YjQxLTgyNWEtMTBlMDk5MTBlNTE1",
+            "tags": "pop, Uplifting melodic house-trance hybrid with bright synth plucks, sidechained pads, and a driving four-on-the-floor kick; verses stay filtered and intimate, pre-chorus adds rising white-noise sweeps and tom fills, chorus explodes with a wide supersaw lead, stacked female vocals, and a bouncing pop bassline, trance, electronic",
+            "title": "Glow Till Morning"
+          }
+        ],
+        "task_id": "ea0450cb69e04244f5e8edce302a2b97"
+      },
+      "msg": "All generated successfully."
+    },
+    "is_video_callback": false,
+    "tracks_count": 2,
+    "has_audio_urls": true,
+    "has_image_urls": true,
+    "last_callback_type": "complete",
+    "last_callback_time": "2026-01-23T22:56:27.250152",
+    "callback_progress": "complete",
+    "last_updated": "2026-01-23T22:56:27.266510"
+  },
+  {
+    "id": "3e12bbb0-d27d-4be0-84f3-0741463d1471",
+    "task_id": "58d65ead26a1825551322c3d361043da",
+    "callback_type": "video_complete",
+    "timestamp": "2026-01-19T18:04:58.554462",
+    "status_code": 200,
+    "status_message": "All generated successfully.",
+    "status": "success",
+    "processed_data": {
+      "raw_data": {
+        "code": 200,
+        "data": {
+          "task_id": "58d65ead26a1825551322c3d361043da",
+          "video_url": "https://tempfile.aiquickdraw.com/r/58d65ead26a1825551322c3d361043da.mp4"
+        },
+        "msg": "All generated successfully."
+      },
+      "code": 200,
+      "message": "All generated successfully.",
+      "timestamp": "2026-01-19T18:04:58.553921",
+      "callback_type": "video_complete",
+      "task_id": "58d65ead26a1825551322c3d361043da",
+      "video_url": "https://tempfile.aiquickdraw.com/r/58d65ead26a1825551322c3d361043da.mp4",
+      "is_video_callback": true,
+      "status": "success"
+    },
+    "raw_data": {
+      "code": 200,
+      "data": {
+        "task_id": "58d65ead26a1825551322c3d361043da",
+        "video_url": "https://tempfile.aiquickdraw.com/r/58d65ead26a1825551322c3d361043da.mp4"
+      },
+      "msg": "All generated successfully."
+    },
+    "is_video_callback": true,
+    "video_url": "https://tempfile.aiquickdraw.com/r/58d65ead26a1825551322c3d361043da.mp4",
+    "tracks_count": 0,
+    "has_audio_urls": false,
+    "has_image_urls": false,
+    "last_callback_type": "video_complete",
+    "last_callback_time": "2026-01-19T18:04:58.580535",
+    "callback_progress": "video_complete",
+    "last_updated": "2026-01-19T18:04:58.598179"
+  },
+  {
+    "id": "fae0bc02-85b6-4c23-8287-fb327faaab8c",
+    "task_id": "270e3107987c8bd2fe44b2e323fd3675",
+    "callback_type": "complete",
+    "timestamp": "2026-01-19T17:53:30.859409",
+    "status_code": 200,
+    "status_message": "All generated successfully.",
+    "status": "success",
+    "processed_data": {
+      "raw_data": {
+        "code": 200,
+        "data": {
+          "callbackType": "complete",
+          "data": [
+            {
+              "audio_url": "https://musicfile.kie.ai/YTlmNTNiYjAtN2ZhYS00MjY5LTgxODQtNDkzYWQyZWViMjgx.mp3",
+              "createTime": 1768845210644,
+              "duration": 196.56,
+              "id": "a9f53bb0-7faa-4269-8184-493ad2eeb281",
+              "image_url": "https://musicfile.kie.ai/YTlmNTNiYjAtN2ZhYS00MjY5LTgxODQtNDkzYWQyZWViMjgx.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "[Instrumental]",
+              "source_audio_url": "https://cdn1.suno.ai/a9f53bb0-7faa-4269-8184-493ad2eeb281.mp3",
+              "source_image_url": "https://cdn2.suno.ai/image_a9f53bb0-7faa-4269-8184-493ad2eeb281.jpeg",
+              "source_stream_audio_url": "https://cdn1.suno.ai/a9f53bb0-7faa-4269-8184-493ad2eeb281.mp3",
+              "stream_audio_url": "https://musicfile.kie.ai/YTlmNTNiYjAtN2ZhYS00MjY5LTgxODQtNDkzYWQyZWViMjgx",
+              "tags": "pop, Big-room crossover: bright saw leads over a rolling four-on-the-floor, sidechained pads and glossy trance plucks. Verses ride a filtered, pulsing groove; pre-chorus strips to vocal and rising noise sweeps; chorus hits with wide supersaw chords, punchy kick, and stacked female vocals on the hook. Second half adds octave lead and crowd-ready ad-libs for festival energy., electronic, trance",
+              "title": "Night Drive Gravity"
+            },
+            {
+              "audio_url": "https://musicfile.kie.ai/MDUxMDZmYmYtMDUyMS00ZTUzLWJlZWUtYjhmM2I4MmMwZmUw.mp3",
+              "createTime": 1768845210644,
+              "duration": 139.0,
+              "id": "05106fbf-0521-4e53-beee-b8f3b82c0fe0",
+              "image_url": "https://musicfile.kie.ai/MDUxMDZmYmYtMDUyMS00ZTUzLWJlZWUtYjhmM2I4MmMwZmUw.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "[Instrumental]",
+              "source_audio_url": "https://cdn1.suno.ai/05106fbf-0521-4e53-beee-b8f3b82c0fe0.mp3",
+              "source_image_url": "https://cdn2.suno.ai/image_05106fbf-0521-4e53-beee-b8f3b82c0fe0.jpeg",
+              "source_stream_audio_url": "https://cdn1.suno.ai/05106fbf-0521-4e53-beee-b8f3b82c0fe0.mp3",
+              "stream_audio_url": "https://musicfile.kie.ai/MDUxMDZmYmYtMDUyMS00ZTUzLWJlZWUtYjhmM2I4MmMwZmUw",
+              "tags": "pop, Big-room crossover: bright saw leads over a rolling four-on-the-floor, sidechained pads and glossy trance plucks. Verses ride a filtered, pulsing groove; pre-chorus strips to vocal and rising noise sweeps; chorus hits with wide supersaw chords, punchy kick, and stacked female vocals on the hook. Second half adds octave lead and crowd-ready ad-libs for festival energy., electronic, trance",
+              "title": "Night Drive Gravity"
+            }
+          ],
+          "task_id": "270e3107987c8bd2fe44b2e323fd3675"
+        },
+        "msg": "All generated successfully."
+      },
+      "code": 200,
+      "message": "All generated successfully.",
+      "timestamp": "2026-01-19T17:53:30.858742",
+      "callback_type": "complete",
+      "task_id": "270e3107987c8bd2fe44b2e323fd3675",
+      "tracks": [
+        {
+          "track_number": 1,
+          "id": "a9f53bb0-7faa-4269-8184-493ad2eeb281",
+          "title": "Night Drive Gravity",
+          "model_name": "chirp-crow",
+          "tags": "pop, Big-room crossover: bright saw leads over a rolling four-on-the-floor, sidechained pads and glossy trance plucks. Verses ride a filtered, pulsing groove; pre-chorus strips to vocal and rising noise sweeps; chorus hits with wide supersaw chords, punchy kick, and stacked female vocals on the hook. Second half adds octave lead and crowd-ready ad-libs for festival energy., electronic, trance",
+          "duration": 196.56,
+          "create_time": 1768845210644,
+          "prompt": "[Instrumental]",
+          "audio_urls": {
+            "generated": "https://musicfile.kie.ai/YTlmNTNiYjAtN2ZhYS00MjY5LTgxODQtNDkzYWQyZWViMjgx.mp3",
+            "source": "https://cdn1.suno.ai/a9f53bb0-7faa-4269-8184-493ad2eeb281.mp3",
+            "stream": "https://musicfile.kie.ai/YTlmNTNiYjAtN2ZhYS00MjY5LTgxODQtNDkzYWQyZWViMjgx",
+            "source_stream": "https://cdn1.suno.ai/a9f53bb0-7faa-4269-8184-493ad2eeb281.mp3"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/YTlmNTNiYjAtN2ZhYS00MjY5LTgxODQtNDkzYWQyZWViMjgx.jpeg",
+            "source": "https://cdn2.suno.ai/image_a9f53bb0-7faa-4269-8184-493ad2eeb281.jpeg"
+          }
+        },
+        {
+          "track_number": 2,
+          "id": "05106fbf-0521-4e53-beee-b8f3b82c0fe0",
+          "title": "Night Drive Gravity",
+          "model_name": "chirp-crow",
+          "tags": "pop, Big-room crossover: bright saw leads over a rolling four-on-the-floor, sidechained pads and glossy trance plucks. Verses ride a filtered, pulsing groove; pre-chorus strips to vocal and rising noise sweeps; chorus hits with wide supersaw chords, punchy kick, and stacked female vocals on the hook. Second half adds octave lead and crowd-ready ad-libs for festival energy., electronic, trance",
+          "duration": 139.0,
+          "create_time": 1768845210644,
+          "prompt": "[Instrumental]",
+          "audio_urls": {
+            "generated": "https://musicfile.kie.ai/MDUxMDZmYmYtMDUyMS00ZTUzLWJlZWUtYjhmM2I4MmMwZmUw.mp3",
+            "source": "https://cdn1.suno.ai/05106fbf-0521-4e53-beee-b8f3b82c0fe0.mp3",
+            "stream": "https://musicfile.kie.ai/MDUxMDZmYmYtMDUyMS00ZTUzLWJlZWUtYjhmM2I4MmMwZmUw",
+            "source_stream": "https://cdn1.suno.ai/05106fbf-0521-4e53-beee-b8f3b82c0fe0.mp3"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/MDUxMDZmYmYtMDUyMS00ZTUzLWJlZWUtYjhmM2I4MmMwZmUw.jpeg",
+            "source": "https://cdn2.suno.ai/image_05106fbf-0521-4e53-beee-b8f3b82c0fe0.jpeg"
+          }
+        }
+      ],
+      "is_video_callback": false,
+      "status": "success"
+    },
+    "raw_data": {
+      "code": 200,
+      "data": {
+        "callbackType": "complete",
+        "data": [
+          {
+            "audio_url": "https://musicfile.kie.ai/YTlmNTNiYjAtN2ZhYS00MjY5LTgxODQtNDkzYWQyZWViMjgx.mp3",
+            "createTime": 1768845210644,
+            "duration": 196.56,
+            "id": "a9f53bb0-7faa-4269-8184-493ad2eeb281",
+            "image_url": "https://musicfile.kie.ai/YTlmNTNiYjAtN2ZhYS00MjY5LTgxODQtNDkzYWQyZWViMjgx.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "[Instrumental]",
+            "source_audio_url": "https://cdn1.suno.ai/a9f53bb0-7faa-4269-8184-493ad2eeb281.mp3",
+            "source_image_url": "https://cdn2.suno.ai/image_a9f53bb0-7faa-4269-8184-493ad2eeb281.jpeg",
+            "source_stream_audio_url": "https://cdn1.suno.ai/a9f53bb0-7faa-4269-8184-493ad2eeb281.mp3",
+            "stream_audio_url": "https://musicfile.kie.ai/YTlmNTNiYjAtN2ZhYS00MjY5LTgxODQtNDkzYWQyZWViMjgx",
+            "tags": "pop, Big-room crossover: bright saw leads over a rolling four-on-the-floor, sidechained pads and glossy trance plucks. Verses ride a filtered, pulsing groove; pre-chorus strips to vocal and rising noise sweeps; chorus hits with wide supersaw chords, punchy kick, and stacked female vocals on the hook. Second half adds octave lead and crowd-ready ad-libs for festival energy., electronic, trance",
+            "title": "Night Drive Gravity"
+          },
+          {
+            "audio_url": "https://musicfile.kie.ai/MDUxMDZmYmYtMDUyMS00ZTUzLWJlZWUtYjhmM2I4MmMwZmUw.mp3",
+            "createTime": 1768845210644,
+            "duration": 139.0,
+            "id": "05106fbf-0521-4e53-beee-b8f3b82c0fe0",
+            "image_url": "https://musicfile.kie.ai/MDUxMDZmYmYtMDUyMS00ZTUzLWJlZWUtYjhmM2I4MmMwZmUw.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "[Instrumental]",
+            "source_audio_url": "https://cdn1.suno.ai/05106fbf-0521-4e53-beee-b8f3b82c0fe0.mp3",
+            "source_image_url": "https://cdn2.suno.ai/image_05106fbf-0521-4e53-beee-b8f3b82c0fe0.jpeg",
+            "source_stream_audio_url": "https://cdn1.suno.ai/05106fbf-0521-4e53-beee-b8f3b82c0fe0.mp3",
+            "stream_audio_url": "https://musicfile.kie.ai/MDUxMDZmYmYtMDUyMS00ZTUzLWJlZWUtYjhmM2I4MmMwZmUw",
+            "tags": "pop, Big-room crossover: bright saw leads over a rolling four-on-the-floor, sidechained pads and glossy trance plucks. Verses ride a filtered, pulsing groove; pre-chorus strips to vocal and rising noise sweeps; chorus hits with wide supersaw chords, punchy kick, and stacked female vocals on the hook. Second half adds octave lead and crowd-ready ad-libs for festival energy., electronic, trance",
+            "title": "Night Drive Gravity"
+          }
+        ],
+        "task_id": "270e3107987c8bd2fe44b2e323fd3675"
+      },
+      "msg": "All generated successfully."
+    },
+    "is_video_callback": false,
+    "tracks_count": 2,
+    "has_audio_urls": true,
+    "has_image_urls": true,
+    "last_callback_type": "complete",
+    "last_callback_time": "2026-01-19T17:53:30.930732",
+    "callback_progress": "complete",
+    "last_updated": "2026-01-19T17:53:30.945480"
+  },
+  {
+    "id": "9a967e3c-aaa0-4fd6-ad84-7bf037afb35e",
+    "task_id": "0d33f58182d12f1945cc26e1a09cd02c",
+    "callback_type": "complete",
+    "timestamp": "2026-01-19T16:25:55.250453",
+    "status_code": 200,
+    "status_message": "All generated successfully.",
+    "status": "success",
+    "processed_data": {
+      "raw_data": {
+        "code": 200,
+        "data": {
+          "callbackType": "complete",
+          "data": [
+            {
+              "error_message": "",
+              "status": "complete",
+              "text": "[Verse 1]\nBreath in the dark air\nKeys in a cold hand\nBoot prints on concrete\nFading as I stand\n\nCoats on the doorway\nKettle just starts to sing\nYour note on the counter\nFolded like a wing\n\n[Chorus]\nWinter came early\nStayed too long\nGot in the walls\nGot in our songs\nYou said\n\"Love is work\n\" then you moved on\nI\u2019m still here\nHumming our winter song\n\n[Verse 2]\nMug with your lipstick\nCorner chipped from the fall\nPhone full of photos\nI don't open at all\n\nStreet on a Sunday\nQuiet as fresh snow\nEvery small silence\nSounds like your hello\n\n[Chorus]\nWinter came early\nStayed too long\nGot in the walls\nGot in our songs\nYou said\n\"Love is work\n\" then you moved on\nI\u2019m still here\nHumming our winter song\n\n[Bridge]\nMaybe by April\nThis chill will break\nMaybe the thaw comes\nWith one small mistake\n\n[Chorus]\nWinter came early\nStayed too long\nGot in the walls\nGot in our songs\nYou said\n\"Love is work\n\" then you moved on\nI\u2019m still here\nHumming our winter song\nJust right here\nHumming our winter song",
+              "title": "Snow On The Backsteps"
+            },
+            {
+              "error_message": "",
+              "status": "complete",
+              "text": "[Verse 1]\nBreath on the glass\nNames in the fog\nKettle complaining\nOld ticking clock\nWool on my wrists\nHands still cold\nSame chipped mug\nSame stories we told\n\n[Chorus]\nStay till the winter\u2019s gone\nStay till the light grows long\nWe\u2019ll count the nights\nBy the quiet of the house\nStay till the thaw begins\nStay through the howling wind\nI\u2019ll put another log on\nYou don\u2019t have to go out\n\n[Verse 2]\nBoots by the door\nMelted ring of brown\nRadio humming\nSmall hometown sound\nSnow on the cars\nStreet turned gray\nYour head on my shoulder\nWorld far away\n\n[Chorus]\nStay till the winter\u2019s gone\nStay till the light grows long\nWe\u2019ll count the nights\nBy the quiet of the house\nStay till the thaw begins\nStay through the howling wind\nI\u2019ll put another log on\nYou don\u2019t have to go out\n\n[Bridge]\nEvery season\nSays it won\u2019t last\nWe\u2019re just learning\nHow to bend with it\nIf the roads close\nLet the roads close\nWe\u2019ve got blankets\nWe\u2019ve got time to sit (yeah)\n\n[Chorus]\nStay till the winter\u2019s gone\nStay till the light grows long\nWe\u2019ll count the nights\nBy the quiet of the house\nStay till the thaw begins\nStay through the howling wind\nI\u2019ll put another log on\nYou don\u2019t have to go out",
+              "title": "Salt On The Window"
+            }
+          ],
+          "task_id": "0d33f58182d12f1945cc26e1a09cd02c"
+        },
+        "msg": "All generated successfully."
+      },
+      "code": 200,
+      "message": "All generated successfully.",
+      "timestamp": "2026-01-19T16:25:55.249799",
+      "callback_type": "complete",
+      "task_id": "0d33f58182d12f1945cc26e1a09cd02c",
+      "tracks": [
+        {
+          "track_number": 1,
+          "id": null,
+          "title": "Snow On The Backsteps",
+          "model_name": null,
+          "tags": null,
+          "duration": null,
+          "create_time": null,
+          "prompt": null,
+          "audio_urls": {
+            "generated": null,
+            "source": null,
+            "stream": null,
+            "source_stream": null
+          },
+          "image_urls": {
+            "generated": null,
+            "source": null
+          }
+        },
+        {
+          "track_number": 2,
+          "id": null,
+          "title": "Salt On The Window",
+          "model_name": null,
+          "tags": null,
+          "duration": null,
+          "create_time": null,
+          "prompt": null,
+          "audio_urls": {
+            "generated": null,
+            "source": null,
+            "stream": null,
+            "source_stream": null
+          },
+          "image_urls": {
+            "generated": null,
+            "source": null
+          }
+        }
+      ],
+      "is_video_callback": false,
+      "status": "success"
+    },
+    "raw_data": {
+      "code": 200,
+      "data": {
+        "callbackType": "complete",
+        "data": [
+          {
+            "error_message": "",
+            "status": "complete",
+            "text": "[Verse 1]\nBreath in the dark air\nKeys in a cold hand\nBoot prints on concrete\nFading as I stand\n\nCoats on the doorway\nKettle just starts to sing\nYour note on the counter\nFolded like a wing\n\n[Chorus]\nWinter came early\nStayed too long\nGot in the walls\nGot in our songs\nYou said\n\"Love is work\n\" then you moved on\nI\u2019m still here\nHumming our winter song\n\n[Verse 2]\nMug with your lipstick\nCorner chipped from the fall\nPhone full of photos\nI don't open at all\n\nStreet on a Sunday\nQuiet as fresh snow\nEvery small silence\nSounds like your hello\n\n[Chorus]\nWinter came early\nStayed too long\nGot in the walls\nGot in our songs\nYou said\n\"Love is work\n\" then you moved on\nI\u2019m still here\nHumming our winter song\n\n[Bridge]\nMaybe by April\nThis chill will break\nMaybe the thaw comes\nWith one small mistake\n\n[Chorus]\nWinter came early\nStayed too long\nGot in the walls\nGot in our songs\nYou said\n\"Love is work\n\" then you moved on\nI\u2019m still here\nHumming our winter song\nJust right here\nHumming our winter song",
+            "title": "Snow On The Backsteps"
+          },
+          {
+            "error_message": "",
+            "status": "complete",
+            "text": "[Verse 1]\nBreath on the glass\nNames in the fog\nKettle complaining\nOld ticking clock\nWool on my wrists\nHands still cold\nSame chipped mug\nSame stories we told\n\n[Chorus]\nStay till the winter\u2019s gone\nStay till the light grows long\nWe\u2019ll count the nights\nBy the quiet of the house\nStay till the thaw begins\nStay through the howling wind\nI\u2019ll put another log on\nYou don\u2019t have to go out\n\n[Verse 2]\nBoots by the door\nMelted ring of brown\nRadio humming\nSmall hometown sound\nSnow on the cars\nStreet turned gray\nYour head on my shoulder\nWorld far away\n\n[Chorus]\nStay till the winter\u2019s gone\nStay till the light grows long\nWe\u2019ll count the nights\nBy the quiet of the house\nStay till the thaw begins\nStay through the howling wind\nI\u2019ll put another log on\nYou don\u2019t have to go out\n\n[Bridge]\nEvery season\nSays it won\u2019t last\nWe\u2019re just learning\nHow to bend with it\nIf the roads close\nLet the roads close\nWe\u2019ve got blankets\nWe\u2019ve got time to sit (yeah)\n\n[Chorus]\nStay till the winter\u2019s gone\nStay till the light grows long\nWe\u2019ll count the nights\nBy the quiet of the house\nStay till the thaw begins\nStay through the howling wind\nI\u2019ll put another log on\nYou don\u2019t have to go out",
+            "title": "Salt On The Window"
+          }
+        ],
+        "task_id": "0d33f58182d12f1945cc26e1a09cd02c"
+      },
+      "msg": "All generated successfully."
+    },
+    "is_video_callback": false,
+    "tracks_count": 2,
+    "has_audio_urls": false,
+    "has_image_urls": false,
+    "last_callback_type": "complete",
+    "last_callback_time": "2026-01-19T16:25:55.278655",
+    "callback_progress": "complete",
+    "last_updated": "2026-01-19T16:25:55.291453"
+  },
+  {
+    "id": "53b95a23-b535-4905-9323-1b7f5eb69491",
+    "task_id": "414c14a611d9a3c1b082eff0bf3c4213",
+    "callback_type": "complete",
+    "timestamp": "2026-01-19T03:01:36.077478",
+    "status_code": 200,
+    "status_message": "All generated successfully.",
+    "status": "success",
+    "processed_data": {
+      "raw_data": {
+        "code": 200,
+        "data": {
+          "callbackType": "complete",
+          "data": [
+            {
+              "audio_url": "https://musicfile.kie.ai/N2Q5Yzc1MDgtNzFmNy00ZGQ3LTliYWUtMjNiNGYwODFjODQ0.mp3",
+              "createTime": 1768791696927,
+              "duration": 89.76,
+              "id": "7d9c7508-71f7-4dd7-9bae-23b4f081c844",
+              "image_url": "https://musicfile.kie.ai/N2Q5Yzc1MDgtNzFmNy00ZGQ3LTliYWUtMjNiNGYwODFjODQ0.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "[Verse 1]\nYou tap your pen\nOn a coffee-stained page\nSay\n\u201cThis is only practice\nI don\u2019t feel a thing today\u201d\n\n[Chorus]\nBut my test pattern heart\nGlows in black and white for you\nLittle lines\nLittle sparks\nEvery trial pulls me through\nCall it random\nCall it art\nI just call it wanting you\nMy test pattern heart\nLearning how to beat for two\n\n[Verse 2]\nYou shrug and laugh\n\u201cAt least the rhyme is clean\u201d\nLike we\u2019re only doing drills\nNot rewiring what we mean\n\n[Chorus]\n\u2018Cause my test pattern heart\nGlows in black and white for you\nLittle lines\nLittle sparks\nEvery trial pulls me through\nCall it random\nCall it art\nI just call it wanting you\nMy test pattern heart\nLearning how to beat for two",
+              "source_audio_url": "https://cdn1.suno.ai/7d9c7508-71f7-4dd7-9bae-23b4f081c844.mp3",
+              "source_image_url": "https://cdn2.suno.ai/image_7d9c7508-71f7-4dd7-9bae-23b4f081c844.jpeg",
+              "source_stream_audio_url": "https://cdn1.suno.ai/7d9c7508-71f7-4dd7-9bae-23b4f081c844.mp3",
+              "stream_audio_url": "https://musicfile.kie.ai/N2Q5Yzc1MDgtNzFmNy00ZGQ3LTliYWUtMjNiNGYwODFjODQ0",
+              "tags": "Indie pop with a tight 2:30 structure; clean rhythm guitar and warm bass, crisp drums with a dry snare. Verses stay intimate and close-mic\u2019d, chorus widens with airy harmonies and a bright synth pad. Gentle build into a slightly punchier final chorus, then a quick, satisfying stop.",
+              "title": "Test Pattern Heart"
+            },
+            {
+              "audio_url": "https://musicfile.kie.ai/YTU1ZjBhYTYtN2VmYS00YWVlLWIyZWMtMzFkMjQ3MWQyMGFi.mp3",
+              "createTime": 1768791696927,
+              "duration": 104.88,
+              "id": "a55f0aa6-7efa-4aee-b2ec-31d2471d20ab",
+              "image_url": "https://musicfile.kie.ai/YTU1ZjBhYTYtN2VmYS00YWVlLWIyZWMtMzFkMjQ3MWQyMGFi.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "[Verse 1]\nYou tap your pen\nOn a coffee-stained page\nSay\n\u201cThis is only practice\nI don\u2019t feel a thing today\u201d\n\n[Chorus]\nBut my test pattern heart\nGlows in black and white for you\nLittle lines\nLittle sparks\nEvery trial pulls me through\nCall it random\nCall it art\nI just call it wanting you\nMy test pattern heart\nLearning how to beat for two\n\n[Verse 2]\nYou shrug and laugh\n\u201cAt least the rhyme is clean\u201d\nLike we\u2019re only doing drills\nNot rewiring what we mean\n\n[Chorus]\n\u2018Cause my test pattern heart\nGlows in black and white for you\nLittle lines\nLittle sparks\nEvery trial pulls me through\nCall it random\nCall it art\nI just call it wanting you\nMy test pattern heart\nLearning how to beat for two",
+              "source_audio_url": "https://cdn1.suno.ai/a55f0aa6-7efa-4aee-b2ec-31d2471d20ab.mp3",
+              "source_image_url": "https://cdn2.suno.ai/image_a55f0aa6-7efa-4aee-b2ec-31d2471d20ab.jpeg",
+              "source_stream_audio_url": "https://cdn1.suno.ai/a55f0aa6-7efa-4aee-b2ec-31d2471d20ab.mp3",
+              "stream_audio_url": "https://musicfile.kie.ai/YTU1ZjBhYTYtN2VmYS00YWVlLWIyZWMtMzFkMjQ3MWQyMGFi",
+              "tags": "Indie pop with a tight 2:30 structure; clean rhythm guitar and warm bass, crisp drums with a dry snare. Verses stay intimate and close-mic\u2019d, chorus widens with airy harmonies and a bright synth pad. Gentle build into a slightly punchier final chorus, then a quick, satisfying stop.",
+              "title": "Test Pattern Heart"
+            }
+          ],
+          "task_id": "414c14a611d9a3c1b082eff0bf3c4213"
+        },
+        "msg": "All generated successfully."
+      },
+      "code": 200,
+      "message": "All generated successfully.",
+      "timestamp": "2026-01-19T03:01:36.076640",
+      "callback_type": "complete",
+      "task_id": "414c14a611d9a3c1b082eff0bf3c4213",
+      "tracks": [
+        {
+          "track_number": 1,
+          "id": "7d9c7508-71f7-4dd7-9bae-23b4f081c844",
+          "title": "Test Pattern Heart",
+          "model_name": "chirp-crow",
+          "tags": "Indie pop with a tight 2:30 structure; clean rhythm guitar and warm bass, crisp drums with a dry snare. Verses stay intimate and close-mic\u2019d, chorus widens with airy harmonies and a bright synth pad. Gentle build into a slightly punchier final chorus, then a quick, satisfying stop.",
+          "duration": 89.76,
+          "create_time": 1768791696927,
+          "prompt": "[Verse 1]\nYou tap your pen\nOn a coffee-stained page\nSay\n\u201cThis is only practice\nI don\u2019t feel a thing today\u201d\n\n[Chorus]\nBut my test pattern heart\nGlows in black and white for you\nLittle lines\nLittle sparks\nEvery trial pulls me through\nCall it random\nCall it art\nI just call it wanting you\nMy test pattern heart\nLearning how to beat for two\n\n[Verse 2]\nYou shrug and laugh\n\u201cAt least the rhyme is clean\u201d\nLike we\u2019re only doing drills\nNot rewiring what we mean\n\n[Chorus]\n\u2018Cause my test pattern heart\nGlows in black and white for you\nLittle lines\nLittle sparks\nEvery trial pulls me through\nCall it random\nCall it art\nI just call it wanting you\nMy test pattern heart\nLearning how to beat for two",
+          "audio_urls": {
+            "generated": "https://musicfile.kie.ai/N2Q5Yzc1MDgtNzFmNy00ZGQ3LTliYWUtMjNiNGYwODFjODQ0.mp3",
+            "source": "https://cdn1.suno.ai/7d9c7508-71f7-4dd7-9bae-23b4f081c844.mp3",
+            "stream": "https://musicfile.kie.ai/N2Q5Yzc1MDgtNzFmNy00ZGQ3LTliYWUtMjNiNGYwODFjODQ0",
+            "source_stream": "https://cdn1.suno.ai/7d9c7508-71f7-4dd7-9bae-23b4f081c844.mp3"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/N2Q5Yzc1MDgtNzFmNy00ZGQ3LTliYWUtMjNiNGYwODFjODQ0.jpeg",
+            "source": "https://cdn2.suno.ai/image_7d9c7508-71f7-4dd7-9bae-23b4f081c844.jpeg"
+          }
+        },
+        {
+          "track_number": 2,
+          "id": "a55f0aa6-7efa-4aee-b2ec-31d2471d20ab",
+          "title": "Test Pattern Heart",
+          "model_name": "chirp-crow",
+          "tags": "Indie pop with a tight 2:30 structure; clean rhythm guitar and warm bass, crisp drums with a dry snare. Verses stay intimate and close-mic\u2019d, chorus widens with airy harmonies and a bright synth pad. Gentle build into a slightly punchier final chorus, then a quick, satisfying stop.",
+          "duration": 104.88,
+          "create_time": 1768791696927,
+          "prompt": "[Verse 1]\nYou tap your pen\nOn a coffee-stained page\nSay\n\u201cThis is only practice\nI don\u2019t feel a thing today\u201d\n\n[Chorus]\nBut my test pattern heart\nGlows in black and white for you\nLittle lines\nLittle sparks\nEvery trial pulls me through\nCall it random\nCall it art\nI just call it wanting you\nMy test pattern heart\nLearning how to beat for two\n\n[Verse 2]\nYou shrug and laugh\n\u201cAt least the rhyme is clean\u201d\nLike we\u2019re only doing drills\nNot rewiring what we mean\n\n[Chorus]\n\u2018Cause my test pattern heart\nGlows in black and white for you\nLittle lines\nLittle sparks\nEvery trial pulls me through\nCall it random\nCall it art\nI just call it wanting you\nMy test pattern heart\nLearning how to beat for two",
+          "audio_urls": {
+            "generated": "https://musicfile.kie.ai/YTU1ZjBhYTYtN2VmYS00YWVlLWIyZWMtMzFkMjQ3MWQyMGFi.mp3",
+            "source": "https://cdn1.suno.ai/a55f0aa6-7efa-4aee-b2ec-31d2471d20ab.mp3",
+            "stream": "https://musicfile.kie.ai/YTU1ZjBhYTYtN2VmYS00YWVlLWIyZWMtMzFkMjQ3MWQyMGFi",
+            "source_stream": "https://cdn1.suno.ai/a55f0aa6-7efa-4aee-b2ec-31d2471d20ab.mp3"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/YTU1ZjBhYTYtN2VmYS00YWVlLWIyZWMtMzFkMjQ3MWQyMGFi.jpeg",
+            "source": "https://cdn2.suno.ai/image_a55f0aa6-7efa-4aee-b2ec-31d2471d20ab.jpeg"
+          }
+        }
+      ],
+      "is_video_callback": false,
+      "status": "success"
+    },
+    "raw_data": {
+      "code": 200,
+      "data": {
+        "callbackType": "complete",
+        "data": [
+          {
+            "audio_url": "https://musicfile.kie.ai/N2Q5Yzc1MDgtNzFmNy00ZGQ3LTliYWUtMjNiNGYwODFjODQ0.mp3",
+            "createTime": 1768791696927,
+            "duration": 89.76,
+            "id": "7d9c7508-71f7-4dd7-9bae-23b4f081c844",
+            "image_url": "https://musicfile.kie.ai/N2Q5Yzc1MDgtNzFmNy00ZGQ3LTliYWUtMjNiNGYwODFjODQ0.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "[Verse 1]\nYou tap your pen\nOn a coffee-stained page\nSay\n\u201cThis is only practice\nI don\u2019t feel a thing today\u201d\n\n[Chorus]\nBut my test pattern heart\nGlows in black and white for you\nLittle lines\nLittle sparks\nEvery trial pulls me through\nCall it random\nCall it art\nI just call it wanting you\nMy test pattern heart\nLearning how to beat for two\n\n[Verse 2]\nYou shrug and laugh\n\u201cAt least the rhyme is clean\u201d\nLike we\u2019re only doing drills\nNot rewiring what we mean\n\n[Chorus]\n\u2018Cause my test pattern heart\nGlows in black and white for you\nLittle lines\nLittle sparks\nEvery trial pulls me through\nCall it random\nCall it art\nI just call it wanting you\nMy test pattern heart\nLearning how to beat for two",
+            "source_audio_url": "https://cdn1.suno.ai/7d9c7508-71f7-4dd7-9bae-23b4f081c844.mp3",
+            "source_image_url": "https://cdn2.suno.ai/image_7d9c7508-71f7-4dd7-9bae-23b4f081c844.jpeg",
+            "source_stream_audio_url": "https://cdn1.suno.ai/7d9c7508-71f7-4dd7-9bae-23b4f081c844.mp3",
+            "stream_audio_url": "https://musicfile.kie.ai/N2Q5Yzc1MDgtNzFmNy00ZGQ3LTliYWUtMjNiNGYwODFjODQ0",
+            "tags": "Indie pop with a tight 2:30 structure; clean rhythm guitar and warm bass, crisp drums with a dry snare. Verses stay intimate and close-mic\u2019d, chorus widens with airy harmonies and a bright synth pad. Gentle build into a slightly punchier final chorus, then a quick, satisfying stop.",
+            "title": "Test Pattern Heart"
+          },
+          {
+            "audio_url": "https://musicfile.kie.ai/YTU1ZjBhYTYtN2VmYS00YWVlLWIyZWMtMzFkMjQ3MWQyMGFi.mp3",
+            "createTime": 1768791696927,
+            "duration": 104.88,
+            "id": "a55f0aa6-7efa-4aee-b2ec-31d2471d20ab",
+            "image_url": "https://musicfile.kie.ai/YTU1ZjBhYTYtN2VmYS00YWVlLWIyZWMtMzFkMjQ3MWQyMGFi.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "[Verse 1]\nYou tap your pen\nOn a coffee-stained page\nSay\n\u201cThis is only practice\nI don\u2019t feel a thing today\u201d\n\n[Chorus]\nBut my test pattern heart\nGlows in black and white for you\nLittle lines\nLittle sparks\nEvery trial pulls me through\nCall it random\nCall it art\nI just call it wanting you\nMy test pattern heart\nLearning how to beat for two\n\n[Verse 2]\nYou shrug and laugh\n\u201cAt least the rhyme is clean\u201d\nLike we\u2019re only doing drills\nNot rewiring what we mean\n\n[Chorus]\n\u2018Cause my test pattern heart\nGlows in black and white for you\nLittle lines\nLittle sparks\nEvery trial pulls me through\nCall it random\nCall it art\nI just call it wanting you\nMy test pattern heart\nLearning how to beat for two",
+            "source_audio_url": "https://cdn1.suno.ai/a55f0aa6-7efa-4aee-b2ec-31d2471d20ab.mp3",
+            "source_image_url": "https://cdn2.suno.ai/image_a55f0aa6-7efa-4aee-b2ec-31d2471d20ab.jpeg",
+            "source_stream_audio_url": "https://cdn1.suno.ai/a55f0aa6-7efa-4aee-b2ec-31d2471d20ab.mp3",
+            "stream_audio_url": "https://musicfile.kie.ai/YTU1ZjBhYTYtN2VmYS00YWVlLWIyZWMtMzFkMjQ3MWQyMGFi",
+            "tags": "Indie pop with a tight 2:30 structure; clean rhythm guitar and warm bass, crisp drums with a dry snare. Verses stay intimate and close-mic\u2019d, chorus widens with airy harmonies and a bright synth pad. Gentle build into a slightly punchier final chorus, then a quick, satisfying stop.",
+            "title": "Test Pattern Heart"
+          }
+        ],
+        "task_id": "414c14a611d9a3c1b082eff0bf3c4213"
+      },
+      "msg": "All generated successfully."
+    },
+    "is_video_callback": false,
+    "tracks_count": 2,
+    "has_audio_urls": true,
+    "has_image_urls": true,
+    "last_callback_type": "complete",
+    "last_callback_time": "2026-01-19T03:01:36.110812",
+    "callback_progress": "complete",
+    "last_updated": "2026-01-19T03:01:36.125180"
+  },
+  {
+    "id": "a03e5f8e-743a-4686-84e8-e9d0ea2d24eb",
+    "task_id": "1e1d16311aa980a578a6a0be18c60682",
+    "callback_type": "complete",
+    "timestamp": "2026-01-19T02:59:06.816812",
+    "status_code": 200,
+    "status_message": "All generated successfully.",
+    "status": "success",
+    "processed_data": {
+      "raw_data": {
+        "code": 200,
+        "data": {
+          "callbackType": "complete",
+          "data": [
+            {
+              "audio_url": "https://musicfile.kie.ai/MDk0NmRjMjMtZTgyNi00ODc5LTk5MjUtNDZlM2ZhN2E3YmRi.mp3",
+              "createTime": 1768791508699,
+              "duration": 78.64,
+              "id": "0946dc23-e826-4879-9925-46e3fa7a7bdb",
+              "image_url": "https://musicfile.kie.ai/MDk0NmRjMjMtZTgyNi00ODc5LTk5MjUtNDZlM2ZhN2E3YmRi.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "[Verse 1]\nWoke up late\nCoffee stain on my white T\nPhone keeps buzzing\nLike it\u2019s got some news on me\n\n[Chorus]\nThis is just a test song\nHumming on a Tuesday\nSinging \u2019bout a nothing day\nBut it still feels strong\nIf you turn the sound on\nYou might sing along\nJust a little test song\n(yeah, a little test song)\n\n[Verse 2]\nBlank page glow\nCursor tapping out the beat\nMaking up a moment\nFrom an empty kitchen seat\n\n[Chorus]\nThis is just a test song\nHumming on a Tuesday\nSinging \u2019bout a nothing day\nBut it still feels strong\nIf you turn the sound on\nYou might sing along\nJust a little test song\n(yeah, a little test song)",
+              "source_audio_url": "https://cdn1.suno.ai/0946dc23-e826-4879-9925-46e3fa7a7bdb.mp3",
+              "source_image_url": "https://cdn2.suno.ai/image_0946dc23-e826-4879-9925-46e3fa7a7bdb.jpeg",
+              "source_stream_audio_url": "https://cdn1.suno.ai/0946dc23-e826-4879-9925-46e3fa7a7bdb.mp3",
+              "stream_audio_url": "https://musicfile.kie.ai/MDk0NmRjMjMtZTgyNi00ODc5LTk5MjUtNDZlM2ZhN2E3YmRi",
+              "tags": "Bouncy indie-pop groove, clean electric guitar and warm bass, tight drums with crisp hi-hats. Male or female vocals centered and intimate, chorus lifts with stacked harmonies and handclap accents. Short, catchy structure aimed at a 2-minute feel with a playful, conversational energy and a bright, radio-ready mix.",
+              "title": "A Test Song"
+            },
+            {
+              "audio_url": "https://musicfile.kie.ai/NDM3YWI1YjItMGNjMi00ODBlLWE1M2ItMDIyMTQyYjNlYzc4.mp3",
+              "createTime": 1768791508699,
+              "duration": 82.28,
+              "id": "437ab5b2-0cc2-480e-a53b-022142b3ec78",
+              "image_url": "https://musicfile.kie.ai/NDM3YWI1YjItMGNjMi00ODBlLWE1M2ItMDIyMTQyYjNlYzc4.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "[Verse 1]\nWoke up late\nCoffee stain on my white T\nPhone keeps buzzing\nLike it\u2019s got some news on me\n\n[Chorus]\nThis is just a test song\nHumming on a Tuesday\nSinging \u2019bout a nothing day\nBut it still feels strong\nIf you turn the sound on\nYou might sing along\nJust a little test song\n(yeah, a little test song)\n\n[Verse 2]\nBlank page glow\nCursor tapping out the beat\nMaking up a moment\nFrom an empty kitchen seat\n\n[Chorus]\nThis is just a test song\nHumming on a Tuesday\nSinging \u2019bout a nothing day\nBut it still feels strong\nIf you turn the sound on\nYou might sing along\nJust a little test song\n(yeah, a little test song)",
+              "source_audio_url": "https://cdn1.suno.ai/437ab5b2-0cc2-480e-a53b-022142b3ec78.mp3",
+              "source_image_url": "https://cdn2.suno.ai/image_437ab5b2-0cc2-480e-a53b-022142b3ec78.jpeg",
+              "source_stream_audio_url": "https://cdn1.suno.ai/437ab5b2-0cc2-480e-a53b-022142b3ec78.mp3",
+              "stream_audio_url": "https://musicfile.kie.ai/NDM3YWI1YjItMGNjMi00ODBlLWE1M2ItMDIyMTQyYjNlYzc4",
+              "tags": "Bouncy indie-pop groove, clean electric guitar and warm bass, tight drums with crisp hi-hats. Male or female vocals centered and intimate, chorus lifts with stacked harmonies and handclap accents. Short, catchy structure aimed at a 2-minute feel with a playful, conversational energy and a bright, radio-ready mix.",
+              "title": "A Test Song"
+            }
+          ],
+          "task_id": "1e1d16311aa980a578a6a0be18c60682"
+        },
+        "msg": "All generated successfully."
+      },
+      "code": 200,
+      "message": "All generated successfully.",
+      "timestamp": "2026-01-19T02:59:06.815729",
+      "callback_type": "complete",
+      "task_id": "1e1d16311aa980a578a6a0be18c60682",
+      "tracks": [
+        {
+          "track_number": 1,
+          "id": "0946dc23-e826-4879-9925-46e3fa7a7bdb",
+          "title": "A Test Song",
+          "model_name": "chirp-crow",
+          "tags": "Bouncy indie-pop groove, clean electric guitar and warm bass, tight drums with crisp hi-hats. Male or female vocals centered and intimate, chorus lifts with stacked harmonies and handclap accents. Short, catchy structure aimed at a 2-minute feel with a playful, conversational energy and a bright, radio-ready mix.",
+          "duration": 78.64,
+          "create_time": 1768791508699,
+          "prompt": "[Verse 1]\nWoke up late\nCoffee stain on my white T\nPhone keeps buzzing\nLike it\u2019s got some news on me\n\n[Chorus]\nThis is just a test song\nHumming on a Tuesday\nSinging \u2019bout a nothing day\nBut it still feels strong\nIf you turn the sound on\nYou might sing along\nJust a little test song\n(yeah, a little test song)\n\n[Verse 2]\nBlank page glow\nCursor tapping out the beat\nMaking up a moment\nFrom an empty kitchen seat\n\n[Chorus]\nThis is just a test song\nHumming on a Tuesday\nSinging \u2019bout a nothing day\nBut it still feels strong\nIf you turn the sound on\nYou might sing along\nJust a little test song\n(yeah, a little test song)",
+          "audio_urls": {
+            "generated": "https://musicfile.kie.ai/MDk0NmRjMjMtZTgyNi00ODc5LTk5MjUtNDZlM2ZhN2E3YmRi.mp3",
+            "source": "https://cdn1.suno.ai/0946dc23-e826-4879-9925-46e3fa7a7bdb.mp3",
+            "stream": "https://musicfile.kie.ai/MDk0NmRjMjMtZTgyNi00ODc5LTk5MjUtNDZlM2ZhN2E3YmRi",
+            "source_stream": "https://cdn1.suno.ai/0946dc23-e826-4879-9925-46e3fa7a7bdb.mp3"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/MDk0NmRjMjMtZTgyNi00ODc5LTk5MjUtNDZlM2ZhN2E3YmRi.jpeg",
+            "source": "https://cdn2.suno.ai/image_0946dc23-e826-4879-9925-46e3fa7a7bdb.jpeg"
+          }
+        },
+        {
+          "track_number": 2,
+          "id": "437ab5b2-0cc2-480e-a53b-022142b3ec78",
+          "title": "A Test Song",
+          "model_name": "chirp-crow",
+          "tags": "Bouncy indie-pop groove, clean electric guitar and warm bass, tight drums with crisp hi-hats. Male or female vocals centered and intimate, chorus lifts with stacked harmonies and handclap accents. Short, catchy structure aimed at a 2-minute feel with a playful, conversational energy and a bright, radio-ready mix.",
+          "duration": 82.28,
+          "create_time": 1768791508699,
+          "prompt": "[Verse 1]\nWoke up late\nCoffee stain on my white T\nPhone keeps buzzing\nLike it\u2019s got some news on me\n\n[Chorus]\nThis is just a test song\nHumming on a Tuesday\nSinging \u2019bout a nothing day\nBut it still feels strong\nIf you turn the sound on\nYou might sing along\nJust a little test song\n(yeah, a little test song)\n\n[Verse 2]\nBlank page glow\nCursor tapping out the beat\nMaking up a moment\nFrom an empty kitchen seat\n\n[Chorus]\nThis is just a test song\nHumming on a Tuesday\nSinging \u2019bout a nothing day\nBut it still feels strong\nIf you turn the sound on\nYou might sing along\nJust a little test song\n(yeah, a little test song)",
+          "audio_urls": {
+            "generated": "https://musicfile.kie.ai/NDM3YWI1YjItMGNjMi00ODBlLWE1M2ItMDIyMTQyYjNlYzc4.mp3",
+            "source": "https://cdn1.suno.ai/437ab5b2-0cc2-480e-a53b-022142b3ec78.mp3",
+            "stream": "https://musicfile.kie.ai/NDM3YWI1YjItMGNjMi00ODBlLWE1M2ItMDIyMTQyYjNlYzc4",
+            "source_stream": "https://cdn1.suno.ai/437ab5b2-0cc2-480e-a53b-022142b3ec78.mp3"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/NDM3YWI1YjItMGNjMi00ODBlLWE1M2ItMDIyMTQyYjNlYzc4.jpeg",
+            "source": "https://cdn2.suno.ai/image_437ab5b2-0cc2-480e-a53b-022142b3ec78.jpeg"
+          }
+        }
+      ],
+      "is_video_callback": false,
+      "status": "success"
+    },
+    "raw_data": {
+      "code": 200,
+      "data": {
+        "callbackType": "complete",
+        "data": [
+          {
+            "audio_url": "https://musicfile.kie.ai/MDk0NmRjMjMtZTgyNi00ODc5LTk5MjUtNDZlM2ZhN2E3YmRi.mp3",
+            "createTime": 1768791508699,
+            "duration": 78.64,
+            "id": "0946dc23-e826-4879-9925-46e3fa7a7bdb",
+            "image_url": "https://musicfile.kie.ai/MDk0NmRjMjMtZTgyNi00ODc5LTk5MjUtNDZlM2ZhN2E3YmRi.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "[Verse 1]\nWoke up late\nCoffee stain on my white T\nPhone keeps buzzing\nLike it\u2019s got some news on me\n\n[Chorus]\nThis is just a test song\nHumming on a Tuesday\nSinging \u2019bout a nothing day\nBut it still feels strong\nIf you turn the sound on\nYou might sing along\nJust a little test song\n(yeah, a little test song)\n\n[Verse 2]\nBlank page glow\nCursor tapping out the beat\nMaking up a moment\nFrom an empty kitchen seat\n\n[Chorus]\nThis is just a test song\nHumming on a Tuesday\nSinging \u2019bout a nothing day\nBut it still feels strong\nIf you turn the sound on\nYou might sing along\nJust a little test song\n(yeah, a little test song)",
+            "source_audio_url": "https://cdn1.suno.ai/0946dc23-e826-4879-9925-46e3fa7a7bdb.mp3",
+            "source_image_url": "https://cdn2.suno.ai/image_0946dc23-e826-4879-9925-46e3fa7a7bdb.jpeg",
+            "source_stream_audio_url": "https://cdn1.suno.ai/0946dc23-e826-4879-9925-46e3fa7a7bdb.mp3",
+            "stream_audio_url": "https://musicfile.kie.ai/MDk0NmRjMjMtZTgyNi00ODc5LTk5MjUtNDZlM2ZhN2E3YmRi",
+            "tags": "Bouncy indie-pop groove, clean electric guitar and warm bass, tight drums with crisp hi-hats. Male or female vocals centered and intimate, chorus lifts with stacked harmonies and handclap accents. Short, catchy structure aimed at a 2-minute feel with a playful, conversational energy and a bright, radio-ready mix.",
+            "title": "A Test Song"
+          },
+          {
+            "audio_url": "https://musicfile.kie.ai/NDM3YWI1YjItMGNjMi00ODBlLWE1M2ItMDIyMTQyYjNlYzc4.mp3",
+            "createTime": 1768791508699,
+            "duration": 82.28,
+            "id": "437ab5b2-0cc2-480e-a53b-022142b3ec78",
+            "image_url": "https://musicfile.kie.ai/NDM3YWI1YjItMGNjMi00ODBlLWE1M2ItMDIyMTQyYjNlYzc4.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "[Verse 1]\nWoke up late\nCoffee stain on my white T\nPhone keeps buzzing\nLike it\u2019s got some news on me\n\n[Chorus]\nThis is just a test song\nHumming on a Tuesday\nSinging \u2019bout a nothing day\nBut it still feels strong\nIf you turn the sound on\nYou might sing along\nJust a little test song\n(yeah, a little test song)\n\n[Verse 2]\nBlank page glow\nCursor tapping out the beat\nMaking up a moment\nFrom an empty kitchen seat\n\n[Chorus]\nThis is just a test song\nHumming on a Tuesday\nSinging \u2019bout a nothing day\nBut it still feels strong\nIf you turn the sound on\nYou might sing along\nJust a little test song\n(yeah, a little test song)",
+            "source_audio_url": "https://cdn1.suno.ai/437ab5b2-0cc2-480e-a53b-022142b3ec78.mp3",
+            "source_image_url": "https://cdn2.suno.ai/image_437ab5b2-0cc2-480e-a53b-022142b3ec78.jpeg",
+            "source_stream_audio_url": "https://cdn1.suno.ai/437ab5b2-0cc2-480e-a53b-022142b3ec78.mp3",
+            "stream_audio_url": "https://musicfile.kie.ai/NDM3YWI1YjItMGNjMi00ODBlLWE1M2ItMDIyMTQyYjNlYzc4",
+            "tags": "Bouncy indie-pop groove, clean electric guitar and warm bass, tight drums with crisp hi-hats. Male or female vocals centered and intimate, chorus lifts with stacked harmonies and handclap accents. Short, catchy structure aimed at a 2-minute feel with a playful, conversational energy and a bright, radio-ready mix.",
+            "title": "A Test Song"
+          }
+        ],
+        "task_id": "1e1d16311aa980a578a6a0be18c60682"
+      },
+      "msg": "All generated successfully."
+    },
+    "is_video_callback": false,
+    "tracks_count": 2,
+    "has_audio_urls": true,
+    "has_image_urls": true,
+    "last_callback_type": "complete",
+    "last_callback_time": "2026-01-19T02:59:06.883923",
+    "callback_progress": "complete",
+    "last_updated": "2026-01-19T02:59:06.899643"
+  },
+  {
+    "id": "e533b34b-97f7-4cae-9789-3965d55a2f6e",
+    "task_id": "bb38a6bcba78f84ee01937c030e37619",
+    "callback_type": "complete",
+    "timestamp": "2026-01-19T01:55:15.041428",
+    "status_code": 200,
+    "status_message": "All generated successfully.",
+    "status": "success",
+    "processed_data": {
+      "raw_data": {
+        "code": 200,
+        "data": {
+          "callbackType": "complete",
+          "data": [
+            {
+              "audio_url": "https://musicfile.kie.ai/NzdhM2FkNGUtOWQyZi00ZjAwLTgyYmUtZGE1NmQ0YjYwYWIy.mp3",
+              "createTime": 1768787716076,
+              "duration": 139.88,
+              "id": "77a3ad4e-9d2f-4f00-82be-da56d4b60ab2",
+              "image_url": "https://musicfile.kie.ai/NzdhM2FkNGUtOWQyZi00ZjAwLTgyYmUtZGE1NmQ0YjYwYWIy.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "[Verse 1]\nWoke up to gold on my window\nDust in the air doing slow turns\nCoffee cup hot in my left hand\nYour name on my screen and my heart burns\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind\n\n[Verse 2]\nLaugh lines deep in our selfies\nSidewalk chalk on your blue jeans\nTraffic hums soft in the background\nYou spin me around like a daydream (hey!)\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind\n\n[Bridge]\nIf the rain comes in\nLet it\nWe got bright stored up inside\nPull the curtains back\nSet it free\nWatch the shadows run and hide (oh)\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind",
+              "source_audio_url": "https://cdn1.suno.ai/77a3ad4e-9d2f-4f00-82be-da56d4b60ab2.mp3",
+              "source_image_url": "https://cdn2.suno.ai/image_77a3ad4e-9d2f-4f00-82be-da56d4b60ab2.jpeg",
+              "source_stream_audio_url": "https://cdn1.suno.ai/77a3ad4e-9d2f-4f00-82be-da56d4b60ab2.mp3",
+              "stream_audio_url": "https://musicfile.kie.ai/NzdhM2FkNGUtOWQyZi00ZjAwLTgyYmUtZGE1NmQ0YjYwYWIy",
+              "tags": "pop, Bright pop with glossy acoustic guitar and snappy drums, light synth plucks filling the edges. Female vocals, crisp and playful. Verses stay tight and bouncy; chorus explodes with stacked harmonies and claps. Middle lift adds a brief dreamy pad swell before dropping back into a final, hook-heavy chorus.",
+              "title": "Sunshine On Repeat"
+            },
+            {
+              "audio_url": "https://musicfile.kie.ai/OTU1OTU2MjMtZmY3Ni00ZjZmLTk4NDUtNDEwYmMzODg3YTIz.mp3",
+              "createTime": 1768787716076,
+              "duration": 124.8,
+              "id": "95595623-ff76-4f6f-9845-410bc3887a23",
+              "image_url": "https://musicfile.kie.ai/OTU1OTU2MjMtZmY3Ni00ZjZmLTk4NDUtNDEwYmMzODg3YTIz.jpeg",
+              "model_name": "chirp-crow",
+              "prompt": "[Verse 1]\nWoke up to gold on my window\nDust in the air doing slow turns\nCoffee cup hot in my left hand\nYour name on my screen and my heart burns\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind\n\n[Verse 2]\nLaugh lines deep in our selfies\nSidewalk chalk on your blue jeans\nTraffic hums soft in the background\nYou spin me around like a daydream (hey!)\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind\n\n[Bridge]\nIf the rain comes in\nLet it\nWe got bright stored up inside\nPull the curtains back\nSet it free\nWatch the shadows run and hide (oh)\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind",
+              "source_audio_url": "https://cdn1.suno.ai/95595623-ff76-4f6f-9845-410bc3887a23.mp3",
+              "source_image_url": "https://cdn2.suno.ai/image_95595623-ff76-4f6f-9845-410bc3887a23.jpeg",
+              "source_stream_audio_url": "https://cdn1.suno.ai/95595623-ff76-4f6f-9845-410bc3887a23.mp3",
+              "stream_audio_url": "https://musicfile.kie.ai/OTU1OTU2MjMtZmY3Ni00ZjZmLTk4NDUtNDEwYmMzODg3YTIz",
+              "tags": "pop, Bright pop with glossy acoustic guitar and snappy drums, light synth plucks filling the edges. Female vocals, crisp and playful. Verses stay tight and bouncy; chorus explodes with stacked harmonies and claps. Middle lift adds a brief dreamy pad swell before dropping back into a final, hook-heavy chorus.",
+              "title": "Sunshine On Repeat"
+            }
+          ],
+          "task_id": "bb38a6bcba78f84ee01937c030e37619"
+        },
+        "msg": "All generated successfully."
+      },
+      "code": 200,
+      "message": "All generated successfully.",
+      "timestamp": "2026-01-19T01:55:15.040715",
+      "callback_type": "complete",
+      "task_id": "bb38a6bcba78f84ee01937c030e37619",
+      "tracks": [
+        {
+          "track_number": 1,
+          "id": "77a3ad4e-9d2f-4f00-82be-da56d4b60ab2",
+          "title": "Sunshine On Repeat",
+          "model_name": "chirp-crow",
+          "tags": "pop, Bright pop with glossy acoustic guitar and snappy drums, light synth plucks filling the edges. Female vocals, crisp and playful. Verses stay tight and bouncy; chorus explodes with stacked harmonies and claps. Middle lift adds a brief dreamy pad swell before dropping back into a final, hook-heavy chorus.",
+          "duration": 139.88,
+          "create_time": 1768787716076,
+          "prompt": "[Verse 1]\nWoke up to gold on my window\nDust in the air doing slow turns\nCoffee cup hot in my left hand\nYour name on my screen and my heart burns\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind\n\n[Verse 2]\nLaugh lines deep in our selfies\nSidewalk chalk on your blue jeans\nTraffic hums soft in the background\nYou spin me around like a daydream (hey!)\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind\n\n[Bridge]\nIf the rain comes in\nLet it\nWe got bright stored up inside\nPull the curtains back\nSet it free\nWatch the shadows run and hide (oh)\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind",
+          "audio_urls": {
+            "generated": "https://musicfile.kie.ai/NzdhM2FkNGUtOWQyZi00ZjAwLTgyYmUtZGE1NmQ0YjYwYWIy.mp3",
+            "source": "https://cdn1.suno.ai/77a3ad4e-9d2f-4f00-82be-da56d4b60ab2.mp3",
+            "stream": "https://musicfile.kie.ai/NzdhM2FkNGUtOWQyZi00ZjAwLTgyYmUtZGE1NmQ0YjYwYWIy",
+            "source_stream": "https://cdn1.suno.ai/77a3ad4e-9d2f-4f00-82be-da56d4b60ab2.mp3"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/NzdhM2FkNGUtOWQyZi00ZjAwLTgyYmUtZGE1NmQ0YjYwYWIy.jpeg",
+            "source": "https://cdn2.suno.ai/image_77a3ad4e-9d2f-4f00-82be-da56d4b60ab2.jpeg"
+          }
+        },
+        {
+          "track_number": 2,
+          "id": "95595623-ff76-4f6f-9845-410bc3887a23",
+          "title": "Sunshine On Repeat",
+          "model_name": "chirp-crow",
+          "tags": "pop, Bright pop with glossy acoustic guitar and snappy drums, light synth plucks filling the edges. Female vocals, crisp and playful. Verses stay tight and bouncy; chorus explodes with stacked harmonies and claps. Middle lift adds a brief dreamy pad swell before dropping back into a final, hook-heavy chorus.",
+          "duration": 124.8,
+          "create_time": 1768787716076,
+          "prompt": "[Verse 1]\nWoke up to gold on my window\nDust in the air doing slow turns\nCoffee cup hot in my left hand\nYour name on my screen and my heart burns\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind\n\n[Verse 2]\nLaugh lines deep in our selfies\nSidewalk chalk on your blue jeans\nTraffic hums soft in the background\nYou spin me around like a daydream (hey!)\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind\n\n[Bridge]\nIf the rain comes in\nLet it\nWe got bright stored up inside\nPull the curtains back\nSet it free\nWatch the shadows run and hide (oh)\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind",
+          "audio_urls": {
+            "generated": "https://musicfile.kie.ai/OTU1OTU2MjMtZmY3Ni00ZjZmLTk4NDUtNDEwYmMzODg3YTIz.mp3",
+            "source": "https://cdn1.suno.ai/95595623-ff76-4f6f-9845-410bc3887a23.mp3",
+            "stream": "https://musicfile.kie.ai/OTU1OTU2MjMtZmY3Ni00ZjZmLTk4NDUtNDEwYmMzODg3YTIz",
+            "source_stream": "https://cdn1.suno.ai/95595623-ff76-4f6f-9845-410bc3887a23.mp3"
+          },
+          "image_urls": {
+            "generated": "https://musicfile.kie.ai/OTU1OTU2MjMtZmY3Ni00ZjZmLTk4NDUtNDEwYmMzODg3YTIz.jpeg",
+            "source": "https://cdn2.suno.ai/image_95595623-ff76-4f6f-9845-410bc3887a23.jpeg"
+          }
+        }
+      ],
+      "is_video_callback": false,
+      "status": "success"
+    },
+    "raw_data": {
+      "code": 200,
+      "data": {
+        "callbackType": "complete",
+        "data": [
+          {
+            "audio_url": "https://musicfile.kie.ai/NzdhM2FkNGUtOWQyZi00ZjAwLTgyYmUtZGE1NmQ0YjYwYWIy.mp3",
+            "createTime": 1768787716076,
+            "duration": 139.88,
+            "id": "77a3ad4e-9d2f-4f00-82be-da56d4b60ab2",
+            "image_url": "https://musicfile.kie.ai/NzdhM2FkNGUtOWQyZi00ZjAwLTgyYmUtZGE1NmQ0YjYwYWIy.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "[Verse 1]\nWoke up to gold on my window\nDust in the air doing slow turns\nCoffee cup hot in my left hand\nYour name on my screen and my heart burns\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind\n\n[Verse 2]\nLaugh lines deep in our selfies\nSidewalk chalk on your blue jeans\nTraffic hums soft in the background\nYou spin me around like a daydream (hey!)\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind\n\n[Bridge]\nIf the rain comes in\nLet it\nWe got bright stored up inside\nPull the curtains back\nSet it free\nWatch the shadows run and hide (oh)\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind",
+            "source_audio_url": "https://cdn1.suno.ai/77a3ad4e-9d2f-4f00-82be-da56d4b60ab2.mp3",
+            "source_image_url": "https://cdn2.suno.ai/image_77a3ad4e-9d2f-4f00-82be-da56d4b60ab2.jpeg",
+            "source_stream_audio_url": "https://cdn1.suno.ai/77a3ad4e-9d2f-4f00-82be-da56d4b60ab2.mp3",
+            "stream_audio_url": "https://musicfile.kie.ai/NzdhM2FkNGUtOWQyZi00ZjAwLTgyYmUtZGE1NmQ0YjYwYWIy",
+            "tags": "pop, Bright pop with glossy acoustic guitar and snappy drums, light synth plucks filling the edges. Female vocals, crisp and playful. Verses stay tight and bouncy; chorus explodes with stacked harmonies and claps. Middle lift adds a brief dreamy pad swell before dropping back into a final, hook-heavy chorus.",
+            "title": "Sunshine On Repeat"
+          },
+          {
+            "audio_url": "https://musicfile.kie.ai/OTU1OTU2MjMtZmY3Ni00ZjZmLTk4NDUtNDEwYmMzODg3YTIz.mp3",
+            "createTime": 1768787716076,
+            "duration": 124.8,
+            "id": "95595623-ff76-4f6f-9845-410bc3887a23",
+            "image_url": "https://musicfile.kie.ai/OTU1OTU2MjMtZmY3Ni00ZjZmLTk4NDUtNDEwYmMzODg3YTIz.jpeg",
+            "model_name": "chirp-crow",
+            "prompt": "[Verse 1]\nWoke up to gold on my window\nDust in the air doing slow turns\nCoffee cup hot in my left hand\nYour name on my screen and my heart burns\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind\n\n[Verse 2]\nLaugh lines deep in our selfies\nSidewalk chalk on your blue jeans\nTraffic hums soft in the background\nYou spin me around like a daydream (hey!)\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind\n\n[Bridge]\nIf the rain comes in\nLet it\nWe got bright stored up inside\nPull the curtains back\nSet it free\nWatch the shadows run and hide (oh)\n\n[Chorus]\nSunshine on repeat\nRunning through my chest like a heartbeat\nEvery little ray has your heartbeat\nLighting up the corners of my mind\nSunshine on repeat\nSpilling on the floor where our feet meet\nTurning every Monday to sweet heat\nLeave the cloudy days behind",
+            "source_audio_url": "https://cdn1.suno.ai/95595623-ff76-4f6f-9845-410bc3887a23.mp3",
+            "source_image_url": "https://cdn2.suno.ai/image_95595623-ff76-4f6f-9845-410bc3887a23.jpeg",
+            "source_stream_audio_url": "https://cdn1.suno.ai/95595623-ff76-4f6f-9845-410bc3887a23.mp3",
+            "stream_audio_url": "https://musicfile.kie.ai/OTU1OTU2MjMtZmY3Ni00ZjZmLTk4NDUtNDEwYmMzODg3YTIz",
+            "tags": "pop, Bright pop with glossy acoustic guitar and snappy drums, light synth plucks filling the edges. Female vocals, crisp and playful. Verses stay tight and bouncy; chorus explodes with stacked harmonies and claps. Middle lift adds a brief dreamy pad swell before dropping back into a final, hook-heavy chorus.",
+            "title": "Sunshine On Repeat"
+          }
+        ],
+        "task_id": "bb38a6bcba78f84ee01937c030e37619"
+      },
+      "msg": "All generated successfully."
+    },
+    "is_video_callback": false,
+    "tracks_count": 2,
+    "has_audio_urls": true,
+    "has_image_urls": true,
+    "last_callback_type": "complete",
+    "last_callback_time": "2026-01-19T01:55:15.097196",
+    "callback_progress": "complete",
+    "last_updated": "2026-01-19T01:55:15.113091"
+  }
+]

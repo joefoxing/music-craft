@@ -11,8 +11,8 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
+    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -362,7 +362,13 @@
                                 <div id="customFields" class="hidden space-y-6">
                                     <!-- Style Input -->
                                     <div>
-                                        <label for="styleInput" class="block text-sm font-medium mb-2">Style Details</label>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <label for="styleInput" class="text-sm font-medium">Style Details</label>
+                                            <button type="button" id="styleBoostBtn" class="btn btn-secondary text-xs py-1 px-2 flex items-center gap-1" title="Generate an enhanced style description from your keywords">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                                <span id="styleBoostBtnText">Style Boost</span>
+                                            </button>
+                                        </div>
                                         <textarea id="styleInput" class="form-control" rows="2" placeholder="e.g., 'Upbeat pop with synth elements, female vocals, 120 BPM'"></textarea>
                                         <div class="char-counter">
                                             <span id="styleChars">0</span>/<span id="styleMax">200</span> characters
@@ -1207,6 +1213,45 @@
             
             // Initial state
             updatePersonaIdState();
+
+            // Style Boost button handler
+            const styleBoostBtn = document.getElementById('styleBoostBtn');
+            if (styleBoostBtn) {
+                styleBoostBtn.addEventListener('click', async function() {
+                    const styleInput = document.getElementById('styleInput');
+                    const btnText = document.getElementById('styleBoostBtnText');
+                    const content = styleInput ? styleInput.value.trim() : '';
+                    if (!content) {
+                        alert('Please enter some style keywords first (e.g. "Pop, Mysterious").');
+                        return;
+                    }
+                    styleBoostBtn.disabled = true;
+                    btnText.textContent = 'Boosting...';
+                    try {
+                        const response = await fetch('/api/style-boost', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': window.csrfToken || ''
+                            },
+                            body: JSON.stringify({ content: content })
+                        });
+                        const result = await response.json();
+                        const boostedStyle = result && result.data && (result.data.result || result.data);
+                        if (boostedStyle && typeof boostedStyle === 'string') {
+                            styleInput.value = boostedStyle;
+                            styleInput.dispatchEvent(new Event('input'));
+                        } else {
+                            alert('Style Boost failed: ' + (result.msg || result.error || 'Unknown error'));
+                        }
+                    } catch (err) {
+                        alert('Style Boost request failed: ' + err.message);
+                    } finally {
+                        styleBoostBtn.disabled = false;
+                        btnText.textContent = 'Style Boost';
+                    }
+                });
+            }
         });
     </script>
     <style>

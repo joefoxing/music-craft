@@ -366,6 +366,7 @@ class AudioLibrary(db.Model):
     processing_status = db.Column(db.String(50), default='ready')  # ready, processing, error
     source_type = db.Column(db.String(50))  # upload, generated, url, history
     source_reference = db.Column(db.Text)  # Reference to original source (task_id, etc.)
+    kie_audio_id = db.Column(db.String(255))  # Kie platform audio UUID (track.id from generation)
     
     # Timestamps
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -410,6 +411,7 @@ class AudioLibrary(db.Model):
             'processing_status': self.processing_status,
             'source_type': self.source_type,
             'source_reference': self.source_reference,
+            'kie_audio_id': self.kie_audio_id,
             'uploaded_at': self.uploaded_at.isoformat() if self.uploaded_at else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,

@@ -170,7 +170,39 @@ def generate_music():
             style=style,
             title=title
         )
-        
+
+        # Record a pending history entry as soon as the job is submitted so it
+        # appears in the history page immediately (before the callback arrives).
+        task_id = (response.get('data') or {}).get('taskId')
+        if task_id:
+            try:
+                pending_entry = {
+                    'id': str(uuid.uuid4()),
+                    'task_id': task_id,
+                    'callback_type': 'pending',
+                    'timestamp': datetime.datetime.utcnow().isoformat(),
+                    'status_code': None,
+                    'status_message': 'Generation in progress',
+                    'status': 'pending',
+                    'is_video_callback': False,
+                    'tracks_count': 0,
+                    'has_audio_urls': False,
+                    'has_image_urls': False,
+                    'generation_params': {
+                        'type': 'music',
+                        'prompt': prompt,
+                        'model': model,
+                        'instrumental': instrumental,
+                        'custom_mode': custom_mode,
+                        'style': style,
+                        'title': title,
+                    }
+                }
+                add_to_history(pending_entry)
+                current_app.logger.info(f"Pending history entry created for music task: {task_id}")
+            except Exception as he:
+                current_app.logger.warning(f"Failed to create pending history entry: {he}")
+
         return jsonify(response)
         
     except Exception as e:
@@ -240,7 +272,39 @@ def generate_cover():
             title=title,
             **optional_params
         )
-        
+
+        # Record a pending history entry immediately upon job submission.
+        task_id = (response.get('data') or {}).get('taskId')
+        if task_id:
+            try:
+                pending_entry = {
+                    'id': str(uuid.uuid4()),
+                    'task_id': task_id,
+                    'callback_type': 'pending',
+                    'timestamp': datetime.datetime.utcnow().isoformat(),
+                    'status_code': None,
+                    'status_message': 'Cover generation in progress',
+                    'status': 'pending',
+                    'is_video_callback': False,
+                    'tracks_count': 0,
+                    'has_audio_urls': False,
+                    'has_image_urls': False,
+                    'generation_params': {
+                        'type': 'cover',
+                        'prompt': prompt,
+                        'model': model,
+                        'instrumental': instrumental,
+                        'custom_mode': custom_mode,
+                        'style': style,
+                        'title': title,
+                        'upload_url': upload_url,
+                    }
+                }
+                add_to_history(pending_entry)
+                current_app.logger.info(f"Pending history entry created for cover task: {task_id}")
+            except Exception as he:
+                current_app.logger.warning(f"Failed to create pending history entry: {he}")
+
         return jsonify(response)
         
     except Exception as e:
@@ -634,6 +698,47 @@ def update_history_entry(task_id, updates):
     
     if updated:
         return save_history(history)
+    return False
+
+def upsert_history_entry(entry):
+    """
+    Update an existing history entry for the same task_id (if in a transient state)
+    or insert a new one.
+
+    A 'pending' or 'processing' entry created at submission time will be replaced
+    in-place by the first callback so the history list stays clean (one row per job).
+    If no existing transient entry is found a new row is prepended.
+    """
+    history = load_history()
+
+    # Ensure required fields are present
+    if 'id' not in entry:
+        entry['id'] = str(uuid.uuid4())
+    if 'timestamp' not in entry:
+        entry['timestamp'] = datetime.datetime.utcnow().isoformat()
+
+    task_id = entry.get('task_id')
+    if task_id:
+        for i, existing in enumerate(history):
+            if existing.get('task_id') == task_id and existing.get('status') in ('pending', 'processing'):
+                # Preserve original submission timestamp and id
+                entry.setdefault('original_timestamp', existing.get('timestamp'))
+                entry['id'] = existing['id']
+                entry['last_updated'] = datetime.datetime.utcnow().isoformat()
+                history[i] = entry
+                return save_history(history)
+
+    # No transient entry found – prepend as a new record
+    history.insert(0, entry)
+    if len(history) > 100:
+        history = history[:100]
+    if save_history(history):
+        if len(history) % 10 == 0:
+            try:
+                cleanup_old_history(days_threshold=15)
+            except Exception as e:
+                current_app.logger.warning(f"Failed to run history cleanup: {e}")
+        return True
     return False
 
 def cleanup_old_history(days_threshold=15):
@@ -1192,20 +1297,11 @@ def callback_handler():
                     )
                 }
             
-            # Add to history
+            # Upsert into history: update the existing pending/processing entry for
+            # this task if one exists, otherwise insert a new row.
             try:
-                add_to_history(history_entry)
-                current_app.logger.info(f"Callback stored in history for task: {task_id}")
-                
-                # Also update existing entry if this is a progress update
-                if callback_type in ['text', 'first', 'complete', 'video_complete']:
-                    update_history_entry(task_id, {
-                        'last_callback_type': callback_type,
-                        'last_callback_time': datetime.datetime.utcnow().isoformat(),
-                        'callback_progress': callback_type,
-                        'processed_data': processed_data
-                    })
-                    
+                upsert_history_entry(history_entry)
+                current_app.logger.info(f"Callback upserted in history for task: {task_id}")
             except Exception as history_error:
                 current_app.logger.error(f"Failed to store callback in history: {history_error}")
         else:

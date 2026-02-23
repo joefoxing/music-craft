@@ -54,6 +54,7 @@ services:
       - ./app/static:/app/app/static
       - ./app/routes:/app/app/routes
       - ./app/services:/app/app/services
+      - ./app/core:/app/app/core
     expose:
       - "8000"
     environment:

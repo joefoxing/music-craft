@@ -159,6 +159,9 @@ def add_to_library():
         if not data:
             return jsonify(ResponseUtils.create_error_response('No JSON data provided')), 400
         
+        current_app.logger.info(f"[add_to_library] Received keys: {list(data.keys())}")
+        current_app.logger.info(f"[add_to_library] source_reference={data.get('source_reference')!r}, kie_audio_id={data.get('kie_audio_id')!r}")
+        
         service = AudioLibraryService()
         success, error_message, audio_item = service.add_to_library(data)
         

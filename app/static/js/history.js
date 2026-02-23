@@ -376,6 +376,11 @@ function createHistoryCard(entry) {
                             <span class="material-symbols-outlined">more_vert</span>
                         </button>
                         <div class="card-menu hidden absolute right-0 mt-2 w-56 bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-lg shadow-lg overflow-hidden z-20">
+                            <button class="card-menu-replace-section w-full text-left px-4 py-2 text-sm text-violet-700 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-base">content_cut</span>
+                                Replace Section
+                            </button>
+                            <div class="h-px bg-slate-100 dark:bg-slate-700 my-1"></div>
                             <button class="card-menu-select w-full text-left px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800">
                                 ${isSelectedForDeletion ? 'Unselect' : 'Select for deletion'}
                             </button>
@@ -460,6 +465,18 @@ function createHistoryCard(entry) {
             e.stopPropagation();
             closeOpenMenu();
             await deleteEntriesById([String(entry.id)]);
+        });
+    }
+
+    const menuReplaceSectionBtn = card.querySelector('.card-menu-replace-section');
+    if (menuReplaceSectionBtn) {
+        menuReplaceSectionBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeOpenMenu();
+            const params = new URLSearchParams();
+            if (entry.task_id) params.set('taskId', entry.task_id);
+            window.location.href = '/replace-section' + (params.toString() ? '?' + params.toString() : '');
         });
     }
     

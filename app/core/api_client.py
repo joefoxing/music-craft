@@ -1162,6 +1162,359 @@ class KieAPIClient:
             
             raise
     
+    def style_boost(
+        self,
+        content: str
+    ) -> Dict[str, Any]:
+        """
+        Generate a music style suggestion using Kie Style Boost API.
+
+        Args:
+            content: Comma-separated style keywords, e.g. "Pop, Mysterious"
+
+        Returns:
+            API response dictionary containing generated style text
+        """
+        if self.use_mock:
+            logger.info("Using mock mode for style_boost")
+            time.sleep(0.3)
+            return {
+                "code": 200,
+                "msg": "success",
+                "data": f"An upbeat and mysterious {content} track with atmospheric synths and driving rhythms."
+            }
+
+        endpoint = f"{self.base_url}/api/v1/style/generate"
+        payload = {"content": content}
+
+        try:
+            logger.info(f"Making request to Kie API style boost endpoint: {endpoint}")
+            response = requests.post(endpoint, headers=self.headers, json=payload, timeout=15)
+            logger.info(f"Response status: {response.status_code}")
+            response.raise_for_status()
+            result = response.json()
+            logger.info(f"Kie API style boost request successful: {result.get('code', 'No code')}")
+            return result
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Kie API style boost request failed: {e}")
+            if hasattr(e, 'response') and e.response is not None:
+                logger.error(f"Response status: {e.response.status_code}")
+                logger.error(f"Response text: {e.response.text[:500]}")
+                if e.response.status_code == 401:
+                    raise requests.exceptions.RequestException(
+                        "Authentication failed (401). Please check your API key."
+                    )
+                elif e.response.status_code == 402:
+                    raise requests.exceptions.RequestException(
+                        "Insufficient credits (402). Please add more credits to your account."
+                    )
+            raise
+
+    def mashup(
+        self,
+        upload_url_list: list,
+        model: str = "V4",
+        custom_mode: bool = True,
+        prompt: str = "",
+        instrumental: bool = False,
+        call_back_url: Optional[str] = None,
+        style: Optional[str] = None,
+        title: Optional[str] = None,
+        vocal_gender: Optional[str] = None,
+        style_weight: Optional[float] = None,
+        weirdness_constraint: Optional[float] = None,
+        audio_weight: Optional[float] = None
+    ) -> Dict[str, Any]:
+        """
+        Create a mashup from multiple audio files using Kie API.
+
+        Args:
+            upload_url_list: List of audio URLs to mashup (minimum 2)
+            model: Model version (V4, V4_5, V4_5PLUS, V4_5ALL, V5)
+            custom_mode: Whether to use custom mode
+            prompt: Description / lyrics for the mashup
+            instrumental: Whether the result should be instrumental
+            call_back_url: Callback URL for status updates
+            style: Music style/genre
+            title: Title for the generated track
+            vocal_gender: Vocal gender ('m' or 'f')
+            style_weight: Style weight (0-1)
+            weirdness_constraint: Weirdness constraint (0-1)
+            audio_weight: Audio weight (0-1)
+
+        Returns:
+            API response dictionary with taskId
+        """
+        if self.use_mock:
+            logger.info("Using mock mode for mashup")
+            task_id = hashlib.md5(f"{upload_url_list}{prompt}{time.time()}".encode()).hexdigest()[:24]
+            time.sleep(0.5)
+            return {"code": 200, "msg": "success", "data": {"taskId": task_id}}
+
+        endpoint = f"{self.base_url}/api/v1/generate/mashup"
+
+        base_url = Config.get_public_base_url()
+        if not base_url and not call_back_url:
+            try:
+                from flask import request as flask_request
+                base_url = flask_request.host_url.rstrip('/')
+            except Exception:
+                pass
+
+        call_back_url_to_use = call_back_url or f"{base_url}/callback"
+
+        payload: Dict[str, Any] = {
+            "uploadUrlList": upload_url_list,
+            "customMode": custom_mode,
+            "model": model,
+            "callBackUrl": call_back_url_to_use,
+            "prompt": prompt,
+            "instrumental": instrumental,
+        }
+
+        if style:
+            payload["style"] = style
+        if title:
+            payload["title"] = title
+        if vocal_gender is not None:
+            payload["vocalGender"] = vocal_gender
+        if style_weight is not None:
+            payload["styleWeight"] = round(style_weight, 2)
+        if weirdness_constraint is not None:
+            payload["weirdnessConstraint"] = round(weirdness_constraint, 2)
+        if audio_weight is not None:
+            payload["audioWeight"] = round(audio_weight, 2)
+
+        logger.info(f"Using callback URL for mashup: {call_back_url_to_use}")
+
+        try:
+            logger.info(f"Making request to Kie API mashup endpoint: {endpoint}")
+            logger.info(f"Request payload keys: {list(payload.keys())}")
+            response = requests.post(endpoint, headers=self.headers, json=payload, timeout=15)
+            logger.info(f"Response status: {response.status_code}")
+            response.raise_for_status()
+            result = response.json()
+            logger.info(f"Kie API mashup request successful: {result.get('code', 'No code')}")
+            return result
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Kie API mashup request failed: {e}")
+            if hasattr(e, 'response') and e.response is not None:
+                logger.error(f"Response status: {e.response.status_code}")
+                logger.error(f"Response text: {e.response.text[:500]}")
+                if e.response.status_code == 401:
+                    raise requests.exceptions.RequestException(
+                        "Authentication failed (401). Please check your API key."
+                    )
+                elif e.response.status_code == 402:
+                    raise requests.exceptions.RequestException(
+                        "Insufficient credits (402). Please add more credits to your account."
+                    )
+                elif e.response.status_code == 404:
+                    raise requests.exceptions.RequestException(
+                        f"Endpoint not found (404): {endpoint}. Please check the Kie API documentation."
+                    )
+            raise
+
+    def replace_section(
+        self,
+        task_id: str,
+        audio_id: str,
+        prompt: str,
+        infill_start_s: float,
+        infill_end_s: float,
+        call_back_url: Optional[str] = None,
+        tags: Optional[str] = None,
+        title: Optional[str] = None,
+        negative_tags: Optional[str] = None,
+        full_lyrics: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Replace a section of a music track using Kie API.
+
+        Args:
+            task_id: ID of the original music-generation task
+            audio_id: ID of the specific audio variation to modify
+            prompt: Description of the replacement section
+            infill_start_s: Start time (in seconds) of the section to replace
+            infill_end_s: End time (in seconds) of the section to replace
+            call_back_url: Callback URL for status updates
+            tags: Style tags for the replacement section
+            title: Track title
+            negative_tags: Tags to avoid in generation
+            full_lyrics: Full song lyrics with section markers
+
+        Returns:
+            API response dictionary with taskId
+        """
+        if self.use_mock:
+            logger.info("Using mock mode for replace_section")
+            task_id_mock = hashlib.md5(f"{task_id}{audio_id}{infill_start_s}{time.time()}".encode()).hexdigest()[:24]
+            time.sleep(0.5)
+            return {"code": 200, "msg": "success", "data": {"taskId": task_id_mock}}
+
+        endpoint = f"{self.base_url}/api/v1/generate/replace-section"
+
+        base_url = Config.get_public_base_url()
+        if not base_url and not call_back_url:
+            try:
+                from flask import request as flask_request
+                base_url = flask_request.host_url.rstrip('/')
+            except Exception:
+                pass
+
+        call_back_url_to_use = call_back_url or f"{base_url}/callback"
+
+        payload: Dict[str, Any] = {
+            "taskId": task_id,
+            "audioId": audio_id,
+            "prompt": prompt,
+            "infillStartS": infill_start_s,
+            "infillEndS": infill_end_s,
+            "callBackUrl": call_back_url_to_use,
+        }
+
+        if tags:
+            payload["tags"] = tags
+        if title:
+            payload["title"] = title
+        if negative_tags:
+            payload["negativeTags"] = negative_tags
+        if full_lyrics:
+            payload["fullLyrics"] = full_lyrics
+
+        logger.info(f"Using callback URL for replace_section: {call_back_url_to_use}")
+
+        try:
+            logger.info(f"Making request to Kie API replace-section endpoint: {endpoint}")
+            logger.info(f"Request payload keys: {list(payload.keys())}")
+            response = requests.post(endpoint, headers=self.headers, json=payload, timeout=15)
+            logger.info(f"Response status: {response.status_code}")
+            response.raise_for_status()
+            result = response.json()
+            logger.info(f"Kie API replace_section request successful: {result.get('code', 'No code')}")
+            return result
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Kie API replace_section request failed: {e}")
+            if hasattr(e, 'response') and e.response is not None:
+                logger.error(f"Response status: {e.response.status_code}")
+                logger.error(f"Response text: {e.response.text[:500]}")
+                if e.response.status_code == 401:
+                    raise requests.exceptions.RequestException(
+                        "Authentication failed (401). Please check your API key."
+                    )
+                elif e.response.status_code == 402:
+                    raise requests.exceptions.RequestException(
+                        "Insufficient credits (402). Please add more credits to your account."
+                    )
+                elif e.response.status_code == 404:
+                    raise requests.exceptions.RequestException(
+                        f"Endpoint not found (404): {endpoint}. Please check the Kie API documentation."
+                    )
+            raise
+
+    def multi_stem_separation(
+        self,
+        task_id: str,
+        audio_id: str,
+        separation_type: str,
+        call_back_url: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Separate a track into multiple stems (vocals, drums, bass, etc.).
+
+        This is a convenience wrapper around vocal_removal that explicitly documents
+        multi-stem use cases.  Pass separation_type='split_stem' to get all stems
+        or 'separate_vocal' to isolate vocals only.
+
+        Args:
+            task_id: ID of the original music-generation task
+            audio_id: ID of the specific audio variation to separate
+            separation_type: 'separate_vocal' or 'split_stem'
+            call_back_url: Callback URL for status updates
+
+        Returns:
+            API response dictionary with taskId
+        """
+        return self.vocal_removal(
+            task_id=task_id,
+            audio_id=audio_id,
+            type=separation_type,
+            call_back_url=call_back_url
+        )
+
+    def generate_persona(
+        self,
+        task_id: str,
+        audio_id: str,
+        name: str,
+        description: str,
+        vocal_start: float,
+        vocal_end: float,
+        style: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Generate an AI singer persona from an existing track using Kie API.
+
+        Args:
+            task_id: ID of the original music-generation task
+            audio_id: ID of the specific audio variation to use as the source
+            name: Persona name (e.g. "Electronic Pop Singer")
+            description: Description of the singer style and characteristics
+            vocal_start: Start time (seconds) of the vocal sample to extract
+            vocal_end: End time (seconds) of the vocal sample to extract
+            style: Music style associated with the persona
+
+        Returns:
+            API response dictionary (typically contains a personaId on completion)
+        """
+        if self.use_mock:
+            logger.info("Using mock mode for generate_persona")
+            mock_persona_id = hashlib.md5(f"{task_id}{audio_id}{name}{time.time()}".encode()).hexdigest()[:24]
+            time.sleep(0.5)
+            return {"code": 200, "msg": "success", "data": {"taskId": mock_persona_id}}
+
+        endpoint = f"{self.base_url}/api/v1/generate/generate-persona"
+
+        payload: Dict[str, Any] = {
+            "taskId": task_id,
+            "audioId": audio_id,
+            "name": name,
+            "description": description,
+            "vocalStart": vocal_start,
+            "vocalEnd": vocal_end,
+        }
+
+        if style:
+            payload["style"] = style
+
+        try:
+            logger.info(f"Making request to Kie API generate-persona endpoint: {endpoint}")
+            logger.info(f"Request payload keys: {list(payload.keys())}")
+            response = requests.post(endpoint, headers=self.headers, json=payload, timeout=15)
+            logger.info(f"Response status: {response.status_code}")
+            response.raise_for_status()
+            result = response.json()
+            logger.info(f"Kie API generate_persona request successful: {result.get('code', 'No code')}")
+            return result
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Kie API generate_persona request failed: {e}")
+            if hasattr(e, 'response') and e.response is not None:
+                logger.error(f"Response status: {e.response.status_code}")
+                logger.error(f"Response text: {e.response.text[:500]}")
+                if e.response.status_code == 401:
+                    raise requests.exceptions.RequestException(
+                        "Authentication failed (401). Please check your API key."
+                    )
+                elif e.response.status_code == 402:
+                    raise requests.exceptions.RequestException(
+                        "Insufficient credits (402). Please add more credits to your account."
+                    )
+                elif e.response.status_code == 404:
+                    raise requests.exceptions.RequestException(
+                        f"Endpoint not found (404): {endpoint}. Please check the Kie API documentation."
+                    )
+            raise
+
     def validate_parameters(
         self,
         custom_mode: bool,

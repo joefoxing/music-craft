@@ -47,6 +47,12 @@ class TrackOptions {
                 action: () => this.viewDetails(track)
             },
             {
+                icon: 'content_cut',
+                text: 'Replace Section',
+                action: () => this.goToReplaceSection(track),
+                class: 'text-violet-600 dark:text-violet-400'
+            },
+            {
                 icon: 'settings',
                 text: 'Studio Settings',
                 action: () => window.location.href = '/' // Assuming root is studio
@@ -186,6 +192,9 @@ class TrackOptions {
                 file_size: track.file_size || 0,
                 source_type: track.source_type || 'history',
                 audio_url: audioUrl,
+                // Preserve Kie platform IDs so Replace Section etc. can pre-fill from the library
+                source_reference: track.task_id || track.taskId || track.source_reference || null,
+                kie_audio_id: track.id || track.audio_id || track.audioId || track.kie_audio_id || null,
                 metadata: {
                     original_data: track,
                     added_via: 'track_options'
@@ -243,6 +252,19 @@ class TrackOptions {
         if (window.showTrackDetails) {
             window.showTrackDetails(track);
         }
+    }
+
+    /**
+     * Navigate to the Replace Section page, pre-filling task + audio IDs when available.
+     * @param {Object} track 
+     */
+    goToReplaceSection(track) {
+        const params = new URLSearchParams();
+        const taskId  = track.task_id  || track.taskId;
+        const audioId = track.id       || track.audio_id || track.audioId;
+        if (taskId)  params.set('taskId',  taskId);
+        if (audioId) params.set('audioId', audioId);
+        window.location.href = '/replace-section' + (params.toString() ? '?' + params.toString() : '');
     }
 }
 

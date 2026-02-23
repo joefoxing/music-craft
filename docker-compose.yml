@@ -13,6 +13,7 @@ services:
       - FLASK_APP=wsgi.py
       - FLASK_DEBUG=1
       - APP_ENV=development
+      - PREFERRED_URL_SCHEME=http
       - DATABASE_URL=postgresql://postgres:a6fbee7ff9e8255dbc0d93771b7edd21c03cc79f@db:5432/music_craft_db
       # Defaults that can be overridden by .env
       - SECRET_KEY=dev-secret-key
