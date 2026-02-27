@@ -1,46 +1,27 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en" class="dark">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>{% block title %}Joefoxing - Make any song{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Vnuno{% endblock %}</title>
     
-    <!-- Scripts -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Fonts: Space Grotesk (headings), Inter (body), JetBrains Mono (code/mono) -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap">
-    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap">
+    <!-- Tailwind -->
+    <script src="{{ url_for('static', filename='css/tailwind.cdn.js') }}"></script>
+    {% include 'partials/_tailwind_config.html' %}
     
-    <!-- Tailwind Config -->
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary-orange": "#FA6E4A",
-                        "suno-pink": "#f43f5e",
-                        "background-dark": "#0a0a0a",
-                    },
-                    fontFamily: {
-                        "sans": ["Inter", "sans-serif"]
-                    }
-                },
-            },
-        }
-    </script>
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
-    <!-- WaveSurfer.js Audio Player -->
-    <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
-
     {% block head %}{% endblock %}
 </head>
-<body class="min-h-screen {% block body_class %}{% endblock %}">
+<body class="{% block body_class %}{% endblock %} bg-background-dark text-text-primary font-body">
     {% block content %}{% endblock %}
-    <script src="{{ url_for('static', filename='js/components/wavesurferPlayer.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
