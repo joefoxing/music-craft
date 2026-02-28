@@ -172,6 +172,12 @@
             z-index: 0;
             pointer-events: none;
         }
+        .testimonial-glow-purple {
+            background: radial-gradient(circle, rgba(162, 155, 254, 0.15) 0%, transparent 70%);
+        }
+        .testimonial-glow-cyan {
+            background: radial-gradient(circle, rgba(0, 206, 201, 0.12) 0%, transparent 70%);
+        }
         .genre-chip {
             background: #1a1a22;
             border: 1px solid #2a2a36;
@@ -318,7 +324,7 @@
 
     <div class="relative z-10 max-w-3xl w-full text-center">
         <div class="inline-flex items-center gap-2 bg-[#1a1a22] border border-[#2a2a36] rounded-full px-4 py-2 mb-8">
-            <span class="w-2 h-2 rounded-full bg-[#00cec9] animate-pulse"></span>
+            <span class="w-2 h-2 rounded-full bg-[#00cec9] animate-pulse" role="img" aria-label="Live indicator"></span>
             <span class="text-[#8888a0] text-sm font-medium">10,000+ creators making music right now</span>
         </div>
 
@@ -535,7 +541,7 @@
                 </div>
             </div>
             <div class="relative">
-                <div class="testimonial-glow bottom-0 right-0" style="background: radial-gradient(circle, rgba(162, 155, 254, 0.15) 0%, transparent 70%);"></div>
+                <div class="testimonial-glow testimonial-glow-purple bottom-0 right-0"></div>
                 <div class="testimonial-card rounded-2xl p-6 flex flex-col h-full">
                     <div class="flex gap-1 mb-4">
                         {% for _ in range(5) %}<span class="material-symbols-outlined text-[#6c5ce7] text-sm font-fill">star</span>{% endfor %}
@@ -555,7 +561,7 @@
                 </div>
             </div>
             <div class="relative">
-                <div class="testimonial-glow top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="background: radial-gradient(circle, rgba(0, 206, 201, 0.12) 0%, transparent 70%);"></div>
+                <div class="testimonial-glow testimonial-glow-cyan top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
                 <div class="testimonial-card rounded-2xl p-6 flex flex-col h-full">
                     <div class="flex gap-1 mb-4">
                         {% for _ in range(5) %}<span class="material-symbols-outlined text-[#6c5ce7] text-sm font-fill">star</span>{% endfor %}
