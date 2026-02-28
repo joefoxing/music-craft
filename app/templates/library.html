@@ -63,16 +63,16 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+<body class="bg-background-light bg-background-dark text-[#e8e8ed] text-white font-display antialiased overflow-hidden">
     <div class="flex h-screen w-full">
         {% include "partials/_sidebar.html" %}
         
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark relative overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-background-light bg-background-dark relative overflow-hidden">
             <!-- Header -->
-            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
                 <div class="hidden md:block">
-                    <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Music Library</h2>
+                    <h2 class="text-[#e8e8ed] text-white text-lg font-bold tracking-tight">Music Library</h2>
                 </div>
                 
                 <div class="flex items-center gap-4">
@@ -114,8 +114,8 @@
                         <div class="flex flex-col gap-2">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Template Library</h2>
-                                    <p class="text-slate-500 dark:text-slate-400">Curated music generation templates for instant inspiration</p>
+                                    <h2 class="text-3xl md:text-4xl font-bold text-white text-[#e8e8ed] tracking-tight">Template Library</h2>
+                                    <p class="text-[#8888a0]">Curated music generation templates for instant inspiration</p>
                                 </div>
                                 <button id="templateRefreshBtn" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
                                     <span class="material-symbols-outlined text-sm">refresh</span>
@@ -125,53 +125,53 @@
                         </div>
                         
                         <!-- Template Gallery -->
-                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-lg">
+                        <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-lg">
                             <div class="flex items-center justify-between mb-6">
                                 <div>
-                                    <h3 class="text-xl font-bold dark:text-white text-slate-900">Music Generation Templates</h3>
-                                    <p class="text-sm text-slate-500 dark:text-slate-400">Browse and apply curated templates for different music styles</p>
+                                    <h3 class="text-xl font-bold text-white text-[#e8e8ed]">Music Generation Templates</h3>
+                                    <p class="text-sm text-[#8888a0]">Browse and apply curated templates for different music styles</p>
                                 </div>
                                 <div class="flex items-center gap-3">
-                                    <input id="templateSearch" type="text" placeholder="Search templates..." class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary w-64"/>
+                                    <input id="templateSearch" type="text" placeholder="Search templates..." class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white placeholder:text-[#8888a0] focus:outline-none focus:ring-2 focus:ring-primary w-64"/>
                                 </div>
                             </div>
                             
                             <!-- Template Stats -->
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                <div class="bg-[#0a0a0c] bg-[#1a1a22] rounded-lg p-4">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="text-sm text-slate-500 dark:text-slate-400">Total Templates</p>
-                                            <p id="templateStatsTotal" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                            <p class="text-sm text-[#8888a0]">Total Templates</p>
+                                            <p id="templateStatsTotal" class="text-2xl font-bold text-white text-[#e8e8ed]">0</p>
                                         </div>
                                         <span class="material-symbols-outlined text-primary text-2xl">content_copy</span>
                                     </div>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                <div class="bg-[#0a0a0c] bg-[#1a1a22] rounded-lg p-4">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="text-sm text-slate-500 dark:text-slate-400">Popular</p>
-                                            <p id="templateStatsPopular" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                            <p class="text-sm text-[#8888a0]">Popular</p>
+                                            <p id="templateStatsPopular" class="text-2xl font-bold text-white text-[#e8e8ed]">0</p>
                                         </div>
                                         <span class="material-symbols-outlined text-yellow-500 text-2xl">star</span>
                                     </div>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                <div class="bg-[#0a0a0c] bg-[#1a1a22] rounded-lg p-4">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="text-sm text-slate-500 dark:text-slate-400">Easy</p>
-                                            <p id="templateStatsEasy" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                            <p class="text-sm text-[#8888a0]">Easy</p>
+                                            <p id="templateStatsEasy" class="text-2xl font-bold text-white text-[#e8e8ed]">0</p>
                                         </div>
-                                        <span class="material-symbols-outlined text-green-500 text-2xl">check_circle</span>
+                                        <span class="material-symbols-outlined text-[#00cec9] text-2xl">check_circle</span>
                                     </div>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                <div class="bg-[#0a0a0c] bg-[#1a1a22] rounded-lg p-4">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="text-sm text-slate-500 dark:text-slate-400">Advanced</p>
-                                            <p id="templateStatsAdvanced" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                            <p class="text-sm text-[#8888a0]">Advanced</p>
+                                            <p id="templateStatsAdvanced" class="text-2xl font-bold text-white text-[#e8e8ed]">0</p>
                                         </div>
-                                        <span class="material-symbols-outlined text-red-500 text-2xl">bolt</span>
+                                        <span class="material-symbols-outlined text-[#d63031] text-2xl">bolt</span>
                                     </div>
                                 </div>
                             </div>
@@ -216,7 +216,7 @@
                             
                             <!-- Loading State -->
                             <div id="templateLoading" class="text-center py-8">
-                                <div class="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                                <div class="inline-flex items-center gap-2 text-[#8888a0]">
                                     <span class="material-symbols-outlined animate-spin">sync</span>
                                     <span>Loading templates...</span>
                                 </div>
@@ -225,18 +225,18 @@
                             <!-- Empty State -->
                             <div id="templateEmpty" class="text-center py-8 hidden">
                                 <div class="flex flex-col items-center gap-3">
-                                    <span class="material-symbols-outlined text-slate-400 text-4xl">content_copy</span>
-                                    <h4 class="text-lg font-medium text-slate-700 dark:text-slate-300">No templates found</h4>
-                                    <p class="text-slate-500 dark:text-slate-400">Try adjusting your filters or check back later.</p>
+                                    <span class="material-symbols-outlined text-[#8888a0] text-4xl">content_copy</span>
+                                    <h4 class="text-lg font-medium text-[#e8e8ed] text-[#8888a0]">No templates found</h4>
+                                    <p class="text-[#8888a0]">Try adjusting your filters or check back later.</p>
                                 </div>
                             </div>
                             
                             <!-- Error State -->
                             <div id="templateError" class="text-center py-8 hidden">
                                 <div class="flex flex-col items-center gap-3">
-                                    <span class="material-symbols-outlined text-red-500 text-4xl">error</span>
-                                    <h4 class="text-lg font-medium text-slate-700 dark:text-slate-300">Failed to load templates</h4>
-                                    <p class="text-slate-500 dark:text-slate-400 error-message"></p>
+                                    <span class="material-symbols-outlined text-[#d63031] text-4xl">error</span>
+                                    <h4 class="text-lg font-medium text-[#e8e8ed] text-[#8888a0]">Failed to load templates</h4>
+                                    <p class="text-[#8888a0] error-message"></p>
                                     <button class="mt-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
                                         Try Again
                                     </button>
@@ -257,8 +257,8 @@
                             <div class="flex flex-col gap-2">
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Song Library</h2>
-                                        <p class="text-slate-500 dark:text-slate-400">Manage and organize your audio collection</p>
+                                        <h2 class="text-3xl md:text-4xl font-bold text-white text-[#e8e8ed] tracking-tight">Song Library</h2>
+                                        <p class="text-[#8888a0]">Manage and organize your audio collection</p>
                                     </div>
                                     <button id="songLibraryRefreshBtn" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
                                         <span class="material-symbols-outlined text-sm">refresh</span>
@@ -269,40 +269,40 @@
                             
                             <!-- Song Library Stats -->
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                <div class="bg-[#0a0a0c] bg-[#1a1a22] rounded-lg p-4">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="text-sm text-slate-500 dark:text-slate-400">Total Songs</p>
-                                            <p id="songStatsTotal" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                            <p class="text-sm text-[#8888a0]">Total Songs</p>
+                                            <p id="songStatsTotal" class="text-2xl font-bold text-white text-[#e8e8ed]">0</p>
                                         </div>
                                         <span class="material-symbols-outlined text-primary text-2xl">music_note</span>
                                     </div>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                <div class="bg-[#0a0a0c] bg-[#1a1a22] rounded-lg p-4">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="text-sm text-slate-500 dark:text-slate-400">Favorites</p>
-                                            <p id="songStatsFavorites" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                            <p class="text-sm text-[#8888a0]">Favorites</p>
+                                            <p id="songStatsFavorites" class="text-2xl font-bold text-white text-[#e8e8ed]">0</p>
                                         </div>
-                                        <span class="material-symbols-outlined text-red-500 text-2xl">favorite</span>
+                                        <span class="material-symbols-outlined text-[#d63031] text-2xl">favorite</span>
                                     </div>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                <div class="bg-[#0a0a0c] bg-[#1a1a22] rounded-lg p-4">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="text-sm text-slate-500 dark:text-slate-400">Recent</p>
-                                            <p id="songStatsRecent" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                            <p class="text-sm text-[#8888a0]">Recent</p>
+                                            <p id="songStatsRecent" class="text-2xl font-bold text-white text-[#e8e8ed]">0</p>
                                         </div>
                                         <span class="material-symbols-outlined text-blue-500 text-2xl">schedule</span>
                                     </div>
                                 </div>
-                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                                <div class="bg-[#0a0a0c] bg-[#1a1a22] rounded-lg p-4">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="text-sm text-slate-500 dark:text-slate-400">Playlists</p>
-                                            <p id="songStatsPlaylists" class="text-2xl font-bold dark:text-white text-slate-900">0</p>
+                                            <p class="text-sm text-[#8888a0]">Playlists</p>
+                                            <p id="songStatsPlaylists" class="text-2xl font-bold text-white text-[#e8e8ed]">0</p>
                                         </div>
-                                        <span class="material-symbols-outlined text-green-500 text-2xl">playlist_play</span>
+                                        <span class="material-symbols-outlined text-[#00cec9] text-2xl">playlist_play</span>
                                     </div>
                                 </div>
                             </div>
@@ -311,7 +311,7 @@
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                                 <!-- Search and Filters -->
                                 <div class="flex flex-col md:flex-row gap-3 flex-1">
-                                    <input id="songLibrarySearch" type="text" placeholder="Search songs, artists, albums..." class="bg-surface-dark border border-border-dark rounded-lg px-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary w-full md:w-80"/>
+                                    <input id="songLibrarySearch" type="text" placeholder="Search songs, artists, albums..." class="bg-surface-dark border border-border-dark rounded-lg px-4 py-2 text-sm text-white placeholder:text-[#8888a0] focus:outline-none focus:ring-2 focus:ring-primary w-full md:w-80"/>
                                     
                                     <select id="songLibrarySort" class="bg-surface-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary">
                                         <option value="created_at_desc">Newest First</option>
@@ -367,7 +367,7 @@
                             
                             <!-- Loading State -->
                             <div id="songLibraryLoading" class="text-center py-12">
-                                <div class="inline-flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                                <div class="inline-flex items-center gap-2 text-[#8888a0]">
                                     <span class="material-symbols-outlined animate-spin">sync</span>
                                     <span>Loading your music library...</span>
                                 </div>
@@ -376,9 +376,9 @@
                             <!-- Empty State -->
                             <div id="songLibraryEmpty" class="text-center py-12 hidden">
                                 <div class="flex flex-col items-center gap-3">
-                                    <span class="material-symbols-outlined text-slate-400 text-6xl">library_music</span>
-                                    <h3 class="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">Your library is empty</h3>
-                                    <p class="text-slate-500 dark:text-slate-400 mb-6">Start building your collection by uploading songs or adding from generated music.</p>
+                                    <span class="material-symbols-outlined text-[#8888a0] text-6xl">library_music</span>
+                                    <h3 class="text-xl font-bold text-[#e8e8ed] text-[#8888a0] mb-2">Your library is empty</h3>
+                                    <p class="text-[#8888a0] mb-6">Start building your collection by uploading songs or adding from generated music.</p>
                                     <div class="flex flex-col sm:flex-row gap-3">
                                         <button class="px-6 py-3 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
                                             <span class="material-symbols-outlined">upload</span>
@@ -395,9 +395,9 @@
                             <!-- Error State -->
                             <div id="songLibraryError" class="text-center py-12 hidden">
                                 <div class="flex flex-col items-center gap-3">
-                                    <span class="material-symbols-outlined text-red-500 text-4xl">error</span>
-                                    <h4 class="text-lg font-medium text-red-700 dark:text-red-300">Failed to load library</h4>
-                                    <p class="text-red-500 dark:text-red-400 mb-4 error-message"></p>
+                                    <span class="material-symbols-outlined text-[#d63031] text-4xl">error</span>
+                                    <h4 class="text-lg font-medium text-red-700 text-red-300">Failed to load library</h4>
+                                    <p class="text-[#d63031] text-red-400 mb-4 error-message"></p>
                                     <button id="songLibraryRetryBtn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
                                         Try Again
                                     </button>
@@ -411,13 +411,13 @@
                             
                             <!-- Pagination -->
                             <div id="songLibraryPagination" class="flex items-center justify-center gap-2 mt-8 hidden" role="navigation" aria-label="Song library pagination">
-                                <button id="songLibraryPrevPage" class="px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <button id="songLibraryPrevPage" class="px-3 py-2 text-sm font-medium text-[#8888a0] hover:text-[#e8e8ed] hover:text-[#8888a0] disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                                     <span class="material-symbols-outlined">chevron_left</span>
                                 </button>
                                 <div id="songLibraryPageNumbers" class="flex gap-1">
                                     <!-- Page numbers will be inserted here -->
                                 </div>
-                                <button id="songLibraryNextPage" class="px-3 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <button id="songLibraryNextPage" class="px-3 py-2 text-sm font-medium text-[#8888a0] hover:text-[#e8e8ed] hover:text-[#8888a0] disabled:opacity-50 disabled:cursor-not-allowed">
                                     <span class="material-symbols-outlined">chevron_right</span>
                                 </button>
                             </div>
@@ -428,22 +428,22 @@
             
             <!-- Song Card Template -->
             <template id="songCardTemplate">
-                <div class="song-card bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-lg hover:shadow-xl transition-all duration-300 group" role="listitem">
+                <div class="song-card bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-lg hover:shadow-xl transition-all duration-300 group" role="listitem">
                     <!-- Header -->
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex-1 min-w-0">
-                            <h3 class="font-bold text-slate-900 dark:text-white text-lg mb-1 truncate song-title" data-song-title></h3>
-                            <p class="text-slate-600 dark:text-slate-400 text-sm mb-1 song-artist" data-song-artist></p>
-                            <p class="text-slate-500 dark:text-slate-500 text-xs song-album" data-song-album></p>
+                            <h3 class="font-bold text-[#e8e8ed] text-white text-lg mb-1 truncate song-title" data-song-title></h3>
+                            <p class="text-[#8888a0] text-sm mb-1 song-artist" data-song-artist></p>
+                            <p class="text-[#8888a0] text-xs song-album" data-song-album></p>
                         </div>
                         <div class="flex items-center gap-2 ml-4">
-                            <button class="song-favorite-btn p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" aria-label="Toggle favorite">
-                                <span class="material-symbols-outlined text-red-500 text-lg hidden" data-favorite-icon>favorite</span>
-                                <span class="material-symbols-outlined text-slate-400 text-lg" data-not-favorite-icon>favorite_border</span>
+                            <button class="song-favorite-btn p-2 rounded-full hover:bg-[#d63031]/10 hover:bg-red-900/20 transition-colors" aria-label="Toggle favorite">
+                                <span class="material-symbols-outlined text-[#d63031] text-lg hidden" data-favorite-icon>favorite</span>
+                                <span class="material-symbols-outlined text-[#8888a0] text-lg" data-not-favorite-icon>favorite_border</span>
                             </button>
                             <div class="relative">
-                                <button class="song-menu-btn p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Song options">
-                                    <span class="material-symbols-outlined text-slate-400">more_vert</span>
+                                <button class="song-menu-btn p-2 rounded-full hover:bg-[#131318] hover:bg-[#1a1a22] transition-colors" aria-label="Song options">
+                                    <span class="material-symbols-outlined text-[#8888a0]">more_vert</span>
                                 </button>
                             </div>
                         </div>
@@ -455,7 +455,7 @@
                     </div>
                     
                     <!-- Metadata -->
-                    <div class="grid grid-cols-2 gap-3 text-xs text-slate-500 dark:text-slate-400 mb-4">
+                    <div class="grid grid-cols-2 gap-3 text-xs text-[#8888a0] mb-4">
                         <div>
                             <span class="font-medium">Duration:</span>
                             <span class="song-meta-duration" data-meta-duration>--:--</span>
@@ -480,9 +480,9 @@
                     </div>
                     
                     <!-- Actions -->
-                    <div class="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between pt-4 border-t border-[#2a2a36]">
                         <div class="flex items-center gap-2">
-                            <span class="text-xs text-slate-400" data-upload-date>Added recently</span>
+                            <span class="text-xs text-[#8888a0]" data-upload-date>Added recently</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <button class="song-add-to-playlist-btn px-3 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-1" aria-label="Add to playlist">
@@ -510,14 +510,14 @@
                         <div class="fixed inset-0 transition-opacity bg-black/70" aria-hidden="true"></div>
                         
                         <!-- Modal panel -->
-                        <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-surface-dark shadow-xl rounded-xl border border-slate-200 dark:border-border-dark sm:my-8 sm:align-middle">
+                        <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-[#131318] bg-surface-dark shadow-xl rounded-xl border border-[#2a2a36] border-border-dark sm:my-8 sm:align-middle">
                             <!-- Modal header -->
                             <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2">
+                                <h3 class="text-xl font-bold text-white text-[#e8e8ed] flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">playlist_add</span>
                                     Create New Playlist
                                 </h3>
-                                <button class="playlist-modal-close-btn text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors" aria-label="Close modal">
+                                <button class="playlist-modal-close-btn text-[#8888a0] hover:text-[#8888a0] hover:text-white transition-colors" aria-label="Close modal">
                                     <span class="material-symbols-outlined">close</span>
                                 </button>
                             </div>
@@ -525,15 +525,15 @@
                             <!-- Modal content -->
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Playlist Type</label>
+                                    <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Playlist Type</label>
                                     <div class="flex gap-4">
-                                        <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                        <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-[#131318] hover:bg-[#1a1a22] transition-colors">
                                             <input type="radio" name="playlistType" value="manual" checked class="text-primary focus:ring-primary w-4 h-4">
-                                            <span class="text-slate-700 dark:text-slate-300 text-sm font-medium">Manual</span>
+                                            <span class="text-[#e8e8ed] text-[#8888a0] text-sm font-medium">Manual</span>
                                         </label>
-                                        <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                        <label class="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-[#131318] hover:bg-[#1a1a22] transition-colors">
                                             <input type="radio" name="playlistType" value="prompt" class="text-primary focus:ring-primary w-4 h-4">
-                                            <span class="text-slate-700 dark:text-slate-300 text-sm font-medium flex items-center gap-1">
+                                            <span class="text-[#e8e8ed] text-[#8888a0] text-sm font-medium flex items-center gap-1">
                                                 Smart (AI)
                                                 <span class="material-symbols-outlined text-xs text-primary">auto_awesome</span>
                                             </span>
@@ -542,10 +542,10 @@
                                 </div>
 
                                 <div id="smartPlaylistOptions" class="hidden animate-slide-in">
-                                    <div class="p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800/30 rounded-lg">
-                                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Generation Prompt</label>
-                                        <textarea id="playlistPromptInput" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-purple-200 dark:border-purple-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm" placeholder="E.g. A cyberpunk detective story in a rainy neon city..." rows="3"></textarea>
-                                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1">
+                                    <div class="p-4 bg-purple-50 bg-purple-900/20 border border-purple-100 border-purple-800/30 rounded-lg">
+                                        <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Generation Prompt</label>
+                                        <textarea id="playlistPromptInput" class="w-full px-4 py-2 bg-[#131318] bg-[#1a1a22] border border-purple-200 border-purple-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm" placeholder="E.g. A cyberpunk detective story in a rainy neon city..." rows="3"></textarea>
+                                        <p class="text-xs text-[#8888a0] mt-2 flex items-center gap-1">
                                             <span class="material-symbols-outlined text-[14px]">info</span>
                                             AI will generate a sequence of tracks based on your prompt.
                                         </p>
@@ -553,19 +553,19 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Playlist Name</label>
-                                    <input type="text" id="playlistNameInput" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="My Awesome Playlist" maxlength="100">
+                                    <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Playlist Name</label>
+                                    <input type="text" id="playlistNameInput" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="My Awesome Playlist" maxlength="100">
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Description (Optional)</label>
-                                    <textarea id="playlistDescriptionInput" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Describe your playlist..." rows="3" maxlength="500"></textarea>
+                                    <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Description (Optional)</label>
+                                    <textarea id="playlistDescriptionInput" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Describe your playlist..." rows="3" maxlength="500"></textarea>
                                 </div>
                             </div>
                             
                             <!-- Modal footer -->
                             <div class="mt-6 flex justify-end gap-3">
-                                <button class="playlist-modal-cancel-btn px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors border border-slate-300 dark:border-slate-700">
+                                <button class="playlist-modal-cancel-btn px-4 py-2 text-sm font-medium text-[#e8e8ed] text-[#8888a0] hover:bg-[#131318] hover:bg-[#1a1a22] rounded-lg transition-colors border border-[#2a2a36]">
                                     Cancel
                                 </button>
                                 <button class="playlist-modal-create-btn px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-lg transition-colors flex items-center gap-2">
@@ -586,20 +586,20 @@
                         <div class="fixed inset-0 transition-opacity bg-black/70" aria-hidden="true"></div>
                         
                         <!-- Modal panel -->
-                        <div class="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-surface-dark shadow-xl rounded-xl border border-slate-200 dark:border-border-dark sm:my-8 sm:align-middle">
+                        <div class="inline-block w-full max-w-2xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-[#131318] bg-surface-dark shadow-xl rounded-xl border border-[#2a2a36] border-border-dark sm:my-8 sm:align-middle">
                             <!-- Modal header -->
                             <div class="flex items-start justify-between mb-6">
                                 <div class="flex-1">
-                                    <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2 mb-1">
+                                    <h3 class="text-xl font-bold text-white text-[#e8e8ed] flex items-center gap-2 mb-1">
                                         <span class="material-symbols-outlined text-primary">lyrics</span>
                                         <span data-lyrics-title>Lyrics</span>
                                     </h3>
-                                    <p class="text-sm text-slate-600 dark:text-slate-400" data-lyrics-artist></p>
+                                    <p class="text-sm text-[#8888a0]" data-lyrics-artist></p>
                                     <div class="flex items-center gap-2 mt-2">
-                                        <span class="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300" data-lyrics-source-badge></span>
+                                        <span class="text-xs px-2 py-1 rounded-full bg-blue-100 bg-blue-900/30 text-blue-700 text-blue-300" data-lyrics-source-badge></span>
                                     </div>
                                 </div>
-                                <button class="lyrics-modal-close-btn text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors" aria-label="Close modal">
+                                <button class="lyrics-modal-close-btn text-[#8888a0] hover:text-[#8888a0] hover:text-white transition-colors" aria-label="Close modal">
                                     <span class="material-symbols-outlined">close</span>
                                 </button>
                             </div>
@@ -609,7 +609,7 @@
                                 <!-- Loading state -->
                                 <div class="lyrics-loading text-center py-12" data-lyrics-loading>
                                     <div class="animate-spin inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
-                                    <p class="text-slate-600 dark:text-slate-400">Loading lyrics...</p>
+                                    <p class="text-[#8888a0]">Loading lyrics...</p>
                                 </div>
                                 
                                 <!-- Lyrics display -->
@@ -619,9 +619,9 @@
                                 
                                 <!-- Empty state -->
                                 <div class="lyrics-empty hidden text-center py-12" data-lyrics-empty>
-                                    <span class="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600 mb-4">music_off</span>
-                                    <p class="text-slate-600 dark:text-slate-400 font-medium mb-2">No Lyrics Available</p>
-                                    <p class="text-sm text-slate-500 dark:text-slate-500">Lyrics could not be found for this track.</p>
+                                    <span class="material-symbols-outlined text-6xl text-[#8888a0] mb-4">music_off</span>
+                                    <p class="text-[#8888a0] font-medium mb-2">No Lyrics Available</p>
+                                    <p class="text-sm text-[#8888a0]">Lyrics could not be found for this track.</p>
                                 </div>
                                 
                                 <!-- Processing state -->
@@ -629,24 +629,24 @@
                                     <div class="animate-pulse inline-block">
                                         <span class="material-symbols-outlined text-6xl text-primary mb-4">autorenew</span>
                                     </div>
-                                    <p class="text-slate-600 dark:text-slate-400 font-medium mb-2">Extracting Lyrics...</p>
-                                    <p class="text-sm text-slate-500 dark:text-slate-500">This may take a few moments.</p>
+                                    <p class="text-[#8888a0] font-medium mb-2">Extracting Lyrics...</p>
+                                    <p class="text-sm text-[#8888a0]">This may take a few moments.</p>
                                 </div>
                                 
                                 <!-- Error state -->
                                 <div class="lyrics-error hidden text-center py-12" data-lyrics-error>
-                                    <span class="material-symbols-outlined text-6xl text-red-400 dark:text-red-500 mb-4">error</span>
-                                    <p class="text-slate-600 dark:text-slate-400 font-medium mb-2">Extraction Failed</p>
-                                    <p class="text-sm text-slate-500 dark:text-slate-500" data-lyrics-error-message></p>
+                                    <span class="material-symbols-outlined text-6xl text-red-400 text-[#d63031] mb-4">error</span>
+                                    <p class="text-[#8888a0] font-medium mb-2">Extraction Failed</p>
+                                    <p class="text-sm text-[#8888a0]" data-lyrics-error-message></p>
                                 </div>
                             </div>
                             
                             <!-- Modal footer -->
                             <div class="mt-6 flex justify-between items-center">
-                                <div class="text-xs text-slate-500 dark:text-slate-400" data-lyrics-info>
+                                <div class="text-xs text-[#8888a0]" data-lyrics-info>
                                     <!-- Info like number of lines will go here -->
                                 </div>
-                                <button class="lyrics-modal-close-btn px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors border border-slate-300 dark:border-slate-700">
+                                <button class="lyrics-modal-close-btn px-4 py-2 text-sm font-medium text-[#e8e8ed] text-[#8888a0] hover:bg-[#131318] hover:bg-[#1a1a22] rounded-lg transition-colors border border-[#2a2a36]">
                                     Close
                                 </button>
                             </div>
@@ -663,15 +663,15 @@
                         <div class="fixed inset-0 transition-opacity bg-black/70 edit-modal-overlay" aria-hidden="true"></div>
 
                         <!-- Modal panel -->
-                        <div class="inline-block w-full max-w-2xl p-6 my-8 text-left align-middle transition-all transform bg-white dark:bg-surface-dark shadow-xl rounded-xl border border-slate-200 dark:border-border-dark relative z-10">
+                        <div class="inline-block w-full max-w-2xl p-6 my-8 text-left align-middle transition-all transform bg-[#131318] bg-surface-dark shadow-xl rounded-xl border border-[#2a2a36] border-border-dark relative z-10">
 
                             <!-- Header -->
                             <div class="flex items-center justify-between mb-5">
-                                <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2">
+                                <h3 class="text-xl font-bold text-white text-[#e8e8ed] flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">edit</span>
                                     Edit Song Metadata
                                 </h3>
-                                <button class="edit-modal-close-btn text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors" aria-label="Close modal">
+                                <button class="edit-modal-close-btn text-[#8888a0] hover:text-[#8888a0] hover:text-white transition-colors" aria-label="Close modal">
                                     <span class="material-symbols-outlined">close</span>
                                 </button>
                             </div>
@@ -680,61 +680,61 @@
                             <div class="space-y-3">
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="block text-xs font-medium mb-1 dark:text-slate-300 text-slate-700">Title <span class="text-red-500">*</span></label>
+                                        <label class="block text-xs font-medium mb-1 text-[#8888a0] text-[#e8e8ed]">Title <span class="text-[#d63031]">*</span></label>
                                         <input type="text" id="editTitleInput"
-                                            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm dark:text-white"
+                                            class="w-full px-3 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm text-white"
                                             placeholder="Song title" maxlength="255">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-medium mb-1 dark:text-slate-300 text-slate-700">Artist</label>
+                                        <label class="block text-xs font-medium mb-1 text-[#8888a0] text-[#e8e8ed]">Artist</label>
                                         <input type="text" id="editArtistInput"
-                                            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm dark:text-white"
+                                            class="w-full px-3 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm text-white"
                                             placeholder="Artist name" maxlength="255">
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-3 gap-3">
                                     <div>
-                                        <label class="block text-xs font-medium mb-1 dark:text-slate-300 text-slate-700">Album</label>
+                                        <label class="block text-xs font-medium mb-1 text-[#8888a0] text-[#e8e8ed]">Album</label>
                                         <input type="text" id="editAlbumInput"
-                                            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm dark:text-white"
+                                            class="w-full px-3 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm text-white"
                                             placeholder="Album" maxlength="255">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-medium mb-1 dark:text-slate-300 text-slate-700">Genre</label>
+                                        <label class="block text-xs font-medium mb-1 text-[#8888a0] text-[#e8e8ed]">Genre</label>
                                         <input type="text" id="editGenreInput"
-                                            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm dark:text-white"
+                                            class="w-full px-3 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm text-white"
                                             placeholder="Pop, Rock…" maxlength="100">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-medium mb-1 dark:text-slate-300 text-slate-700">Year</label>
+                                        <label class="block text-xs font-medium mb-1 text-[#8888a0] text-[#e8e8ed]">Year</label>
                                         <input type="number" id="editYearInput"
-                                            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm dark:text-white"
+                                            class="w-full px-3 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm text-white"
                                             placeholder="2024" min="1900" max="2100">
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-medium mb-1 dark:text-slate-300 text-slate-700">Tags <span class="text-slate-400 font-normal">(comma-separated)</span></label>
+                                    <label class="block text-xs font-medium mb-1 text-[#8888a0] text-[#e8e8ed]">Tags <span class="text-[#8888a0] font-normal">(comma-separated)</span></label>
                                     <input type="text" id="editTagsInput"
-                                        class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm dark:text-white"
+                                        class="w-full px-3 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm text-white"
                                         placeholder="e.g. relaxing, instrumental, pop">
                                 </div>
                             </div>
 
                             <!-- ── Lyrics Pipeline ─────────────────────────────── -->
-                            <div class="mt-5 pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <div class="mt-5 pt-4 border-t border-[#2a2a36]">
                                 <div class="flex items-center gap-2 mb-3">
                                     <span class="material-symbols-outlined text-primary text-base">lyrics</span>
-                                    <h4 class="text-sm font-semibold dark:text-white text-slate-900">Find Lyrics &amp; Metadata</h4>
-                                    <span class="text-xs text-slate-500 dark:text-slate-400">— LRCLIB · Genius pipeline</span>
+                                    <h4 class="text-sm font-semibold text-white text-[#e8e8ed]">Find Lyrics &amp; Metadata</h4>
+                                    <span class="text-xs text-[#8888a0]">— LRCLIB · Genius pipeline</span>
                                 </div>
 
                                 <!-- Search inputs row -->
                                 <div class="flex gap-2">
                                     <input type="text" id="pipelineTrackInput"
-                                        class="flex-1 min-w-0 px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm dark:text-white"
+                                        class="flex-1 min-w-0 px-3 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm text-white"
                                         placeholder="Track title…">
                                     <input type="text" id="pipelineArtistInput"
-                                        class="flex-1 min-w-0 px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm dark:text-white"
+                                        class="flex-1 min-w-0 px-3 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-sm text-white"
                                         placeholder="Artist (optional)">
                                     <button id="pipelineLrcSearchBtn"
                                         class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1 whitespace-nowrap flex-shrink-0">
@@ -745,14 +745,14 @@
 
                                 <!-- Tier 2 – LRCLIB results -->
                                 <div id="editTier2Section" class="hidden mt-3">
-                                    <div id="editTier2Header" class="text-xs font-semibold mb-2 text-slate-600 dark:text-slate-400"></div>
+                                    <div id="editTier2Header" class="text-xs font-semibold mb-2 text-[#8888a0]"></div>
                                     <div id="editTier2Results" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-1"></div>
                                 </div>
 
                                 <!-- Divider + Tier 3 -->
-                                <div id="editTier3Section" class="hidden mt-3 pt-3 border-t border-dashed border-slate-200 dark:border-slate-700">
+                                <div id="editTier3Section" class="hidden mt-3 pt-3 border-t border-dashed border-[#2a2a36]">
                                     <div class="flex items-center justify-between gap-3">
-                                        <div class="text-xs text-slate-500 dark:text-slate-400">
+                                        <div class="text-xs text-[#8888a0]">
                                             <span class="material-symbols-outlined text-[14px] align-middle">hub</span>
                                             Tier 3 – Genius pipeline (resolves metadata + synced lyrics via LRCLIB)
                                         </div>
@@ -763,11 +763,11 @@
                                         </button>
                                     </div>
                                     <!-- Tier 3 result card -->
-                                    <div id="editTier3Result" class="hidden mt-2 p-3 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800/40 rounded-lg">
+                                    <div id="editTier3Result" class="hidden mt-2 p-3 bg-purple-50 bg-purple-900/20 border border-purple-200 border-purple-800/40 rounded-lg">
                                         <div class="flex items-start justify-between gap-3">
                                             <div class="flex-1 min-w-0">
-                                                <p class="text-sm font-semibold dark:text-white text-slate-900 truncate" id="editTier3Title"></p>
-                                                <p class="text-xs text-slate-500 mt-0.5 truncate" id="editTier3Artist"></p>
+                                                <p class="text-sm font-semibold text-white text-[#e8e8ed] truncate" id="editTier3Title"></p>
+                                                <p class="text-xs text-[#8888a0] mt-0.5 truncate" id="editTier3Artist"></p>
                                                 <div class="flex items-center gap-2 mt-1 flex-wrap">
                                                     <span id="editTier3Badge" class="text-xs px-2 py-0.5 rounded-full"></span>
                                                     <a id="editTier3Url" href="#" target="_blank" rel="noopener noreferrer"
@@ -784,33 +784,33 @@
                                 </div>
 
                                 <!-- Lyrics populated badge -->
-                                <div id="editLyricsPopulatedBadge" class="hidden mt-2 flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+                                <div id="editLyricsPopulatedBadge" class="hidden mt-2 flex items-center gap-1.5 text-xs text-[#00cec9] text-green-400">
                                     <span class="material-symbols-outlined text-sm">check_circle</span>
                                     <span id="editLyricsPopulatedLabel">Lyrics loaded from search</span>
                                 </div>
                             </div>
 
                             <!-- ── Lyrics Editor ───────────────────────────────── -->
-                            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                            <div class="mt-4 pt-4 border-t border-[#2a2a36]">
                                 <div class="flex items-center justify-between mb-2">
-                                    <label class="text-xs font-medium dark:text-slate-300 text-slate-700 flex items-center gap-1">
+                                    <label class="text-xs font-medium text-[#8888a0] text-[#e8e8ed] flex items-center gap-1">
                                         <span class="material-symbols-outlined text-sm">lyrics</span>
                                         Lyrics
                                     </label>
                                     <div class="flex items-center gap-2">
-                                        <span id="editLyricsSourceBadge" class="hidden text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500"></span>
-                                        <button id="editClearLyricsBtn" class="text-xs text-slate-400 hover:text-red-500 transition-colors hidden">✕ Clear</button>
+                                        <span id="editLyricsSourceBadge" class="hidden text-xs px-2 py-0.5 rounded-full bg-[#131318] bg-[#1a1a22] text-[#8888a0]"></span>
+                                        <button id="editClearLyricsBtn" class="text-xs text-[#8888a0] hover:text-[#d63031] transition-colors hidden">✕ Clear</button>
                                     </div>
                                 </div>
                                 <textarea id="editLyricsInput"
-                                    class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-xs dark:text-white font-mono leading-relaxed custom-scrollbar"
+                                    class="w-full px-3 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-xs text-white font-mono leading-relaxed custom-scrollbar"
                                     placeholder="Paste or search for lyrics…" rows="8"></textarea>
-                                <p class="text-xs text-slate-400 mt-1">Lyrics are saved as-is. LRC timestamps are stripped automatically when displayed.</p>
+                                <p class="text-xs text-[#8888a0] mt-1">Lyrics are saved as-is. LRC timestamps are stripped automatically when displayed.</p>
                             </div>
 
                             <!-- Footer -->
                             <div class="mt-5 flex justify-end gap-3">
-                                <button class="edit-modal-cancel-btn px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors border border-slate-300 dark:border-slate-700">
+                                <button class="edit-modal-cancel-btn px-4 py-2 text-sm font-medium text-[#e8e8ed] text-[#8888a0] hover:bg-[#131318] hover:bg-[#1a1a22] rounded-lg transition-colors border border-[#2a2a36]">
                                     Cancel
                                 </button>
                                 <button id="editMetadataSaveBtn"

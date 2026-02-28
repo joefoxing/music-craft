@@ -49,23 +49,23 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+<body class="bg-background-light bg-background-dark text-[#e8e8ed] text-white font-display antialiased overflow-hidden">
     <div class="flex h-screen w-full">
         {% include "partials/_sidebar.html" %}
         
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-gradient-to-b dark:from-[#181118] dark:to-background-dark relative overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-background-light bg-gradient-to-b from-[#181118] to-background-dark relative overflow-hidden">
             <!-- Header -->
-            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-[#181118]/50 backdrop-blur-md sticky top-0 z-10">
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 bg-[#0a0a0c]/50 backdrop-blur-md sticky top-0 z-10">
                 <div class="flex items-center gap-4 text-white md:hidden">
-                    <button class="text-slate-400 hover:text-white" id="mobileMenuBtn">
+                    <button class="text-[#8888a0] hover:text-white" id="mobileMenuBtn">
                         <span class="material-symbols-outlined">menu</span>
                     </button>
                     <h2 class="text-lg font-bold">Create</h2>
                 </div>
                 
                 <div class="hidden md:block">
-                    <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Studio Dashboard</h2>
+                    <h2 class="text-[#e8e8ed] text-white text-lg font-bold tracking-tight">Studio Dashboard</h2>
                 </div>
                 
                 <div class="flex items-center gap-4">
@@ -81,12 +81,12 @@
                     </div>
                     
                     {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('auth.profile') }}" class="p-2 text-slate-400 hover:text-white relative" title="Profile">
+                    <a href="{{ url_for('auth.profile') }}" class="p-2 text-[#8888a0] hover:text-white relative" title="Profile">
                         <span class="material-symbols-outlined">account_circle</span>
                     </a>
                     {% endif %}
                     
-                    <button class="p-2 text-slate-400 hover:text-white relative" id="themeToggle">
+                    <button class="p-2 text-[#8888a0] hover:text-white relative" id="themeToggle">
                         <span class="material-symbols-outlined">dark_mode</span>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
                     </button>
@@ -99,13 +99,13 @@
                     <!-- Generator Section -->
                     <section class="flex flex-col gap-6">
                         <div class="flex flex-col gap-2">
-                            <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Extraordinary Song Quality</h2>
-                            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2">Whether the melody is in your head, lyrics you've written, or just to hear your feeling —Vnuno makes high-quality music creation available to all</p>
+                            <h2 class="text-3xl md:text-4xl font-bold text-white text-[#e8e8ed] tracking-tight">Extraordinary Song Quality</h2>
+                            <p class="text-[#8888a0] text-sm mt-2">Whether the melody is in your head, lyrics you've written, or just to hear your feeling —Vnuno makes high-quality music creation available to all</p>
                         </div>
                         
                         <!-- Audio Source Card -->
-                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
-                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                        <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-primary">music_note</span>
                                 1. Audio Source
                             </h3>
@@ -127,8 +127,8 @@
                                 <div class="upload-area" id="uploadArea">
                                     <span class="material-symbols-outlined text-primary text-5xl mb-4">file_upload</span>
                                     <p class="text-lg font-medium mb-2">Drag & drop your audio file here</p>
-                                    <p class="text-slate-500 dark:text-slate-400 mb-4">or click to browse</p>
-                                    <p class="file-types text-sm text-slate-500">Supported: MP3, WAV, OGG, M4A, FLAC (max 100MB)</p>
+                                    <p class="text-[#8888a0] mb-4">or click to browse</p>
+                                    <p class="file-types text-sm text-[#8888a0]">Supported: MP3, WAV, OGG, M4A, FLAC (max 100MB)</p>
                                     <input type="file" id="audioFile" accept=".mp3,.wav,.ogg,.m4a,.flac" hidden>
                                     <button class="mt-4 px-6 py-2 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors" onclick="document.getElementById('audioFile').click()">
                                         <span class="material-symbols-outlined mr-2">folder_open</span>
@@ -136,12 +136,12 @@
                                     </button>
                                 </div>
                                 
-                                <div id="fileInfo" class="file-info hidden mt-6 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                                <div id="fileInfo" class="file-info hidden mt-6 p-4 bg-[#0a0a0c] bg-[#131318] rounded-lg">
                                     <p class="font-medium"><strong>Selected file:</strong> <span id="fileName"></span></p>
                                     <p class="font-medium mt-2"><strong>Status:</strong> <span id="uploadStatus">Ready to upload</span></p>
                                     <div class="mt-4">
                                         <label for="lyricsLanguageSelect" class="block text-sm font-medium mb-2">Lyrics Language</label>
-                                        <select id="lyricsLanguageSelect" class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                        <select id="lyricsLanguageSelect" class="w-full px-4 py-2 bg-[#131318] bg-[#1a1a22] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                                             <option value="">Auto Detect</option>
                                             <option value="en">English</option>
                                             <option value="es">Spanish</option>
@@ -159,19 +159,19 @@
                                             <option value="hi">Hindi</option>
                                             <option value="ar">Arabic</option>
                                         </select>
-                                        <div id="lyricsLanguageWarning" class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                                        <div id="lyricsLanguageWarning" class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-amber-100 text-amber-800 bg-amber-900/30 text-amber-300">
                                             <span class="material-symbols-outlined text-sm">warning</span>
                                             Auto Detect may return translated lyrics. Select a language to keep original wording.
                                         </div>
-                                        <p class="text-xs text-slate-500 mt-1">Used for Whisper transcription during lyrics extraction.</p>
+                                        <p class="text-xs text-[#8888a0] mt-1">Used for Whisper transcription during lyrics extraction.</p>
                                     </div>
                                     
                                     <div class="progress-container hidden mt-4" id="progressContainer">
-                                        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
+                                        <div class="w-full bg-slate-200 bg-slate-700 rounded-full h-2.5">
                                             <div class="progress-bar bg-primary h-2.5 rounded-full" id="progressBar" style="width: 0%"></div>
                                         </div>
                                         <div class="flex justify-between mt-1">
-                                            <span id="progressStage" class="text-sm text-slate-500">Uploading file...</span>
+                                            <span id="progressStage" class="text-sm text-[#8888a0]">Uploading file...</span>
                                             <span id="progressText" class="text-sm font-medium">0%</span>
                                         </div>
                                     </div>
@@ -190,16 +190,16 @@
                                         <span class="material-symbols-outlined text-primary">link</span>
                                         Audio URL
                                     </label>
-                                    <input type="url" id="audioUrlInput" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    <input type="url" id="audioUrlInput" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                            placeholder="https://drive.google.com/uc?export=download&id=FILE_ID">
                                     
-                                    <div class="mt-3 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                                    <div class="mt-3 p-3 bg-[#0a0a0c] bg-[#131318] rounded-lg">
                                         <p class="text-sm font-medium mb-2">For Google Drive:</p>
-                                        <ol class="text-sm text-slate-600 dark:text-slate-400 space-y-1 ml-4 list-decimal">
+                                        <ol class="text-sm text-[#8888a0] space-y-1 ml-4 list-decimal">
                                             <li>Upload file to Google Drive</li>
                                             <li>Right-click → "Get link" → Set to "Anyone with the link"</li>
                                             <li>Copy the file ID from the URL</li>
-                                            <li>Use format: <code class="bg-slate-200 dark:bg-slate-800 px-1 rounded">https://drive.google.com/uc?export=download&id=FILE_ID</code></li>
+                                            <li>Use format: <code class="bg-slate-200 bg-[#1a1a22] px-1 rounded">https://drive.google.com/uc?export=download&id=FILE_ID</code></li>
                                         </ol>
                                     </div>
                                 </div>
@@ -220,15 +220,15 @@
                             </div>
                             
                             <!-- Source Info Display -->
-                            <div id="sourceInfo" class="source-info hidden mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                                <h4 class="font-bold text-green-700 dark:text-green-400 flex items-center gap-2">
+                            <div id="sourceInfo" class="source-info hidden mt-6 p-4 bg-green-50 bg-green-900/20 border border-green-200 border-green-800 rounded-lg">
+                                <h4 class="font-bold text-green-700 text-green-400 flex items-center gap-2">
                                     <span class="material-symbols-outlined">check_circle</span>
                                     Audio Source Ready
                                 </h4>
                                 
                                 <div class="mt-2 space-y-2">
                                     <p><strong>Source:</strong> <span id="sourceType" class="font-medium">-</span></p>
-                                    <p><strong>URL:</strong> <code id="sourceUrl" class="bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded text-sm break-all">-</code></p>
+                                    <p><strong>URL:</strong> <code id="sourceUrl" class="bg-green-100 bg-green-900/30 px-2 py-1 rounded text-sm break-all">-</code></p>
                                 </div>
                                 
                                 <button class="mt-4 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors flex items-center" onclick="clearAudioSource()">
@@ -239,8 +239,8 @@
                         </div>
                         
                         <!-- Generation Settings Card -->
-                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
-                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                        <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-primary">tune</span>
                                 2. Generation Settings
                             </h3>
@@ -257,14 +257,14 @@
                                             Extend Audio
                                         </button>
                                     </div>
-                                    <p id="taskTypeHelp" class="text-sm text-slate-500 mt-2">Cover: Create a new version/remix. Extend: Continue the music from a specific point.</p>
+                                    <p id="taskTypeHelp" class="text-sm text-[#8888a0] mt-2">Cover: Create a new version/remix. Extend: Continue the music from a specific point.</p>
                                 </div>
 
                                 <!-- Continue At (Hidden for Cover) -->
                                 <div id="continueAtField" class="hidden">
                                     <label for="continueAtInput" class="block text-sm font-medium mb-2">Continue At (Seconds)</label>
                                     <input type="number" id="continueAtInput" class="form-control" placeholder="e.g. 60" min="0" value="60">
-                                    <p class="text-sm text-slate-500 mt-1">Start extending from this timestamp (in seconds).</p>
+                                    <p class="text-sm text-[#8888a0] mt-1">Start extending from this timestamp (in seconds).</p>
                                 </div>
 
                                 <!-- Mode Selection -->
@@ -278,7 +278,7 @@
                                             Custom Mode
                                         </button>
                                     </div>
-                                    <p id="modeHelp" class="text-sm text-slate-500 mt-2">Simple Mode: Just provide a prompt, lyrics will be auto-generated.</p>
+                                    <p id="modeHelp" class="text-sm text-[#8888a0] mt-2">Simple Mode: Just provide a prompt, lyrics will be auto-generated.</p>
                                 </div>
                                 
                                 <!-- Model Selection -->
@@ -296,7 +296,7 @@
                                 <!-- Prompt Input -->
                                 <div>
                                     <div class="flex justify-between items-center mb-2">
-                                        <label for="promptInput" class="block text-sm font-medium">Prompt <span class="text-slate-500">(Describe the style you want)</span></label>
+                                        <label for="promptInput" class="block text-sm font-medium">Prompt <span class="text-[#8888a0]">(Describe the style you want)</span></label>
                                         <button id="expandPromptEditorBtn" type="button" class="text-xs text-primary hover:text-primary-dark font-medium flex items-center gap-1 transition-colors" title="Open in full editor">
                                             <span class="material-symbols-outlined text-sm">open_in_full</span>
                                             Expand Editor
@@ -309,7 +309,7 @@
                                 </div>
                                 
                                 <!-- Lyrics pipeline – replaces old manual search -->
-                                <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 space-y-4" id="lyricsPipelinePanel">
+                                <div class="mt-4 p-4 bg-[#0a0a0c] bg-[#1a1a22]/50 rounded-lg border border-[#2a2a36] space-y-4" id="lyricsPipelinePanel">
                                     <!-- Header + manual search inputs -->
                                     <div>
                                         <div class="flex justify-between items-center mb-3">
@@ -317,7 +317,7 @@
                                                 <span class="material-symbols-outlined text-primary text-sm">lyrics</span>
                                                 Lyrics Search
                                             </label>
-                                            <span class="text-xs text-slate-500 dark:text-slate-400">LRCLIB · Genius pipeline</span>
+                                            <span class="text-xs text-[#8888a0]">LRCLIB · Genius pipeline</span>
                                         </div>
                                         <div class="space-y-2">
                                             <input type="text" id="lyricsSearchTrack" class="form-control text-sm" placeholder="Song title (required)">
@@ -334,12 +334,12 @@
                                         <div class="text-xs font-semibold uppercase tracking-wide text-primary mb-2">✓ Tier 1 — Metadata</div>
                                         <div class="grid grid-cols-2 gap-2">
                                             <div>
-                                                <label class="block text-xs text-slate-500 mb-1">Artist</label>
-                                                <input type="text" id="tier1Artist" readonly class="form-control text-sm bg-slate-100 dark:bg-slate-900/50" value="">
+                                                <label class="block text-xs text-[#8888a0] mb-1">Artist</label>
+                                                <input type="text" id="tier1Artist" readonly class="form-control text-sm bg-[#131318]/50" value="">
                                             </div>
                                             <div>
-                                                <label class="block text-xs text-slate-500 mb-1">Title</label>
-                                                <input type="text" id="tier1Title" readonly class="form-control text-sm bg-slate-100 dark:bg-slate-900/50" value="">
+                                                <label class="block text-xs text-[#8888a0] mb-1">Title</label>
+                                                <input type="text" id="tier1Title" readonly class="form-control text-sm bg-[#131318]/50" value="">
                                             </div>
                                         </div>
                                     </div>
@@ -352,14 +352,14 @@
 
                                     <!-- Tier 3: Genius pipeline -->
                                     <div id="tier3Section" class="hidden border-l-2 border-slate-400 pl-3">
-                                        <div class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Tier 3 — Genius Pipeline</div>
+                                        <div class="text-xs font-semibold uppercase tracking-wide text-[#8888a0] mb-2">Tier 3 — Genius Pipeline</div>
                                         <button type="button" id="pipelineSearchBtn" class="btn btn-secondary w-full text-sm py-2 flex items-center justify-center gap-1">
                                             <span class="material-symbols-outlined text-sm">hub</span>
                                             Search via Genius Pipeline
                                         </button>
                                         <div id="tier3Result" class="hidden mt-3 space-y-2">
-                                            <div class="text-xs text-slate-500" id="tier3Meta"></div>
-                                            <div class="max-h-40 overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded p-2 text-xs font-mono whitespace-pre-wrap" id="tier3Preview"></div>
+                                            <div class="text-xs text-[#8888a0]" id="tier3Meta"></div>
+                                            <div class="max-h-40 overflow-y-auto bg-[#131318] border border-[#2a2a36] rounded p-2 text-xs font-mono whitespace-pre-wrap" id="tier3Preview"></div>
                                             <button type="button" id="applyPipelineBtn" class="w-full bg-primary hover:bg-primary-dark text-white text-sm font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-1">
                                                 <span class="material-symbols-outlined text-sm">check</span>
                                                 Apply These Lyrics
@@ -371,10 +371,10 @@
                                 <!-- Lyrics applied preview -->
                                 <div id="lyricsPreview" class="hidden mt-3">
                                     <label class="block text-sm font-medium mb-1">Applied Lyrics</label>
-                                    <div class="lyrics-container max-h-48 overflow-y-auto bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-green-300 dark:border-green-700">
-                                        <div class="lyrics-content text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line" id="extractedLyrics">-</div>
+                                    <div class="lyrics-container max-h-48 overflow-y-auto bg-[#0a0a0c] bg-[#1a1a22]/50 rounded-lg p-3 border border-green-300 border-green-700">
+                                        <div class="lyrics-content text-sm text-[#e8e8ed] text-[#8888a0] whitespace-pre-line" id="extractedLyrics">-</div>
                                     </div>
-                                    <div class="mt-2 text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                                    <div class="mt-2 text-xs text-[#8888a0] flex items-center gap-1">
                                         <span class="material-symbols-outlined text-xs">check_circle</span>
                                         Lyrics inserted into prompt above.
                                     </div>
@@ -407,7 +407,7 @@
                                     </div>
                                     
                                     <!-- Advanced Options -->
-                                    <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                                    <div class="border-t border-[#2a2a36] pt-4">
                                         <label class="block text-sm font-medium mb-2">Advanced Options</label>
                                         <div class="space-y-4">
                                             <!-- Vocal Gender -->
@@ -428,7 +428,7 @@
                                             </div>
                                             
                                             <!-- Optional Parameters -->
-                                            <div class="border-t border-slate-200 dark:border-slate-700 pt-4">
+                                            <div class="border-t border-[#2a2a36] pt-4">
                                                 <label class="block text-sm font-medium mb-2">Optional Parameters</label>
                                                 <div class="space-y-4">
                                                     <!-- Style Weight -->
@@ -438,7 +438,7 @@
                                                             <input type="range" id="styleWeight" min="0" max="1" step="0.01" value="0.5" class="flex-1">
                                                             <input type="number" id="styleWeightNumber" min="0" max="1" step="0.01" value="0.5" class="w-20 form-control">
                                                         </div>
-                                                        <p class="text-xs text-slate-500 mt-1">Controls how much the style influences generation (0.0-1.0)</p>
+                                                        <p class="text-xs text-[#8888a0] mt-1">Controls how much the style influences generation (0.0-1.0)</p>
                                                     </div>
                                                     
                                                     <!-- Weirdness Constraint -->
@@ -448,7 +448,7 @@
                                                             <input type="range" id="weirdnessConstraint" min="0" max="1" step="0.01" value="0.5" class="flex-1">
                                                             <input type="number" id="weirdnessConstraintNumber" min="0" max="1" step="0.01" value="0.5" class="w-20 form-control">
                                                         </div>
-                                                        <p class="text-xs text-slate-500 mt-1">Controls how "weird" or experimental the output can be (0.0-1.0)</p>
+                                                        <p class="text-xs text-[#8888a0] mt-1">Controls how "weird" or experimental the output can be (0.0-1.0)</p>
                                                     </div>
                                                     
                                                     <!-- Audio Weight -->
@@ -458,14 +458,14 @@
                                                             <input type="range" id="audioWeight" min="0" max="1" step="0.01" value="0.5" class="flex-1">
                                                             <input type="number" id="audioWeightNumber" min="0" max="1" step="0.01" value="0.5" class="w-20 form-control">
                                                         </div>
-                                                        <p class="text-xs text-slate-500 mt-1">Controls audio quality vs. style adherence (0.0-1.0)</p>
+                                                        <p class="text-xs text-[#8888a0] mt-1">Controls audio quality vs. style adherence (0.0-1.0)</p>
                                                     </div>
                                                     
                                                     <!-- Persona ID -->
                                                     <div>
                                                         <label for="personaId" class="block text-sm font-medium mb-1">Persona ID</label>
                                                         <input type="text" id="personaId" class="form-control" placeholder="e.g., 'artist123'">
-                                                        <p class="text-xs text-slate-500 mt-1">Optional persona identifier for custom mode</p>
+                                                        <p class="text-xs text-[#8888a0] mt-1">Optional persona identifier for custom mode</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -477,31 +477,31 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <label class="block text-sm font-medium mb-1">Instrumental Only</label>
-                                        <p class="text-sm text-slate-500">Generate without vocals</p>
+                                        <p class="text-sm text-[#8888a0]">Generate without vocals</p>
                                     </div>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" id="instrumentalToggle" class="sr-only peer">
-                                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-primary"></div>
+                                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#131318] after:rounded-full after:h-5 after:w-5 after:transition-all border-slate-600 peer-checked:bg-primary"></div>
                                     </label>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Generate Button -->
-                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
-                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                        <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-primary">play_circle</span>
                                 3. Generate Cover
                             </h3>
                             
-                            <p class="text-slate-500 dark:text-slate-400 mb-6">Once you've set your audio source and generation settings, you can generate your cover.</p>
+                            <p class="text-[#8888a0] mb-6">Once you've set your audio source and generation settings, you can generate your cover.</p>
                             
                             <button id="generateBtn" class="btn-generate flex items-center justify-center" disabled>
                                 <span class="material-symbols-outlined mr-2">play_circle</span>
                                 Generate Music Cover
                             </button>
                             
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-4">
+                            <p class="text-sm text-[#8888a0] mt-4">
                                 <span class="material-symbols-outlined text-xs align-text-bottom mr-1">info</span>
                                 Generation typically takes 2-5 minutes. You'll be notified when it's complete.
                             </p>
@@ -511,7 +511,7 @@
                         <div id="taskStatus" class="task-status hidden">
                             <div class="status-card">
                                 <div class="status-header">
-                                    <h4 class="text-lg font-bold dark:text-white text-slate-900">Generation Status</h4>
+                                    <h4 class="text-lg font-bold text-white text-[#e8e8ed]">Generation Status</h4>
                                     <div class="flex items-center gap-3">
                                         <span id="statusBadge" class="status-badge">Processing</span>
                                         <button id="refreshStatusBtn" class="refresh-btn">
@@ -524,13 +524,13 @@
                                 <div class="space-y-4">
                                     <div>
                                         <label class="block text-sm font-medium mb-1">Task ID</label>
-                                        <code id="taskId" class="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-sm">-</code>
+                                        <code id="taskId" class="bg-[#131318] bg-[#1a1a22] px-2 py-1 rounded text-sm">-</code>
                                     </div>
                                     
                                     <div>
                                         <label class="block text-sm font-medium mb-1">Progress</label>
                                         <progress id="statusProgress" value="0" max="100" class="w-full h-2 rounded-full"></progress>
-                                        <p id="statusText" class="text-sm text-slate-500 mt-1">Starting generation...</p>
+                                        <p id="statusText" class="text-sm text-[#8888a0] mt-1">Starting generation...</p>
                                     </div>
                                     
                                     <div class="status-details">
@@ -555,7 +555,7 @@
                                         
                                         <div class="mt-4">
                                             <p class="text-sm font-medium">Message</p>
-                                            <p id="statusMessage" class="text-sm text-slate-600 dark:text-slate-400">-</p>
+                                            <p id="statusMessage" class="text-sm text-[#8888a0]">-</p>
                                         </div>
                                     </div>
                                 </div>
@@ -565,12 +565,12 @@
                         <!-- Results (Hidden by default) -->
                         <div id="results" class="results hidden">
                             <div class="result-card">
-                                <h4 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-green-500">check_circle</span>
+                                <h4 class="text-xl font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[#00cec9]">check_circle</span>
                                     Cover Generated Successfully!
                                 </h4>
                                 
-                                <p class="text-slate-500 dark:text-slate-400 mb-4">Your generated covers are ready to play and download.</p>
+                                <p class="text-[#8888a0] mb-4">Your generated covers are ready to play and download.</p>
                                 
                                 <!-- Container for multiple audio players -->
                                 <div id="audioPlayersContainer" class="space-y-6">
@@ -579,13 +579,13 @@
                                 
                                 <!-- Single audio player template (hidden, used for cloning) -->
                                 <template id="audioPlayerTemplate">
-                                    <div class="audio-player border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-900/50">
+                                    <div class="audio-player border border-[#2a2a36] rounded-lg p-4 bg-[#0a0a0c] bg-[#131318]/50">
                                         <div class="flex justify-between items-start mb-3">
                                             <div>
-                                                <h5 class="font-bold text-slate-900 dark:text-white text-lg" data-title>Song Title</h5>
+                                                <h5 class="font-bold text-[#e8e8ed] text-white text-lg" data-title>Song Title</h5>
                                                 <div class="flex items-center gap-3 mt-1">
                                                     <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full" data-model>Model</span>
-                                                    <span class="text-xs text-slate-500" data-duration>Duration</span>
+                                                    <span class="text-xs text-[#8888a0]" data-duration>Duration</span>
                                                 </div>
                                             </div>
                                             <div class="flex flex-col gap-2">
@@ -613,10 +613,10 @@
                                                 <label class="block text-sm font-medium mb-1">Generated Image</label>
                                                 <div class="mt-2">
                                                     <!-- Thumbnail image display -->
-                                                    <div class="relative bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
-                                                        <img src="" alt="Generated cover image" class="w-full h-32 object-contain bg-white" data-image-display style="display: none;">
+                                                    <div class="relative bg-[#131318] bg-[#1a1a22] rounded-lg overflow-hidden border border-[#2a2a36]">
+                                                        <img src="" alt="Generated cover image" class="w-full h-32 object-contain bg-[#131318]" data-image-display style="display: none;">
                                                         <div class="image-placeholder h-32 flex items-center justify-center" data-image-placeholder>
-                                                            <span class="material-symbols-outlined text-slate-400 text-4xl">image</span>
+                                                            <span class="material-symbols-outlined text-[#8888a0] text-4xl">image</span>
                                                         </div>
                                                     </div>
                                                     <a href="#" target="_blank" class="text-primary hover:underline break-all text-sm mt-2 block" data-image-url style="display: none;">View full image</a>
@@ -626,10 +626,10 @@
                                         
                                         <div class="mt-3">
                                             <label class="block text-sm font-medium mb-1">Lyrics</label>
-                                            <div class="lyrics-container max-h-48 overflow-y-auto bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
-                                                <div class="lyrics-content text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line" data-lyrics>-</div>
+                                            <div class="lyrics-container max-h-48 overflow-y-auto bg-[#0a0a0c] bg-[#1a1a22]/50 rounded-lg p-3 border border-[#2a2a36]">
+                                                <div class="lyrics-content text-sm text-[#e8e8ed] text-[#8888a0] whitespace-pre-line" data-lyrics>-</div>
                                             </div>
-                                            <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
+                                            <div class="mt-2 text-xs text-[#8888a0]">
                                                 <span class="material-symbols-outlined align-text-bottom text-xs mr-1">info</span>
                                                 Lyrics are displayed line by line as generated by the AI.
                                             </div>
@@ -639,13 +639,13 @@
                                 
                                 <!-- Video player template (hidden, used for cloning) -->
                                 <template id="videoPlayerTemplate">
-                                    <div class="video-player border border-blue-200 dark:border-blue-800 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20 mt-6">
+                                    <div class="video-player border border-blue-200 border-blue-800 rounded-lg p-4 bg-blue-50 bg-blue-900/20 mt-6">
                                         <div class="flex justify-between items-start mb-3">
                                             <div>
-                                                <h5 class="font-bold text-slate-900 dark:text-white text-lg" data-video-title>Music Video</h5>
+                                                <h5 class="font-bold text-[#e8e8ed] text-white text-lg" data-video-title>Music Video</h5>
                                                 <div class="flex items-center gap-3 mt-1">
                                                     <span class="text-xs px-2 py-1 bg-blue-500/10 text-blue-500 rounded-full">Video</span>
-                                                    <span class="text-xs text-slate-500" data-video-status>Processing</span>
+                                                    <span class="text-xs text-[#8888a0]" data-video-status>Processing</span>
                                                 </div>
                                             </div>
                                             <button class="btn-video-download" data-video-download-btn style="display: none;">
@@ -666,13 +666,13 @@
                                                 <span class="text-sm font-medium">Video generation in progress...</span>
                                             </div>
                                             <progress value="0" max="100" class="w-full h-2 rounded-full" data-video-progress></progress>
-                                            <p class="text-xs text-slate-500 mt-1" data-video-status-text>Starting video generation</p>
+                                            <p class="text-xs text-[#8888a0] mt-1" data-video-status-text>Starting video generation</p>
                                         </div>
                                         
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                             <div>
                                                 <label class="block text-sm font-medium mb-1">Video Task ID</label>
-                                                <code class="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-sm" data-video-task-id>-</code>
+                                                <code class="bg-[#131318] bg-[#1a1a22] px-2 py-1 rounded text-sm" data-video-task-id>-</code>
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium mb-1">Video URL</label>
@@ -725,67 +725,67 @@
             <div class="fixed inset-0 transition-opacity bg-black/70" aria-hidden="true"></div>
             
             <!-- Modal panel -->
-            <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-surface-dark shadow-xl rounded-xl border border-slate-200 dark:border-border-dark sm:my-8 sm:align-middle">
+            <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-[#131318] bg-surface-dark shadow-xl rounded-xl border border-[#2a2a36] border-border-dark sm:my-8 sm:align-middle">
                 <!-- Modal header -->
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2">
+                    <h3 class="text-xl font-bold text-white text-[#e8e8ed] flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">movie</span>
                         Create Music Video
                     </h3>
-                    <button id="closeVideoModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                    <button id="closeVideoModalBtn" class="text-[#8888a0] hover:text-[#8888a0] hover:text-white transition-colors">
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 </div>
                 
                 <!-- Modal content -->
                 <div class="space-y-4">
-                    <p class="text-slate-500 dark:text-slate-400 text-sm">
+                    <p class="text-[#8888a0] text-sm">
                         Create a music video using the generated audio and image. This will use the Kie API to generate a video with visualizations.
                     </p>
                     
                     <!-- Task ID field -->
                     <div>
-                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Task ID</label>
-                        <input type="text" id="modalTaskId" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" readonly>
+                        <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Task ID</label>
+                        <input type="text" id="modalTaskId" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" readonly>
                     </div>
                     
                     <!-- Audio ID field -->
                     <div>
-                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Audio ID</label>
-                        <input type="text" id="modalAudioId" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" readonly>
+                        <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Audio ID</label>
+                        <input type="text" id="modalAudioId" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" readonly>
                     </div>
                     
                     <!-- Song title display -->
                     <div id="modalSongTitleContainer" class="hidden">
-                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Song Title</label>
-                        <p id="modalSongTitle" class="text-slate-700 dark:text-slate-300 font-medium"></p>
+                        <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Song Title</label>
+                        <p id="modalSongTitle" class="text-[#e8e8ed] text-[#8888a0] font-medium"></p>
                     </div>
                     
                     <!-- Author field -->
                     <div>
-                        <label for="modalAuthor" class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Author (Artist/Creator)</label>
-                        <input type="text" id="modalAuthor" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                        <label for="modalAuthor" class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Author (Artist/Creator)</label>
+                        <input type="text" id="modalAuthor" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                placeholder="e.g., DJ Electronic" maxlength="50">
-                        <p class="text-xs text-slate-500 mt-1">Artist or creator name to display as a signature on the video cover. Maximum 50 characters.</p>
+                        <p class="text-xs text-[#8888a0] mt-1">Artist or creator name to display as a signature on the video cover. Maximum 50 characters.</p>
                     </div>
                     
                     <!-- Domain name field -->
                     <div>
-                        <label for="modalDomainName" class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Domain Name (Watermark)</label>
-                        <input type="text" id="modalDomainName" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                        <label for="modalDomainName" class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Domain Name (Watermark)</label>
+                        <input type="text" id="modalDomainName" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                placeholder="e.g., music.example.com" maxlength="50">
-                        <p class="text-xs text-slate-500 mt-1">Website or brand to display as a watermark at the bottom of the video. Maximum 50 characters.</p>
+                        <p class="text-xs text-[#8888a0] mt-1">Website or brand to display as a watermark at the bottom of the video. Maximum 50 characters.</p>
                     </div>
                     
                     <!-- Status message -->
-                    <div id="modalStatusMessage" class="hidden p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                        <p class="text-sm text-blue-700 dark:text-blue-400" id="modalStatusText"></p>
+                    <div id="modalStatusMessage" class="hidden p-3 bg-blue-50 bg-blue-900/20 border border-blue-200 border-blue-800 rounded-lg">
+                        <p class="text-sm text-blue-700 text-blue-400" id="modalStatusText"></p>
                     </div>
                 </div>
                 
                 <!-- Modal footer -->
                 <div class="mt-6 flex justify-end gap-3">
-                    <button id="cancelVideoBtn" class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors border border-slate-300 dark:border-slate-700">
+                    <button id="cancelVideoBtn" class="px-4 py-2 text-sm font-medium text-[#e8e8ed] text-[#8888a0] hover:bg-[#131318] hover:bg-[#1a1a22] rounded-lg transition-colors border border-[#2a2a36]">
                         Cancel
                     </button>
                     <button id="createVideoBtn" class="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-lg transition-colors flex items-center">
@@ -959,10 +959,10 @@
                         // Show temporary success feedback
                         const originalText = copyPromptBtn.textContent;
                         copyPromptBtn.textContent = 'Copied!';
-                        copyPromptBtn.classList.add('text-green-600');
+                        copyPromptBtn.classList.add('text-[#00cec9]');
                         setTimeout(() => {
                             copyPromptBtn.textContent = originalText;
-                            copyPromptBtn.classList.remove('text-green-600');
+                            copyPromptBtn.classList.remove('text-[#00cec9]');
                         }, 2000);
                     });
                 });
@@ -1137,40 +1137,40 @@
             <!-- Background overlay -->
             <div class="fixed inset-0 transition-opacity bg-black/70" aria-hidden="true"></div>
             <!-- Modal panel -->
-            <div class="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-surface-dark shadow-xl rounded-xl border border-slate-200 dark:border-border-dark sm:my-8 sm:align-middle">
+            <div class="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-[#131318] bg-surface-dark shadow-xl rounded-xl border border-[#2a2a36] border-border-dark sm:my-8 sm:align-middle">
                 <!-- Modal header -->
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2" id="promptEditorModalTitle">
+                    <h3 class="text-xl font-bold text-white text-[#e8e8ed] flex items-center gap-2" id="promptEditorModalTitle">
                         <span class="material-symbols-outlined text-primary">edit</span>
                         Prompt Editor
                     </h3>
-                    <button id="closePromptEditor" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors" aria-label="Close modal">
+                    <button id="closePromptEditor" class="text-[#8888a0] hover:text-[#8888a0] hover:text-white transition-colors" aria-label="Close modal">
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 </div>
                 <!-- Modal content -->
                 <div class="space-y-6">
                     <!-- Song Structure Tags Panel -->
-                    <div id="promptTagsPanel" class="border border-slate-200 dark:border-border-dark rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+                    <div id="promptTagsPanel" class="border border-[#2a2a36] border-border-dark rounded-lg overflow-hidden bg-[#0a0a0c] bg-[#131318]/40">
                         <!-- Panel Header -->
-                        <div class="flex items-center gap-2 px-3 py-2 border-b border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark">
+                        <div class="flex items-center gap-2 px-3 py-2 border-b border-[#2a2a36] border-border-dark bg-[#131318] bg-surface-dark">
                             <span class="material-symbols-outlined text-[15px] text-primary">label</span>
-                            <span class="text-xs font-semibold text-slate-600 dark:text-slate-300 select-none">Song Structure Tags</span>
+                            <span class="text-xs font-semibold text-[#8888a0] select-none">Song Structure Tags</span>
                             <div class="flex-1"></div>
-                            <button id="promptViewTemplateBtn" type="button" class="px-2 py-0.5 text-xs text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-slate-800 rounded flex items-center gap-1 transition-colors" title="View full template">
+                            <button id="promptViewTemplateBtn" type="button" class="px-2 py-0.5 text-xs text-[#8888a0] hover:text-primary hover:bg-[#131318] hover:bg-[#1a1a22] rounded flex items-center gap-1 transition-colors" title="View full template">
                                 <span class="material-symbols-outlined text-[13px]">article</span> Template
                             </button>
                             <button id="promptInsertAllBtn" type="button" class="px-2 py-0.5 bg-primary/10 text-primary hover:bg-primary/20 rounded text-xs font-medium flex items-center gap-1 transition-colors" title="Insert full template at cursor">
                                 <span class="material-symbols-outlined text-[13px]">playlist_add</span> Insert All
                             </button>
-                            <button id="promptTagsPanelToggle" type="button" class="p-0.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="Toggle tags panel">
-                                <span class="material-symbols-outlined text-[16px] text-slate-400" id="promptTagsPanelIcon">expand_less</span>
+                            <button id="promptTagsPanelToggle" type="button" class="p-0.5 rounded hover:bg-slate-200 hover:bg-slate-700 transition-colors" title="Toggle tags panel">
+                                <span class="material-symbols-outlined text-[16px] text-[#8888a0]" id="promptTagsPanelIcon">expand_less</span>
                             </button>
                         </div>
                         <!-- Tag Chips Body -->
                         <div id="promptTagsBody" class="px-3 py-2 space-y-1.5">
                             <!-- Template Preview (hidden by default) -->
-                            <div id="promptTemplatePreview" class="hidden mb-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-lg p-3 text-xs font-mono text-slate-600 dark:text-slate-400 leading-relaxed overflow-y-auto max-h-40 whitespace-pre">[Mood: Focused]
+                            <div id="promptTemplatePreview" class="hidden mb-2 bg-[#131318] bg-surface-dark border border-[#2a2a36] border-border-dark rounded-lg p-3 text-xs font-mono text-[#8888a0] leading-relaxed overflow-y-auto max-h-40 whitespace-pre">[Mood: Focused]
 [Energy: Medium]
 [Instrument: Keys, Drums]
 
@@ -1206,7 +1206,7 @@
 (leave room for a Studio fade)</div>
                             <!-- Metadata Tags -->
                             <div class="flex flex-wrap gap-1 items-center">
-                                <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider w-14 shrink-0">Metadata</span>
+                                <span class="text-[10px] font-bold text-[#a29bfe] uppercase tracking-wider w-14 shrink-0">Metadata</span>
                                 <button type="button" class="prompt-tag-btn" data-tag="[Mood: Focused]" data-newline="true">[Mood: Focused]</button>
                                 <button type="button" class="prompt-tag-btn" data-tag="[Energy: Medium]" data-newline="true">[Energy: Medium]</button>
                                 <button type="button" class="prompt-tag-btn" data-tag="[Energy: High]" data-newline="true">[Energy: High]</button>
@@ -1243,17 +1243,17 @@
                     </div>
                     <!-- Editor -->
                     <div>
-                        <label class="block text-sm font-medium mb-2 dark:text-white text-slate-900">Prompt Text</label>
-                        <div class="relative border border-slate-300 dark:border-slate-700 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-900">
-                            <textarea id="promptEditorText" class="w-full py-3 px-4 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-white resize-none min-h-[300px]" placeholder="Describe the style you want for your cover..." rows="15"></textarea>
+                        <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Prompt Text</label>
+                        <div class="relative border border-[#2a2a36] rounded-lg overflow-hidden bg-[#0a0a0c] bg-[#131318]">
+                            <textarea id="promptEditorText" class="w-full py-3 px-4 bg-transparent border-none focus:ring-0 text-[#e8e8ed] text-white resize-none min-h-[300px]" placeholder="Describe the style you want for your cover..." rows="15"></textarea>
                         </div>
                         <div class="flex justify-between items-center mt-2">
-                            <div class="text-xs text-slate-500 dark:text-slate-400">
+                            <div class="text-xs text-[#8888a0]">
                                 <span id="promptEditorLineCount">0 lines</span>
                                 • <span id="promptEditorWordCount">0 words</span>
                                 • <span id="promptEditorCharCount">0 characters</span>
                             </div>
-                            <div class="text-xs text-slate-500 dark:text-slate-400">
+                            <div class="text-xs text-[#8888a0]">
                                 <button id="clearPromptBtn" class="text-primary hover:text-primary-dark">Clear</button>
                                 <button id="copyPromptBtn" class="text-primary hover:text-primary-dark ml-3">Copy</button>
                             </div>
@@ -1277,10 +1277,10 @@
 
     <!-- Lyrics Search Results Modal (kept for backward compatibility, now hidden inline) -->
     <div id="lyricsSearchModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] flex flex-col">
-            <div class="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700">
+        <div class="bg-[#131318] bg-[#1a1a22] rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-[#2a2a36]">
                 <h3 class="text-lg font-semibold">Lyrics Search Results</h3>
-                <button id="closeLyricsModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+                <button id="closeLyricsModal" class="text-[#8888a0] hover:text-[#e8e8ed] hover:text-[#8888a0]">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>

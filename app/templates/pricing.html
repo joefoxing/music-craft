@@ -59,9 +59,9 @@
 <a href="/" class="font-black text-xl tracking-tighter uppercase italic text-white hover:opacity-80 transition-opacity">Joefoxing</a>
 </div>
 <div class="flex items-center gap-4">
-<a href="/pricing" class="text-xs font-semibold px-3 py-1.5 bg-white/10 rounded-full transition-colors text-white">Pricing</a>
-<a href="{{ url_for('auth.login') }}" class="text-xs font-semibold px-3 py-1.5 hover:bg-white/10 rounded-full transition-colors text-white">Sign In</a>
-<a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-gray-200 transition-colors">Sign Up</a>
+<a href="/pricing" class="text-xs font-semibold px-3 py-1.5 bg-[#131318]/10 rounded-full transition-colors text-white">Pricing</a>
+<a href="{{ url_for('auth.login') }}" class="text-xs font-semibold px-3 py-1.5 hover:bg-[#131318]/10 rounded-full transition-colors text-white">Sign In</a>
+<a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-[#131318] text-black px-4 py-1.5 rounded-full hover:bg-gray-200 transition-colors">Sign Up</a>
 </div>
 </header>
 
@@ -73,10 +73,10 @@
     </p>
 
     <!-- Billing cycle toggle -->
-    <div class="mt-8 inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-2 py-1.5">
+    <div class="mt-8 inline-flex items-center gap-3 bg-[#131318]/5 border border-white/10 rounded-full px-2 py-1.5">
       <button id="toggleMonthly"
               onclick="setBilling('monthly')"
-              class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all bg-white text-black">
+              class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all bg-[#131318] text-black">
         Monthly
       </button>
       <button id="toggleAnnual"
@@ -115,7 +115,7 @@
       </div>
       <p class="text-white/60 text-sm mb-8">Perfect for hobbyists exploring AI music.</p>
       <a href="{{ url_for('auth.register') }}"
-         class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-white/5 transition-colors mb-8">
+         class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-[#131318]/5 transition-colors mb-8">
         Get Started
       </a>
       <ul class="space-y-4 text-sm flex-1 text-white/80">
@@ -159,7 +159,7 @@
         </button>
         <!-- Token top-up -->
         <button onclick="startCheckout('tokens')"
-                class="w-full mb-8 py-2 px-4 rounded-xl border border-white/10 text-xs font-semibold text-white/60 hover:bg-white/5 transition-colors">
+                class="w-full mb-8 py-2 px-4 rounded-xl border border-white/10 text-xs font-semibold text-white/60 hover:bg-[#131318]/5 transition-colors">
           Just need more credits? Buy 100 tokens for $5
         </button>
       {% endif %}
@@ -184,7 +184,7 @@
       </div>
       <p class="text-white/60 text-sm mb-8">For production houses and teams.</p>
       <a href="/contact"
-         class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-white/5 transition-colors mb-8">
+         class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-[#131318]/5 transition-colors mb-8">
         Contact Sales
       </a>
       <ul class="space-y-4 text-sm flex-1 text-white/80">
@@ -214,17 +214,17 @@
     var noteEl     = document.getElementById('annualNote');
 
     if (cycle === 'annual') {
-      monthlyBtn.classList.remove('bg-white', 'text-black');
+      monthlyBtn.classList.remove('bg-[#131318]', 'text-black');
       monthlyBtn.classList.add('text-white/60', 'hover:text-white');
-      annualBtn.classList.add('bg-white', 'text-black');
+      annualBtn.classList.add('bg-[#131318]', 'text-black');
       annualBtn.classList.remove('text-white/60', 'hover:text-white');
       if (priceEl)  priceEl.textContent  = '$12';
       if (periodEl) periodEl.textContent = '/mo';
       if (noteEl)   noteEl.classList.remove('hidden');
     } else {
-      annualBtn.classList.remove('bg-white', 'text-black');
+      annualBtn.classList.remove('bg-[#131318]', 'text-black');
       annualBtn.classList.add('text-white/60', 'hover:text-white');
-      monthlyBtn.classList.add('bg-white', 'text-black');
+      monthlyBtn.classList.add('bg-[#131318]', 'text-black');
       monthlyBtn.classList.remove('text-white/60', 'hover:text-white');
       if (priceEl)  priceEl.textContent  = '$15';
       if (periodEl) periodEl.textContent = '/mo';

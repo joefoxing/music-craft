@@ -104,24 +104,24 @@
         }
     </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+<body class="bg-background-light bg-background-dark text-[#e8e8ed] text-white font-display antialiased overflow-hidden">
     <div class="flex h-screen w-full">
         {% include "partials/_sidebar.html" %}
 
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark relative overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-background-light bg-background-dark relative overflow-hidden">
 
             <!-- Header -->
-            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
                 <div class="flex items-center gap-4 text-white md:hidden">
-                    <button class="text-slate-400 hover:text-white" id="mobileMenuBtn">
+                    <button class="text-[#8888a0] hover:text-white" id="mobileMenuBtn">
                         <span class="material-symbols-outlined">menu</span>
                     </button>
                     <h2 class="text-lg font-bold">Persona</h2>
                 </div>
 
                 <div class="hidden md:block">
-                    <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">AI Singer Persona</h2>
+                    <h2 class="text-[#e8e8ed] text-white text-lg font-bold tracking-tight">AI Singer Persona</h2>
                 </div>
 
                 <div class="flex items-center gap-4">
@@ -137,12 +137,12 @@
                     </div>
 
                     {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('auth.profile') }}" class="p-2 text-slate-400 hover:text-white relative" title="Profile">
+                    <a href="{{ url_for('auth.profile') }}" class="p-2 text-[#8888a0] hover:text-white relative" title="Profile">
                         <span class="material-symbols-outlined">account_circle</span>
                     </a>
                     {% endif %}
 
-                    <button class="p-2 text-slate-400 hover:text-white relative" id="themeToggle">
+                    <button class="p-2 text-[#8888a0] hover:text-white relative" id="themeToggle">
                         <span class="material-symbols-outlined">dark_mode</span>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
                     </button>
@@ -155,32 +155,32 @@
 
                     <!-- Page Title -->
                     <section class="flex flex-col gap-2">
-                        <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">AI Singer Persona</h2>
-                        <p class="text-slate-500 dark:text-slate-400">Extract a reusable AI singer identity from a vocal sample in any of your tracks. The generated Persona ID can then be applied when creating new songs in custom mode.</p>
+                        <h2 class="text-3xl md:text-4xl font-bold text-white text-[#e8e8ed] tracking-tight">AI Singer Persona</h2>
+                        <p class="text-[#8888a0]">Extract a reusable AI singer identity from a vocal sample in any of your tracks. The generated Persona ID can then be applied when creating new songs in custom mode.</p>
                     </section>
 
                     <!-- How it works -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-4 flex flex-col gap-2">
+                        <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-4 flex flex-col gap-2">
                             <span class="material-symbols-outlined text-primary text-3xl">search</span>
                             <p class="font-semibold text-sm">1. Pick a source track</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Provide the Task ID and Audio ID from any previously generated song with vocals.</p>
+                            <p class="text-xs text-[#8888a0]">Provide the Task ID and Audio ID from any previously generated song with vocals.</p>
                         </div>
-                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-4 flex flex-col gap-2">
+                        <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-4 flex flex-col gap-2">
                             <span class="material-symbols-outlined text-primary text-3xl">mic</span>
                             <p class="font-semibold text-sm">2. Select a vocal sample</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Choose the start and end time (seconds) of a clean vocal section — ideally 5–30 s.</p>
+                            <p class="text-xs text-[#8888a0]">Choose the start and end time (seconds) of a clean vocal section — ideally 5–30 s.</p>
                         </div>
-                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-4 flex flex-col gap-2">
+                        <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-4 flex flex-col gap-2">
                             <span class="material-symbols-outlined text-primary text-3xl">badge</span>
                             <p class="font-semibold text-sm">3. Name &amp; describe it</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Give the persona a name and description, then use the returned Persona ID in future generations.</p>
+                            <p class="text-xs text-[#8888a0]">Give the persona a name and description, then use the returned Persona ID in future generations.</p>
                         </div>
                     </div>
 
                     <!-- Main Form Card -->
-                    <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
-                        <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-6 flex items-center gap-2">
+                    <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
+                        <h3 class="text-xl font-bold text-white text-[#e8e8ed] mb-6 flex items-center gap-2">
                             <span class="material-symbols-outlined text-primary">face</span>
                             Persona Configuration
                         </h3>
@@ -188,12 +188,12 @@
                         <form id="personaForm" class="space-y-6" novalidate>
 
                             <!-- ─── Track Identification ─────────────────────── -->
-                            <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 p-5">
-                                <h4 class="text-base font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                            <div class="bg-[#0a0a0c] bg-[#131318]/50 rounded-lg border border-[#2a2a36] p-5">
+                                <h4 class="text-base font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">fingerprint</span>
-                                    Source Track <span class="text-red-500 ml-1">*</span>
+                                    Source Track <span class="text-[#d63031] ml-1">*</span>
                                 </h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                                <p class="text-xs text-[#8888a0] mb-4">
                                     Find these IDs in your <a href="/history" class="text-primary hover:text-primary-dark underline">History</a> or <a href="/library" class="text-primary hover:text-primary-dark underline">Library</a>. The track must contain clear vocals.
                                 </p>
 
@@ -201,7 +201,7 @@
                                     <!-- Task ID -->
                                     <div>
                                         <label for="taskId" class="block text-sm font-medium mb-1.5">
-                                            Task ID <span class="text-red-500">*</span>
+                                            Task ID <span class="text-[#d63031]">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -213,13 +213,13 @@
                                             autocomplete="off"
                                             value="{{ prefill_task_id }}"
                                         >
-                                        <p class="text-xs text-slate-500 mt-1">ID of the original music-generation task.</p>
+                                        <p class="text-xs text-[#8888a0] mt-1">ID of the original music-generation task.</p>
                                     </div>
 
                                     <!-- Audio ID -->
                                     <div>
                                         <label for="audioId" class="block text-sm font-medium mb-1.5">
-                                            Audio ID <span class="text-red-500">*</span>
+                                            Audio ID <span class="text-[#d63031]">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -231,18 +231,18 @@
                                             autocomplete="off"
                                             value="{{ prefill_audio_id }}"
                                         >
-                                        <p class="text-xs text-slate-500 mt-1">ID of the specific audio variation to extract from.</p>
+                                        <p class="text-xs text-[#8888a0] mt-1">ID of the specific audio variation to extract from.</p>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- ─── Vocal Sample Range ──────────────────────── -->
-                            <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 p-5">
-                                <h4 class="text-base font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                            <div class="bg-[#0a0a0c] bg-[#131318]/50 rounded-lg border border-[#2a2a36] p-5">
+                                <h4 class="text-base font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">schedule</span>
-                                    Vocal Sample Range <span class="text-red-500 ml-1">*</span>
+                                    Vocal Sample Range <span class="text-[#d63031] ml-1">*</span>
                                 </h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                                <p class="text-xs text-[#8888a0] mb-4">
                                     Select a 5–30 second segment containing a clean, clearly audible vocal performance.
                                     Avoid sections with heavy reverb, backing vocals, or instrumental fills.
                                 </p>
@@ -252,14 +252,14 @@
                                     <label class="block text-sm font-medium mb-3">Visual Timeline (drag handles to set range)</label>
 
                                     <!-- Duration hint -->
-                                    <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+                                    <div class="flex items-center justify-between text-xs text-[#8888a0] mb-2">
                                         <span>Track duration (seconds):</span>
                                         <div class="flex items-center gap-2">
                                             <input
                                                 type="number"
                                                 id="trackDuration"
                                                 min="10" max="600" value="120" step="1"
-                                                class="w-20 px-2 py-1 text-xs bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-right"
+                                                class="w-20 px-2 py-1 text-xs bg-[#131318] bg-[#1a1a22] border border-[#2a2a36] border-slate-600 rounded-lg text-right"
                                             >
                                             <span>sec</span>
                                         </div>
@@ -279,7 +279,7 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label for="vocalStart" class="block text-sm font-medium mb-1.5">
-                                            Vocal Start (seconds) <span class="text-red-500">*</span>
+                                            Vocal Start (seconds) <span class="text-[#d63031]">*</span>
                                         </label>
                                         <input
                                             type="number"
@@ -291,11 +291,11 @@
                                             required
                                             value="10"
                                         >
-                                        <p class="text-xs text-slate-500 mt-1">Where the vocal sample begins.</p>
+                                        <p class="text-xs text-[#8888a0] mt-1">Where the vocal sample begins.</p>
                                     </div>
                                     <div>
                                         <label for="vocalEnd" class="block text-sm font-medium mb-1.5">
-                                            Vocal End (seconds) <span class="text-red-500">*</span>
+                                            Vocal End (seconds) <span class="text-[#d63031]">*</span>
                                         </label>
                                         <input
                                             type="number"
@@ -307,17 +307,17 @@
                                             required
                                             value="30"
                                         >
-                                        <p class="text-xs text-slate-500 mt-1">Where the vocal sample ends.</p>
+                                        <p class="text-xs text-[#8888a0] mt-1">Where the vocal sample ends.</p>
                                     </div>
                                 </div>
 
                                 <!-- Duration badge -->
                                 <div class="mt-3 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-sm text-primary">timer</span>
-                                    <span class="text-sm text-slate-600 dark:text-slate-300">
+                                    <span class="text-sm text-[#8888a0]">
                                         Sample duration: <strong id="sampleDuration" class="text-primary">20.0s</strong>
                                     </span>
-                                    <span id="durationWarning" class="hidden text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                                    <span id="durationWarning" class="hidden text-xs text-amber-600 text-amber-400 flex items-center gap-1">
                                         <span class="material-symbols-outlined text-sm">warning</span>
                                         Recommended: 5–30 seconds
                                     </span>
@@ -325,16 +325,16 @@
                             </div>
 
                             <!-- ─── Persona Identity ────────────────────────── -->
-                            <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 p-5">
-                                <h4 class="text-base font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                            <div class="bg-[#0a0a0c] bg-[#131318]/50 rounded-lg border border-[#2a2a36] p-5">
+                                <h4 class="text-base font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">badge</span>
-                                    Persona Identity <span class="text-red-500 ml-1">*</span>
+                                    Persona Identity <span class="text-[#d63031] ml-1">*</span>
                                 </h4>
 
                                 <!-- Name -->
                                 <div class="mb-4">
                                     <label for="personaName" class="block text-sm font-medium mb-1.5">
-                                        Name <span class="text-red-500">*</span>
+                                        Name <span class="text-[#d63031]">*</span>
                                     </label>
                                     <input
                                         type="text"
@@ -347,15 +347,15 @@
                                         autocomplete="off"
                                     >
                                     <div class="flex justify-between mt-1">
-                                        <p class="text-xs text-slate-500">A short, descriptive label for this vocal identity.</p>
-                                        <span class="text-xs text-slate-500 font-mono"><span id="nameChars">0</span>/100</span>
+                                        <p class="text-xs text-[#8888a0]">A short, descriptive label for this vocal identity.</p>
+                                        <span class="text-xs text-[#8888a0] font-mono"><span id="nameChars">0</span>/100</span>
                                     </div>
                                 </div>
 
                                 <!-- Description -->
                                 <div class="mb-4">
                                     <label for="personaDescription" class="block text-sm font-medium mb-1.5">
-                                        Description <span class="text-red-500">*</span>
+                                        Description <span class="text-[#d63031]">*</span>
                                     </label>
                                     <textarea
                                         id="personaDescription"
@@ -367,14 +367,14 @@
                                         maxlength="500"
                                     ></textarea>
                                     <div class="flex justify-between mt-1">
-                                        <p class="text-xs text-slate-500">Describe the vocal characteristics, tone, and best-fit genres.</p>
-                                        <span class="text-xs text-slate-500 font-mono"><span id="descChars">0</span>/500</span>
+                                        <p class="text-xs text-[#8888a0]">Describe the vocal characteristics, tone, and best-fit genres.</p>
+                                        <span class="text-xs text-[#8888a0] font-mono"><span id="descChars">0</span>/500</span>
                                     </div>
                                 </div>
 
                                 <!-- Style -->
                                 <div>
-                                    <label for="personaStyle" class="block text-sm font-medium mb-1.5">Style <span class="text-slate-400 font-normal">(optional)</span></label>
+                                    <label for="personaStyle" class="block text-sm font-medium mb-1.5">Style <span class="text-[#8888a0] font-normal">(optional)</span></label>
                                     <input
                                         type="text"
                                         id="personaStyle"
@@ -384,14 +384,14 @@
                                         maxlength="100"
                                         autocomplete="off"
                                     >
-                                    <p class="text-xs text-slate-500 mt-1">Music style(s) associated with this persona.</p>
+                                    <p class="text-xs text-[#8888a0] mt-1">Music style(s) associated with this persona.</p>
                                 </div>
                             </div>
 
                             <!-- ─── Tips ────────────────────────────────────── -->
-                            <div class="flex items-start gap-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4">
+                            <div class="flex items-start gap-3 rounded-lg bg-blue-50 bg-blue-900/20 border border-blue-200 border-blue-800 p-4">
                                 <span class="material-symbols-outlined text-blue-500 mt-0.5 shrink-0">tips_and_updates</span>
-                                <div class="text-sm text-blue-700 dark:text-blue-300">
+                                <div class="text-sm text-blue-700 text-blue-300">
                                     <p class="font-semibold mb-1">Tips for a great persona</p>
                                     <ul class="list-disc list-inside space-y-0.5 text-xs">
                                         <li>Choose a 5–30 second section with clear, isolated vocals.</li>
@@ -403,10 +403,10 @@
                             </div>
 
                             <!-- ─── Submit ───────────────────────────────────── -->
-                            <div class="border-t border-slate-200 dark:border-slate-700 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div class="border-t border-[#2a2a36] pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                 <div>
-                                    <h4 class="text-base font-bold dark:text-white text-slate-900">Create Persona</h4>
-                                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-0.5">Submit to extract the AI singer identity from your track.</p>
+                                    <h4 class="text-base font-bold text-white text-[#e8e8ed]">Create Persona</h4>
+                                    <p class="text-[#8888a0] text-sm mt-0.5">Submit to extract the AI singer identity from your track.</p>
                                 </div>
                                 <button type="submit" id="submitBtn" class="btn-primary flex items-center shrink-0">
                                     <span class="material-symbols-outlined mr-2">face</span>
@@ -421,8 +421,8 @@
                                 <div class="flex items-center gap-3">
                                     <span class="material-symbols-outlined text-primary animate-spin">sync</span>
                                     <div class="flex-1">
-                                        <h5 class="font-bold text-slate-900 dark:text-white">Generating Persona…</h5>
-                                        <p class="text-sm text-slate-600 dark:text-slate-400">Extracting vocal identity from your track. This may take a moment.</p>
+                                        <h5 class="font-bold text-[#e8e8ed] text-white">Generating Persona…</h5>
+                                        <p class="text-sm text-[#8888a0]">Extracting vocal identity from your track. This may take a moment.</p>
                                     </div>
                                 </div>
                             </div>
@@ -432,10 +432,10 @@
                         <div id="successContainer" class="hidden mt-6">
                             <div class="rounded-lg p-4 border border-green-500/30 bg-green-500/5">
                                 <div class="flex items-center gap-3 mb-4">
-                                    <span class="material-symbols-outlined text-green-500 text-3xl">check_circle</span>
+                                    <span class="material-symbols-outlined text-[#00cec9] text-3xl">check_circle</span>
                                     <div class="flex-1">
-                                        <h5 class="font-bold text-slate-900 dark:text-white">Persona Job Submitted!</h5>
-                                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                                        <h5 class="font-bold text-[#e8e8ed] text-white">Persona Job Submitted!</h5>
+                                        <p class="text-sm text-[#8888a0]">
                                             The AI is building your singer persona. The Persona ID will be available once processing completes.
                                         </p>
                                     </div>
@@ -443,19 +443,19 @@
 
                                 <!-- Task ID -->
                                 <div class="mb-4">
-                                    <label class="block text-xs font-medium text-slate-500 mb-1">Generation Task ID</label>
+                                    <label class="block text-xs font-medium text-[#8888a0] mb-1">Generation Task ID</label>
                                     <div class="flex items-center gap-2">
-                                        <code class="bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-lg text-sm flex-1 break-all font-mono" id="successTaskId">-</code>
-                                        <button type="button" onclick="copyText('successTaskId', 'Task ID')" class="p-2 text-slate-400 hover:text-primary transition-colors rounded-lg hover:bg-primary/10" title="Copy Task ID">
+                                        <code class="bg-[#131318] bg-[#1a1a22] px-3 py-2 rounded-lg text-sm flex-1 break-all font-mono" id="successTaskId">-</code>
+                                        <button type="button" onclick="copyText('successTaskId', 'Task ID')" class="p-2 text-[#8888a0] hover:text-primary transition-colors rounded-lg hover:bg-primary/10" title="Copy Task ID">
                                             <span class="material-symbols-outlined text-base">content_copy</span>
                                         </button>
                                     </div>
-                                    <p class="text-xs text-slate-500 mt-1">Use this to track status in <a href="/history" class="text-primary hover:underline">History</a>.</p>
+                                    <p class="text-xs text-[#8888a0] mt-1">Use this to track status in <a href="/history" class="text-primary hover:underline">History</a>.</p>
                                 </div>
 
                                 <!-- How to use -->
-                                <div class="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg mb-4">
-                                    <p class="text-xs text-blue-700 dark:text-blue-300">
+                                <div class="p-3 bg-blue-50 bg-blue-900/20 border border-blue-200 border-blue-800 rounded-lg mb-4">
+                                    <p class="text-xs text-blue-700 text-blue-300">
                                         <span class="material-symbols-outlined text-sm align-text-bottom mr-1">info</span>
                                         Once the persona finishes processing, the <strong>Persona ID</strong> will appear in your
                                         <a href="/history" class="underline font-medium">History</a> callback data.
@@ -486,10 +486,10 @@
                         <div id="errorContainer" class="hidden mt-6">
                             <div class="rounded-lg p-4 border border-red-500/30 bg-red-500/5">
                                 <div class="flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-red-500 text-3xl">error</span>
+                                    <span class="material-symbols-outlined text-[#d63031] text-3xl">error</span>
                                     <div class="flex-1">
-                                        <h5 class="font-bold text-slate-900 dark:text-white">Persona Generation Failed</h5>
-                                        <p class="text-sm text-slate-600 dark:text-slate-400" id="errorMessage">
+                                        <h5 class="font-bold text-[#e8e8ed] text-white">Persona Generation Failed</h5>
+                                        <p class="text-sm text-[#8888a0]" id="errorMessage">
                                             An error occurred while processing your request.
                                         </p>
                                     </div>
