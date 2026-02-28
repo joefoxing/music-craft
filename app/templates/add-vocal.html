@@ -49,23 +49,23 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+<body class="bg-background-dark text-[#e8e8ed] font-display antialiased overflow-hidden">
     <div class="flex h-screen w-full">
         {% include "partials/_sidebar.html" %}
         
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark relative overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-background-dark relative overflow-hidden">
             <!-- Header -->
-            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3/50 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
                 <div class="flex items-center gap-4 text-white md:hidden">
-                    <button class="text-slate-400 hover:text-white" id="mobileMenuBtn">
+                    <button class="text-[#8888a0] hover:text-white" id="mobileMenuBtn">
                         <span class="material-symbols-outlined">menu</span>
                     </button>
                     <h2 class="text-lg font-bold">Create</h2>
                 </div>
                 
                 <div class="hidden md:block">
-                    <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Add Vocal</h2>
+                    <h2 class="text-[#e8e8ed] text-lg font-bold tracking-tight">Add Vocal</h2>
                 </div>
                 
                 <div class="flex items-center gap-4">
@@ -81,12 +81,12 @@
                     </div>
                     
                     {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('auth.profile') }}" class="p-2 text-slate-400 hover:text-white relative" title="Profile">
+                    <a href="{{ url_for('auth.profile') }}" class="p-2 text-[#8888a0] hover:text-white relative" title="Profile">
                         <span class="material-symbols-outlined">account_circle</span>
                     </a>
                     {% endif %}
                     
-                    <button class="p-2 text-slate-400 hover:text-white relative" id="themeToggle">
+                    <button class="p-2 text-[#8888a0] hover:text-white relative" id="themeToggle">
                         <span class="material-symbols-outlined">dark_mode</span>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
                     </button>
@@ -99,21 +99,21 @@
                     <!-- Add Vocal Section -->
                     <section class="flex flex-col gap-6">
                         <div class="flex flex-col gap-2">
-                            <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Add Vocal</h2>
-                            <p class="text-slate-500 dark:text-slate-400">Layer AI-generated vocals on top of an existing instrumental track.</p>
+                            <h2 class="text-3xl md:text-4xl font-bold text-[#e8e8ed] tracking-tight">Add Vocal</h2>
+                            <p class="text-[#8888a0]">Layer AI-generated vocals on top of an existing instrumental track.</p>
                         </div>
                         
                         <!-- Vocal Form Card -->
-                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
-                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                        <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-primary">mic</span>
                                 Vocal Configuration
                             </h3>
                             
                             <form id="addVocalForm" class="space-y-6">
                                 <!-- Audio Source Section -->
-                                <div class="bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700 p-5">
-                                    <h4 class="text-lg font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                <div class="bg-[#0a0a0c] bg-[#131318]/50 rounded-lg border border-[#2a2a36] p-5">
+                                    <h4 class="text-lg font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                         <span class="material-symbols-outlined text-primary">music_note</span>
                                         Instrumental Source
                                     </h4>
@@ -135,8 +135,8 @@
                                         <div class="upload-area" id="uploadArea">
                                             <span class="material-symbols-outlined text-primary text-5xl mb-4">file_upload</span>
                                             <p class="text-lg font-medium mb-2">Drag & drop your instrumental file here</p>
-                                            <p class="text-slate-500 dark:text-slate-400 mb-4">or click to browse</p>
-                                            <p class="file-types text-sm text-slate-500">Supported: MP3, WAV, OGG, M4A, FLAC (max 100MB)</p>
+                                            <p class="text-[#8888a0] mb-4">or click to browse</p>
+                                            <p class="file-types text-sm text-[#8888a0]">Supported: MP3, WAV, OGG, M4A, FLAC (max 100MB)</p>
                                             <input type="file" id="audioFile" accept=".mp3,.wav,.ogg,.m4a,.flac" hidden>
                                             <button type="button" class="mt-4 px-6 py-2 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors" id="browseButton">
                                                 <span class="material-symbols-outlined mr-2">folder_open</span>
@@ -144,16 +144,16 @@
                                             </button>
                                         </div>
                                         
-                                        <div id="fileInfo" class="file-info hidden mt-6 p-4 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                                        <div id="fileInfo" class="file-info hidden mt-6 p-4 bg-[#1a1a22] rounded-lg">
                                             <p class="font-medium"><strong>Selected file:</strong> <span id="fileName"></span></p>
                                             <p class="font-medium mt-2"><strong>Status:</strong> <span id="uploadStatus">Ready to upload</span></p>
                                             
                                             <div class="progress-container hidden mt-4" id="progressContainer">
-                                                <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
+                                                <div class="w-full bg-slate-200 bg-slate-700 rounded-full h-2.5">
                                                     <div class="progress-bar bg-primary h-2.5 rounded-full" id="progressBar" style="width: 0%"></div>
                                                 </div>
                                                 <div class="flex justify-between mt-1">
-                                                    <span class="text-sm text-slate-500">Uploading...</span>
+                                                    <span class="text-sm text-[#8888a0]">Uploading...</span>
                                                     <span id="progressText" class="text-sm font-medium">0%</span>
                                                 </div>
                                             </div>
@@ -170,18 +170,18 @@
                                         <div class="mb-4">
                                             <label for="uploadUrl" class="block text-sm font-medium mb-2 flex items-center gap-2">
                                                 <span class="material-symbols-outlined text-primary">link</span>
-                                                Audio URL <span class="text-red-500">*</span>
+                                                Audio URL <span class="text-[#d63031]">*</span>
                                             </label>
-                                            <input type="url" id="uploadUrl" name="uploadUrl" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                            <input type="url" id="uploadUrl" name="uploadUrl" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                                    placeholder="https://example.com/music.mp3" required>
                                             
-                                            <div class="mt-3 p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                                            <div class="mt-3 p-3 bg-[#0a0a0c] bg-[#131318] rounded-lg">
                                                 <p class="text-sm font-medium mb-2">For Google Drive:</p>
-                                                <ol class="text-sm text-slate-600 dark:text-slate-400 space-y-1 ml-4 list-decimal">
+                                                <ol class="text-sm text-[#8888a0] space-y-1 ml-4 list-decimal">
                                                     <li>Upload file to Google Drive</li>
                                                     <li>Right-click → "Get link" → Set to "Anyone with the link"</li>
                                                     <li>Copy the file ID from the URL</li>
-                                                    <li>Use format: <code class="bg-slate-200 dark:bg-slate-800 px-1 rounded">https://drive.google.com/uc?export=download&id=FILE_ID</code></li>
+                                                    <li>Use format: <code class="bg-slate-200 bg-[#1a1a22] px-1 rounded">https://drive.google.com/uc?export=download&id=FILE_ID</code></li>
                                                 </ol>
                                             </div>
                                         </div>
@@ -202,15 +202,15 @@
                                     </div>
                                     
                                     <!-- Source Info Display -->
-                                    <div id="audioSourceInfo" class="source-info hidden mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                                        <h4 class="font-bold text-green-700 dark:text-green-400 flex items-center gap-2">
+                                    <div id="audioSourceInfo" class="source-info hidden mt-6 p-4 bg-green-50 bg-green-900/20 border border-green-200 border-green-800 rounded-lg">
+                                        <h4 class="font-bold text-green-700 text-green-400 flex items-center gap-2">
                                             <span class="material-symbols-outlined">check_circle</span>
                                             Instrumental Source Ready
                                         </h4>
                                         
                                         <div class="mt-2 space-y-2">
                                             <p><strong>Source:</strong> <span id="sourceType" class="font-medium">-</span></p>
-                                            <p><strong>URL:</strong> <code id="sourceUrl" class="bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded text-sm break-all">-</code></p>
+                                            <p><strong>URL:</strong> <code id="sourceUrl" class="bg-green-100 bg-green-900/30 px-2 py-1 rounded text-sm break-all">-</code></p>
                                         </div>
                                         
                                         <button type="button" class="mt-4 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-lg transition-colors flex items-center" onclick="clearAudioSource()">
@@ -225,17 +225,17 @@
                                 
                                 <!-- Prompt -->
                                 <div>
-                                    <label for="prompt" class="block text-sm font-medium mb-2">Prompt <span class="text-red-500">*</span></label>
+                                    <label for="prompt" class="block text-sm font-medium mb-2">Prompt <span class="text-[#d63031]">*</span></label>
                                     <textarea id="prompt" name="prompt" class="form-control h-32" placeholder="A calm and relaxing vocal track with soothing lyrics about nature and peace..." required maxlength="500"></textarea>
                                     <div class="char-counter">
                                         <span id="promptChars">0</span>/<span id="promptMax">500</span> characters
                                     </div>
-                                    <p class="text-xs text-slate-500 mt-1">Describe the lyrical content and singing style you want.</p>
+                                    <p class="text-xs text-[#8888a0] mt-1">Describe the lyrical content and singing style you want.</p>
                                 </div>
                                 
                                 <!-- Title -->
                                 <div>
-                                    <label for="title" class="block text-sm font-medium mb-2">Title <span class="text-red-500">*</span></label>
+                                    <label for="title" class="block text-sm font-medium mb-2">Title <span class="text-[#d63031]">*</span></label>
                                     <input type="text" id="title" name="title" class="form-control" placeholder="Relaxing Vocal Track" required maxlength="100">
                                     <div class="char-counter">
                                         <span id="titleChars">0</span>/<span id="titleMax">100</span> characters
@@ -246,26 +246,26 @@
                                 <div>
                                     <label for="style" class="block text-sm font-medium mb-2">Style</label>
                                     <input type="text" id="style" name="style" class="form-control" placeholder="Jazz, Pop, R&B">
-                                    <p class="text-xs text-slate-500 mt-1">Musical style or genre for the vocals.</p>
+                                    <p class="text-xs text-[#8888a0] mt-1">Musical style or genre for the vocals.</p>
                                 </div>
                                 
                                 <!-- Tags -->
                                 <div>
                                     <label for="tags" class="block text-sm font-medium mb-2">Tags</label>
                                     <input type="text" id="tags" name="tags" class="form-control" placeholder="soothing, melodic, emotional">
-                                    <p class="text-xs text-slate-500 mt-1">Comma-separated tags describing the vocal style.</p>
+                                    <p class="text-xs text-[#8888a0] mt-1">Comma-separated tags describing the vocal style.</p>
                                 </div>
                                 
                                 <!-- Negative Tags -->
                                 <div>
                                     <label for="negativeTags" class="block text-sm font-medium mb-2">Negative Tags</label>
                                     <input type="text" id="negativeTags" name="negativeTags" class="form-control" placeholder="heavy metal, aggressive, distorted">
-                                    <p class="text-xs text-slate-500 mt-1">Comma-separated tags to avoid in the vocal generation.</p>
+                                    <p class="text-xs text-[#8888a0] mt-1">Comma-separated tags to avoid in the vocal generation.</p>
                                 </div>
                                 
                                 <!-- Model Selection -->
                                 <div>
-                                    <label for="model" class="block text-sm font-medium mb-2">Model Version <span class="text-red-500">*</span></label>
+                                    <label for="model" class="block text-sm font-medium mb-2">Model Version <span class="text-[#d63031]">*</span></label>
                                     <select id="model" name="model" class="form-control" required>
                                         <option value="V5" selected>V5 - Superior musical expression, faster generation</option>
                                         <option value="V4_5PLUS">V4.5+ - Richer sound, new ways to create, max 8 min</option>
@@ -284,12 +284,12 @@
                                         <option value="male" selected>Male</option>
                                         <option value="mixed">Mixed</option>
                                     </select>
-                                    <p class="text-xs text-slate-500 mt-1">Gender of vocals to generate.</p>
+                                    <p class="text-xs text-[#8888a0] mt-1">Gender of vocals to generate.</p>
                                 </div>
                                 
                                 <!-- Advanced Parameters Section -->
-                                <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
-                                    <h4 class="text-lg font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                                <div class="border-t border-[#2a2a36] pt-6">
+                                    <h4 class="text-lg font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                         <span class="material-symbols-outlined text-primary">tune</span>
                                         Advanced Parameters
                                     </h4>
@@ -301,7 +301,7 @@
                                             <input type="range" id="styleWeight" name="styleWeight" min="0" max="1" step="0.01" value="0.61" class="flex-1">
                                             <span class="text-sm font-mono w-16 text-right" id="styleWeightValue">0.61</span>
                                         </div>
-                                        <p class="text-xs text-slate-500 mt-1">How strongly to adhere to the specified style (0.0 to 1.0).</p>
+                                        <p class="text-xs text-[#8888a0] mt-1">How strongly to adhere to the specified style (0.0 to 1.0).</p>
                                     </div>
                                     
                                     <!-- Weirdness Constraint -->
@@ -311,7 +311,7 @@
                                             <input type="range" id="weirdnessConstraint" name="weirdnessConstraint" min="0" max="1" step="0.01" value="0.72" class="flex-1">
                                             <span class="text-sm font-mono w-16 text-right" id="weirdnessConstraintValue">0.72</span>
                                         </div>
-                                        <p class="text-xs text-slate-500 mt-1">Controls how unconventional the generation can be (0.0 to 1.0).</p>
+                                        <p class="text-xs text-[#8888a0] mt-1">Controls how unconventional the generation can be (0.0 to 1.0).</p>
                                     </div>
                                     
                                     <!-- Audio Weight -->
@@ -321,30 +321,30 @@
                                             <input type="range" id="audioWeight" name="audioWeight" min="0" max="1" step="0.01" value="0.65" class="flex-1">
                                             <span class="text-sm font-mono w-16 text-right" id="audioWeightValue">0.65</span>
                                         </div>
-                                        <p class="text-xs text-slate-500 mt-1">Weight given to audio quality vs. other factors (0.0 to 1.0).</p>
+                                        <p class="text-xs text-[#8888a0] mt-1">Weight given to audio quality vs. other factors (0.0 to 1.0).</p>
                                     </div>
                                     
                                     <!-- Callback URL -->
                                     <div class="mt-4">
                                         <label for="callBackUrl" class="block text-sm font-medium mb-2">Callback URL</label>
                                         <input type="url" id="callBackUrl" name="callBackUrl" class="form-control" placeholder="https://example.com/callback">
-                                        <p class="text-xs text-slate-500 mt-1">Optional URL to receive generation status updates. If empty, system default will be used.</p>
+                                        <p class="text-xs text-[#8888a0] mt-1">Optional URL to receive generation status updates. If empty, system default will be used.</p>
                                     </div>
                                 </div>
                                 
                                 <!-- Submit Button -->
-                                <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
+                                <div class="border-t border-[#2a2a36] pt-6">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <h4 class="text-lg font-bold dark:text-white text-slate-900 mb-2">Ready to Add</h4>
-                                            <p class="text-slate-500 dark:text-slate-400 text-sm">Submit the form to generate vocals for your instrumental.</p>
+                                            <h4 class="text-lg font-bold text-[#e8e8ed] mb-2">Ready to Add</h4>
+                                            <p class="text-[#8888a0] text-sm">Submit the form to generate vocals for your instrumental.</p>
                                         </div>
                                         <button type="submit" id="submitBtn" class="btn-primary flex items-center">
                                             <span class="material-symbols-outlined mr-2">mic</span>
                                             Generate Vocals
                                         </button>
                                     </div>
-                                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-4">
+                                    <p class="text-sm text-[#8888a0] mt-4">
                                         <span class="material-symbols-outlined text-xs align-text-bottom mr-1">info</span>
                                         The vocals will be generated and mixed with your instrumental. This may take a few minutes.
                                     </p>
@@ -357,16 +357,16 @@
                                     <div class="flex items-center gap-3">
                                         <span class="material-symbols-outlined text-primary animate-spin" id="statusIcon">sync</span>
                                         <div class="flex-1">
-                                            <h5 class="font-bold text-slate-900 dark:text-white" id="statusTitle">Processing</h5>
-                                            <p class="text-sm text-slate-600 dark:text-slate-400" id="statusMessage">Generating vocals...</p>
+                                            <h5 class="font-bold text-[#e8e8ed]" id="statusTitle">Processing</h5>
+                                            <p class="text-sm text-[#8888a0]" id="statusMessage">Generating vocals...</p>
                                         </div>
                                         <div class="text-right">
-                                            <span class="text-xs font-mono text-slate-500" id="statusTaskId"></span>
+                                            <span class="text-xs font-mono text-[#8888a0]" id="statusTaskId"></span>
                                         </div>
                                     </div>
                                     <div class="mt-3">
                                         <progress id="statusProgress" value="0" max="100" class="w-full h-2 rounded-full"></progress>
-                                        <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                        <div class="flex justify-between text-xs text-[#8888a0] mt-1">
                                             <span id="statusProgressText">0%</span>
                                             <span id="statusTime">Just started</span>
                                         </div>
@@ -378,20 +378,20 @@
                             <div id="successContainer" class="hidden mt-6">
                                 <div class="rounded-lg p-4 border border-green-500/30 bg-green-500/5">
                                     <div class="flex items-center gap-3">
-                                        <span class="material-symbols-outlined text-green-500">check_circle</span>
+                                        <span class="material-symbols-outlined text-[#00cec9]">check_circle</span>
                                         <div class="flex-1">
-                                            <h5 class="font-bold text-slate-900 dark:text-white">Vocals Generated Successfully!</h5>
-                                            <p class="text-sm text-slate-600 dark:text-slate-400" id="successMessage">Your track with vocals has been generated and is ready for use.</p>
+                                            <h5 class="font-bold text-[#e8e8ed]">Vocals Generated Successfully!</h5>
+                                            <p class="text-sm text-[#8888a0]" id="successMessage">Your track with vocals has been generated and is ready for use.</p>
                                         </div>
                                     </div>
                                     <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
                                             <label class="block text-sm font-medium mb-1">Task ID</label>
-                                            <code class="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-sm" id="successTaskId">-</code>
+                                            <code class="bg-[#1a1a22] px-2 py-1 rounded text-sm" id="successTaskId">-</code>
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium mb-1">Status</label>
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">Complete</span>
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 bg-green-900 text-green-300">Complete</span>
                                         </div>
                                     </div>
                                     <div class="mt-4 flex gap-3">
@@ -411,10 +411,10 @@
                             <div id="errorContainer" class="hidden mt-6">
                                 <div class="rounded-lg p-4 border border-red-500/30 bg-red-500/5">
                                     <div class="flex items-center gap-3">
-                                        <span class="material-symbols-outlined text-red-500">error</span>
+                                        <span class="material-symbols-outlined text-[#d63031]">error</span>
                                         <div class="flex-1">
-                                            <h5 class="font-bold text-slate-900 dark:text-white">Failed to Generate Vocals</h5>
-                                            <p class="text-sm text-slate-600 dark:text-slate-400" id="errorMessage">An error occurred while processing your request.</p>
+                                            <h5 class="font-bold text-[#e8e8ed]">Failed to Generate Vocals</h5>
+                                            <p class="text-sm text-[#8888a0]" id="errorMessage">An error occurred while processing your request.</p>
                                         </div>
                                     </div>
                                     <div class="mt-4">
