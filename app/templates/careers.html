@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}Careers - Vnuno{% endblock %}
+
+{% block head %}
+    <style type="text/tailwindcss">
+        :root {
+            --grain: url("https://grainy-gradients.vercel.app/noise.svg");
+        }
+        body {
+            background-color: #0a0a0a;
+            color: white;
+        }
+        .grainy-bg {
+            background: linear-gradient(135deg, #450a0a 0%, #7c2d12 25%, #4c1d95 75%, #1e1b4b 100%);
+            position: relative;
+        }
+        .grainy-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+            pointer-events: none;
+            background-image: var(--grain);
+            filter: contrast(120%) brightness(100%);
+            mix-blend-mode: soft-light;
+            z-index: 0;
+        }
+        .grainy-bg > * {
+            position: relative;
+            z-index: 1;
+        }
+        .content-section {
+            background: #070403;
+        }
+        .main-footer {
+            background: #070403;
+        }
+        .job-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .job-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(250, 110, 74, 0.3);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="grainy-bg min-h-[40vh] flex flex-col items-center pt-8 px-6 relative overflow-hidden">
+    <header class="w-full flex items-center justify-between z-20 mb-16">
+        <a href="/" class="flex items-center gap-1">
+            <span class="font-black text-xl tracking-tighter uppercase italic text-white">Vnuno</span>
+        </a>
+        <div class="flex items-center gap-4">
+            <a href="{{ url_for('auth.login') }}" class="text-xs font-semibold px-3 py-1.5 hover:bg-white/10 rounded-full transition-colors text-white">Sign In</a>
+            <a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-white/90 transition-colors">Sign Up</a>
+        </div>
+    </header>
+    <div class="max-w-3xl w-full text-center z-10 py-16">
+        <p class="text-primary-orange text-xs font-bold tracking-[0.2em] uppercase mb-4">Join Our Team</p>
+        <h1 class="text-4xl sm:text-6xl font-extrabold leading-[1.1] tracking-tight mb-6 text-white">Careers</h1>
+        <p class="text-white/60 text-sm sm:text-base font-medium max-w-xl mx-auto">
+            Help us build the future of music creation. We're looking for passionate people who want to make a difference.
+        </p>
+    </div>
+</section>
+
+<section class="content-section py-20 px-6">
+    <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-2xl font-bold text-white mb-4">Why Work at Vnuno</h2>
+            <p class="text-white/60 text-sm max-w-2xl mx-auto">
+                We're building something special. Join a team that values creativity, innovation, and the power of music to bring people together.
+            </p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+            <div class="text-center p-6">
+                <span class="material-symbols-outlined text-4xl text-primary-orange mb-4">health_and_safety</span>
+                <h3 class="text-sm font-bold text-white mb-2">Health Benefits</h3>
+                <p class="text-white/50 text-xs">Comprehensive medical, dental, and vision coverage</p>
+            </div>
+            <div class="text-center p-6">
+                <span class="material-symbols-outlined text-4xl text-primary-orange mb-4">paid</span>
+                <h3 class="text-sm font-bold text-white mb-2">Competitive Pay</h3>
+                <p class="text-white/50 text-xs">Salary and equity packages that reward your impact</p>
+            </div>
+            <div class="text-center p-6">
+                <span class="material-symbols-outlined text-4xl text-primary-orange mb-4">home</span>
+                <h3 class="text-sm font-bold text-white mb-2">Flexible Work</h3>
+                <p class="text-white/50 text-xs">Remote-first culture with flexible schedules</p>
+            </div>
+            <div class="text-center p-6">
+                <span class="material-symbols-outlined text-4xl text-primary-orange mb-4">local_cafe</span>
+                <h3 class="text-sm font-bold text-white mb-2">Unlimited PTO</h3>
+                <p class="text-white/50 text-xs">Take the time you need to recharge</p>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-bold text-white mb-8">Open Positions</h2>
+        <div class="space-y-4">
+            <div class="job-card rounded-xl p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1">Senior ML Engineer</h3>
+                        <p class="text-white/50 text-xs">Engineering · Full-time · Remote</p>
+                    </div>
+                    <a href="mailto:careers@vnuno.com" class="inline-flex items-center justify-center px-4 py-2 bg-primary-orange text-white text-sm font-semibold rounded-full hover:bg-primary-orange/90 transition-colors">
+                        Apply Now
+                    </a>
+                </div>
+                <p class="text-white/60 text-sm mt-4">
+                    Build and optimize our music generation models. Experience with deep learning and audio processing required.
+                </p>
+            </div>
+
+            <div class="job-card rounded-xl p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1">Product Designer</h3>
+                        <p class="text-white/50 text-xs">Design · Full-time · Remote</p>
+                    </div>
+                    <a href="mailto:careers@vnuno.com" class="inline-flex items-center justify-center px-4 py-2 bg-primary-orange text-white text-sm font-semibold rounded-full hover:bg-primary-orange/90 transition-colors">
+                        Apply Now
+                    </a>
+                </div>
+                <p class="text-white/60 text-sm mt-4">
+                    Shape the future of our user experience. Strong portfolio in consumer apps and passion for music a plus.
+                </p>
+            </div>
+
+            <div class="job-card rounded-xl p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1">Full-Stack Developer</h3>
+                        <p class="text-white/50 text-xs">Engineering · Full-time · Remote</p>
+                    </div>
+                    <a href="mailto:careers@vnuno.com" class="inline-flex items-center justify-center px-4 py-2 bg-primary-orange text-white text-sm font-semibold rounded-full hover:bg-primary-orange/90 transition-colors">
+                        Apply Now
+                    </a>
+                </div>
+                <p class="text-white/60 text-sm mt-4">
+                    Build scalable web applications using React and Python. Experience with audio APIs preferred.
+                </p>
+            </div>
+
+            <div class="job-card rounded-xl p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-1">Community Manager</h3>
+                        <p class="text-white/50 text-xs">Marketing · Full-time · Remote</p>
+                    </div>
+                    <a href="mailto:careers@vnuno.com" class="inline-flex items-center justify-center px-4 py-2 bg-primary-orange text-white text-sm font-semibold rounded-full hover:bg-primary-orange/90 transition-colors">
+                        Apply Now
+                    </a>
+                </div>
+                <p class="text-white/60 text-sm mt-4">
+                    Grow and nurture our creator community. Strong communication skills and music industry knowledge preferred.
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center p-8 bg-white/5 rounded-2xl border border-white/10">
+            <p class="text-white/60 text-sm">
+                Don't see a role that fits? We're always looking for talented people.
+            </p>
+            <a href="mailto:careers@vnuno.com" class="inline-flex items-center gap-2 text-primary-orange text-sm font-semibold mt-4 hover:underline">
+                <span>Send us your resume</span>
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<footer class="main-footer pt-16 pb-8 px-6 border-t border-white/10">
+    <div class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-2 gap-12 mb-16">
+            <div>
+                <h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Brand</h4>
+                <ul class="space-y-4">
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/about">About Us</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/careers">Careers</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/press">Press</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/community">Community</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Support</h4>
+                <ul class="space-y-4">
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/help">Help Center</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/safety">Safety</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/terms">Terms of Service</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="flex flex-col items-center gap-8 border-t border-white/5 pt-8">
+            <p class="text-white/20 text-[10px] font-bold tracking-widest uppercase">© 2024 Vnuno. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}

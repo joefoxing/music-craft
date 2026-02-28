@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Community - Vnuno{% endblock %}
+
+{% block head %}
+    <style type="text/tailwindcss">
+        :root {
+            --grain: url("https://grainy-gradients.vercel.app/noise.svg");
+        }
+        body {
+            background-color: #0a0a0a;
+            color: white;
+        }
+        .grainy-bg {
+            background: linear-gradient(135deg, #450a0a 0%, #7c2d12 25%, #4c1d95 75%, #1e1b4b 100%);
+            position: relative;
+        }
+        .grainy-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+            pointer-events: none;
+            background-image: var(--grain);
+            filter: contrast(120%) brightness(100%);
+            mix-blend-mode: soft-light;
+            z-index: 0;
+        }
+        .grainy-bg > * {
+            position: relative;
+            z-index: 1;
+        }
+        .content-section {
+            background: #070403;
+        }
+        .main-footer {
+            background: #070403;
+        }
+        .community-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .community-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(250, 110, 74, 0.3);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="grainy-bg min-h-[40vh] flex flex-col items-center pt-8 px-6 relative overflow-hidden">
+    <header class="w-full flex items-center justify-between z-20 mb-16">
+        <a href="/" class="flex items-center gap-1">
+            <span class="font-black text-xl tracking-tighter uppercase italic text-white">Vnuno</span>
+        </a>
+        <div class="flex items-center gap-4">
+            <a href="{{ url_for('auth.login') }}" class="text-xs font-semibold px-3 py-1.5 hover:bg-white/10 rounded-full transition-colors text-white">Sign In</a>
+            <a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-white/90 transition-colors">Sign Up</a>
+        </div>
+    </header>
+    <div class="max-w-3xl w-full text-center z-10 py-16">
+        <p class="text-primary-orange text-xs font-bold tracking-[0.2em] uppercase mb-4">Join the Movement</p>
+        <h1 class="text-4xl sm:text-6xl font-extrabold leading-[1.1] tracking-tight mb-6 text-white">Community</h1>
+        <p class="text-white/60 text-sm sm:text-base font-medium max-w-xl mx-auto">
+            Connect with creators, share your music, and be part of the future of AI-powered music creation.
+        </p>
+    </div>
+</section>
+
+<section class="content-section py-20 px-6">
+    <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-2xl font-bold text-white mb-4">Connect With Us</h2>
+            <p class="text-white/60 text-sm max-w-2xl mx-auto">
+                Join thousands of music creators sharing ideas, getting feedback, and collaborating on amazing projects.
+            </p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+            <a href="#" class="community-card rounded-xl p-6 text-center">
+                <div class="w-14 h-14 bg-[#5865F2]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7 fill-[#5865F2]" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
+                </div>
+                <h3 class="text-sm font-bold text-white mb-1">Discord</h3>
+                <p class="text-white/50 text-xs">Join the conversation</p>
+            </a>
+
+            <a href="#" class="community-card rounded-xl p-6 text-center">
+                <div class="w-14 h-14 bg-[#1DA1F2]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7 fill-[#1DA1F2]" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </div>
+                <h3 class="text-sm font-bold text-white mb-1">X (Twitter)</h3>
+                <p class="text-white/50 text-xs">Follow updates</p>
+            </a>
+
+            <a href="#" class="community-card rounded-xl p-6 text-center">
+                <div class="w-14 h-14 bg-[#FF4500]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7 fill-[#FF4500]" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.327.327 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+                </div>
+                <h3 class="text-sm font-bold text-white mb-1">Reddit</h3>
+                <p class="text-white/50 text-xs">Share & discuss</p>
+            </a>
+
+            <a href="#" class="community-card rounded-xl p-6 text-center">
+                <div class="w-14 h-14 bg-[#FF0000]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7 fill-[#FF0000]" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </div>
+                <h3 class="text-sm font-bold text-white mb-1">YouTube</h3>
+                <p class="text-white/50 text-xs">Watch tutorials</p>
+            </a>
+        </div>
+
+        <div class="border-t border-white/10 pt-16 mb-16">
+            <h2 class="text-2xl font-bold text-white mb-8 text-center">Community Highlights</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="community-card rounded-xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-primary-orange/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary-orange">music_note</span>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Weekly Challenges</h3>
+                            <p class="text-white/50 text-xs">Every Monday</p>
+                        </div>
+                    </div>
+                    <p class="text-white/60 text-sm">
+                        Join our weekly music creation challenges and showcase your skills to the community.
+                    </p>
+                </div>
+
+                <div class="community-card rounded-xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-primary-orange/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary-orange">school</span>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Creator Workshops</h3>
+                            <p class="text-white/50 text-xs">Monthly sessions</p>
+                        </div>
+                    </div>
+                    <p class="text-white/60 text-sm">
+                        Learn from experienced creators and improve your music production skills.
+                    </p>
+                </div>
+
+                <div class="community-card rounded-xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-primary-orange/20 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary-orange">emoji_events</span>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Spotlight Program</h3>
+                            <p class="text-white/50 text-xs">Featured artists</p>
+                        </div>
+                    </div>
+                    <p class="text-white/60 text-sm">
+                        Get featured on our platform and reach thousands of music lovers.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center p-8 bg-gradient-to-r from-primary-orange/10 to-suno-pink/10 rounded-2xl border border-white/10">
+            <h2 class="text-xl font-bold text-white mb-4">Start Creating Today</h2>
+            <p class="text-white/60 text-sm mb-6 max-w-lg mx-auto">
+                Join our growing community of music creators and start making amazing songs with AI.
+            </p>
+            <a href="{{ url_for('auth.register') }}" class="inline-flex items-center justify-center px-6 py-3 bg-primary-orange text-white font-semibold rounded-full hover:bg-primary-orange/90 transition-colors">
+                Get Started Free
+            </a>
+        </div>
+    </div>
+</section>
+
+<footer class="main-footer pt-16 pb-8 px-6 border-t border-white/10">
+    <div class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-2 gap-12 mb-16">
+            <div>
+                <h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Brand</h4>
+                <ul class="space-y-4">
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/about">About Us</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/careers">Careers</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/press">Press</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/community">Community</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Support</h4>
+                <ul class="space-y-4">
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/help">Help Center</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/safety">Safety</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/terms">Terms of Service</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="flex flex-col items-center gap-8 border-t border-white/5 pt-8">
+            <p class="text-white/20 text-[10px] font-bold tracking-widest uppercase">© 2024 Vnuno. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}

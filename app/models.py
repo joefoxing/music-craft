@@ -63,6 +63,11 @@ class User(UserMixin, db.Model):
     subscription_tier = db.Column(db.String(50), nullable=False, default='free')   # free | pro
     subscription_period_end = db.Column(db.DateTime, nullable=True)
     token_balance = db.Column(db.Integer, nullable=False, default=0)
+    
+    # PayPal / Billing
+    paypal_customer_id = db.Column(db.String(100), nullable=True, index=True)
+    paypal_subscription_id = db.Column(db.String(100), nullable=True, index=True)
+    paypal_email = db.Column(db.String(100), nullable=True)
 
     # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}Safety - Vnuno{% endblock %}
+
+{% block head %}
+    <style type="text/tailwindcss">
+        :root {
+            --grain: url("https://grainy-gradients.vercel.app/noise.svg");
+        }
+        body {
+            background-color: #0a0a0a;
+            color: white;
+        }
+        .grainy-bg {
+            background: linear-gradient(135deg, #450a0a 0%, #7c2d12 25%, #4c1d95 75%, #1e1b4b 100%);
+            position: relative;
+        }
+        .grainy-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+            pointer-events: none;
+            background-image: var(--grain);
+            filter: contrast(120%) brightness(100%);
+            mix-blend-mode: soft-light;
+            z-index: 0;
+        }
+        .grainy-bg > * {
+            position: relative;
+            z-index: 1;
+        }
+        .content-section {
+            background: #070403;
+        }
+        .main-footer {
+            background: #070403;
+        }
+        .safety-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="grainy-bg min-h-[40vh] flex flex-col items-center pt-8 px-6 relative overflow-hidden">
+    <header class="w-full flex items-center justify-between z-20 mb-16">
+        <a href="/" class="flex items-center gap-1">
+            <span class="font-black text-xl tracking-tighter uppercase italic text-white">Vnuno</span>
+        </a>
+        <div class="flex items-center gap-4">
+            <a href="{{ url_for('auth.login') }}" class="text-xs font-semibold px-3 py-1.5 hover:bg-white/10 rounded-full transition-colors text-white">Sign In</a>
+            <a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-white/90 transition-colors">Sign Up</a>
+        </div>
+    </header>
+    <div class="max-w-3xl w-full text-center z-10 py-16">
+        <p class="text-primary-orange text-xs font-bold tracking-[0.2em] uppercase mb-4">Trust & Safety</p>
+        <h1 class="text-4xl sm:text-6xl font-extrabold leading-[1.1] tracking-tight mb-6 text-white">Safety</h1>
+        <p class="text-white/60 text-sm sm:text-base font-medium max-w-xl mx-auto">
+            Our commitment to creating a safe and responsible AI music platform.
+        </p>
+    </div>
+</section>
+
+<section class="content-section py-20 px-6">
+    <div class="max-w-4xl mx-auto">
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold text-white mb-6">Our Safety Principles</h2>
+            <p class="text-white/60 text-sm leading-relaxed mb-8">
+                At Vnuno, we take safety seriously. We're committed to developing AI technology responsibly and ensuring our platform is used for creative, positive purposes. Our comprehensive safety measures protect our users and the broader community.
+            </p>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="safety-card rounded-xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="material-symbols-outlined text-2xl text-primary-orange">shield</span>
+                        <h3 class="text-lg font-bold text-white">Content Moderation</h3>
+                    </div>
+                    <p class="text-white/60 text-sm">
+                        We use automated systems and human review to detect and prevent harmful content, including hate speech, explicit material, and copyright violations.
+                    </p>
+                </div>
+
+                <div class="safety-card rounded-xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="material-symbols-outlined text-2xl text-primary-orange">copyright</span>
+                        <h3 class="text-lg font-bold text-white">Copyright Protection</h3>
+                    </div>
+                    <p class="text-white/60 text-sm">
+                        Our AI is trained to respect intellectual property. We have systems in place to prevent generation of content that infringes on existing copyrights.
+                    </p>
+                </div>
+
+                <div class="safety-card rounded-xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="material-symbols-outlined text-2xl text-primary-orange">verified_user</span>
+                        <h3 class="text-lg font-bold text-white">User Verification</h3>
+                    </div>
+                    <p class="text-white/60 text-sm">
+                        We implement email verification and optional identity verification for creators to maintain platform integrity and prevent abuse.
+                    </p>
+                </div>
+
+                <div class="safety-card rounded-xl p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="material-symbols-outlined text-2xl text-primary-orange">report</span>
+                        <h3 class="text-lg font-bold text-white">Reporting System</h3>
+                    </div>
+                    <p class="text-white/60 text-sm">
+                        Users can report concerning content or behavior. Our team reviews reports promptly and takes appropriate action.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-white/10 pt-16 mb-16">
+            <h2 class="text-2xl font-bold text-white mb-6">Prohibited Uses</h2>
+            <p class="text-white/60 text-sm leading-relaxed mb-6">
+                To maintain a safe platform, the following uses of Vnuno are strictly prohibited:
+            </p>
+            <ul class="space-y-3 text-white/60 text-sm">
+                <li class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary-orange text-sm mt-0.5">block</span>
+                    <span>Creating content that promotes hate speech, violence, or discrimination</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary-orange text-sm mt-0.5">block</span>
+                    <span>Generating explicit or sexually inappropriate content</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary-orange text-sm mt-0.5">block</span>
+                    <span>Impersonating individuals without consent</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary-orange text-sm mt-0.5">block</span>
+                    <span>Creating content intended to deceive or mislead</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary-orange text-sm mt-0.5">block</span>
+                    <span>Using the platform for illegal activities</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-primary-orange text-sm mt-0.5">block</span>
+                    <span>Attempting to circumvent safety filters or restrictions</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="border-t border-white/10 pt-16 mb-16">
+            <h2 class="text-2xl font-bold text-white mb-6">Data Privacy & Security</h2>
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-2">Your Content</h3>
+                    <p class="text-white/60 text-sm">
+                        You retain ownership of the music you create. We don't use your private creations to train our AI models without explicit consent. Your data is encrypted both in transit and at rest.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-2">Third-Party Sharing</h3>
+                    <p class="text-white/60 text-sm">
+                        We never sell your personal information. We only share data with trusted service providers necessary to operate our platform, and only under strict confidentiality agreements.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white mb-2">Account Security</h3>
+                    <p class="text-white/60 text-sm">
+                        We support two-factor authentication and recommend all users enable it. We monitor for suspicious account activity and notify you of any potential security issues.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-white/10 pt-16 mb-16">
+            <h2 class="text-2xl font-bold text-white mb-6">For Parents & Guardians</h2>
+            <p class="text-white/60 text-sm leading-relaxed mb-6">
+                Vnuno is committed to providing a safe environment for users of all ages. We recommend that children under 13 use our platform with parental supervision. Our content filters help ensure age-appropriate experiences.
+            </p>
+            <div class="safety-card rounded-xl p-6">
+                <h3 class="text-sm font-bold text-white mb-3">Parental Controls</h3>
+                <ul class="space-y-2 text-white/60 text-sm">
+                    <li>• Option to disable sharing features for underage accounts</li>
+                    <li>• Content filtering options</li>
+                    <li>• Activity monitoring tools</li>
+                    <li>• Easy account deletion process</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="text-center p-8 bg-white/5 rounded-2xl border border-white/10">
+            <h2 class="text-xl font-bold text-white mb-4">Report a Concern</h2>
+            <p class="text-white/60 text-sm mb-6">
+                If you encounter content or behavior that violates our safety guidelines, please report it immediately.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="mailto:safety@vnuno.com" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary-orange text-white font-semibold rounded-full hover:bg-primary-orange/90 transition-colors">
+                    <span class="material-symbols-outlined text-sm">email</span>
+                    <span>Report via Email</span>
+                </a>
+                <a href="/help" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/10 text-white font-semibold rounded-full hover:bg-white/20 transition-colors">
+                    <span>Visit Help Center</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="main-footer pt-16 pb-8 px-6 border-t border-white/10">
+    <div class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-2 gap-12 mb-16">
+            <div>
+                <h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Brand</h4>
+                <ul class="space-y-4">
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/about">About Us</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/careers">Careers</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/press">Press</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/community">Community</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Support</h4>
+                <ul class="space-y-4">
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/help">Help Center</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/safety">Safety</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/terms">Terms of Service</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="flex flex-col items-center gap-8 border-t border-white/5 pt-8">
+            <p class="text-white/20 text-[10px] font-bold tracking-widest uppercase">© 2024 Vnuno. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}

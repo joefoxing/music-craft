@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}Terms of Service - Vnuno{% endblock %}
+
+{% block head %}
+    <style type="text/tailwindcss">
+        :root {
+            --grain: url("https://grainy-gradients.vercel.app/noise.svg");
+        }
+        body {
+            background-color: #0a0a0a;
+            color: white;
+        }
+        .grainy-bg {
+            background: linear-gradient(135deg, #450a0a 0%, #7c2d12 25%, #4c1d95 75%, #1e1b4b 100%);
+            position: relative;
+        }
+        .grainy-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+            pointer-events: none;
+            background-image: var(--grain);
+            filter: contrast(120%) brightness(100%);
+            mix-blend-mode: soft-light;
+            z-index: 0;
+        }
+        .grainy-bg > * {
+            position: relative;
+            z-index: 1;
+        }
+        .content-section {
+            background: #070403;
+        }
+        .main-footer {
+            background: #070403;
+        }
+        .terms-content h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .terms-content h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .terms-content p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            line-height: 1.75;
+            margin-bottom: 1rem;
+        }
+        .terms-content ul {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            line-height: 1.75;
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        .terms-content li {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="grainy-bg min-h-[40vh] flex flex-col items-center pt-8 px-6 relative overflow-hidden">
+    <header class="w-full flex items-center justify-between z-20 mb-16">
+        <a href="/" class="flex items-center gap-1">
+            <span class="font-black text-xl tracking-tighter uppercase italic text-white">Vnuno</span>
+        </a>
+        <div class="flex items-center gap-4">
+            <a href="{{ url_for('auth.login') }}" class="text-xs font-semibold px-3 py-1.5 hover:bg-white/10 rounded-full transition-colors text-white">Sign In</a>
+            <a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-white/90 transition-colors">Sign Up</a>
+        </div>
+    </header>
+    <div class="max-w-3xl w-full text-center z-10 py-16">
+        <p class="text-primary-orange text-xs font-bold tracking-[0.2em] uppercase mb-4">Legal</p>
+        <h1 class="text-4xl sm:text-6xl font-extrabold leading-[1.1] tracking-tight mb-6 text-white">Terms of Service</h1>
+        <p class="text-white/60 text-sm sm:text-base font-medium max-w-xl mx-auto">
+            Last updated: January 2025
+        </p>
+    </div>
+</section>
+
+<section class="content-section py-20 px-6">
+    <div class="max-w-3xl mx-auto terms-content">
+        <p>
+            Please read these Terms of Service ("Terms", "Terms of Service") carefully before using the Vnuno website and AI music generation service operated by Vnuno Inc. ("us", "we", or "our").
+        </p>
+        <p>
+            Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.
+        </p>
+        <p>
+            By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.
+        </p>
+
+        <h2>1. Accounts</h2>
+        <p>
+            When you create an account with us, you must provide information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.
+        </p>
+        <p>
+            You are responsible for safeguarding the password that you use to access the Service and for any activities or actions under your password, whether your password is with our Service or a third-party service.
+        </p>
+        <p>
+            You agree not to disclose your password to any third party. You must notify us immediately upon becoming aware of any breach of security or unauthorized use of your account.
+        </p>
+
+        <h2>2. AI-Generated Content</h2>
+        <h3>2.1 Ownership</h3>
+        <p>
+            Subject to your compliance with these Terms, you retain ownership of the music you generate using our Service. Vnuno grants you a perpetual, worldwide, royalty-free license to use, distribute, and commercially exploit the AI-generated content you create.
+        </p>
+
+        <h3>2.2 Content Restrictions</h3>
+        <p>You agree not to use the Service to generate content that:</p>
+        <ul>
+            <li>Is unlawful, harmful, threatening, abusive, harassing, tortious, defamatory, vulgar, obscene, libelous, invasive of another's privacy, hateful, or racially, ethnically, or otherwise objectionable</li>
+            <li>Infringes any patent, trademark, trade secret, copyright, or other proprietary rights of any party</li>
+            <li>Impersonates any person or entity or falsely states or misrepresents your affiliation with a person or entity</li>
+            <li>Contains software viruses or any other computer code designed to interrupt, destroy, or limit the functionality of any computer software or hardware</li>
+        </ul>
+
+        <h2>3. Subscriptions and Payments</h2>
+        <h3>3.1 Billing</h3>
+        <p>
+            Some parts of the Service are billed on a subscription basis ("Subscription(s)"). You will be billed in advance on a recurring and periodic basis ("Billing Cycle"). Billing cycles are set either on a monthly or annual basis, depending on the type of subscription plan you select.
+        </p>
+
+        <h3>3.2 Fee Changes</h3>
+        <p>
+            Vnuno, in its sole discretion and at any time, may modify the Subscription fees. Any Subscription fee change will become effective at the end of the then-current Billing Cycle.
+        </p>
+
+        <h3>3.3 Refunds</h3>
+        <p>
+            Certain refund requests for Subscriptions may be considered by Vnuno on a case-by-case basis and granted in sole discretion of Vnuno.
+        </p>
+
+        <h2>4. Termination</h2>
+        <p>
+            We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.
+        </p>
+        <p>
+            Upon termination, your right to use the Service will immediately cease. If you wish to terminate your account, you may simply discontinue using the Service or contact us to request account deletion.
+        </p>
+
+        <h2>5. Limitation of Liability</h2>
+        <p>
+            In no event shall Vnuno, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from:
+        </p>
+        <ul>
+            <li>Your access to or use of or inability to access or use the Service</li>
+            <li>Any conduct or content of any third party on the Service</li>
+            <li>Any content obtained from the Service</li>
+            <li>Unauthorized access, use or alteration of your transmissions or content</li>
+        </ul>
+
+        <h2>6. Disclaimer</h2>
+        <p>
+            Your use of the Service is at your sole risk. The Service is provided on an "AS IS" and "AS AVAILABLE" basis. The Service is provided without warranties of any kind, whether express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, non-infringement, or course of performance.
+        </p>
+
+        <h2>7. Governing Law</h2>
+        <p>
+            These Terms shall be governed and construed in accordance with the laws of [Jurisdiction], without regard to its conflict of law provisions.
+        </p>
+        <p>
+            Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect.
+        </p>
+
+        <h2>8. Changes</h2>
+        <p>
+            We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material we will try to provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.
+        </p>
+
+        <h2>9. Contact Us</h2>
+        <p>
+            If you have any questions about these Terms, please contact us at:
+        </p>
+        <p>
+            <a href="mailto:legal@vnuno.com" class="text-primary-orange hover:underline">legal@vnuno.com</a>
+        </p>
+    </div>
+</section>
+
+<footer class="main-footer pt-16 pb-8 px-6 border-t border-white/10">
+    <div class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-2 gap-12 mb-16">
+            <div>
+                <h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Brand</h4>
+                <ul class="space-y-4">
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/about">About Us</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/careers">Careers</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/press">Press</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/community">Community</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Support</h4>
+                <ul class="space-y-4">
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/help">Help Center</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/safety">Safety</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/terms">Terms of Service</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="flex flex-col items-center gap-8 border-t border-white/5 pt-8">
+            <p class="text-white/20 text-[10px] font-bold tracking-widest uppercase">© 2024 Vnuno. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}

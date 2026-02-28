@@ -335,3 +335,52 @@ def dashboard():
     from datetime import datetime
     hour = datetime.now().hour
     return render_template('dashboard.html', active_nav='dashboard', greeting_hour=hour)
+
+
+# Footer Pages
+@main_bp.route('/about')
+def about():
+    """Render the About Us page."""
+    return render_template('about.html')
+
+
+@main_bp.route('/careers')
+def careers():
+    """Render the Careers page."""
+    return render_template('careers.html')
+
+
+@main_bp.route('/press')
+def press():
+    """Render the Press page."""
+    return render_template('press.html')
+
+
+@main_bp.route('/community')
+def community():
+    """Render the Community page."""
+    return render_template('community.html')
+
+
+@main_bp.route('/help')
+def help_center():
+    """Render the Help Center page."""
+    return render_template('help-center.html')
+
+
+@main_bp.route('/safety')
+def safety():
+    """Render the Safety page."""
+    return render_template('safety.html')
+
+
+@main_bp.route('/terms')
+def terms():
+    """Render the Terms of Service page."""
+    return render_template('terms.html')
+
+
+@main_bp.route('/privacy')
+def privacy():
+    """Render the Privacy Policy page."""
+    return render_template('privacy.html')

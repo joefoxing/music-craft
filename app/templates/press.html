@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Press - Vnuno{% endblock %}
+
+{% block head %}
+    <style type="text/tailwindcss">
+        :root {
+            --grain: url("https://grainy-gradients.vercel.app/noise.svg");
+        }
+        body {
+            background-color: #0a0a0a;
+            color: white;
+        }
+        .grainy-bg {
+            background: linear-gradient(135deg, #450a0a 0%, #7c2d12 25%, #4c1d95 75%, #1e1b4b 100%);
+            position: relative;
+        }
+        .grainy-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+            pointer-events: none;
+            background-image: var(--grain);
+            filter: contrast(120%) brightness(100%);
+            mix-blend-mode: soft-light;
+            z-index: 0;
+        }
+        .grainy-bg > * {
+            position: relative;
+            z-index: 1;
+        }
+        .content-section {
+            background: #070403;
+        }
+        .main-footer {
+            background: #070403;
+        }
+        .press-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="grainy-bg min-h-[40vh] flex flex-col items-center pt-8 px-6 relative overflow-hidden">
+    <header class="w-full flex items-center justify-between z-20 mb-16">
+        <a href="/" class="flex items-center gap-1">
+            <span class="font-black text-xl tracking-tighter uppercase italic text-white">Vnuno</span>
+        </a>
+        <div class="flex items-center gap-4">
+            <a href="{{ url_for('auth.login') }}" class="text-xs font-semibold px-3 py-1.5 hover:bg-white/10 rounded-full transition-colors text-white">Sign In</a>
+            <a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-white/90 transition-colors">Sign Up</a>
+        </div>
+    </header>
+    <div class="max-w-3xl w-full text-center z-10 py-16">
+        <p class="text-primary-orange text-xs font-bold tracking-[0.2em] uppercase mb-4">Media Resources</p>
+        <h1 class="text-4xl sm:text-6xl font-extrabold leading-[1.1] tracking-tight mb-6 text-white">Press</h1>
+        <p class="text-white/60 text-sm sm:text-base font-medium max-w-xl mx-auto">
+            Latest news, brand assets, and media contact information.
+        </p>
+    </div>
+</section>
+
+<section class="content-section py-20 px-6">
+    <div class="max-w-4xl mx-auto">
+        <div class="grid sm:grid-cols-3 gap-8 mb-20">
+            <div class="text-center p-6 bg-white/5 rounded-xl border border-white/10">
+                <span class="material-symbols-outlined text-4xl text-primary-orange mb-4">newspaper</span>
+                <h3 class="text-lg font-bold text-white mb-1">50+</h3>
+                <p class="text-white/50 text-xs">Media Mentions</p>
+            </div>
+            <div class="text-center p-6 bg-white/5 rounded-xl border border-white/10">
+                <span class="material-symbols-outlined text-4xl text-primary-orange mb-4">groups</span>
+                <h3 class="text-lg font-bold text-white mb-1">2M+</h3>
+                <p class="text-white/50 text-xs">Active Users</p>
+            </div>
+            <div class="text-center p-6 bg-white/5 rounded-xl border border-white/10">
+                <span class="material-symbols-outlined text-4xl text-primary-orange mb-4">public</span>
+                <h3 class="text-lg font-bold text-white mb-1">100+</h3>
+                <p class="text-white/50 text-xs">Countries</p>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-bold text-white mb-8">Recent News</h2>
+        <div class="space-y-6 mb-20">
+            <div class="press-card rounded-xl p-6">
+                <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                    <div class="flex-1">
+                        <span class="text-primary-orange text-xs font-bold uppercase tracking-wider">January 2025</span>
+                        <h3 class="text-lg font-bold text-white mt-2 mb-2">Vnuno Raises Series A to Expand AI Music Platform</h3>
+                        <p class="text-white/60 text-sm">
+                            We're excited to announce our $15M Series A funding round led by top-tier investors to accelerate our mission of democratizing music creation.
+                        </p>
+                    </div>
+                    <a href="#" class="text-white/40 hover:text-white transition-colors flex items-center gap-1 text-sm whitespace-nowrap">
+                        <span>Read more</span>
+                        <span class="material-symbols-outlined text-sm">arrow_outward</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="press-card rounded-xl p-6">
+                <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                    <div class="flex-1">
+                        <span class="text-primary-orange text-xs font-bold uppercase tracking-wider">December 2024</span>
+                        <h3 class="text-lg font-bold text-white mt-2 mb-2">New Features: Advanced Vocal Control and Mashup Tools</h3>
+                        <p class="text-white/60 text-sm">
+                            Introducing powerful new editing capabilities that give creators unprecedented control over their AI-generated music.
+                        </p>
+                    </div>
+                    <a href="#" class="text-white/40 hover:text-white transition-colors flex items-center gap-1 text-sm whitespace-nowrap">
+                        <span>Read more</span>
+                        <span class="material-symbols-outlined text-sm">arrow_outward</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="press-card rounded-xl p-6">
+                <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                    <div class="flex-1">
+                        <span class="text-primary-orange text-xs font-bold uppercase tracking-wider">November 2024</span>
+                        <h3 class="text-lg font-bold text-white mt-2 mb-2">Vnuno Partners with Major Record Labels</h3>
+                        <p class="text-white/60 text-sm">
+                            Strategic partnerships with leading music industry players to ensure fair compensation for artists and rights holders.
+                        </p>
+                    </div>
+                    <a href="#" class="text-white/40 hover:text-white transition-colors flex items-center gap-1 text-sm whitespace-nowrap">
+                        <span>Read more</span>
+                        <span class="material-symbols-outlined text-sm">arrow_outward</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12">
+            <div>
+                <h2 class="text-2xl font-bold text-white mb-6">Brand Assets</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-white/60">image</span>
+                            <span class="text-sm text-white">Logo Package</span>
+                        </div>
+                        <a href="#" class="text-primary-orange text-xs font-semibold hover:underline">Download</a>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-white/60">palette</span>
+                            <span class="text-sm text-white">Brand Guidelines</span>
+                        </div>
+                        <a href="#" class="text-primary-orange text-xs font-semibold hover:underline">Download</a>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-white/60">photo_library</span>
+                            <span class="text-sm text-white">Press Kit Images</span>
+                        </div>
+                        <a href="#" class="text-primary-orange text-xs font-semibold hover:underline">Download</a>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-bold text-white mb-6">Media Contact</h2>
+                <div class="p-6 bg-white/5 rounded-xl border border-white/10">
+                    <p class="text-white/60 text-sm mb-4">
+                        For press inquiries, interview requests, or additional information, please contact our communications team.
+                    </p>
+                    <a href="mailto:press@vnuno.com" class="inline-flex items-center gap-2 text-primary-orange font-semibold hover:underline">
+                        <span class="material-symbols-outlined text-sm">email</span>
+                        <span>press@vnuno.com</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="main-footer pt-16 pb-8 px-6 border-t border-white/10">
+    <div class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-2 gap-12 mb-16">
+            <div>
+                <h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Brand</h4>
+                <ul class="space-y-4">
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/about">About Us</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/careers">Careers</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/press">Press</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/community">Community</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Support</h4>
+                <ul class="space-y-4">
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/help">Help Center</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/safety">Safety</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/terms">Terms of Service</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="flex flex-col items-center gap-8 border-t border-white/5 pt-8">
+            <p class="text-white/20 text-[10px] font-bold tracking-widest uppercase">© 2024 Vnuno. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}

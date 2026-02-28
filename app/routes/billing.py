@@ -14,6 +14,11 @@ GET  /billing/success   – post-checkout success page
 GET  /billing/cancel    – checkout abandoned page
 POST /billing/webhook   – Stripe webhook receiver (CSRF-exempt)
 POST /billing/portal    – open Stripe Customer Portal (login required)
+POST /billing/paypal/checkout  – create PayPal order (login required)
+POST /billing/paypal/capture   – capture PayPal order (login required)
+POST /billing/paypal/subscribe – create PayPal subscription (login required)
+POST /billing/paypal/webhook   – PayPal webhook receiver (CSRF-exempt)
+GET  /billing/return    – payment return page
 """
 
 import logging
@@ -34,6 +39,7 @@ from flask_login import current_user, login_required
 
 from app import db
 from app.models import User, WebhookEvent
+from app.paypal import get_paypal_client
 
 logger = logging.getLogger(__name__)
 
@@ -77,10 +83,8 @@ def _price_id_for_plan(plan: str) -> tuple[str, str]:
         'tokens':      (cfg['STRIPE_TOKEN_PACK_PRICE_ID'],  'payment'),
     }
     if plan not in mapping:
-        abort(400, description=f"Unknown plan '{plan}'")
+        return None, None  # handled by caller
     price_id, mode = mapping[plan]
-    if not price_id:
-        abort(500, description=f"Price ID for plan '{plan}' is not configured.")
     return price_id, mode
 
 
@@ -97,7 +101,19 @@ def create_checkout_session():
     """
     data = request.get_json(silent=True) or {}
     plan = data.get('plan', '').strip()
+
+    valid_plans = {'pro_monthly', 'pro_annual', 'tokens'}
+    if plan not in valid_plans:
+        return jsonify({'error': f"Unknown plan '{plan}'"}), 400
+
     price_id, mode = _price_id_for_plan(plan)
+    if not price_id:
+        logger.error("Stripe price ID for plan '%s' is not configured.", plan)
+        return jsonify({'error': 'Billing is not configured yet. Please contact support.'}), 500
+
+    if not current_app.config.get('STRIPE_SECRET_KEY'):
+        logger.error("STRIPE_SECRET_KEY is not set.")
+        return jsonify({'error': 'Billing is not configured yet. Please contact support.'}), 500
 
     customer_id = _get_or_create_customer(current_user)
     s = _stripe()
@@ -358,3 +374,308 @@ def _apply_subscription(user: User, sub: dict) -> None:
         "User %s subscription updated: status=%s tier=%s period_end=%s",
         user.id, user.subscription_status, user.subscription_tier, period_end,
     )
+
+# ---------------------------------------------------------------------------
+# PayPal Checkout Routes
+# ---------------------------------------------------------------------------
+
+@billing_bp.route('/paypal/checkout', methods=['POST'])
+@login_required
+def paypal_checkout():
+    """
+    Create a PayPal order for subscription or one-time purchase.
+    Body (JSON): { "plan": "pro_monthly" | "pro_annual" | "tokens" }
+    Returns: { "order_id": "<paypal_order_id>" }
+    """
+    data = request.get_json(silent=True) or {}
+    plan = data.get('plan', '').strip()
+
+    valid_plans = {'pro_monthly', 'pro_annual', 'tokens'}
+    if plan not in valid_plans:
+        return jsonify({'error': f"Unknown plan '{plan}'"}), 400
+
+    # Check PayPal is configured
+    if not current_app.config.get('PAYPAL_CLIENT_ID'):
+        logger.error("PAYPAL_CLIENT_ID is not set")
+        return jsonify({'error': 'PayPal is not configured. Please contact support.'}), 500
+
+    try:
+        paypal = get_paypal_client()
+        base = request.host_url.rstrip('/')
+        return_url = f"{base}/billing/return?plan={plan}"
+        cancel_url = f"{base}/billing/cancel"
+        
+        order_id = paypal.create_order(plan, str(current_user.id), return_url, cancel_url)
+        
+        if not order_id:
+            return jsonify({'error': 'Failed to create PayPal order'}), 500
+        
+        logger.info(f"PayPal order created for user {current_user.id}: {order_id}")
+        return jsonify({'order_id': order_id})
+    except Exception as e:
+        logger.error(f"PayPal order creation error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@billing_bp.route('/paypal/capture', methods=['POST'])
+@login_required
+def paypal_capture():
+    """
+    Capture a PayPal order to complete payment.
+    Body (JSON): { "order_id": "<paypal_order_id>" }
+    Returns: { "status": "success|error", "message": "..." }
+    """
+    data = request.get_json(silent=True) or {}
+    order_id = data.get('order_id', '').strip()
+
+    if not order_id:
+        return jsonify({'error': 'Order ID is required'}), 400
+
+    try:
+        paypal = get_paypal_client()
+        result = paypal.capture_order(order_id)
+        
+        if not result:
+            return jsonify({'status': 'error', 'message': 'Failed to capture order'}), 400
+        
+        # Get purchase unit info
+        purchase_units = result.get('purchase_units', [])
+        if purchase_units:
+            custom_id = purchase_units[0].get('custom_id', '')
+            
+            # For token purchases, add tokens to user
+            if custom_id == str(current_user.id):
+                plan_param = request.args.get('plan', 'tokens')
+                if plan_param in ['tokens', 'pro_monthly', 'pro_annual']:
+                    current_user.token_balance = (current_user.token_balance or 0) + TOKEN_PACK_AMOUNT
+                    db.session.commit()
+                    logger.info(f"User {current_user.id} purchased token pack via PayPal (+{TOKEN_PACK_AMOUNT} tokens)")
+        
+        return jsonify({'status': 'success', 'message': 'Payment captured successfully'})
+    except Exception as e:
+        logger.error(f"PayPal order capture error: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+@billing_bp.route('/paypal/subscribe', methods=['POST'])
+@login_required
+def paypal_subscribe():
+    """
+    Create a PayPal subscription.
+    Body (JSON): { "plan": "pro_monthly" | "pro_annual" }
+    Returns: { "subscription_url": "<paypal_subscription_url>" }
+    """
+    data = request.get_json(silent=True) or {}
+    plan = data.get('plan', '').strip()
+
+    subscription_plans = {'pro_monthly', 'pro_annual'}
+    if plan not in subscription_plans:
+        return jsonify({'error': f"Unknown subscription plan '{plan}'"}), 400
+
+    try:
+        paypal = get_paypal_client()
+        
+        # Create billing plan if needed (in production, these could be cached/pre-created)
+        plan_id = paypal.create_billing_plan(plan)
+        if not plan_id:
+            return jsonify({'error': 'Failed to create subscription plan'}), 500
+        
+        # Create subscription
+        subscription_id = paypal.create_subscription(
+            plan_id, 
+            str(current_user.id),
+            current_user.email
+        )
+        
+        if not subscription_id:
+            return jsonify({'error': 'Failed to create subscription'}), 500
+        
+        # Store subscription ID
+        current_user.paypal_subscription_id = subscription_id
+        current_user.paypal_email = current_user.email
+        db.session.commit()
+        
+        logger.info(f"PayPal subscription created for user {current_user.id}: {subscription_id}")
+        
+        # Get subscription approval link
+        try:
+            sub_details = paypal.get_subscription(subscription_id)
+            approval_url = sub_details.get('links', [])
+            for link in approval_url:
+                if link.get('rel') == 'approve':
+                    return jsonify({'subscription_url': link.get('href')})
+        except:
+            pass
+        
+        return jsonify({'status': 'created', 'subscription_id': subscription_id})
+    except Exception as e:
+        logger.error(f"PayPal subscription creation error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@billing_bp.route('/paypal/webhook', methods=['POST'])
+def paypal_webhook():
+    """
+    Receive PayPal webhook events (CSRF-exempt).
+    PayPal sends subscription and payment notifications here.
+    """
+    try:
+        # Get webhook headers
+        transmission_id = request.headers.get('Paypal-Transmission-Id', '')
+        transmission_time = request.headers.get('Paypal-Transmission-Time', '')
+        cert_url = request.headers.get('Paypal-Cert-Url', '')
+        actual_sig = request.headers.get('Paypal-Transmission-Sig', '')
+        
+        event = request.get_json()
+        event_type = event.get('event_type', '')
+        
+        # Log the webhook
+        logger.info(f"PayPal webhook received: {event_type}")
+        
+        # Check if already processed
+        event_id = event.get('id', '')
+        if event_id and WebhookEvent.query.filter_by(source='paypal', event_id=event_id).first():
+            logger.debug(f"PayPal webhook already processed: {event_id}")
+            return jsonify({'status': 'already_processed'}), 200
+        
+        # Verify webhook (optional but recommended)
+        webhook_id = current_app.config.get('PAYPAL_WEBHOOK_ID', '')
+        if webhook_id:
+            paypal = get_paypal_client()
+            if not paypal.verify_webhook_signature(webhook_id, event, transmission_id, transmission_time, cert_url, actual_sig):
+                logger.warning(f"PayPal webhook verification failed")
+                abort(401)
+        
+        # Handle specific event types
+        resource = event.get('resource', {})
+        
+        if event_type == 'CHECKOUT.ORDER.APPROVED':
+            _on_paypal_order_approved(resource)
+        elif event_type == 'CHECKOUT.ORDER.COMPLETED':
+            _on_paypal_order_completed(resource)
+        elif event_type == 'BILLING.SUBSCRIPTION.CREATED':
+            _on_paypal_subscription_created(resource)
+        elif event_type == 'BILLING.SUBSCRIPTION.UPDATED':
+            _on_paypal_subscription_updated(resource)
+        elif event_type == 'BILLING.SUBSCRIPTION.CANCELLED':
+            _on_paypal_subscription_cancelled(resource)
+        elif event_type == 'PAYMENT.CAPTURE.COMPLETED':
+            _on_paypal_payment_completed(resource)
+        elif event_type == 'PAYMENT.CAPTURE.DENIED':
+            _on_paypal_payment_denied(resource)
+        
+        # Store webhook event for idempotency
+        if event_id:
+            db.session.add(WebhookEvent(source='paypal', event_id=event_id))
+            db.session.commit()
+        
+        return jsonify({'status': 'ok'}), 200
+    except Exception as e:
+        logger.exception(f"PayPal webhook error: {e}")
+        return jsonify({'status': 'error', 'detail': str(e)}), 200
+
+
+@billing_bp.route('/return')
+def paypal_return():
+    """PayPal return page after user approves payment."""
+    return render_template('billing/success.html')
+
+
+# ---------------------------------------------------------------------------
+# PayPal Event Handlers
+# ---------------------------------------------------------------------------
+
+def _on_paypal_order_approved(resource: dict) -> None:
+    """Handle when a PayPal order is approved."""
+    logger.info(f"PayPal order approved: {resource.get('id')}")
+
+
+def _on_paypal_order_completed(resource: dict) -> None:
+    """Handle when a PayPal order is completed."""
+    order_id = resource.get('id')
+    custom_id = resource.get('custom_id', '')
+    
+    try:
+        user = User.query.get(custom_id)
+        if user:
+            user.paypal_customer_id = order_id
+            user.token_balance = (user.token_balance or 0) + TOKEN_PACK_AMOUNT
+            db.session.commit()
+            logger.info(f"User {user.id} completed PayPal payment: +{TOKEN_PACK_AMOUNT} tokens")
+    except Exception as e:
+        logger.error(f"Error processing PayPal order completion: {e}")
+
+
+def _on_paypal_subscription_created(resource: dict) -> None:
+    """Handle when a PayPal subscription is created."""
+    subscription_id = resource.get('id')
+    custom_id = resource.get('custom_id', '')
+    status = resource.get('status', 'PENDING')
+    
+    try:
+        user = User.query.get(custom_id)
+        if user:
+            user.paypal_subscription_id = subscription_id
+            # Set to active only if subscription is approved
+            if status in ['ACTIVE', 'APPROVAL_PENDING']:
+                user.subscription_status = 'active'
+                user.subscription_tier = 'pro'
+            db.session.commit()
+            logger.info(f"User {user.id} PayPal subscription created: {subscription_id} ({status})")
+    except Exception as e:
+        logger.error(f"Error processing PayPal subscription creation: {e}")
+
+
+def _on_paypal_subscription_updated(resource: dict) -> None:
+    """Handle when a PayPal subscription is updated."""
+    subscription_id = resource.get('id')
+    status = resource.get('status', '')
+    
+    try:
+        user = User.query.filter_by(paypal_subscription_id=subscription_id).first()
+        if user:
+            if status == 'ACTIVE':
+                user.subscription_status = 'active'
+                user.subscription_tier = 'pro'
+                # Parse billing cycle end date
+                billing_info = resource.get('billing_info', {})
+                if billing_info and 'next_billing_time' in billing_info:
+                    next_billing = billing_info['next_billing_time']
+                    if isinstance(next_billing, str):
+                        try:
+                            user.subscription_period_end = datetime.fromisoformat(next_billing.replace('Z', '+00:00'))
+                        except:
+                            pass
+            elif status == 'SUSPENDED':
+                user.subscription_status = 'past_due'
+            
+            db.session.commit()
+            logger.info(f"User {user.id} PayPal subscription updated: status={status}")
+    except Exception as e:
+        logger.error(f"Error processing PayPal subscription update: {e}")
+
+
+def _on_paypal_subscription_cancelled(resource: dict) -> None:
+    """Handle when a PayPal subscription is cancelled."""
+    subscription_id = resource.get('id')
+    
+    try:
+        user = User.query.filter_by(paypal_subscription_id=subscription_id).first()
+        if user:
+            user.subscription_status = 'canceled'
+            user.subscription_tier = 'free'
+            user.subscription_period_end = None
+            db.session.commit()
+            logger.info(f"User {user.id} PayPal subscription cancelled: {subscription_id}")
+    except Exception as e:
+        logger.error(f"Error processing PayPal subscription cancellation: {e}")
+
+
+def _on_paypal_payment_completed(resource: dict) -> None:
+    """Handle when a PayPal payment capture is completed."""
+    logger.info(f"PayPal payment completed: {resource.get('id')}")
+
+
+def _on_paypal_payment_denied(resource: dict) -> None:
+    """Handle when a PayPal payment capture is denied."""
+    logger.warning(f"PayPal payment denied: {resource.get('id')}")

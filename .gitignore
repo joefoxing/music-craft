@@ -1,6 +1,8 @@
 ﻿# Environment files
 .env
 .env.*
+.env.staging    # Explicit for clarity (already covered by .env.*)
+.env.prod       # Explicit for clarity (already covered by .env.*)
 !.env.example
 !.env.*.example
 

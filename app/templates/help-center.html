@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Help Center - Vnuno{% endblock %}
+
+{% block head %}
+    <style type="text/tailwindcss">
+        :root {
+            --grain: url("https://grainy-gradients.vercel.app/noise.svg");
+        }
+        body {
+            background-color: #0a0a0a;
+            color: white;
+        }
+        .grainy-bg {
+            background: linear-gradient(135deg, #450a0a 0%, #7c2d12 25%, #4c1d95 75%, #1e1b4b 100%);
+            position: relative;
+        }
+        .grainy-bg::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+            pointer-events: none;
+            background-image: var(--grain);
+            filter: contrast(120%) brightness(100%);
+            mix-blend-mode: soft-light;
+            z-index: 0;
+        }
+        .grainy-bg > * {
+            position: relative;
+            z-index: 1;
+        }
+        .content-section {
+            background: #070403;
+        }
+        .main-footer {
+            background: #070403;
+        }
+        .faq-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .help-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .help-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(250, 110, 74, 0.3);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<section class="grainy-bg min-h-[40vh] flex flex-col items-center pt-8 px-6 relative overflow-hidden">
+    <header class="w-full flex items-center justify-between z-20 mb-16">
+        <a href="/" class="flex items-center gap-1">
+            <span class="font-black text-xl tracking-tighter uppercase italic text-white">Vnuno</span>
+        </a>
+        <div class="flex items-center gap-4">
+            <a href="{{ url_for('auth.login') }}" class="text-xs font-semibold px-3 py-1.5 hover:bg-white/10 rounded-full transition-colors text-white">Sign In</a>
+            <a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-white/90 transition-colors">Sign Up</a>
+        </div>
+    </header>
+    <div class="max-w-3xl w-full text-center z-10 py-16">
+        <p class="text-primary-orange text-xs font-bold tracking-[0.2em] uppercase mb-4">Support</p>
+        <h1 class="text-4xl sm:text-6xl font-extrabold leading-[1.1] tracking-tight mb-6 text-white">Help Center</h1>
+        <p class="text-white/60 text-sm sm:text-base font-medium max-w-xl mx-auto">
+            Find answers to common questions and get the support you need.
+        </p>
+    </div>
+</section>
+
+<section class="content-section py-20 px-6">
+    <div class="max-w-4xl mx-auto">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+            <a href="#getting-started" class="help-card rounded-xl p-6 text-center">
+                <span class="material-symbols-outlined text-3xl text-primary-orange mb-3">rocket_launch</span>
+                <h3 class="text-sm font-bold text-white">Getting Started</h3>
+            </a>
+            <a href="#account" class="help-card rounded-xl p-6 text-center">
+                <span class="material-symbols-outlined text-3xl text-primary-orange mb-3">person</span>
+                <h3 class="text-sm font-bold text-white">Account</h3>
+            </a>
+            <a href="#billing" class="help-card rounded-xl p-6 text-center">
+                <span class="material-symbols-outlined text-3xl text-primary-orange mb-3">credit_card</span>
+                <h3 class="text-sm font-bold text-white">Billing</h3>
+            </a>
+            <a href="#troubleshooting" class="help-card rounded-xl p-6 text-center">
+                <span class="material-symbols-outlined text-3xl text-primary-orange mb-3">build</span>
+                <h3 class="text-sm font-bold text-white">Troubleshooting</h3>
+            </a>
+        </div>
+
+        <div class="mb-16" id="getting-started">
+            <h2 class="text-xl font-bold text-white mb-6">Getting Started</h2>
+            <div class="space-y-4">
+                <div class="faq-item rounded-xl p-6">
+                    <h3 class="text-sm font-bold text-white mb-2">How do I create my first song?</h3>
+                    <p class="text-white/60 text-sm">
+                        Simply enter a description of the song you want to create in the prompt box on the homepage, then click "Create". Our AI will generate a complete song based on your description. You can also choose from our templates for inspiration.
+                    </p>
+                </div>
+                <div class="faq-item rounded-xl p-6">
+                    <h3 class="text-sm font-bold text-white mb-2">What types of music can I create?</h3>
+                    <p class="text-white/60 text-sm">
+                        Vnuno supports a wide variety of genres including pop, rock, hip-hop, electronic, classical, jazz, country, and more. You can specify the genre, mood, instruments, and style in your prompt.
+                    </p>
+                </div>
+                <div class="faq-item rounded-xl p-6">
+                    <h3 class="text-sm font-bold text-white mb-2">Do I need musical experience?</h3>
+                    <p class="text-white/60 text-sm">
+                        Not at all! Vnuno is designed to be accessible to everyone, regardless of musical background. Just describe what you want, and our AI handles the technical details.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-16" id="account">
+            <h2 class="text-xl font-bold text-white mb-6">Account</h2>
+            <div class="space-y-4">
+                <div class="faq-item rounded-xl p-6">
+                    <h3 class="text-sm font-bold text-white mb-2">How do I reset my password?</h3>
+                    <p class="text-white/60 text-sm">
+                        Go to the login page and click "Forgot Password". Enter your email address, and we'll send you a link to reset your password. If you don't see the email, check your spam folder.
+                    </p>
+                </div>
+                <div class="faq-item rounded-xl p-6">
+                    <h3 class="text-sm font-bold text-white mb-2">Can I change my email address?</h3>
+                    <p class="text-white/60 text-sm">
+                        Yes! Go to your Profile settings and click "Edit" next to your email address. You'll need to verify the new email before the change takes effect.
+                    </p>
+                </div>
+                <div class="faq-item rounded-xl p-6">
+                    <h3 class="text-sm font-bold text-white mb-2">How do I delete my account?</h3>
+                    <p class="text-white/60 text-sm">
+                        We're sorry to see you go. To delete your account, go to Profile Settings > Account > Delete Account. Note that this action is permanent and will remove all your data and generated songs.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-16" id="billing">
+            <h2 class="text-xl font-bold text-white mb-6">Billing</h2>
+            <div class="space-y-4">
+                <div class="faq-item rounded-xl p-6">
+                    <h3 class="text-sm font-bold text-white mb-2">What's included in the Pro plan?</h3>
+                    <p class="text-white/60 text-sm">
+                        Pro subscribers get unlimited song generation, higher quality audio (320kbps), commercial usage rights, priority processing, and access to advanced editing features like vocal removal and mashup tools.
+                    </p>
+                </div>
+                <div class="faq-item rounded-xl p-6">
+                    <h3 class="text-sm font-bold text-white mb-2">How do I cancel my subscription?</h3>
+                    <p class="text-white/60 text-sm">
+                        You can cancel anytime from your Profile > Billing page. Your Pro features will remain active until the end of your current billing period.
+                    </p>
+                </div>
+                <div class="faq-item rounded-xl p-6">
+                    <h3 class="text-sm font-bold text-white mb-2">Do you offer refunds?</h3>
+                    <p class="text-white/60 text-sm">
+                        We offer refunds within 7 days of purchase if you haven't generated more than 5 songs. Contact support@vnuno.com for refund requests.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-16" id="troubleshooting">
+            <h2 class="text-xl font-bold text-white mb-6">Troubleshooting</h2>
+            <div class="space-y-4">
+                <div class="faq-item rounded-xl p-6">
+                    <h3 class="text-sm font-bold text-white mb-2">My song generation failed. What should I do?</h3>
+                    <p class="text-white/60 text-sm">
+                        First, check your internet connection. If the problem persists, try simplifying your prompt or trying a different style. You can also check our status page to see if we're experiencing any outages.
+                    </p>
+                </div>
+                <div class="faq-item rounded-xl p-6">
+                    <h3 class="text-sm font-bold text-white mb-2">The audio won't play. How do I fix this?</h3>
+                    <p class="text-white/60 text-sm">
+                        Make sure your browser's audio is enabled and not muted. Try refreshing the page or using a different browser. If issues continue, clear your browser cache and cookies.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center p-8 bg-white/5 rounded-2xl border border-white/10">
+            <h2 class="text-xl font-bold text-white mb-4">Still Need Help?</h2>
+            <p class="text-white/60 text-sm mb-6">
+                Can't find what you're looking for? Our support team is here to help.
+            </p>
+            <a href="mailto:support@vnuno.com" class="inline-flex items-center gap-2 px-6 py-3 bg-primary-orange text-white font-semibold rounded-full hover:bg-primary-orange/90 transition-colors">
+                <span class="material-symbols-outlined text-sm">email</span>
+                <span>Contact Support</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<footer class="main-footer pt-16 pb-8 px-6 border-t border-white/10">
+    <div class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-2 gap-12 mb-16">
+            <div>
+                <h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Brand</h4>
+                <ul class="space-y-4">
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/about">About Us</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/careers">Careers</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/press">Press</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/community">Community</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Support</h4>
+                <ul class="space-y-4">
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/help">Help Center</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/safety">Safety</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/terms">Terms of Service</a></li>
+                    <li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="flex flex-col items-center gap-8 border-t border-white/5 pt-8">
+            <p class="text-white/20 text-[10px] font-bold tracking-widest uppercase">© 2024 Vnuno. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}

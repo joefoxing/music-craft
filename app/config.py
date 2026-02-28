@@ -115,6 +115,12 @@ class Config:
     STRIPE_PRO_MONTHLY_PRICE_ID = os.environ.get('STRIPE_PRO_MONTHLY_PRICE_ID', '')
     STRIPE_PRO_ANNUAL_PRICE_ID = os.environ.get('STRIPE_PRO_ANNUAL_PRICE_ID', '')
     STRIPE_TOKEN_PACK_PRICE_ID = os.environ.get('STRIPE_TOKEN_PACK_PRICE_ID', '')
+    
+    # PayPal / Billing configuration
+    PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID', '')
+    PAYPAL_CLIENT_SECRET = os.environ.get('PAYPAL_CLIENT_SECRET', '')
+    PAYPAL_MODE = os.environ.get('PAYPAL_MODE', 'sandbox')
+    PAYPAL_WEBHOOK_ID = os.environ.get('PAYPAL_WEBHOOK_ID', '')
 
     # Security configuration
     LOGIN_RATE_LIMIT = os.environ.get('LOGIN_RATE_LIMIT', '5 per minute')
@@ -224,6 +230,12 @@ class Config:
         app.config['STRIPE_PRO_MONTHLY_PRICE_ID'] = cls.STRIPE_PRO_MONTHLY_PRICE_ID
         app.config['STRIPE_PRO_ANNUAL_PRICE_ID'] = cls.STRIPE_PRO_ANNUAL_PRICE_ID
         app.config['STRIPE_TOKEN_PACK_PRICE_ID'] = cls.STRIPE_TOKEN_PACK_PRICE_ID
+        
+        # PayPal / Billing configuration
+        app.config['PAYPAL_CLIENT_ID'] = cls.PAYPAL_CLIENT_ID
+        app.config['PAYPAL_CLIENT_SECRET'] = cls.PAYPAL_CLIENT_SECRET
+        app.config['PAYPAL_MODE'] = cls.PAYPAL_MODE
+        app.config['PAYPAL_WEBHOOK_ID'] = cls.PAYPAL_WEBHOOK_ID
 
         # Ensure upload folder exists
         os.makedirs(cls.UPLOAD_FOLDER, exist_ok=True)
