@@ -29,7 +29,7 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            background: rgba(250, 110, 74, 0.9);
+            background: rgba(108, 92, 231, 0.9);
             border: none;
             color: white;
             cursor: pointer;
@@ -40,28 +40,22 @@
             font-size: 20px;
         }
         .promoted-scroll-btn:hover {
-            background: rgba(250, 110, 74, 1);
-            box-shadow: 0 0 20px rgba(250, 110, 74, 0.6);
+            background: rgba(108, 92, 231, 1);
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.6);
         }
         .promoted-scroll-btn:active {
             transform: translateY(-50%) scale(0.95);
         }
-        .promoted-scroll-btn.left {
-            left: 12px;
-        }
-        .promoted-scroll-btn.right {
-            right: 12px;
-        }
-        .promoted-container-wrapper {
-            position: relative;
-        }
+        .promoted-scroll-btn.left { left: 12px; }
+        .promoted-scroll-btn.right { right: 12px; }
+        .promoted-container-wrapper { position: relative; }
         body {
-            background-color: #0a0a0a;
+            background-color: #0a0a0c;
             color: white;
             overflow-x: hidden;
         }
         .grainy-bg {
-            background: linear-gradient(135deg, #450a0a 0%, #7c2d12 25%, #4c1d95 75%, #1e1b4b 100%);
+            background: linear-gradient(135deg, #0a0a0c 0%, #131318 50%, #1a1a22 100%);
             position: relative;
         }
         .grainy-bg::before, .promoted-card::before, .grain-overlay::before {
@@ -77,27 +71,21 @@
             mix-blend-mode: soft-light;
             z-index: 0;
         }
-        /* Ensure all interactive elements are above the grain overlay */
         .grainy-bg > *, .grain-overlay > *, .promoted-section > *, .features-section > *,
-        .testimonials-section > *, .pricing-section > *, .app-download-section > *, .templates-section > * {
+        .testimonials-section > *, .pricing-section > *, .templates-section > * {
             position: relative;
             z-index: 1;
         }
-        /* Ensure buttons and links are always clickable */
         button, a, input, select, textarea, [role="button"] {
             position: relative;
             z-index: 2;
             pointer-events: auto !important;
         }
-        .cursor-blink {
-            animation: blink 1s step-end infinite;
-        }
+        .cursor-blink { animation: blink 1s step-end infinite; }
         @keyframes blink {
             from, to { border-color: transparent }
             50% { border-color: white }
         }
-        
-        /* Typewriter Single-Line Constraint Styles with Horizontal Scroll */
         .typewriter-container {
             display: inline-flex;
             align-items: baseline;
@@ -105,30 +93,18 @@
             position: relative;
             overflow: hidden;
         }
-        
         .typewriter-text {
             display: inline-block;
             white-space: nowrap;
             vertical-align: bottom;
             will-change: transform;
         }
-        
-        .typewriter-text.scrolling {
-            animation: typewriter-scroll linear forwards;
-        }
-        
+        .typewriter-text.scrolling { animation: typewriter-scroll linear forwards; }
         @keyframes typewriter-scroll {
-            0% {
-                transform: translateX(0);
-            }
-            20% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(var(--scroll-distance));
-            }
+            0% { transform: translateX(0); }
+            20% { transform: translateX(0); }
+            100% { transform: translateX(var(--scroll-distance)); }
         }
-        
         .typewriter-cursor {
             display: inline-block;
             border-right: 4px solid white;
@@ -137,80 +113,41 @@
             vertical-align: baseline;
             flex-shrink: 0;
         }
-        
-        /* Responsive adjustments for typewriter */
         @media (max-width: 640px) {
-            .typewriter-cursor {
-                border-right-width: 3px;
-                height: 1.1em;
-            }
+            .typewriter-cursor { border-right-width: 3px; height: 1.1em; }
         }
-        
-        /* Ensure hero headline contains the typewriter */
-        #hero-rotating-headline {
-            min-height: 1.2em;
-            overflow: hidden;
-        }
-        
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
+        #hero-rotating-headline { min-height: 1.2em; overflow: hidden; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
         .mask-fade {
             mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
         }
         .neon-border-purple {
-            box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.3), 0 0 10px rgba(139, 92, 246, 0.1);
+            box-shadow: 0 0 0 1px rgba(108, 92, 231, 0.3), 0 0 10px rgba(108, 92, 231, 0.1);
         }
         .neon-border-orange {
-            box-shadow: 0 0 0 1px rgba(250, 110, 74, 0.3), 0 0 10px rgba(250, 110, 74, 0.1);
+            box-shadow: 0 0 0 1px rgba(162, 155, 254, 0.3), 0 0 10px rgba(162, 155, 254, 0.1);
         }
-        .promoted-section {
-            background: #070403;
-            position: relative;
-        }
-        .features-section {
-            background: #070403;
-            position: relative;
-        }
-        .testimonials-section {
-            background: #070403;
-            position: relative;
-        }
-        .pricing-section {
-            background: #070403;
-            position: relative;
-        }
-        .app-download-section {
-            background: #070403;
-            position: relative;
-        }
-        .templates-section {
-            background: #070403;
-            position: relative;
-        }
-        .main-footer {
-            background: #070403;
-            position: relative;
-        }
-        .highlight-border {
-            position: relative;
-        }
+        .promoted-section { background: #131318; position: relative; }
+        .features-section { background: #131318; position: relative; }
+        .testimonials-section { background: #0a0a0c; position: relative; }
+        .pricing-section { background: #131318; position: relative; }
+        .templates-section { background: #131318; position: relative; }
+        .main-footer { background: #131318; position: relative; }
+        .highlight-border { position: relative; }
         .highlight-border::after {
             content: '';
             position: absolute;
             inset: -1px;
             padding: 1px;
             border-radius: inherit;
-            background: linear-gradient(to bottom right, #FA6E4A, #f43f5e);
+            background: linear-gradient(to bottom right, #6c5ce7, #a29bfe);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             pointer-events: none;
         }
-        .neon-icon-glow {
-            filter: drop-shadow(0 0 8px currentColor);
-        }
+        .neon-icon-glow { filter: drop-shadow(0 0 8px currentColor); }
         .glassmorphic-btn {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(12px);
@@ -230,17 +167,49 @@
             position: absolute;
             width: 120px;
             height: 120px;
-            background: radial-gradient(circle, rgba(250, 110, 74, 0.15) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(108, 92, 231, 0.15) 0%, transparent 70%);
             filter: blur(20px);
             z-index: 0;
             pointer-events: none;
         }
+        .testimonial-glow-purple {
+            background: radial-gradient(circle, rgba(162, 155, 254, 0.15) 0%, transparent 70%);
+        }
+        .testimonial-glow-cyan {
+            background: radial-gradient(circle, rgba(0, 206, 201, 0.12) 0%, transparent 70%);
+        }
+        .genre-chip {
+            background: #1a1a22;
+            border: 1px solid #2a2a36;
+            color: #8888a0;
+            border-radius: 9999px;
+            padding: 6px 16px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .genre-chip:hover { border-color: #6c5ce7; color: #e8e8ed; }
+        .genre-chip.active {
+            border-color: #6c5ce7;
+            background: rgba(108, 92, 231, 0.15);
+            color: #a29bfe;
+        }
+        .hero-radial-glow {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 700px;
+            height: 500px;
+            background: radial-gradient(ellipse, rgba(108, 92, 231, 0.18) 0%, rgba(108, 92, 231, 0.05) 50%, transparent 80%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .landing-nav-link { color: #8888a0; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+        .landing-nav-link:hover { color: #e8e8ed; }
     </style>
     <style>
-        body {
-            min-height: max(884px, 100dvh);
-        }
-        /* Redesign Grid & Card Sizing */
+        body { min-height: max(884px, 100dvh); }
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, 376px);
@@ -248,29 +217,23 @@
             justify-content: center;
             padding: 20px 0;
         }
-        .unified-card {
-            width: 376px;
-            height: 460px;
-            min-width: 376px;
-            flex: 0 0 auto;
-        }
-        /* Template Dropdown Menu Styles */
+        .unified-card { width: 376px; height: 460px; min-width: 376px; flex: 0 0 auto; }
+        /* Template Dropdown */
         .template-dropdown {
             position: fixed;
-            background: white;
-            border-radius: 4px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: #1a1a22;
+            border: 1px solid #2a2a36;
+            border-radius: 8px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
             padding: 8px 0;
             min-width: 160px;
             z-index: 10000;
             display: none;
         }
-        .template-dropdown.active {
-            display: block;
-        }
+        .template-dropdown.active { display: block; }
         .template-dropdown-item {
             padding: 10px 16px;
-            color: #1a1a1a;
+            color: #e8e8ed;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
@@ -280,26 +243,17 @@
             gap: 8px;
             outline: none;
         }
-        .template-dropdown-item:hover,
-        .template-dropdown-item:focus {
-            background-color: #f3f4f6;
-        }
-        .template-dropdown-item:focus-visible {
-            background-color: #f3f4f6;
-        }
-        .template-dropdown-item:active {
-            background-color: #e5e7eb;
-        }
-        .template-dropdown-item[aria-selected="true"] {
-            background-color: #f3f4f6;
-        }
-
-        /* Hero Create Button Dropdown Menu */
+        .template-dropdown-item:hover, .template-dropdown-item:focus { background-color: #2a2a36; }
+        .template-dropdown-item:focus-visible { background-color: #2a2a36; }
+        .template-dropdown-item:active { background-color: #35354a; }
+        .template-dropdown-item[aria-selected="true"] { background-color: #2a2a36; }
+        /* Hero Create Dropdown */
         .hero-create-dropdown {
             position: absolute;
-            background: white;
-            border-radius: 4px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: #1a1a22;
+            border: 1px solid #2a2a36;
+            border-radius: 8px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
             padding: 8px 0;
             min-width: 180px;
             z-index: 1000;
@@ -308,12 +262,10 @@
             top: 100%;
             right: 0;
         }
-        .hero-create-dropdown.active {
-            display: block;
-        }
+        .hero-create-dropdown.active { display: block; }
         .hero-create-dropdown-item {
             padding: 10px 16px;
-            color: #1a1a1a;
+            color: #e8e8ed;
             font-size: 14px;
             font-weight: 500;
             cursor: pointer;
@@ -328,109 +280,143 @@
             text-align: left;
             font-family: inherit;
         }
-        .hero-create-dropdown-item:hover,
-        .hero-create-dropdown-item:focus {
-            background-color: #f3f4f6;
-        }
+        .hero-create-dropdown-item:hover, .hero-create-dropdown-item:focus { background-color: #2a2a36; }
         .hero-create-dropdown-item:focus-visible {
-            background-color: #f3f4f6;
-            outline: 2px solid #FA6E4A;
+            background-color: #2a2a36;
+            outline: 2px solid #6c5ce7;
             outline-offset: -2px;
         }
-        .hero-create-dropdown-item:active {
-            background-color: #e5e7eb;
-        }
-        .hero-create-dropdown-item[aria-selected="true"] {
-            background-color: #f3f4f6;
-        }
-        .hero-create-dropdown-item .material-symbols-outlined {
-            font-size: 18px;
-            color: #666;
-        }
-        .hero-create-dropdown-container {
-            position: relative;
-            display: inline-block;
-        }
+        .hero-create-dropdown-item:active { background-color: #35354a; }
+        .hero-create-dropdown-item[aria-selected="true"] { background-color: #2a2a36; }
+        .hero-create-dropdown-item .material-symbols-outlined { font-size: 18px; color: #8888a0; }
+        .hero-create-dropdown-container { position: relative; display: inline-block; }
     </style>
 {% endblock %}
 
-{% block body_class %}pb-40{% endblock %}
+{% block body_class %}pb-24{% endblock %}
 
 {% block content %}
-<section class="grainy-bg min-h-screen flex flex-col items-center pt-8 px-6 relative overflow-hidden">
-<header class="w-full flex items-center justify-between z-20 mb-16">
-<div class="flex items-center gap-1">
-<span class="font-black text-xl tracking-tighter uppercase italic text-white">Vnuno</span>
-</div>
-<div class="flex items-center gap-4">
-<a href="{{ url_for('auth.login') }}" class="text-xs font-semibold px-3 py-1.5 hover:bg-white/10 rounded-full transition-colors text-white">Sign In</a>
-<a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-white text-black px-4 py-1.5 rounded-full hover:bg-white/90 transition-colors">Sign Up</a>
-</div>
-</header>
-<div class="max-w-xl w-full text-center z-10 mt-12">
-<p class="text-primary-orange text-xs font-bold tracking-[0.2em] uppercase mb-4">AI-Powered Music Creation</p>
-<h1 class="text-4xl sm:text-6xl font-extrabold leading-[1.1] tracking-tight mb-6 text-white" aria-live="polite" id="hero-rotating-headline">
-                <span class="typewriter-container">
-                    <span id="hero-text-content" class="typewriter-text">Make a country song about Jess</span><span id="hero-typewriter-cursor" class="typewriter-cursor cursor-blink"></span>
-                </span>
-</h1>
-<p class="text-white/60 text-sm sm:text-base font-medium mb-8 max-w-sm mx-auto">
-                Start with a simple prompt or dive into our pro editing tools, your next track is just a step away.
-            </p>
-<div class="bg-black/30 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 w-full shadow-2xl">
-<div class="relative min-h-[100px] flex flex-col justify-between">
-<input type="text" id="hero-prompt-input" placeholder="Type any idea you have into a song" class="text-left text-white text-sm font-medium px-2 py-2 bg-transparent border-none outline-none placeholder-white/40 w-full mb-2">
-<div class="flex items-center justify-between mt-4">
-<div class="flex gap-2">
-<button id="hero-random-btn" class="size-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors" title="Random prompt">
-<span class="material-symbols-outlined text-xl text-white">casino</span>
-</button>
-</div>
-<div class="flex items-center gap-2 hero-create-dropdown-container" id="hero-create-container">
-<button id="hero-create-btn" class="bg-gradient-to-r from-primary-orange via-suno-pink to-primary-orange bg-[length:200%_auto] text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-lg flex items-center gap-2 transition-all active:scale-95 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed" aria-haspopup="menu" aria-expanded="false" aria-controls="hero-create-dropdown-menu">
-<span class="material-symbols-outlined text-base">music_note</span>
-<span id="hero-create-text">Create</span>
-<span class="material-symbols-outlined text-base" aria-hidden="true">expand_more</span>
-</button>
-<div id="hero-create-dropdown-menu" class="hero-create-dropdown" role="menu" aria-labelledby="hero-create-btn">
-<button class="hero-create-dropdown-item" role="menuitem" tabindex="-1" data-action="cover" aria-selected="false">
-<span class="material-symbols-outlined">image</span>
-<span>Cover Generator</span>
-</button>
-<button class="hero-create-dropdown-item" role="menuitem" tabindex="-1" data-action="music" aria-selected="false">
-<span class="material-symbols-outlined">music_note</span>
-<span>Music Generator</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-</div>
-<a href="#features-section" class="mt-8 flex items-center justify-center gap-2 text-xs font-semibold bg-white/5 border border-white/10 px-4 py-2 rounded-full mx-auto hover:bg-white/10 transition-all text-white">
-                Explore Advanced Features
-                <span class="material-symbols-outlined text-sm">arrow_downward</span>
-</a>
-</div>
-<div class="mt-auto w-full max-w-4xl pb-12 pt-20">
-<div class="flex flex-wrap justify-center gap-8 text-center">
-<span class="text-lg font-bold tracking-tighter text-white">Billboard</span>
-<span class="text-lg font-bold tracking-tighter text-white">COMPLEX</span>
-<span class="text-lg font-serif font-bold italic text-white">Forbes</span>
-<span class="text-lg font-serif font-bold text-white">RollingStone</span>
-<span class="text-lg font-bold uppercase text-white">Variety</span>
-<span class="text-lg font-mono font-bold tracking-widest uppercase text-white">Wired</span>
-</div>
-</div>
-<div class="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-[#070403] to-transparent pointer-events-none z-10"></div>
+<!-- ========== NAVIGATION ========== -->
+<nav class="fixed top-0 left-0 right-0 z-50 border-b border-[#2a2a36] bg-[#0a0a0c]/90 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#6c5ce7] text-2xl">music_note</span>
+            <span class="font-black text-xl tracking-tighter text-[#e8e8ed]">Vnuno</span>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+            <a href="#features-section" class="landing-nav-link">Features</a>
+            <a href="#pricing" class="landing-nav-link">Pricing</a>
+            <a href="/library" class="landing-nav-link">Library</a>
+            <a href="/lyrics-extraction" class="landing-nav-link">Lyrics</a>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ url_for('auth.login') }}" class="text-sm font-medium text-[#8888a0] hover:text-[#e8e8ed] transition-colors px-3 py-1.5">Sign In</a>
+            <a href="{{ url_for('auth.register') }}" class="text-sm font-semibold bg-[#6c5ce7] hover:bg-[#5a4bd1] text-white px-4 py-2 rounded-full transition-colors">Get Started</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ========== HERO SECTION ========== -->
+<section class="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 overflow-hidden bg-[#0a0a0c]">
+    <div class="hero-radial-glow"></div>
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-[#6c5ce7]/10 rounded-full blur-[120px] pointer-events-none"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[#a29bfe]/8 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <div class="relative z-10 max-w-3xl w-full text-center">
+        <div class="inline-flex items-center gap-2 bg-[#1a1a22] border border-[#2a2a36] rounded-full px-4 py-2 mb-8">
+            <span class="w-2 h-2 rounded-full bg-[#00cec9] animate-pulse" role="img" aria-label="Live indicator"></span>
+            <span class="text-[#8888a0] text-sm font-medium">10,000+ creators making music right now</span>
+        </div>
+
+        <h1 class="text-4xl sm:text-6xl font-extrabold leading-[1.1] tracking-tight mb-6 text-[#e8e8ed]" aria-live="polite" id="hero-rotating-headline">
+            <span class="typewriter-container">
+                <span id="hero-text-content" class="typewriter-text">Make a country song about Jess</span><span id="hero-typewriter-cursor" class="typewriter-cursor cursor-blink"></span>
+            </span>
+        </h1>
+
+        <p class="text-[#8888a0] text-base sm:text-lg font-medium mb-10 max-w-xl mx-auto">
+            Start with a simple prompt or dive into our pro editing tools — your next track is just a step away.
+        </p>
+
+        <div class="bg-[#131318] border border-[#2a2a36] focus-within:border-[#6c5ce7] rounded-2xl p-4 w-full shadow-2xl transition-colors mb-4">
+            <div class="flex flex-col gap-4">
+                <input
+                    type="text"
+                    id="hero-prompt-input"
+                    placeholder="Describe your song..."
+                    class="text-[#e8e8ed] text-sm font-medium px-2 py-2 bg-transparent border-none outline-none placeholder-[#8888a0] w-full"
+                >
+                <div class="flex items-center justify-between">
+                    <button id="hero-random-btn" class="size-9 flex items-center justify-center rounded-full bg-[#1a1a22] hover:bg-[#2a2a36] transition-colors border border-[#2a2a36]" title="Random prompt">
+                        <span class="material-symbols-outlined text-lg text-[#8888a0]">casino</span>
+                    </button>
+                    <div class="flex items-center gap-2 hero-create-dropdown-container" id="hero-create-container">
+                        <button
+                            id="hero-create-btn"
+                            class="bg-[#6c5ce7] hover:bg-[#5a4bd1] text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-lg flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                            aria-haspopup="menu" aria-expanded="false" aria-controls="hero-create-dropdown-menu"
+                        >
+                            <span class="material-symbols-outlined text-base">music_note</span>
+                            <span id="hero-create-text">Create</span>
+                            <span class="material-symbols-outlined text-base" aria-hidden="true">expand_more</span>
+                        </button>
+                        <div id="hero-create-dropdown-menu" class="hero-create-dropdown" role="menu" aria-labelledby="hero-create-btn">
+                            <button class="hero-create-dropdown-item" role="menuitem" tabindex="-1" data-action="cover" aria-selected="false">
+                                <span class="material-symbols-outlined">image</span>
+                                <span>Cover Generator</span>
+                            </button>
+                            <button class="hero-create-dropdown-item" role="menuitem" tabindex="-1" data-action="music" aria-selected="false">
+                                <span class="material-symbols-outlined">music_note</span>
+                                <span>Music Generator</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-2">
+            <button class="genre-chip" data-genre="Lo-fi">Lo-fi</button>
+            <button class="genre-chip" data-genre="Hip Hop">Hip Hop</button>
+            <button class="genre-chip" data-genre="Pop">Pop</button>
+            <button class="genre-chip" data-genre="Rock">Rock</button>
+            <button class="genre-chip" data-genre="Country">Country</button>
+            <button class="genre-chip" data-genre="R&B">R&amp;B</button>
+            <button class="genre-chip" data-genre="EDM">EDM</button>
+            <button class="genre-chip" data-genre="Classical">Classical</button>
+        </div>
+    </div>
+
+    <a href="#features-section" class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-[#8888a0] hover:text-[#e8e8ed] transition-colors z-10">
+        <span class="text-xs font-medium tracking-widest uppercase">Explore</span>
+        <span class="material-symbols-outlined animate-bounce text-sm">keyboard_arrow_down</span>
+    </a>
+    <div class="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#0a0a0c] to-transparent pointer-events-none z-10"></div>
 </section>
+
+<!-- ========== SOCIAL PROOF BAR ========== -->
+<section class="py-12 border-y border-[#2a2a36] bg-[#131318]">
+    <div class="max-w-5xl mx-auto px-6">
+        <p class="text-center text-[#8888a0] text-xs font-semibold tracking-widest uppercase mb-6">As seen in</p>
+        <div class="flex flex-wrap justify-center items-center gap-10">
+            <span class="text-xl font-black tracking-tighter text-[#e8e8ed] opacity-30">Billboard</span>
+            <span class="text-xl font-black tracking-tighter text-[#e8e8ed] opacity-30">Forbes</span>
+            <span class="text-xl font-serif font-bold italic text-[#e8e8ed] opacity-30">Rolling Stone</span>
+            <span class="text-xl font-mono font-bold tracking-widest uppercase text-[#e8e8ed] opacity-30">Wired</span>
+            <span class="text-xl font-bold uppercase text-[#e8e8ed] opacity-30">Variety</span>
+        </div>
+    </div>
+</section>
+
+<!-- ========== TEMPLATES SECTION ========== -->
 <section class="templates-section grain-overlay pt-20 px-0 overflow-hidden relative">
     <div class="px-6 flex items-end justify-between mb-8 gap-4 max-w-[1200px] mx-auto relative z-10">
         <div class="flex flex-col gap-2">
-            <p class="text-primary-orange text-[10px] font-bold tracking-[0.2em] uppercase">Jumpstart Your Creativity</p>
-            <h2 class="text-3xl font-extrabold tracking-tighter uppercase italic leading-none text-white">Browse Templates</h2>
-            <p class="text-white/50 text-sm mt-1">Hundreds of curated styles to spark your next hit</p>
+            <p class="text-[#6c5ce7] text-[10px] font-bold tracking-[0.2em] uppercase">Jumpstart Your Creativity</p>
+            <h2 class="text-3xl font-extrabold tracking-tighter uppercase italic leading-none text-[#e8e8ed]">Browse Templates</h2>
+            <p class="text-[#8888a0] text-sm mt-1">Hundreds of curated styles to spark your next hit</p>
         </div>
-        <a href="/library" class="text-[10px] font-bold tracking-widest uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2 hover:bg-white/10 transition-colors text-white shrink-0 mb-1">
+        <a href="/library" class="text-[10px] font-bold tracking-widest uppercase bg-[#1a1a22] border border-[#2a2a36] px-3 py-1.5 rounded-full flex items-center gap-2 hover:border-[#6c5ce7] transition-colors text-[#8888a0] hover:text-[#e8e8ed] shrink-0 mb-1">
             View All
         </a>
     </div>
@@ -438,454 +424,334 @@
         <!-- Templates will be injected here via JS -->
     </div>
 </section>
-<section class="promoted-section grain-overlay pt-20 px-0 relative">
-    <div class="px-6 flex items-end justify-between mb-8 gap-4 max-w-[1200px] mx-auto relative z-10">
-        <div class="flex flex-col gap-2">
-            <p class="text-primary-orange text-[10px] font-bold tracking-[0.2em] uppercase">Community Spotlight</p>
-            <h2 class="text-3xl font-extrabold tracking-tighter uppercase italic leading-none text-white">Promoted Creator Songs</h2>
-            <p class="text-white/50 text-sm mt-1">Discover trending tracks from our global artist community</p>
+
+<!-- ========== COMMUNITY SHOWCASE ========== -->
+<section class="promoted-section grain-overlay py-16 px-0 relative">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex items-end justify-between mb-8 gap-4">
+            <div>
+                <p class="text-[#6c5ce7] text-[10px] font-bold tracking-[0.2em] uppercase mb-2">Community Spotlight</p>
+                <h2 class="text-3xl font-bold text-[#e8e8ed]">Community Showcase</h2>
+                <p class="text-[#8888a0] mt-1 text-sm">Tracks created by our community</p>
+            </div>
+            <a href="/library" class="text-[10px] font-bold tracking-widest uppercase bg-[#1a1a22] border border-[#2a2a36] px-3 py-1.5 rounded-full flex items-center gap-2 hover:border-[#6c5ce7] transition-colors text-[#8888a0] hover:text-[#e8e8ed] shrink-0 mb-1">
+                View All
+            </a>
         </div>
-        <a href="/library" class="text-[10px] font-bold tracking-widest uppercase bg-white/5 border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2 hover:bg-white/10 transition-colors text-white shrink-0 mb-1">
-            View All
-        </a>
-    </div>
-    <div class="promoted-container-wrapper max-w-[1200px] mx-auto">
-        <button class="promoted-scroll-btn left" id="promoted-scroll-left" aria-label="Scroll left">
-            <span class="material-symbols-outlined">chevron_left</span>
-        </button>
-        <div id="promoted-cards-container" class="no-scrollbar px-6">
-            <!-- Creator songs will be injected here via JS using CardFactory -->
+        <div class="promoted-container-wrapper relative">
+            <button class="promoted-scroll-btn left" id="promoted-scroll-left" aria-label="Scroll left">
+                <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <div id="promoted-cards-container" class="no-scrollbar px-0">
+                <!-- JS will populate this -->
+            </div>
+            <button class="promoted-scroll-btn right" id="promoted-scroll-right" aria-label="Scroll right">
+                <span class="material-symbols-outlined">chevron_right</span>
+            </button>
         </div>
-        <button class="promoted-scroll-btn right" id="promoted-scroll-right" aria-label="Scroll right">
-            <span class="material-symbols-outlined">chevron_right</span>
-        </button>
     </div>
 </section>
+
+<!-- ========== FEATURES SECTION ========== -->
 <section id="features-section" class="features-section grain-overlay py-24 px-6 overflow-hidden">
     <div class="relative z-10 max-w-[1200px] mx-auto">
         <div class="text-center mb-16">
-            <p class="text-primary-orange text-[10px] font-bold tracking-[0.2em] uppercase mb-3">Studio-Grade Tools</p>
-            <h2 class="text-3xl font-extrabold tracking-tighter uppercase italic leading-[1.1] mb-4 text-white">Features</h2>
-            <p class="text-white/50 text-sm max-w-md mx-auto">Everything you need to produce professional-quality music in minutes</p>
-            <div class="w-12 h-1 bg-gradient-to-r from-primary-orange to-suno-pink mx-auto rounded-full mt-4"></div>
+            <p class="text-[#6c5ce7] text-[10px] font-bold tracking-[0.2em] uppercase mb-3">Studio-Grade Tools</p>
+            <h2 class="text-3xl font-extrabold tracking-tighter uppercase italic leading-[1.1] mb-4 text-[#e8e8ed]">Features</h2>
+            <p class="text-[#8888a0] text-sm max-w-md mx-auto">Everything you need to produce professional-quality music in minutes</p>
+            <div class="w-12 h-1 bg-gradient-to-r from-[#6c5ce7] to-[#a29bfe] mx-auto rounded-full mt-4"></div>
         </div>
-        
-        <div class="cards-grid">
-            <!-- 1. Existing Feature Card 1: Custom Lyrics -->
-            <div class="unified-card group relative p-3 rounded-2xl bg-white/[0.03] backdrop-blur-md neon-border-purple border border-white/5 overflow-hidden transition-transform hover:-translate-y-1">
-                <div class="relative aspect-video rounded-lg overflow-hidden mb-3 border border-white/5 h-48">
-                    <div class="absolute inset-0 bg-gradient-to-br from-pink-900/40 to-black"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-4xl text-pink-400">edit_note</span>
-                    </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="group relative p-6 rounded-2xl bg-[#1a1a22] border border-[#2a2a36] hover:border-[#6c5ce7] overflow-hidden transition-all hover:-translate-y-1">
+                <div class="w-12 h-12 rounded-xl bg-[#6c5ce7]/20 flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-[#a29bfe] text-2xl">edit_note</span>
                 </div>
-                <div class="px-2 pb-2">
-                    <h3 class="text-lg font-bold tracking-tight mb-1 text-white">Custom Lyrics</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Shape your story word-for-word or let our AI enhance your ideas with poetic precision.</p>
+                <h3 class="text-lg font-bold mb-2 text-[#e8e8ed]">Custom Lyrics</h3>
+                <p class="text-[#8888a0] text-sm leading-relaxed">Shape your story word-for-word or let our AI enhance your ideas with poetic precision.</p>
+            </div>
+            <div class="group relative p-6 rounded-2xl bg-[#1a1a22] border border-[#2a2a36] hover:border-[#6c5ce7] overflow-hidden transition-all hover:-translate-y-1">
+                <div class="w-12 h-12 rounded-xl bg-[#00cec9]/15 flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-[#00cec9] text-2xl">tune</span>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-[#e8e8ed]">Style Control</h3>
+                <p class="text-[#8888a0] text-sm leading-relaxed">From lo-fi hip hop to cinematic orchestral, define your sound with granular style prompts.</p>
+            </div>
+            <div class="group relative p-6 rounded-2xl bg-[#1a1a22] border border-[#2a2a36] hover:border-[#6c5ce7] overflow-hidden transition-all hover:-translate-y-1">
+                <div class="w-12 h-12 rounded-xl bg-[#fd79a8]/15 flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-[#fd79a8] text-2xl">graphic_eq</span>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-[#e8e8ed]">Studio Fidelity</h3>
+                <p class="text-[#8888a0] text-sm leading-relaxed">Generate audio in pristine 48kHz stereo for professional, broadcast-ready results.</p>
+            </div>
+            <div class="group relative p-6 rounded-2xl bg-[#1a1a22] border border-[#2a2a36] hover:border-[#6c5ce7] overflow-hidden transition-all hover:-translate-y-1">
+                <div class="w-12 h-12 rounded-xl bg-[#e17055]/15 flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-[#e17055] text-2xl">mic_external_on</span>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-[#e8e8ed]">Crisp Vocals</h3>
+                <p class="text-[#8888a0] text-sm leading-relaxed">Advanced synthesis produces clear, emotive, and natural-sounding voices for every genre.</p>
+            </div>
+            <div class="group relative p-6 rounded-2xl bg-[#1a1a22] border border-[#2a2a36] hover:border-[#6c5ce7] overflow-hidden transition-all hover:-translate-y-1">
+                <div class="w-12 h-12 rounded-xl bg-[#6c5ce7]/20 flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-[#a29bfe] text-2xl">speed</span>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-[#e8e8ed]">Fast Generation</h3>
+                <p class="text-[#8888a0] text-sm leading-relaxed">Go from text prompt to a full, polished song in under a minute.</p>
+            </div>
+            <div class="group relative p-6 rounded-2xl bg-[#1a1a22] border border-[#2a2a36] hover:border-[#6c5ce7] overflow-hidden transition-all hover:-translate-y-1">
+                <div class="w-12 h-12 rounded-xl bg-[#00cec9]/15 flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-[#00cec9] text-2xl">lyrics</span>
+                </div>
+                <h3 class="text-lg font-bold mb-2 text-[#e8e8ed]">Lyrics Extraction</h3>
+                <p class="text-[#8888a0] text-sm leading-relaxed">Extract lyrics from any audio file using advanced AI speech recognition.
+                    <a href="/lyrics-extraction" class="inline-flex items-center gap-1 text-[#6c5ce7] hover:text-[#a29bfe] transition-colors font-medium ml-1">Try it now <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== TESTIMONIALS ========== -->
+<section class="testimonials-section grain-overlay py-24 overflow-hidden relative">
+    <div class="relative z-10 max-w-[1200px] mx-auto px-6">
+        <div class="mb-12">
+            <p class="text-[#6c5ce7] text-[10px] font-bold tracking-[0.2em] uppercase mb-2">Trusted by 10,000+ Artists</p>
+            <h2 class="text-3xl font-extrabold tracking-tighter uppercase italic leading-none text-[#e8e8ed]">Hear From Our Creators</h2>
+            <p class="text-[#8888a0] text-sm mt-3 max-w-md">See how musicians, producers, and content creators are transforming their sound</p>
+            <div class="mt-4 w-12 h-1 bg-gradient-to-r from-[#6c5ce7] to-[#a29bfe] rounded-full"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="relative">
+                <div class="testimonial-glow top-0 left-0"></div>
+                <div class="testimonial-card rounded-2xl p-6 flex flex-col h-full">
+                    <div class="flex gap-1 mb-4">
+                        {% for _ in range(5) %}<span class="material-symbols-outlined text-[#6c5ce7] text-sm font-fill">star</span>{% endfor %}
+                    </div>
+                    <p class="text-[#e8e8ed]/80 text-sm italic leading-relaxed mb-6 flex-1">"I never thought I could produce a full metal track in minutes. Vnuno is a complete game changer for my workflow."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 rounded-full bg-gradient-to-tr from-[#6c5ce7] to-[#a29bfe] p-[2px]">
+                            <div class="w-full h-full rounded-full bg-[#1a1a22] flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[#a29bfe] text-base">person</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-[#e8e8ed]">@RiffMaster</p>
+                            <p class="text-[10px] text-[#8888a0] uppercase font-bold tracking-widest">Producer</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <!-- 2. Existing Feature Card 2: Style Control -->
-            <div class="unified-card group relative p-3 rounded-2xl bg-white/[0.03] backdrop-blur-md neon-border-orange border border-white/5 overflow-hidden transition-transform hover:-translate-y-1">
-                <div class="relative aspect-video rounded-lg overflow-hidden mb-3 border border-white/5 h-48">
-                    <div class="absolute inset-0 bg-gradient-to-br from-orange-900/40 to-black"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-4xl text-orange-400">tune</span>
+            <div class="relative">
+                <div class="testimonial-glow testimonial-glow-purple bottom-0 right-0"></div>
+                <div class="testimonial-card rounded-2xl p-6 flex flex-col h-full">
+                    <div class="flex gap-1 mb-4">
+                        {% for _ in range(5) %}<span class="material-symbols-outlined text-[#6c5ce7] text-sm font-fill">star</span>{% endfor %}
                     </div>
-                </div>
-                <div class="px-2 pb-2">
-                    <h3 class="text-lg font-bold tracking-tight mb-1 text-white">Style Control</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">From lo-fi hip hop to cinematic orchestral, define your sound with granular style prompts.</p>
+                    <p class="text-[#e8e8ed]/80 text-sm italic leading-relaxed mb-6 flex-1">"The lyrics engine is terrifyingly good. It captured the exact mood of my poem and turned it into a haunting ballad."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 rounded-full bg-gradient-to-tr from-[#a29bfe] to-[#fd79a8] p-[2px]">
+                            <div class="w-full h-full rounded-full bg-[#1a1a22] flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[#fd79a8] text-base">person</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-[#e8e8ed]">@Lyricist_Luna</p>
+                            <p class="text-[10px] text-[#8888a0] uppercase font-bold tracking-widest">Songwriter</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <!-- 3. Moved Feature Card: Studio Fidelity -->
-            <div class="unified-card group relative p-3 rounded-2xl bg-white/[0.03] backdrop-blur-md neon-border-purple border border-white/5 overflow-hidden transition-transform hover:-translate-y-1">
-                <div class="relative aspect-video rounded-lg overflow-hidden mb-3 border border-white/5 h-48">
-                    <div class="absolute inset-0 bg-gradient-to-br from-purple-900/40 to-black"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-4xl text-purple-400">graphic_eq</span>
+            <div class="relative">
+                <div class="testimonial-glow testimonial-glow-cyan top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                <div class="testimonial-card rounded-2xl p-6 flex flex-col h-full">
+                    <div class="flex gap-1 mb-4">
+                        {% for _ in range(5) %}<span class="material-symbols-outlined text-[#6c5ce7] text-sm font-fill">star</span>{% endfor %}
                     </div>
-                </div>
-                <div class="px-2 pb-2">
-                    <h3 class="text-lg font-bold tracking-tight mb-1 text-white">Studio Fidelity</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Generate audio in pristine 48kHz stereo for professional results.</p>
-                </div>
-            </div>
-
-            <!-- 4. Moved Feature Card: Smart Mixing -->
-            <div class="unified-card group relative p-3 rounded-2xl bg-white/[0.03] backdrop-blur-md neon-border-orange border border-white/5 overflow-hidden transition-transform hover:-translate-y-1">
-                <div class="relative aspect-video rounded-lg overflow-hidden mb-3 border border-white/5 h-48">
-                    <div class="absolute inset-0 bg-gradient-to-br from-orange-900/40 to-black"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-4xl text-orange-400">auto_fix_high</span>
+                    <p class="text-[#e8e8ed]/80 text-sm italic leading-relaxed mb-6 flex-1">"From lo-fi beats to full cinematic scores, the range is incredible. My content creation has never sounded this professional."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 rounded-full bg-gradient-to-tr from-[#00cec9] to-[#6c5ce7] p-[2px]">
+                            <div class="w-full h-full rounded-full bg-[#1a1a22] flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[#00cec9] text-base">person</span>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-[#e8e8ed]">@VibeCreator</p>
+                            <p class="text-[10px] text-[#8888a0] uppercase font-bold tracking-widest">YouTuber</p>
+                        </div>
                     </div>
-                </div>
-                <div class="px-2 pb-2">
-                    <h3 class="text-lg font-bold tracking-tight mb-1 text-white">Smart Mixing</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">AI-driven mastering ensures balanced levels between vocals and instruments.</p>
-                </div>
-            </div>
-
-            <!-- 5. Moved Feature Card: Genre Fluidity -->
-            <div class="unified-card group relative p-3 rounded-2xl bg-white/[0.03] backdrop-blur-md neon-border-purple border border-white/5 overflow-hidden transition-transform hover:-translate-y-1">
-                <div class="relative aspect-video rounded-lg overflow-hidden mb-3 border border-white/5 h-48">
-                    <div class="absolute inset-0 bg-gradient-to-br from-pink-900/40 to-black"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-4xl text-pink-400">queue_music</span>
-                    </div>
-                </div>
-                <div class="px-2 pb-2">
-                    <h3 class="text-lg font-bold tracking-tight mb-1 text-white">Genre Fluidity</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Seamlessly blend styles from Classical to EDM in a single track.</p>
-                </div>
-            </div>
-
-            <!-- 6. Moved Feature Card: Crisp Vocals -->
-            <div class="unified-card group relative p-3 rounded-2xl bg-white/[0.03] backdrop-blur-md neon-border-orange border border-white/5 overflow-hidden transition-transform hover:-translate-y-1">
-                <div class="relative aspect-video rounded-lg overflow-hidden mb-3 border border-white/5 h-48">
-                    <div class="absolute inset-0 bg-gradient-to-br from-red-900/40 to-black"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-4xl text-red-400">mic_external_on</span>
-                    </div>
-                </div>
-                <div class="px-2 pb-2">
-                    <h3 class="text-lg font-bold tracking-tight mb-1 text-white">Crisp Vocals</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Advanced synthesis produces clear, emotive, and natural-sounding voices.</p>
-                </div>
-            </div>
-
-            <!-- 7. Moved Feature Card: Rich Instrumentals -->
-            <div class="unified-card group relative p-3 rounded-2xl bg-white/[0.03] backdrop-blur-md neon-border-purple border border-white/5 overflow-hidden transition-transform hover:-translate-y-1">
-                <div class="relative aspect-video rounded-lg overflow-hidden mb-3 border border-white/5 h-48">
-                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-900/40 to-black"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-4xl text-indigo-400">piano</span>
-                    </div>
-                </div>
-                <div class="px-2 pb-2">
-                    <h3 class="text-lg font-bold tracking-tight mb-1 text-white">Rich Instrumentals</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Deep bass, shimmering synths, and realistic acoustic textures.</p>
-                </div>
-            </div>
-
-            <!-- 8. Moved Feature Card: Dynamic Range -->
-            <div class="unified-card group relative p-3 rounded-2xl bg-white/[0.03] backdrop-blur-md neon-border-orange border border-white/5 overflow-hidden transition-transform hover:-translate-y-1">
-                <div class="relative aspect-video rounded-lg overflow-hidden mb-3 border border-white/5 h-48">
-                    <div class="absolute inset-0 bg-gradient-to-br from-yellow-900/40 to-black"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-4xl text-yellow-400">waves</span>
-                    </div>
-                </div>
-                <div class="px-2 pb-2">
-                    <h3 class="text-lg font-bold tracking-tight mb-1 text-white">Dynamic Range</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Experience the full emotional impact with wide dynamic contrast.</p>
-                </div>
-            </div>
-
-            <!-- 9. Moved Feature Card: Fast Generation -->
-            <div class="unified-card group relative p-3 rounded-2xl bg-white/[0.03] backdrop-blur-md neon-border-purple border border-white/5 overflow-hidden transition-transform hover:-translate-y-1">
-                <div class="relative aspect-video rounded-lg overflow-hidden mb-3 border border-white/5 h-48">
-                    <div class="absolute inset-0 bg-gradient-to-br from-blue-900/40 to-black"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-4xl text-blue-400">speed</span>
-                    </div>
-                </div>
-                <div class="px-2 pb-2">
-                    <h3 class="text-lg font-bold tracking-tight mb-1 text-white">Fast Generation</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Go from text prompt to full song in under a minute.</p>
-                </div>
-            </div>
-
-            <!-- 10. New Feature Card: Lyrics Extraction -->
-            <div class="unified-card group relative p-3 rounded-2xl bg-white/[0.03] backdrop-blur-md neon-border-orange border border-white/5 overflow-hidden transition-transform hover:-translate-y-1">
-                <div class="relative aspect-video rounded-lg overflow-hidden mb-3 border border-white/5 h-48">
-                    <div class="absolute inset-0 bg-gradient-to-br from-green-900/40 to-black"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-4xl text-green-400">lyrics</span>
-                    </div>
-                </div>
-                <div class="px-2 pb-2">
-                    <h3 class="text-lg font-bold tracking-tight mb-1 text-white">Lyrics Extraction</h3>
-                    <p class="text-white/50 text-sm leading-relaxed">Extract lyrics from any audio file using advanced AI speech recognition.</p>
-                    <a href="/lyrics-extraction" class="inline-flex items-center gap-1 text-primary-orange hover:text-suno-pink transition-colors text-sm font-medium mt-2">
-                        Try it now
-                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                    </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<section class="testimonials-section grain-overlay py-24 overflow-hidden relative">
-<div class="relative z-10">
-<div class="px-6 mb-12">
-<p class="text-primary-orange text-[10px] font-bold tracking-[0.2em] uppercase mb-2">Trusted by 10,000+ Artists</p>
-<h2 class="text-3xl font-extrabold tracking-tighter uppercase italic leading-none text-white">Hear From Our Creators</h2>
-<p class="text-white/50 text-sm mt-3 max-w-md">See how musicians, producers, and content creators are transforming their sound</p>
-<div class="mt-4 w-12 h-1 bg-gradient-to-r from-suno-pink to-indigo-500 rounded-full"></div>
-</div>
-<div class="mask-fade overflow-x-auto no-scrollbar flex gap-6 px-6 pb-8">
-<div class="flex-none w-[280px] relative">
-<div class="testimonial-glow top-0 left-0"></div>
-<div class="testimonial-card rounded-3xl p-6 flex flex-col justify-between h-full">
-<p class="text-white/80 text-sm italic leading-relaxed mb-6 font-medium">"I never thought I could produce a full metal track in minutes. Suno is a complete game changer for my workflow."</p>
-<div class="flex items-center gap-3">
-<div class="size-10 rounded-full bg-gradient-to-tr from-primary-orange to-suno-pink p-[1px]">
-<img alt="Avatar" class="w-full h-full rounded-full bg-zinc-900 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9K2PSSQaI-rJL92jJaM3tAQ1T2NtZ5yVrUT2-gXZgXoq2dnSkXQwtcs5P7XoFFZ5pJY7r4uDh3AVwHknMgulK0Gf8JNEVE1ez_Htp_2GbJH_LBgeYgs0xyLZ9aevK_Bbb5HOQ-oSSjWOPOmQn943f6E2S0OKOrW1sC64pIgjVBM8YRbbNsuJ7qdzsIjdHHcPVBCXFcTBEB9x1XHa8RoMSLQbp2y0TJm8kbqnp0NkLnvSHJC6ObUCjAIQwuhcI4Ox_PdA3PuW3Hhrl"/>
-</div>
-<div>
-<p class="text-xs font-bold text-white tracking-tight">@RiffMaster</p>
-<p class="text-[10px] text-white/40 uppercase font-bold tracking-widest">Producer</p>
-</div>
-</div>
-</div>
-</div>
-<div class="flex-none w-[280px] relative">
-<div class="testimonial-glow bottom-0 right-0" style="background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);"></div>
-<div class="testimonial-card rounded-3xl p-6 flex flex-col justify-between h-full">
-<p class="text-white/80 text-sm italic leading-relaxed mb-6 font-medium">"The lyrics engine is terrifyingly good. It captured the exact mood of my poem and turned it into a haunting ballad."</p>
-<div class="flex items-center gap-3">
-<div class="size-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 p-[1px]">
-<img alt="Avatar" class="w-full h-full rounded-full bg-zinc-900 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA37vBktAruczZiLMKAPG16Z15rIrIl5cW0NLTI5qeMApP3JcJ79k1_qMaBlAtg_2xRxUEfx4ziJ4GozmSJBij-h0rZrm3skCo-psZwH1MH-Mw0wZ4zFr8iIeL_3ynl2xAezIszWwen5l6VPT6xe7xsPMyYGM5OB15RpLK0s4PaqkSiPWKbwEq1vjtbqhC9VymFWJ98Ot85K5c8fMbWNo-gMozGKrmwSl6JPaBLd3FPcTTe1-mmOcl8qvJ23b6jAye_wFtSUpmHswIs"/>
-</div>
-<div>
-<p class="text-xs font-bold text-white tracking-tight">@Lyricist_Luna</p>
-<p class="text-[10px] text-white/40 uppercase font-bold tracking-widest">Songwriter</p>
-</div>
-</div>
-</div>
-</div>
-<div class="flex-none w-[280px] relative">
-<div class="testimonial-glow top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style="background: radial-gradient(circle, rgba(244, 63, 94, 0.15) 0%, transparent 70%);"></div>
-<div class="testimonial-card rounded-3xl p-6 flex flex-col justify-between h-full">
-<p class="text-white/80 text-sm italic leading-relaxed mb-6 font-medium">"From lo-fi beats to full cinematic scores, the range is incredible. My content creation has never sounded this professional."</p>
-<div class="flex items-center gap-3">
-<div class="size-10 rounded-full bg-gradient-to-tr from-yellow-400 to-primary-orange p-[1px]">
-<img alt="Avatar" class="w-full h-full rounded-full bg-zinc-900 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEmUE5XL3ZoJiBu1PGrU5ZIm4u0vERj5qL-KTb6j0KApexQhHkfP0TQgTB66wD9LiC7esNuDR-Hcc2HuA6lhJ9emB20KAONXej55_FoShvnLTzxpl6vgRh0HE5yD1NBCqg2ZB_PWN2zeURrLtWyRr56MKWxfxoALgA9qyaMKAueT4Lqtp-dvjZDo9NUGw0xa2GKXcPzqP4zBfYY0z6d4jq_bQIMHiQmXScpTp6-ckoUFNuMFyg4UPqeKOgwyxOatsMZlAq-5LvBzhl"/>
-</div>
-<div>
-<p class="text-xs font-bold text-white tracking-tight">@VibeCreator</p>
-<p class="text-[10px] text-white/40 uppercase font-bold tracking-widest">YouTuber</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
+
+<!-- ========== PRICING ========== -->
+<section id="pricing" class="pricing-section grain-overlay py-24 px-6 overflow-hidden">
+    <div class="max-w-5xl w-full mx-auto relative z-10">
+        <div class="text-center mb-16">
+            <p class="text-[#6c5ce7] text-[10px] font-bold tracking-[0.2em] uppercase mb-3">Flexible Plans</p>
+            <h2 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 text-[#e8e8ed]">Simple, Transparent Pricing</h2>
+            <p class="text-[#8888a0] text-lg max-w-2xl mx-auto">Unlock the full potential of AI music generation. Choose the plan that fits your creative workflow.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8 items-start">
+            <div class="bg-[#1a1a22] border border-[#2a2a36] rounded-2xl p-8 flex flex-col hover:border-[#6c5ce7]/50 transition-colors">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2 text-[#e8e8ed]">Starter</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl font-bold text-[#e8e8ed]">$0</span>
+                        <span class="text-[#8888a0]">/mo</span>
+                    </div>
+                    <p class="text-[#8888a0] text-sm mt-3">Perfect for hobbyists exploring AI music.</p>
+                </div>
+                <a href="{{ url_for('auth.register') }}" class="w-full py-3 px-4 rounded-xl border border-[#2a2a36] hover:border-[#6c5ce7] font-semibold text-center text-[#e8e8ed] hover:bg-[#6c5ce7]/10 transition-all mb-6 block">Get Started Free</a>
+                <ul class="space-y-3 text-sm text-[#8888a0]">
+                    <li class="flex items-center gap-3"><span class="material-symbols-outlined text-[#00cec9] text-lg">check</span>5 generations per day</li>
+                    <li class="flex items-center gap-3"><span class="material-symbols-outlined text-[#00cec9] text-lg">check</span>Standard quality</li>
+                    <li class="flex items-center gap-3"><span class="material-symbols-outlined text-[#00cec9] text-lg">check</span>Public library access</li>
+                </ul>
+            </div>
+            <div class="bg-[#1a1a22] border-2 border-[#6c5ce7] rounded-2xl p-8 flex flex-col relative shadow-[0_0_40px_rgba(108,92,231,0.2)] md:-translate-y-4">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#6c5ce7] text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Most Popular</div>
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2 text-[#a29bfe]">Pro Creator</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl font-bold text-[#e8e8ed]">$19</span>
+                        <span class="text-[#8888a0]">/mo</span>
+                    </div>
+                    <p class="text-[#8888a0] text-sm mt-3">For serious artists and content creators.</p>
+                </div>
+                <a href="/checkout?plan=pro" class="w-full py-3 px-4 rounded-xl bg-[#6c5ce7] hover:bg-[#5a4bd1] font-semibold text-center text-white transition-colors mb-6 block">Upgrade to Pro</a>
+                <ul class="space-y-3 text-sm text-[#8888a0]">
+                    <li class="flex items-center gap-3"><span class="material-symbols-outlined text-[#00cec9] text-lg">check</span>Unlimited generations</li>
+                    <li class="flex items-center gap-3"><span class="material-symbols-outlined text-[#00cec9] text-lg">check</span>High fidelity (320kbps)</li>
+                    <li class="flex items-center gap-3"><span class="material-symbols-outlined text-[#00cec9] text-lg">check</span>Commercial usage rights</li>
+                    <li class="flex items-center gap-3"><span class="material-symbols-outlined text-[#00cec9] text-lg">check</span>Priority processing</li>
+                </ul>
+            </div>
+            <div class="bg-[#1a1a22] border border-[#2a2a36] rounded-2xl p-8 flex flex-col hover:border-[#6c5ce7]/50 transition-colors">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-2 text-[#e8e8ed]">Studio</h3>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-4xl font-bold text-[#e8e8ed]">$49</span>
+                        <span class="text-[#8888a0]">/mo</span>
+                    </div>
+                    <p class="text-[#8888a0] text-sm mt-3">For production houses and teams.</p>
+                </div>
+                <a href="/contact" class="w-full py-3 px-4 rounded-xl border border-[#2a2a36] hover:border-[#6c5ce7] font-semibold text-center text-[#e8e8ed] hover:bg-[#6c5ce7]/10 transition-all mb-6 block">Contact Sales</a>
+                <ul class="space-y-3 text-sm text-[#8888a0]">
+                    <li class="flex items-center gap-3"><span class="material-symbols-outlined text-[#00cec9] text-lg">check</span>Everything in Pro</li>
+                    <li class="flex items-center gap-3"><span class="material-symbols-outlined text-[#00cec9] text-lg">check</span>5 Team seats included</li>
+                    <li class="flex items-center gap-3"><span class="material-symbols-outlined text-[#00cec9] text-lg">check</span>API Access</li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center mt-12 border-t border-[#2a2a36] pt-8">
+            <p class="text-[#8888a0] text-sm">Trusted by over 10,000 creators worldwide. Need help? <a href="/contact" class="text-[#6c5ce7] hover:text-[#a29bfe] transition-colors">Contact Support</a></p>
+        </div>
+    </div>
 </section>
-<section class="pricing-section grain-overlay py-20 px-6 overflow-hidden flex flex-col items-center">
-<div class="max-w-6xl w-full z-10 pb-20 mx-auto relative">
-<div class="text-center mb-16">
-<p class="text-primary-orange text-[10px] font-bold tracking-[0.2em] uppercase mb-3">Flexible Plans</p>
-<h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6">Simple, Transparent Pricing</h1>
-<p class="text-white/60 text-lg max-w-2xl mx-auto">
-                    Unlock the full potential of AI music generation. Choose the plan that fits your creative workflow.
-                </p>
-</div>
 
-<div class="grid md:grid-cols-3 gap-8">
-<!-- Free Tier -->
-<div class="bg-black/30 backdrop-blur-xl border border-white/10 rounded-2xl p-8 flex flex-col hover:border-white/20 transition-colors">
-<div class="mb-4">
-<h3 class="text-lg font-semibold mb-2">Starter</h3>
-<div class="flex items-baseline gap-1">
-<span class="text-4xl font-bold">$0</span>
-<span class="text-white/60">/mo</span>
-</div>
-</div>
-<p class="text-white/60 text-sm mb-8">Perfect for hobbyists exploring AI music.</p>
-<a href="{{ url_for('auth.register') }}" class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-white/5 transition-colors mb-8">Get Started</a>
-<ul class="space-y-4 text-sm flex-1 text-white/80">
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> 5 generations per day</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Standard quality</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Public library access</li>
-</ul>
-</div>
-
-<!-- Pro Tier -->
-<div class="bg-black/40 backdrop-blur-xl border-2 border-primary-orange rounded-2xl p-8 flex flex-col relative shadow-2xl shadow-primary-orange/10 transform md:-translate-y-4">
-<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary-orange to-suno-pink text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Most Popular</div>
-<div class="mb-4">
-<h3 class="text-lg font-semibold mb-2 text-primary-orange">Pro Creator</h3>
-<div class="flex items-baseline gap-1">
-<span class="text-4xl font-bold">$19</span>
-<span class="text-white/60">/mo</span>
-</div>
-</div>
-<p class="text-white/60 text-sm mb-8">For serious artists and content creators.</p>
-<a href="/checkout?plan=pro" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-primary-orange to-suno-pink font-semibold text-center hover:opacity-90 transition-opacity mb-8">Upgrade to Pro</a>
-<ul class="space-y-4 text-sm flex-1 text-white/80">
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Unlimited generations</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> High fidelity (320kbps)</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Commercial usage rights</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Priority processing</li>
-</ul>
-</div>
-
-<!-- Team Tier -->
-<div class="bg-black/30 backdrop-blur-xl border border-white/10 rounded-2xl p-8 flex flex-col hover:border-white/20 transition-colors">
-<div class="mb-4">
-<h3 class="text-lg font-semibold mb-2">Studio</h3>
-<div class="flex items-baseline gap-1">
-<span class="text-4xl font-bold">$49</span>
-<span class="text-white/60">/mo</span>
-</div>
-</div>
-<p class="text-white/60 text-sm mb-8">For production houses and teams.</p>
-<a href="/contact" class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-white/5 transition-colors mb-8">Contact Sales</a>
-<ul class="space-y-4 text-sm flex-1 text-white/80">
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> Everything in Pro</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> 5 Team seats included</li>
-<li class="flex items-center gap-3"><span class="material-symbols-outlined text-green-400 text-xl">check</span> API Access</li>
-</ul>
-</div>
-</div>
-
-<div class="text-center mt-16 border-t border-white/10 pt-8">
-<p class="text-white/40 text-sm">Trusted by over 10,000 creators worldwide. Need help? <a href="/contact" class="text-primary-orange hover:underline">Contact Support</a></p>
-</div>
-</div>
+<!-- ========== FINAL CTA ========== -->
+<section class="py-24 bg-[#0a0a0c] overflow-hidden relative">
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div class="w-[600px] h-[300px] bg-[#6c5ce7]/15 rounded-full blur-[120px]"></div>
+    </div>
+    <div class="relative z-10 max-w-2xl mx-auto px-6 text-center">
+        <h2 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-6 text-[#e8e8ed]">Your next track starts with a single prompt</h2>
+        <p class="text-[#8888a0] text-lg mb-10">Join 10,000+ creators already making music with Vnuno. No experience required.</p>
+        <a href="{{ url_for('auth.register') }}" class="inline-flex items-center gap-2 bg-[#6c5ce7] hover:bg-[#5a4bd1] text-white px-8 py-4 rounded-full font-bold text-lg shadow-[0_0_30px_rgba(108,92,231,0.4)] transition-all hover:shadow-[0_0_50px_rgba(108,92,231,0.6)] active:scale-95">
+            <span class="material-symbols-outlined">music_note</span>
+            Get Started Free
+        </a>
+        <p class="text-[#8888a0] text-sm mt-4">No credit card required &middot; 5 free generations per day</p>
+    </div>
 </section>
-<section class="app-download-section grain-overlay py-24 px-6 overflow-hidden">
-<div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
-<div class="text-center mb-12">
-<p class="text-primary-orange text-[10px] font-bold tracking-[0.2em] uppercase mb-3">Mobile Studio</p>
-<h2 class="text-4xl font-black tracking-tight mb-4 text-white">Take Vnuno With You</h2>
-<p class="text-white/50 text-sm font-medium max-w-xs mx-auto">Create and discover music on the go with our premium mobile experience.</p>
-</div>
-<div class="relative w-full mb-16 flex justify-center">
-<div class="relative z-10 w-64 h-[420px] bg-zinc-900 rounded-[3rem] border-[8px] border-zinc-800 shadow-2xl overflow-hidden transform -rotate-3 hover:rotate-0 transition-transform duration-500">
-<div class="absolute inset-0 bg-gradient-to-b from-indigo-900/50 to-black"></div>
-<div class="absolute top-0 inset-x-0 h-6 bg-black flex justify-center items-end pb-1">
-<div class="w-20 h-4 bg-zinc-800 rounded-full"></div>
-</div>
-<div class="p-6 pt-12 space-y-4">
-<div class="w-12 h-1 bg-white/20 rounded-full"></div>
-<div class="space-y-2">
-<div class="w-full h-32 bg-white/5 rounded-2xl flex items-center justify-center">
-<span class="material-symbols-outlined text-white/20 text-4xl">music_note</span>
-</div>
-<div class="w-3/4 h-4 bg-white/10 rounded-full"></div>
-<div class="w-1/2 h-3 bg-white/5 rounded-full"></div>
-</div>
-<div class="grid grid-cols-2 gap-2 pt-4">
-<div class="h-16 bg-white/5 rounded-xl"></div>
-<div class="h-16 bg-white/5 rounded-xl"></div>
-</div>
-</div>
-</div>
-<div class="absolute -top-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-primary-orange/20 blur-[100px] rounded-full pointer-events-none"></div>
-<div class="absolute -bottom-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-suno-pink/20 blur-[100px] rounded-full pointer-events-none"></div>
-</div>
-<div class="flex flex-col sm:flex-row gap-4 w-full max-w-sm">
-<button class="glassmorphic-btn flex items-center justify-center gap-3 px-6 py-4 rounded-2xl hover:bg-white/10 transition-all active:scale-95 group border-white/20">
-<svg class="w-6 h-6 fill-white" viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"></path></svg>
-<div class="text-left">
-<p class="text-[10px] uppercase font-bold tracking-widest text-white/50">Download on</p>
-<p class="text-sm font-bold text-white">iPhone</p>
-</div>
-</button>
-<button class="glassmorphic-btn flex items-center justify-center gap-3 px-6 py-4 rounded-2xl hover:bg-white/10 transition-all active:scale-95 group border-white/20">
-<svg class="w-6 h-6 fill-white" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"></path></svg>
-<div class="text-left">
-<p class="text-[10px] uppercase font-bold tracking-widest text-white/50">Get it on</p>
-<p class="text-sm font-bold text-white">Android</p>
-</div>
-</button>
-</div>
-</div>
-</section>
-<footer class="main-footer grain-overlay pt-16 pb-32 px-6">
-<div class="w-full h-px bg-white/5 mb-12"></div>
-<div class="max-w-4xl mx-auto z-10 relative">
-<div class="grid grid-cols-2 gap-12 mb-16">
-<div>
-<h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Brand</h4>
-<ul class="space-y-4">
-<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">About Us</a></li>
-<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Careers</a></li>
-<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Press</a></li>
-<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Community</a></li>
-</ul>
-</div>
-<div>
-<h4 class="text-sm font-extrabold tracking-tighter uppercase italic text-white mb-6">Support</h4>
-<ul class="space-y-4">
-<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Help Center</a></li>
-<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Safety</a></li>
-<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Terms of Service</a></li>
-<li><a class="text-xs font-medium text-white/40 hover:text-white transition-colors" href="#">Privacy Policy</a></li>
-</ul>
-</div>
-</div>
-<div class="flex flex-col items-center gap-8 border-t border-white/5 pt-12">
-<div class="flex gap-6">
-<a class="text-white/30 hover:text-white transition-colors" href="#">
-<svg class="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path></svg>
-</a>
-<a class="text-white/30 hover:text-white transition-colors" href="#">
-<svg class="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.441 1.441 1.441c.795 0 1.439-.645 1.439-1.441s-.644-1.44-1.439-1.44z"></path></svg>
-</a>
-<a class="text-white/30 hover:text-white transition-colors" href="#">
-<svg class="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path></svg>
-</a>
-</div>
-<p class="text-white/20 text-[10px] font-bold tracking-widest uppercase">© 2024 Suno Inc. All rights reserved.</p>
-</div>
-</div>
+
+<!-- ========== FOOTER ========== -->
+<footer class="border-t border-[#2a2a36] bg-[#131318] py-12">
+    <div class="max-w-5xl mx-auto px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-10 mb-10">
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="material-symbols-outlined text-[#6c5ce7] text-xl">music_note</span>
+                    <span class="font-black text-lg tracking-tighter text-[#e8e8ed]">Vnuno</span>
+                </div>
+                <p class="text-[#8888a0] text-sm">AI-powered music creation for everyone.</p>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-[#e8e8ed] mb-4 uppercase tracking-wider">Product</h4>
+                <ul class="space-y-3">
+                    <li><a href="#features-section" class="text-sm text-[#8888a0] hover:text-[#e8e8ed] transition-colors">Features</a></li>
+                    <li><a href="#pricing" class="text-sm text-[#8888a0] hover:text-[#e8e8ed] transition-colors">Pricing</a></li>
+                    <li><a href="/library" class="text-sm text-[#8888a0] hover:text-[#e8e8ed] transition-colors">Library</a></li>
+                    <li><a href="/lyrics-extraction" class="text-sm text-[#8888a0] hover:text-[#e8e8ed] transition-colors">Lyrics</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-[#e8e8ed] mb-4 uppercase tracking-wider">Company</h4>
+                <ul class="space-y-3">
+                    <li><a href="#" class="text-sm text-[#8888a0] hover:text-[#e8e8ed] transition-colors">About Us</a></li>
+                    <li><a href="#" class="text-sm text-[#8888a0] hover:text-[#e8e8ed] transition-colors">Careers</a></li>
+                    <li><a href="#" class="text-sm text-[#8888a0] hover:text-[#e8e8ed] transition-colors">Press</a></li>
+                    <li><a href="#" class="text-sm text-[#8888a0] hover:text-[#e8e8ed] transition-colors">Community</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-[#e8e8ed] mb-4 uppercase tracking-wider">Support</h4>
+                <ul class="space-y-3">
+                    <li><a href="#" class="text-sm text-[#8888a0] hover:text-[#e8e8ed] transition-colors">Help Center</a></li>
+                    <li><a href="#" class="text-sm text-[#8888a0] hover:text-[#e8e8ed] transition-colors">Safety</a></li>
+                    <li><a href="#" class="text-sm text-[#8888a0] hover:text-[#e8e8ed] transition-colors">Terms of Service</a></li>
+                    <li><a href="#" class="text-sm text-[#8888a0] hover:text-[#e8e8ed] transition-colors">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#2a2a36] pt-8">
+            <p class="text-[#8888a0] text-sm">&copy; 2024 Vnuno Inc. All rights reserved.</p>
+            <div class="flex gap-5">
+                <a class="text-[#8888a0] hover:text-[#e8e8ed] transition-colors" href="#" aria-label="Twitter">
+                    <svg class="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path></svg>
+                </a>
+                <a class="text-[#8888a0] hover:text-[#e8e8ed] transition-colors" href="#" aria-label="Instagram">
+                    <svg class="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.441 1.441 1.441c.795 0 1.439-.645 1.439-1.441s-.644-1.44-1.439-1.44z"></path></svg>
+                </a>
+                <a class="text-[#8888a0] hover:text-[#e8e8ed] transition-colors" href="#" aria-label="YouTube">
+                    <svg class="size-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path></svg>
+                </a>
+            </div>
+        </div>
+    </div>
 </footer>
-<div class="fixed bottom-24 left-4 right-4 z-50">
-    <div class="bg-black/60 backdrop-blur-xl p-3 rounded-2xl flex items-center gap-3 border border-white/10 shadow-2xl">
-        <div class="size-12 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden">
+
+<!-- ========== STICKY PLAYER (preserved for JS) ========== -->
+<div class="fixed bottom-4 left-4 right-4 z-50 max-w-2xl mx-auto">
+    <div class="bg-[#131318]/90 backdrop-blur-xl p-3 rounded-2xl flex items-center gap-3 border border-[#2a2a36] shadow-2xl">
+        <div class="size-12 rounded-lg bg-[#1a1a22] flex items-center justify-center overflow-hidden flex-shrink-0">
             <img data-sticky-player-image src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100&h=100&fit=crop" alt="Song cover" class="w-full h-full object-cover">
         </div>
         <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2">
-                <p class="font-bold text-sm truncate text-white" data-sticky-player-title>Neon Rain</p>
-                <span class="text-[9px] bg-white/10 text-white px-1.5 py-0.5 rounded font-bold uppercase">Pro</span>
+                <p class="font-bold text-sm truncate text-[#e8e8ed]" data-sticky-player-title>Neon Rain</p>
+                <span class="text-[9px] bg-[#6c5ce7]/20 text-[#a29bfe] px-1.5 py-0.5 rounded font-bold uppercase">Pro</span>
             </div>
             <div class="mt-1" data-sticky-ws-container>
-                <!-- WaveSurfer compact player will be rendered here -->
-                <div class="w-full bg-white/5 h-1 rounded-full overflow-hidden">
-                    <div class="bg-primary-orange h-full w-0" data-sticky-progress-bar></div>
+                <div class="w-full bg-[#2a2a36] h-1 rounded-full overflow-hidden">
+                    <div class="bg-[#6c5ce7] h-full w-0 transition-all" data-sticky-progress-bar></div>
                 </div>
             </div>
         </div>
-        <div class="flex items-center gap-1">
-            <button class="p-2 text-white/60 hover:text-white">
-                <span class="material-symbols-outlined">skip_previous</span>
+        <div class="flex items-center gap-1 flex-shrink-0">
+            <button class="p-2 text-[#8888a0] hover:text-[#e8e8ed] transition-colors">
+                <span class="material-symbols-outlined text-lg">skip_previous</span>
             </button>
-            <button class="size-10 bg-white text-black rounded-full flex items-center justify-center" data-sticky-play-btn>
+            <button class="size-10 bg-[#6c5ce7] hover:bg-[#5a4bd1] text-white rounded-full flex items-center justify-center transition-colors" data-sticky-play-btn>
                 <span class="material-symbols-outlined font-fill text-xl">play_arrow</span>
             </button>
-            <button class="p-2 text-white/60 hover:text-white">
-                <span class="material-symbols-outlined">skip_next</span>
+            <button class="p-2 text-[#8888a0] hover:text-[#e8e8ed] transition-colors">
+                <span class="material-symbols-outlined text-lg">skip_next</span>
             </button>
         </div>
     </div>
 </div>
-<nav class="fixed bottom-0 inset-x-0 h-20 bg-black/80 backdrop-blur-md border-t border-white/10 flex items-center justify-around px-6 z-50">
-<button class="flex flex-col items-center gap-1 text-white">
-<span class="material-symbols-outlined font-fill">home</span>
-<span class="text-[10px] font-bold uppercase tracking-wider">Home</span>
-</button>
-<button class="flex flex-col items-center gap-1 text-white/40 hover:text-white transition-colors">
-<span class="material-symbols-outlined">explore</span>
-<span class="text-[10px] font-bold uppercase tracking-wider">Feed</span>
-</button>
-<div class="-mt-12 size-16 bg-gradient-to-tr from-primary-orange to-suno-pink rounded-full flex items-center justify-center text-white shadow-[0_0_30px_rgba(250,110,74,0.4)] border-4 border-black active:scale-90 transition-transform cursor-pointer">
-<span class="material-symbols-outlined text-3xl font-bold">add</span>
-</div>
-<button class="flex flex-col items-center gap-1 text-white/40 hover:text-white transition-colors">
-<span class="material-symbols-outlined">library_music</span>
-<span class="text-[10px] font-bold uppercase tracking-wider">Library</span>
-</button>
-<button class="flex flex-col items-center gap-1 text-white/40 hover:text-white transition-colors">
-<span class="material-symbols-outlined">person</span>
-<span class="text-[10px] font-bold uppercase tracking-wider">Profile</span>
-</button>
-</nav>
 {% endblock %}
 
 {% block scripts %}
@@ -901,57 +767,27 @@ class HeroCreateDropdown {
         this.menuItems = this.dropdown ? this.dropdown.querySelectorAll('[role="menuitem"]') : [];
         this.focusIndex = -1;
         this.isOpen = false;
-        
-        if (this.container && this.triggerBtn && this.dropdown) {
-            this.init();
-        }
+        if (this.container && this.triggerBtn && this.dropdown) { this.init(); }
     }
-    
     init() {
-        // Toggle dropdown on button click
         this.triggerBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            this.toggle();
+            e.preventDefault(); e.stopPropagation(); this.toggle();
         });
-        
-        // Handle menu item clicks
-        this.menuItems.forEach((item, index) => {
+        this.menuItems.forEach((item) => {
             item.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
                 this.handleSelection(item.dataset.action);
             });
-            
-            item.addEventListener('keydown', (e) => {
-                this.handleMenuKeyDown(e);
-            });
+            item.addEventListener('keydown', (e) => { this.handleMenuKeyDown(e); });
         });
-        
-        // Close on outside click
         document.addEventListener('click', (e) => {
-            if (this.isOpen && !this.container.contains(e.target)) {
-                this.close();
-            }
+            if (this.isOpen && !this.container.contains(e.target)) { this.close(); }
         });
-        
-        // Close on Escape key
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.isOpen) {
-                this.close();
-                this.triggerBtn.focus();
-            }
+            if (e.key === 'Escape' && this.isOpen) { this.close(); this.triggerBtn.focus(); }
         });
     }
-    
-    toggle() {
-        if (this.isOpen) {
-            this.close();
-        } else {
-            this.open();
-        }
-    }
-    
+    toggle() { if (this.isOpen) { this.close(); } else { this.open(); } }
     open() {
         this.isOpen = true;
         this.dropdown.classList.add('active');
@@ -959,7 +795,6 @@ class HeroCreateDropdown {
         this.focusIndex = 0;
         this.updateFocus();
     }
-    
     close() {
         this.isOpen = false;
         this.dropdown.classList.remove('active');
@@ -970,96 +805,45 @@ class HeroCreateDropdown {
         });
         this.focusIndex = -1;
     }
-    
     handleMenuKeyDown(e) {
         const itemsCount = this.menuItems.length;
-        
         switch(e.key) {
-            case 'ArrowDown':
-                e.preventDefault();
-                this.focusIndex = (this.focusIndex + 1) % itemsCount;
-                this.updateFocus();
-                break;
-            case 'ArrowUp':
-                e.preventDefault();
-                this.focusIndex = (this.focusIndex - 1 + itemsCount) % itemsCount;
-                this.updateFocus();
-                break;
-            case 'Enter':
-            case ' ': // Space key
-                e.preventDefault();
-                this.handleSelection(this.menuItems[this.focusIndex].dataset.action);
-                break;
-            case 'Home':
-                e.preventDefault();
-                this.focusIndex = 0;
-                this.updateFocus();
-                break;
-            case 'End':
-                e.preventDefault();
-                this.focusIndex = itemsCount - 1;
-                this.updateFocus();
-                break;
-            case 'Tab':
-                this.close();
-                break;
+            case 'ArrowDown': e.preventDefault(); this.focusIndex = (this.focusIndex + 1) % itemsCount; this.updateFocus(); break;
+            case 'ArrowUp': e.preventDefault(); this.focusIndex = (this.focusIndex - 1 + itemsCount) % itemsCount; this.updateFocus(); break;
+            case 'Enter': case ' ': e.preventDefault(); this.handleSelection(this.menuItems[this.focusIndex].dataset.action); break;
+            case 'Home': e.preventDefault(); this.focusIndex = 0; this.updateFocus(); break;
+            case 'End': e.preventDefault(); this.focusIndex = itemsCount - 1; this.updateFocus(); break;
+            case 'Tab': this.close(); break;
         }
     }
-    
     updateFocus() {
         this.menuItems.forEach((item, index) => {
             if (index === this.focusIndex) {
-                item.setAttribute('tabindex', '0');
-                item.setAttribute('aria-selected', 'true');
-                item.focus();
+                item.setAttribute('tabindex', '0'); item.setAttribute('aria-selected', 'true'); item.focus();
             } else {
-                item.setAttribute('tabindex', '-1');
-                item.setAttribute('aria-selected', 'false');
+                item.setAttribute('tabindex', '-1'); item.setAttribute('aria-selected', 'false');
             }
         });
     }
-    
     handleSelection(action) {
-        // Get the prompt input value
         const promptInput = document.getElementById('hero-prompt-input');
         const prompt = promptInput ? promptInput.value.trim() : '';
-        
-        // Store prompt in sessionStorage if it exists
         if (prompt) {
-            try {
-                sessionStorage.setItem('heroPrompt', prompt);
-            } catch (e) {
-                console.error('Failed to store prompt in sessionStorage:', e);
-            }
+            try { sessionStorage.setItem('heroPrompt', prompt); } catch (e) { console.error('Failed to store prompt:', e); }
         }
-        
-        // Navigate based on selection
-        if (action === 'cover') {
-            window.location.href = '/cover-generator';
-        } else if (action === 'music') {
-            window.location.href = '/music-generator';
-        }
-        
+        if (action === 'cover') { window.location.href = '/cover-generator'; }
+        else if (action === 'music') { window.location.href = '/music-generator'; }
         this.close();
     }
 }
 
-// Initialize the hero dropdown
 let heroCreateDropdown;
 
-// Hero Section Music Generation
 function initializeHeroGenerator() {
     const promptInput = document.getElementById('hero-prompt-input');
     const createBtn = document.getElementById('hero-create-btn');
     const randomBtn = document.getElementById('hero-random-btn');
-    const createText = document.getElementById('hero-create-text');
-    
-    if (!promptInput || !createBtn) {
-        console.warn('Hero generator elements not found');
-        return;
-    }
-    
-    // Random prompts for inspiration
+    if (!promptInput || !createBtn) { console.warn('Hero generator elements not found'); return; }
     const randomPrompts = [
         'a smooth lo-fi hip hop beat',
         'epic cinematic orchestral soundtrack',
@@ -1070,61 +854,49 @@ function initializeHeroGenerator() {
         'relaxing jazz piano',
         'indie rock anthem'
     ];
-    
-    // Random prompt button
     if (randomBtn) {
         randomBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const randomPrompt = randomPrompts[Math.floor(Math.random() * randomPrompts.length)];
-            promptInput.value = randomPrompt;
+            promptInput.value = randomPrompts[Math.floor(Math.random() * randomPrompts.length)];
             promptInput.focus();
         });
     }
-    
-    // Note: Create button click is now handled by HeroCreateDropdown class
-    // The dropdown provides options for Cover Generator and Music Generator
+    // Genre chip interaction
+    document.querySelectorAll('.genre-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            const genre = chip.dataset.genre;
+            chip.classList.toggle('active');
+            const current = promptInput.value.trim();
+            if (chip.classList.contains('active')) {
+                promptInput.value = current ? current + ' in ' + genre + ' style' : 'A ' + genre + ' song';
+            }
+            promptInput.focus();
+        });
+    });
 }
 
-// Sticky Player Controls
 function initializeStickyPlayer() {
     const playBtn = document.querySelector('[data-sticky-play-btn]');
-    const wsContainer = document.querySelector('[data-sticky-ws-container]');
-    
-    if (!playBtn) {
-        console.warn('Sticky player elements not found');
-        return;
-    }
-
-    // Store reference to the WaveSurfer player on the window for promotedSongs.js to access
+    if (!playBtn) { console.warn('Sticky player elements not found'); return; }
     window.stickyWsPlayer = null;
-    
-    // The sticky player will be initialized when a song is played via promotedSongs.js
-    // Play/pause button delegates to the WaveSurfer instance
     playBtn.addEventListener('click', () => {
-        if (window.stickyWsPlayer) {
-            window.stickyWsPlayer.togglePlayPause();
-        }
+        if (window.stickyWsPlayer) { window.stickyWsPlayer.togglePlayPause(); }
     });
 }
 
 // Template Dropdown Menu Component
 class TemplateDropdownMenu {
     constructor() {
-        this.dropdown = null;
-        this.triggerBtn = null;
-        this.currentTemplate = null;
-        this.focusIndex = -1;
-        this.menuItems = [];
+        this.dropdown = null; this.triggerBtn = null; this.currentTemplate = null;
+        this.focusIndex = -1; this.menuItems = [];
         this.boundHandleClickOutside = this.handleClickOutside.bind(this);
         this.boundHandleKeydown = this.handleKeydown.bind(this);
     }
-
     createDropdown() {
         const dropdown = document.createElement('div');
         dropdown.className = 'template-dropdown';
         dropdown.setAttribute('role', 'menu');
         dropdown.setAttribute('aria-label', 'Template options');
-        
         dropdown.innerHTML = `
             <div class="template-dropdown-item" role="menuitem" tabindex="-1" data-action="cover">
                 <span class="material-symbols-outlined text-sm">image</span>
@@ -1135,155 +907,66 @@ class TemplateDropdownMenu {
                 <span>Music Generator</span>
             </div>
         `;
-        
-        // Add click handlers to menu items
         const items = dropdown.querySelectorAll('.template-dropdown-item');
         items.forEach((item, index) => {
-            item.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.handleSelection(item.dataset.action);
-            });
-            
-            item.addEventListener('mouseenter', () => {
-                this.focusIndex = index;
-                this.updateFocus();
-            });
+            item.addEventListener('click', (e) => { e.stopPropagation(); this.handleSelection(item.dataset.action); });
+            item.addEventListener('mouseenter', () => { this.focusIndex = index; this.updateFocus(); });
         });
-        
         this.menuItems = Array.from(items);
         return dropdown;
     }
-
     show(triggerBtn, template) {
-        // Hide any existing dropdown
         this.hide();
-        
-        this.triggerBtn = triggerBtn;
-        this.currentTemplate = template;
-        this.focusIndex = -1;
-        
-        // Create and position dropdown
+        this.triggerBtn = triggerBtn; this.currentTemplate = template; this.focusIndex = -1;
         this.dropdown = this.createDropdown();
-        
-        // Position dropdown relative to trigger button
         const rect = triggerBtn.getBoundingClientRect();
         this.dropdown.style.left = rect.left + 'px';
         this.dropdown.style.top = (rect.bottom + 4) + 'px';
-        
         document.body.appendChild(this.dropdown);
-        
-        // Update trigger button aria state
         triggerBtn.setAttribute('aria-expanded', 'true');
-        
-        // Show dropdown
-        requestAnimationFrame(() => {
-            this.dropdown.classList.add('active');
-        });
-        
-        // Add event listeners
+        requestAnimationFrame(() => { this.dropdown.classList.add('active'); });
         document.addEventListener('click', this.boundHandleClickOutside);
         document.addEventListener('keydown', this.boundHandleKeydown);
     }
-
     hide() {
-        if (this.dropdown) {
-            this.dropdown.classList.remove('active');
-            this.dropdown.remove();
-            this.dropdown = null;
-        }
-        
-        if (this.triggerBtn) {
-            this.triggerBtn.setAttribute('aria-expanded', 'false');
-            this.triggerBtn = null;
-        }
-        
-        this.currentTemplate = null;
-        this.focusIndex = -1;
-        this.menuItems = [];
-        
+        if (this.dropdown) { this.dropdown.classList.remove('active'); this.dropdown.remove(); this.dropdown = null; }
+        if (this.triggerBtn) { this.triggerBtn.setAttribute('aria-expanded', 'false'); this.triggerBtn = null; }
+        this.currentTemplate = null; this.focusIndex = -1; this.menuItems = [];
         document.removeEventListener('click', this.boundHandleClickOutside);
         document.removeEventListener('keydown', this.boundHandleKeydown);
     }
-
     handleClickOutside(e) {
-        if (this.dropdown && !this.dropdown.contains(e.target) && e.target !== this.triggerBtn) {
-            this.hide();
-        }
+        if (this.dropdown && !this.dropdown.contains(e.target) && e.target !== this.triggerBtn) { this.hide(); }
     }
-
     handleKeydown(e) {
         if (!this.dropdown) return;
-        
         switch (e.key) {
-            case 'Escape':
-                e.preventDefault();
-                this.hide();
-                break;
-            case 'ArrowDown':
-                e.preventDefault();
-                this.focusIndex = (this.focusIndex + 1) % this.menuItems.length;
-                this.updateFocus();
-                break;
-            case 'ArrowUp':
-                e.preventDefault();
-                this.focusIndex = (this.focusIndex - 1 + this.menuItems.length) % this.menuItems.length;
-                this.updateFocus();
-                break;
-            case 'Enter':
-                e.preventDefault();
-                if (this.focusIndex >= 0 && this.menuItems[this.focusIndex]) {
-                    this.handleSelection(this.menuItems[this.focusIndex].dataset.action);
-                }
-                break;
-            case 'Home':
-                e.preventDefault();
-                this.focusIndex = 0;
-                this.updateFocus();
-                break;
-            case 'End':
-                e.preventDefault();
-                this.focusIndex = this.menuItems.length - 1;
-                this.updateFocus();
-                break;
+            case 'Escape': e.preventDefault(); this.hide(); break;
+            case 'ArrowDown': e.preventDefault(); this.focusIndex = (this.focusIndex + 1) % this.menuItems.length; this.updateFocus(); break;
+            case 'ArrowUp': e.preventDefault(); this.focusIndex = (this.focusIndex - 1 + this.menuItems.length) % this.menuItems.length; this.updateFocus(); break;
+            case 'Enter': e.preventDefault(); if (this.focusIndex >= 0 && this.menuItems[this.focusIndex]) { this.handleSelection(this.menuItems[this.focusIndex].dataset.action); } break;
+            case 'Home': e.preventDefault(); this.focusIndex = 0; this.updateFocus(); break;
+            case 'End': e.preventDefault(); this.focusIndex = this.menuItems.length - 1; this.updateFocus(); break;
         }
     }
-
     updateFocus() {
         this.menuItems.forEach((item, index) => {
-            if (index === this.focusIndex) {
-                item.setAttribute('tabindex', '0');
-                item.setAttribute('aria-selected', 'true');
-                item.focus();
-            } else {
-                item.setAttribute('tabindex', '-1');
-                item.setAttribute('aria-selected', 'false');
-            }
+            if (index === this.focusIndex) { item.setAttribute('tabindex', '0'); item.setAttribute('aria-selected', 'true'); item.focus(); }
+            else { item.setAttribute('tabindex', '-1'); item.setAttribute('aria-selected', 'false'); }
         });
     }
-
     handleSelection(action) {
         if (!this.currentTemplate) return;
-        
         try {
-            // Store template in sessionStorage
             sessionStorage.setItem('selectedMusicTemplate', JSON.stringify(this.currentTemplate));
             sessionStorage.setItem('selectedTemplate', JSON.stringify(this.currentTemplate));
-        } catch (e) {
-            console.error('Failed to store template in sessionStorage:', e);
-        }
-        
-        // Navigate based on selection
-        if (action === 'music') {
-            window.location.href = '/music-generator';
-        } else if (action === 'cover') {
-            window.location.href = '/cover-generator';
-        }
-        
+        } catch (e) { console.error('Failed to store template:', e); }
+        if (action === 'music') { window.location.href = '/music-generator'; }
+        else if (action === 'cover') { window.location.href = '/cover-generator'; }
         this.hide();
     }
 }
 
-// Global dropdown instance
 const templateDropdown = new TemplateDropdownMenu();
 
 // Template Card Factory
@@ -1301,34 +984,21 @@ class TemplateCardFactory {
                 <p class="text-white/50 text-sm leading-relaxed">${template.description}</p>
                 <div class="flex items-center justify-between mt-3">
                     <span class="text-xs text-white/40 uppercase font-bold">${template.category}</span>
-                    <button class="use-template-btn px-2 py-1 rounded-full bg-primary-orange/20 text-primary-orange text-xs font-bold hover:bg-primary-orange/30 transition-colors" aria-haspopup="menu" aria-expanded="false">Use Template</button>
+                    <button class="use-template-btn px-2 py-1 rounded-full bg-[#6c5ce7]/20 text-[#a29bfe] text-xs font-bold hover:bg-[#6c5ce7]/30 transition-colors" aria-haspopup="menu" aria-expanded="false">Use Template</button>
                 </div>
             </div>
         `;
-        
-        // Add click handler to Use Template button
         const useTemplateBtn = card.querySelector('.use-template-btn');
         if (useTemplateBtn) {
             useTemplateBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
+                e.preventDefault(); e.stopPropagation();
                 const isExpanded = useTemplateBtn.getAttribute('aria-expanded') === 'true';
-                if (isExpanded) {
-                    templateDropdown.hide();
-                } else {
-                    templateDropdown.show(useTemplateBtn, template);
-                }
+                if (isExpanded) { templateDropdown.hide(); } else { templateDropdown.show(useTemplateBtn, template); }
             });
         }
-        
         return card;
     }
-    
-    static handleUseTemplate(template) {
-        // Legacy method - kept for compatibility, but now uses dropdown
-        templateDropdown.show(document.activeElement, template);
-    }
+    static handleUseTemplate(template) { templateDropdown.show(document.activeElement, template); }
 }
 
 // Hero Text Rotator Component with Typewriter Effect
@@ -1338,21 +1008,11 @@ class HeroTextRotator {
         this.textContent = document.getElementById('hero-text-content');
         this.cursor = document.getElementById('hero-typewriter-cursor');
         this.container = this.textContent?.parentElement;
-        this.currentIndex = 0;
-        this.isPaused = false;
-        this.isTyping = false;
-        this.isDeleting = false;
-        this.isScrolling = false;
-        this.currentText = '';
-        this.charIndex = 0;
-        this.typingSpeed = 80; // ms per character
-        this.pauseDuration = 2000; // ms pause after typing
-        this.scrollDuration = 3000; // ms for horizontal scroll
-        this.lastFrameTime = 0;
-        this.accumulatedTime = 0;
-        this.animationId = null;
-        
-        // 8 diverse songwriting prompts with consistent length
+        this.currentIndex = 0; this.isPaused = false;
+        this.isTyping = false; this.isDeleting = false; this.isScrolling = false;
+        this.currentText = ''; this.charIndex = 0;
+        this.typingSpeed = 80; this.pauseDuration = 2000; this.scrollDuration = 3000;
+        this.lastFrameTime = 0; this.accumulatedTime = 0; this.animationId = null;
         this.prompts = [
             "Make a country song about Jess",
             "Create a pop ballad for Sarah",
@@ -1363,214 +1023,114 @@ class HeroTextRotator {
             "Produce a lo-fi beat for studying",
             "Design a synthwave track for gaming"
         ];
-        
-        if (this.headline && this.textContent) {
-            this.init();
-        }
+        if (this.headline && this.textContent) { this.init(); }
     }
-    
     init() {
-        // Add hover pause functionality
-        this.headline.addEventListener('mouseenter', () => {
-            this.isPaused = true;
-        });
-        
-        this.headline.addEventListener('mouseleave', () => {
-            this.isPaused = false;
-        });
-        
-        // Start the typewriter animation
+        this.headline.addEventListener('mouseenter', () => { this.isPaused = true; });
+        this.headline.addEventListener('mouseleave', () => { this.isPaused = false; });
         this.startTypingAnimation();
     }
-    
     startTypingAnimation() {
         this.currentText = this.prompts[this.currentIndex];
-        this.charIndex = 0;
-        this.isTyping = true;
-        this.isDeleting = false;
+        this.charIndex = 0; this.isTyping = true; this.isDeleting = false;
         this.textContent.textContent = '';
         this.startBlinkingCursor();
         this.scheduleNextFrame();
     }
-    
     scheduleNextFrame() {
-        if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-        }
+        if (this.animationId) { cancelAnimationFrame(this.animationId); }
         this.animationId = requestAnimationFrame((timestamp) => this.animate(timestamp));
     }
-    
     animate(timestamp) {
-        if (!this.lastFrameTime) {
-            this.lastFrameTime = timestamp;
-        }
-        
+        if (!this.lastFrameTime) { this.lastFrameTime = timestamp; }
         const deltaTime = timestamp - this.lastFrameTime;
         this.lastFrameTime = timestamp;
-        
-        // Skip frame if paused (but still schedule next to check for resume)
-        if (this.isPaused) {
-            this.animationId = requestAnimationFrame((t) => this.animate(t));
-            return;
-        }
-        
+        if (this.isPaused) { this.animationId = requestAnimationFrame((t) => this.animate(t)); return; }
         this.accumulatedTime += deltaTime;
-        
         if (this.isTyping) {
-            // Type characters
             if (this.accumulatedTime >= this.typingSpeed) {
                 const charsToType = Math.floor(this.accumulatedTime / this.typingSpeed);
                 this.accumulatedTime %= this.typingSpeed;
-                
                 for (let i = 0; i < charsToType && this.charIndex < this.currentText.length; i++) {
                     this.textContent.textContent += this.currentText.charAt(this.charIndex);
                     this.charIndex++;
                 }
-                
-                // Check if typing is complete
                 if (this.charIndex >= this.currentText.length) {
-                    this.isTyping = false;
-                    this.accumulatedTime = 0;
-                    
-                    // Check if text overflows and needs scrolling
-                    if (this.checkTextOverflow()) {
-                        this.startHorizontalScroll();
-                    } else {
-                        // No overflow, pause then delete
-                        this.scheduleDeletion();
-                    }
+                    this.isTyping = false; this.accumulatedTime = 0;
+                    if (this.checkTextOverflow()) { this.startHorizontalScroll(); } else { this.scheduleDeletion(); }
                     return;
                 }
             }
         } else if (this.isDeleting) {
-            // Delete characters
             if (this.accumulatedTime >= this.typingSpeed) {
                 const charsToDelete = Math.floor(this.accumulatedTime / this.typingSpeed);
                 this.accumulatedTime %= this.typingSpeed;
-                
-                for (let i = 0; i < charsToDelete && this.charIndex > 0; i++) {
-                    this.charIndex--;
-                }
+                for (let i = 0; i < charsToDelete && this.charIndex > 0; i++) { this.charIndex--; }
                 this.textContent.textContent = this.currentText.substring(0, this.charIndex);
-                
-                // Check if deletion is complete
                 if (this.charIndex <= 0) {
                     this.isDeleting = false;
-                    // Move to next prompt
                     this.currentIndex = (this.currentIndex + 1) % this.prompts.length;
                     this.currentText = this.prompts[this.currentIndex];
-                    this.charIndex = 0;
-                    this.isTyping = true;
+                    this.charIndex = 0; this.isTyping = true;
                 }
             }
         }
-        
         this.animationId = requestAnimationFrame((t) => this.animate(t));
     }
-    
-    startBlinkingCursor() {
-        if (this.cursor) {
-            this.cursor.classList.add('cursor-blink');
-        }
-    }
-    
+    startBlinkingCursor() { if (this.cursor) { this.cursor.classList.add('cursor-blink'); } }
     checkTextOverflow() {
         if (!this.container || !this.textContent) return false;
         return this.textContent.scrollWidth > this.container.clientWidth;
     }
-    
     startHorizontalScroll() {
         if (!this.container || !this.textContent) return;
-        
         this.isScrolling = true;
         const textWidth = this.textContent.scrollWidth;
         const containerWidth = this.container.clientWidth;
-        const scrollDistance = -(textWidth - containerWidth + 20); // +20px buffer
-        
-        // Set CSS variable for scroll distance
-        this.textContent.style.setProperty('--scroll-distance', `${scrollDistance}px`);
-        
-        // Calculate animation duration based on scroll distance (50px per second)
+        const scrollDistance = -(textWidth - containerWidth + 20);
+        this.textContent.style.setProperty('--scroll-distance', scrollDistance + 'px');
         const duration = Math.max(2000, Math.abs(scrollDistance) * 20);
-        this.textContent.style.animationDuration = `${duration}ms`;
-        
-        // Add scrolling class to trigger animation
+        this.textContent.style.animationDuration = duration + 'ms';
         this.textContent.classList.add('scrolling');
-        
-        // Schedule deletion after scroll completes
         setTimeout(() => {
             this.textContent.classList.remove('scrolling');
             this.textContent.style.transform = 'translateX(0)';
             this.isScrolling = false;
-            if (!this.isPaused) {
-                this.isDeleting = true;
-                this.scheduleNextFrame();
-            }
+            if (!this.isPaused) { this.isDeleting = true; this.scheduleNextFrame(); }
         }, duration);
     }
-    
     scheduleDeletion() {
         setTimeout(() => {
-            if (!this.isPaused) {
-                this.isDeleting = true;
-                this.scheduleNextFrame();
-            }
+            if (!this.isPaused) { this.isDeleting = true; this.scheduleNextFrame(); }
         }, this.pauseDuration);
     }
-    
-    destroy() {
-        if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-        }
-    }
+    destroy() { if (this.animationId) { cancelAnimationFrame(this.animationId); } }
 }
 
-// Initialize Templates Section
 async function initializeTemplates() {
     try {
         const response = await fetch('/static/templates/templates_complete.json');
         const data = await response.json();
         const container = document.getElementById('templates-cards-container');
-        
         if (container && data.templates) {
-            // Display first 6 templates
-            const templateSlice = data.templates.slice(0, 6);
-            templateSlice.forEach(template => {
-                const card = TemplateCardFactory.createCard(template);
-                container.appendChild(card);
+            data.templates.slice(0, 6).forEach(template => {
+                container.appendChild(TemplateCardFactory.createCard(template));
             });
         }
-    } catch (error) {
-        console.error('Error loading templates:', error);
-    }
+    } catch (error) { console.error('Error loading templates:', error); }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize PromotedSongs component
     const promotedSongs = new PromotedSongs();
     promotedSongs.initialize({
         container: document.getElementById('promoted-cards-container'),
-        loadingState: null,
-        emptyState: null,
-        errorState: null
+        loadingState: null, emptyState: null, errorState: null
     });
-    
-    // Initialize Templates
     initializeTemplates();
-    
-    // Initialize Sticky Player Controls
     initializeStickyPlayer();
-    
-    // Initialize Promoted Songs Scroll Arrows
     initializePromotedScroll();
-    
-    // Initialize Hero Generator
     initializeHeroGenerator();
-    
-    // Initialize Hero Create Button Dropdown
     heroCreateDropdown = new HeroCreateDropdown();
-    
-    // Initialize Hero Text Rotator
     const heroTextRotator = new HeroTextRotator();
 });
 
@@ -1578,24 +1138,10 @@ function initializePromotedScroll() {
     const container = document.getElementById('promoted-cards-container');
     const leftBtn = document.getElementById('promoted-scroll-left');
     const rightBtn = document.getElementById('promoted-scroll-right');
-    
     if (!container || !leftBtn || !rightBtn) return;
-    
-    const scrollAmount = 376 + 24; // card width + gap
-    
-    leftBtn.addEventListener('click', () => {
-        container.scrollBy({
-            left: -scrollAmount,
-            behavior: 'smooth'
-        });
-    });
-    
-    rightBtn.addEventListener('click', () => {
-        container.scrollBy({
-            left: scrollAmount,
-            behavior: 'smooth'
-        });
-    });
+    const scrollAmount = 376 + 24;
+    leftBtn.addEventListener('click', () => { container.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); });
+    rightBtn.addEventListener('click', () => { container.scrollBy({ left: scrollAmount, behavior: 'smooth' }); });
 }
 </script>
 {% endblock %}

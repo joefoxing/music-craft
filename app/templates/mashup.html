@@ -52,39 +52,39 @@
     <style>
         /* Track slot card */
         .track-slot {
-            @apply bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700 p-4 transition-all;
+            @apply bg-[#0a0a0c] bg-[#131318]/60 rounded-xl border border-[#2a2a36] p-4 transition-all;
         }
         .track-slot.is-ready {
-            @apply border-green-400 dark:border-green-600;
+            @apply border-green-400 border-green-600;
         }
         /* Sub-tabs inside each slot */
-        .slot-tab { @apply flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer; }
+        .slot-tab { @apply flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors text-[#8888a0] hover:text-[#e8e8ed] hover:text-white cursor-pointer; }
         .slot-tab.active { @apply bg-primary/10 text-primary; }
         /* Upload drop area inside slot */
         .slot-upload-area {
-            @apply border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-4 text-center cursor-pointer transition-colors hover:border-primary hover:bg-primary/5;
+            @apply border-2 border-dashed border-[#2a2a36] rounded-lg p-4 text-center cursor-pointer transition-colors hover:border-primary hover:bg-primary/5;
         }
         .slot-upload-area.drag-over { @apply border-primary bg-primary/10; }
     </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased overflow-hidden">
+<body class="bg-background-dark text-[#e8e8ed] font-display antialiased overflow-hidden">
     <div class="flex h-screen w-full">
         {% include "partials/_sidebar.html" %}
 
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-gradient-to-b dark:from-[#181118] dark:to-background-dark relative overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-gradient-to-b from-[#181118] to-background-dark relative overflow-hidden">
 
             <!-- Header -->
-            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 dark:bg-[#181118]/50 backdrop-blur-md sticky top-0 z-10">
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3/50 bg-[#0a0a0c]/50 backdrop-blur-md sticky top-0 z-10">
                 <div class="flex items-center gap-4 text-white md:hidden">
-                    <button class="text-slate-400 hover:text-white" id="mobileMenuBtn">
+                    <button class="text-[#8888a0] hover:text-white" id="mobileMenuBtn">
                         <span class="material-symbols-outlined">menu</span>
                     </button>
                     <h2 class="text-lg font-bold">Mashup</h2>
                 </div>
 
                 <div class="hidden md:block">
-                    <h2 class="text-slate-900 dark:text-white text-lg font-bold tracking-tight">Mashup Generator</h2>
+                    <h2 class="text-[#e8e8ed] text-lg font-bold tracking-tight">Mashup Generator</h2>
                 </div>
 
                 <div class="flex items-center gap-4">
@@ -95,11 +95,11 @@
                         </span>
                     </div>
                     {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('auth.profile') }}" class="p-2 text-slate-400 hover:text-white relative" title="Profile">
+                    <a href="{{ url_for('auth.profile') }}" class="p-2 text-[#8888a0] hover:text-white relative" title="Profile">
                         <span class="material-symbols-outlined">account_circle</span>
                     </a>
                     {% endif %}
-                    <button class="p-2 text-slate-400 hover:text-white relative" id="themeToggle">
+                    <button class="p-2 text-[#8888a0] hover:text-white relative" id="themeToggle">
                         <span class="material-symbols-outlined">dark_mode</span>
                         <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
                     </button>
@@ -113,16 +113,16 @@
                     <section class="flex flex-col gap-6">
                         <!-- Page headline -->
                         <div class="flex flex-col gap-2">
-                            <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 tracking-tight">Blend Multiple Tracks</h2>
-                            <p class="text-slate-500 dark:text-slate-400 text-sm mt-2">
+                            <h2 class="text-3xl md:text-4xl font-bold text-[#e8e8ed] tracking-tight">Blend Multiple Tracks</h2>
+                            <p class="text-[#8888a0] text-sm mt-2">
                                 Combine 2–5 audio sources into a single AI-generated mashup. Upload files or provide direct URLs.
                             </p>
                         </div>
 
                         <!-- ── STEP 1 · Audio Tracks ───────────────────── -->
-                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
+                        <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
                             <div class="flex items-center justify-between mb-5">
-                                <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2">
+                                <h3 class="text-xl font-bold text-[#e8e8ed] flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">merge</span>
                                     1. Audio Tracks
                                 </h3>
@@ -143,10 +143,10 @@
                                 <div data-track-slot class="track-slot">
                                     <!-- Slot header -->
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="text-sm font-semibold text-slate-700 dark:text-white flex items-center gap-2" data-track-label>Track 1</span>
+                                        <span class="text-sm font-semibold text-[#e8e8ed] flex items-center gap-2" data-track-label>Track 1</span>
                                         <div class="flex items-center gap-2">
                                             <!-- Ready badge -->
-                                            <span data-ready-badge class="hidden inline-flex items-center gap-1 text-xs font-medium text-green-600 dark:text-green-400">
+                                            <span data-ready-badge class="hidden inline-flex items-center gap-1 text-xs font-medium text-[#00cec9] text-green-400">
                                                 <span class="material-symbols-outlined text-sm">check_circle</span> Ready
                                             </span>
                                             <!-- Clear -->
@@ -155,7 +155,7 @@
                                             </button>
                                             <!-- Remove -->
                                             <button data-remove-btn
-                                                    class="p-1 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                                                    class="p-1 rounded-lg text-[#8888a0] hover:text-[#d63031] hover:bg-[#d63031]/10 hover:bg-red-900/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                                                     title="Remove track">
                                                 <span class="material-symbols-outlined text-sm">delete</span>
                                             </button>
@@ -176,21 +176,21 @@
                                     <div data-upload-section>
                                         <div data-upload-area class="slot-upload-area">
                                             <span class="material-symbols-outlined text-primary text-3xl mb-1">file_upload</span>
-                                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-2">Drag &amp; drop or click to browse</p>
-                                            <p class="text-xs text-slate-400">MP3, WAV, OGG, M4A, FLAC · max 100 MB</p>
+                                            <p class="text-sm text-[#8888a0] mb-2">Drag &amp; drop or click to browse</p>
+                                            <p class="text-xs text-[#8888a0]">MP3, WAV, OGG, M4A, FLAC · max 100 MB</p>
                                             <input data-file-input type="file" accept=".mp3,.wav,.ogg,.m4a,.flac" class="hidden">
                                             <button data-browse-btn type="button"
-                                                    class="mt-3 px-4 py-1.5 text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                                                    class="mt-3 px-4 py-1.5 text-xs font-medium bg-[#1a1a22] hover:bg-[#23232e] rounded-lg transition-colors">
                                                 Browse Files
                                             </button>
                                         </div>
 
                                         <!-- Progress -->
                                         <div class="mt-2 flex items-center gap-2">
-                                            <div class="flex-1 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                            <div class="flex-1 h-1.5 bg-slate-200 bg-slate-700 rounded-full overflow-hidden">
                                                 <div data-progress-bar class="h-full bg-primary rounded-full transition-all" style="width:0%"></div>
                                             </div>
-                                            <span data-progress-text class="text-xs text-slate-500 w-8 text-right">0%</span>
+                                            <span data-progress-text class="text-xs text-[#8888a0] w-8 text-right">0%</span>
                                         </div>
 
                                         <!-- Upload button -->
@@ -204,11 +204,11 @@
                                     <!-- URL section (hidden by default) -->
                                     <div data-url-section class="hidden space-y-2">
                                         <input data-url-input type="url"
-                                               class="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                               class="w-full px-3 py-2 text-sm bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                                placeholder="https://example.com/audio.mp3">
                                         <div class="flex gap-2">
                                             <button data-test-btn type="button"
-                                                    class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                                                    class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-[#1a1a22] hover:bg-[#23232e] rounded-lg transition-colors">
                                                 <span class="material-symbols-outlined text-sm">wifi_tethering</span> Test
                                             </button>
                                             <button data-use-url-btn type="button"
@@ -216,24 +216,24 @@
                                                 <span class="material-symbols-outlined text-sm">check</span> Use URL
                                             </button>
                                         </div>
-                                        <p data-url-status class="text-xs text-slate-500 mt-1"></p>
+                                        <p data-url-status class="text-xs text-[#8888a0] mt-1"></p>
                                     </div>
 
                                     <!-- Slot status label -->
-                                    <p data-slot-status class="text-sm text-slate-500 mt-2 truncate">No file selected</p>
+                                    <p data-slot-status class="text-sm text-[#8888a0] mt-2 truncate">No file selected</p>
                                 </div>
                             </template>
 
                             <!-- Hint when < 2 ready -->
-                            <p id="tracksHint" class="text-xs text-slate-400 mt-3 flex items-center gap-1">
+                            <p id="tracksHint" class="text-xs text-[#8888a0] mt-3 flex items-center gap-1">
                                 <span class="material-symbols-outlined text-sm">info</span>
                                 Add at least 2 tracks with audio sources before generating.
                             </p>
                         </div>
 
                         <!-- ── STEP 2 · Generation Settings ───────────── -->
-                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
-                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-5 flex items-center gap-2">
+                        <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold text-[#e8e8ed] mb-5 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-primary">tune</span>
                                 2. Generation Settings
                             </h3>
@@ -258,13 +258,13 @@
                                         <button type="button" class="toggle-btn active" id="mashupSimpleBtn">Simple Mode</button>
                                         <button type="button" class="toggle-btn" id="mashupCustomBtn">Custom Mode</button>
                                     </div>
-                                    <p id="mashupModeHelp" class="text-sm text-slate-500 mt-2">Simple: Just provide a prompt.</p>
+                                    <p id="mashupModeHelp" class="text-sm text-[#8888a0] mt-2">Simple: Just provide a prompt.</p>
                                 </div>
 
                                 <!-- Prompt -->
                                 <div>
                                     <label for="mashupPrompt" class="block text-sm font-medium mb-2">
-                                        Prompt <span class="text-slate-500">(describe the mashup style)</span>
+                                        Prompt <span class="text-[#8888a0]">(describe the mashup style)</span>
                                     </label>
                                     <textarea id="mashupPrompt" class="form-control" rows="5"
                                               placeholder="e.g. 'A chill lo-fi blend with jazz elements and smooth transitions'"></textarea>
@@ -296,7 +296,7 @@
                                     </div>
 
                                     <!-- Advanced params -->
-                                    <div class="border-t border-slate-200 dark:border-slate-700 pt-4 space-y-4">
+                                    <div class="border-t border-[#2a2a36] pt-4 space-y-4">
                                         <label class="block text-sm font-medium">Advanced Parameters</label>
 
                                         <!-- Vocal Gender -->
@@ -343,23 +343,23 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <label class="block text-sm font-medium mb-1">Instrumental Only</label>
-                                        <p class="text-sm text-slate-500">Generate without vocals</p>
+                                        <p class="text-sm text-[#8888a0]">Generate without vocals</p>
                                     </div>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input type="checkbox" id="mashupInstrumental" class="sr-only peer">
-                                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-primary"></div>
+                                        <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#131318] after:rounded-full after:h-5 after:w-5 after:transition-all border-slate-600 peer-checked:bg-primary"></div>
                                     </label>
                                 </div>
                             </div>
                         </div>
 
                         <!-- ── STEP 3 · Generate ───────────────────────── -->
-                        <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6 shadow-xl shadow-black/5">
-                            <h3 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
+                        <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
+                            <h3 class="text-xl font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-primary">play_circle</span>
                                 3. Generate Mashup
                             </h3>
-                            <p class="text-slate-500 dark:text-slate-400 mb-6">
+                            <p class="text-[#8888a0] mb-6">
                                 Upload all tracks and configure settings, then hit Generate.
                             </p>
 
@@ -369,7 +369,7 @@
                                 Generate Mashup
                             </button>
 
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-4 flex items-center gap-1">
+                            <p class="text-sm text-[#8888a0] mt-4 flex items-center gap-1">
                                 <span class="material-symbols-outlined text-xs">info</span>
                                 Generation typically takes 2–5 minutes. Status updates appear below.
                             </p>
@@ -379,7 +379,7 @@
                         <div id="mashupTaskStatus" class="task-status hidden">
                             <div class="status-card">
                                 <div class="status-header">
-                                    <h4 class="text-lg font-bold dark:text-white text-slate-900">Generation Status</h4>
+                                    <h4 class="text-lg font-bold text-[#e8e8ed]">Generation Status</h4>
                                     <div class="flex items-center gap-3">
                                         <span id="mashupStatusBadge" class="status-badge">Processing</span>
                                         <button id="mashupRefreshBtn" class="refresh-btn">
@@ -391,12 +391,12 @@
                                 <div class="space-y-4">
                                     <div>
                                         <label class="block text-sm font-medium mb-1">Task ID</label>
-                                        <code id="mashupTaskId" class="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-sm">-</code>
+                                        <code id="mashupTaskId" class="bg-[#1a1a22] px-2 py-1 rounded text-sm">-</code>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium mb-1">Progress</label>
                                         <progress id="mashupStatusProgress" value="0" max="100" class="w-full h-2 rounded-full"></progress>
-                                        <p id="mashupStatusText" class="text-sm text-slate-500 mt-1">Starting generation…</p>
+                                        <p id="mashupStatusText" class="text-sm text-[#8888a0] mt-1">Starting generation…</p>
                                     </div>
                                     <div class="status-details">
                                         <div class="grid grid-cols-2 gap-4">
@@ -407,7 +407,7 @@
                                         </div>
                                         <div class="mt-4">
                                             <p class="text-sm font-medium">Message</p>
-                                            <p id="mashupStatusMessage" class="text-sm text-slate-600 dark:text-slate-400">-</p>
+                                            <p id="mashupStatusMessage" class="text-sm text-[#8888a0]">-</p>
                                         </div>
                                     </div>
                                 </div>
@@ -417,22 +417,22 @@
                         <!-- ── Results (hidden until complete) ────────── -->
                         <div id="mashupResults" class="results hidden">
                             <div class="result-card">
-                                <h4 class="text-xl font-bold dark:text-white text-slate-900 mb-4 flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-green-500">check_circle</span>
+                                <h4 class="text-xl font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[#00cec9]">check_circle</span>
                                     Mashup Generated Successfully!
                                 </h4>
-                                <p class="text-slate-500 dark:text-slate-400 mb-4">Your mashup is ready to play and download.</p>
+                                <p class="text-[#8888a0] mb-4">Your mashup is ready to play and download.</p>
                                 <div id="mashupAudioPlayersContainer" class="space-y-6"></div>
 
                                 <!-- Audio player template -->
                                 <template id="mashupAudioPlayerTemplate">
-                                    <div class="audio-player border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-900/50">
+                                    <div class="audio-player border border-[#2a2a36] rounded-lg p-4 bg-[#0a0a0c] bg-[#131318]/50">
                                         <div class="flex justify-between items-start mb-3">
                                             <div>
-                                                <h5 class="font-bold text-slate-900 dark:text-white text-lg" data-title>Mashup</h5>
+                                                <h5 class="font-bold text-[#e8e8ed] text-lg" data-title>Mashup</h5>
                                                 <div class="flex items-center gap-3 mt-1">
                                                     <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full" data-model>Model</span>
-                                                    <span class="text-xs text-slate-500" data-duration>Duration</span>
+                                                    <span class="text-xs text-[#8888a0]" data-duration>Duration</span>
                                                 </div>
                                             </div>
                                             <button class="btn-download" data-download-btn>
@@ -449,18 +449,18 @@
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium mb-1">Generated Image</label>
-                                                <div class="relative bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
-                                                    <img src="" alt="Cover image" class="w-full h-32 object-contain bg-white" data-image-display style="display:none;">
+                                                <div class="relative bg-[#1a1a22] rounded-lg overflow-hidden border border-[#2a2a36]">
+                                                    <img src="" alt="Cover image" class="w-full h-32 object-contain bg-[#131318]" data-image-display style="display:none;">
                                                     <div class="image-placeholder h-32 flex items-center justify-center" data-image-placeholder>
-                                                        <span class="material-symbols-outlined text-slate-400 text-4xl">image</span>
+                                                        <span class="material-symbols-outlined text-[#8888a0] text-4xl">image</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="mt-3">
                                             <label class="block text-sm font-medium mb-1">Lyrics</label>
-                                            <div class="lyrics-container max-h-48 overflow-y-auto bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
-                                                <div class="lyrics-content text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line" data-lyrics>-</div>
+                                            <div class="lyrics-container max-h-48 overflow-y-auto bg-[#0a0a0c] bg-[#1a1a22]/50 rounded-lg p-3 border border-[#2a2a36]">
+                                                <div class="lyrics-content text-sm text-[#e8e8ed] text-[#8888a0] whitespace-pre-line" data-lyrics>-</div>
                                             </div>
                                         </div>
                                     </div>

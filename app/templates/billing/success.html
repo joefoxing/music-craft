@@ -13,7 +13,7 @@
 
     <h1 class="text-3xl font-extrabold text-white mb-3">You're all set!</h1>
 
-    <p class="text-slate-400 text-base mb-8">
+    <p class="text-[#8888a0] text-base mb-8">
       Your payment was successful. Your subscription and/or token balance has been updated — 
       enjoy unlimited creativity 🎵
     </p>
@@ -27,7 +27,7 @@
       <form method="POST" action="{{ url_for('billing.customer_portal') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit"
-                class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-white font-semibold hover:bg-white/5 transition-colors">
+                class="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 text-white font-semibold hover:bg-[#131318]/5 transition-colors">
           <span class="material-symbols-outlined text-base">manage_accounts</span>
           Manage Subscription
         </button>

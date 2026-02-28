@@ -116,7 +116,7 @@
         </div>
 
         <!-- Upload Form -->
-        <div class="bg-white/5 rounded-lg p-6 mb-6">
+        <div class="bg-[#131318]/5 rounded-lg p-6 mb-6">
             <form id="lyricsForm" enctype="multipart/form-data">
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-2">Audio File</label>
@@ -133,7 +133,7 @@
 
                 <div class="mb-4">
                     <label for="languageHint" class="block text-sm font-medium mb-2">Language</label>
-                    <select id="languageHint" name="language_hint" class="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white">
+                    <select id="languageHint" name="language_hint" class="w-full bg-[#131318]/10 border border-white/20 rounded-lg px-3 py-2 text-white">
                         <option value="auto">Auto-detect</option>
                         <option value="en">English</option>
                         <option value="vi">Vietnamese</option>
@@ -154,7 +154,7 @@
         </div>
 
         <!-- Tier 1: Metadata Extraction Status -->
-        <div id="metadataSection" class="hidden bg-white/5 rounded-lg p-6 mb-6">
+        <div id="metadataSection" class="hidden bg-[#131318]/5 rounded-lg p-6 mb-6">
             <div class="tier-section">
                 <div class="tier-header">✓ Tier 1: Metadata Extracted</div>
                 <div class="grid grid-cols-2 gap-4">
@@ -171,7 +171,7 @@
         </div>
 
         <!-- Tier 2: LRCLIB Search Results -->
-        <div id="lrcLibSection" class="hidden bg-white/5 rounded-lg p-6 mb-6">
+        <div id="lrcLibSection" class="hidden bg-[#131318]/5 rounded-lg p-6 mb-6">
             <div class="tier-section">
                 <div class="tier-header">⚡ Tier 2: LRCLIB Search (auto-searching...)</div>
                 <div id="lrcLibStatus" class="text-sm text-white/60 mb-4">Searching for lyrics...</div>
@@ -180,7 +180,7 @@
         </div>
 
         <!-- Tier 2 Success: Show Selected Result -->
-        <div id="lrcLibSuccessSection" class="hidden bg-white/5 rounded-lg p-6 mb-6">
+        <div id="lrcLibSuccessSection" class="hidden bg-[#131318]/5 rounded-lg p-6 mb-6">
             <div class="tier-section">
                 <div class="tier-header">✓ Tier 2: Lyrics Found on LRCLIB</div>
                 <div class="bg-black/30 rounded-lg p-4 mb-4 max-h-48 overflow-y-auto">
@@ -191,7 +191,7 @@
                         <span class="material-symbols-outlined text-sm mr-1" style="vertical-align: middle;">check</span>
                         Apply These Lyrics
                     </button>
-                    <button id="searchAgainBtn" class="flex-1 bg-white/10 hover:bg-white/20 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    <button id="searchAgainBtn" class="flex-1 bg-[#131318]/10 hover:bg-[#131318]/20 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                         Try Transcription Instead
                     </button>
                 </div>
@@ -199,7 +199,7 @@
         </div>
 
         <!-- Processing Section (Tier 3 Fallback) -->
-        <div id="progressSection" class="hidden bg-white/5 rounded-lg p-6 mb-6">
+        <div id="progressSection" class="hidden bg-[#131318]/5 rounded-lg p-6 mb-6">
             <div class="tier-section">
                 <div class="tier-header">🎯 Tier 3: Converting to Text (AI Transcription)</div>
                 <div class="progress-bar mb-4">
@@ -210,17 +210,17 @@
         </div>
 
         <!-- Results Section -->
-        <div id="resultsSection" class="hidden bg-white/5 rounded-lg p-6">
+        <div id="resultsSection" class="hidden bg-[#131318]/5 rounded-lg p-6">
             <h3 class="text-lg font-semibold mb-4">Extracted Lyrics</h3>
             <div class="bg-black/30 rounded-lg p-4 mb-4">
                 <pre id="lyricsText" class="whitespace-pre-wrap text-white font-mono text-sm"></pre>
             </div>
             <div class="flex gap-4">
-                <button id="copyBtn" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                <button id="copyBtn" class="bg-[#131318]/10 hover:bg-[#131318]/20 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                     <span class="material-symbols-outlined text-sm mr-1">content_copy</span>
                     Copy
                 </button>
-                <button id="downloadBtn" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                <button id="downloadBtn" class="bg-[#131318]/10 hover:bg-[#131318]/20 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                     <span class="material-symbols-outlined text-sm mr-1">download</span>
                     Download
                 </button>

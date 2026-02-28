@@ -1,45 +1,75 @@
-<!-- Shared Tailwind config for pages using the AudioCraft pink/fuchsia design system.
-     Include this partial in any template that uses the primary:#f20df2 color vocabulary.
-     Note: base.html uses a separate orange-primary theme for other pages. -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script>
-  tailwind.config = {
-    darkMode: "class",
+tailwind.config = {
+    darkMode: 'class',
     theme: {
-      extend: {
-        colors: {
-          "primary":           "#f20df2",
-          "primary-dark":      "#c20ac2",
-          "background-light":  "#f8f5f8",
-          "background-dark":   "#181118",
-          "surface-dark":      "#271b27",
-          "border-dark":       "#392839",
-        },
-        fontFamily: {
-          "display": ["Space Grotesk", "sans-serif"],
-          "body":    ["Space Grotesk", "sans-serif"],
-        },
-        borderRadius: {
-          "DEFAULT": "0.5rem",
-          "lg":      "0.75rem",
-          "xl":      "1rem",
-          "full":    "9999px"
-        },
-        animation: {
-          "slide-in": "slideIn 0.3s ease-out",
-          "fade-in":  "fadeIn 0.5s ease-out",
-        },
-        keyframes: {
-          slideIn: {
-            from: { opacity: 0, transform: "translateY(-10px)" },
-            to:   { opacity: 1, transform: "translateY(0)" }
-          },
-          fadeIn: {
-            from: { opacity: 0 },
-            to:   { opacity: 1 }
-          }
+        extend: {
+            colors: {
+                /* ── New Dark Theme Palette ── */
+                'background-dark': '#0a0a0c',
+                'surface-dark': '#131318',
+                'surface-2': '#1a1a22',
+                'surface-3': '#23232e',
+                'border-dark': '#2a2a36',
+                
+                /* Text */
+                'text-primary': '#e8e8ed',
+                'text-dim': '#8888a0',
+                'text-muted': '#55556a',
+                
+                /* Accent */
+                'primary': '#6c5ce7',
+                'primary-light': '#a29bfe',
+                'primary-glow': 'rgba(108, 92, 231, 0.25)',
+                
+                /* Semantic */
+                'success': '#00cec9',
+                'success-glow': 'rgba(0, 206, 201, 0.2)',
+                'warning': '#e17055',
+                'error': '#d63031',
+                'info': '#0984e3',
+                'pink': '#fd79a8',
+                
+                /* Legacy compat (old indigo → new purple) */
+                'indigo': {
+                    400: '#a29bfe',
+                    500: '#6c5ce7',
+                    600: '#5a4bd1',
+                    700: '#4839b5',
+                    800: '#362a99',
+                    900: '#241c7d'
+                },
+                
+                /* Slate overrides for dark theme */
+                'slate': {
+                    50: '#e8e8ed',
+                    100: '#d0d0db',
+                    200: '#8888a0',
+                    300: '#6a6a82',
+                    400: '#55556a',
+                    500: '#3d3d52',
+                    600: '#2a2a36',
+                    700: '#23232e',
+                    800: '#1a1a22',
+                    900: '#131318',
+                    950: '#0a0a0c'
+                }
+            },
+            fontFamily: {
+                'heading': ['Space Grotesk', 'system-ui', 'sans-serif'],
+                'body': ['Inter', 'system-ui', 'sans-serif'],
+                'mono': ['JetBrains Mono', 'Consolas', 'monospace']
+            },
+            borderRadius: {
+                'sm': '8px',
+                'DEFAULT': '12px',
+                'lg': '20px'
+            },
+            boxShadow: {
+                'glow': '0 0 20px rgba(108, 92, 231, 0.25)',
+                'glow-sm': '0 0 12px rgba(108, 92, 231, 0.15)',
+                'glow-green': '0 0 20px rgba(0, 206, 201, 0.2)'
+            }
         }
-      },
-    },
-  }
+    }
+}
 </script>

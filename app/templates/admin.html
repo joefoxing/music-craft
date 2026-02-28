@@ -42,31 +42,31 @@
 </style>
 {% endblock %}
 
-{% block body_class %}bg-slate-950 overflow-hidden{% endblock %}
+{% block body_class %}bg-[#0a0a0c] overflow-hidden{% endblock %}
 
 {% block content %}
 <div class="flex h-screen w-full overflow-hidden">
     {% include "partials/_sidebar.html" %}
 
-    <main class="flex-1 flex flex-col min-w-0 bg-slate-950 overflow-hidden">
+    <main class="flex-1 flex flex-col min-w-0 bg-[#0a0a0c] overflow-hidden">
 
         <!-- ── Header ── -->
-        <header class="flex items-center justify-between gap-4 border-b border-slate-800 px-6 py-3 bg-slate-950/90 backdrop-blur-md sticky top-0 z-10 shrink-0">
+        <header class="flex items-center justify-between gap-4 border-b border-[#2a2a36] px-6 py-3 bg-[#0a0a0c]/90 backdrop-blur-md sticky top-0 z-10 shrink-0">
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center shrink-0">
                     <span class="material-symbols-outlined text-base text-blue-400 msf">admin_panel_settings</span>
                 </div>
                 <div>
                     <h1 class="text-slate-100 text-base font-semibold leading-tight tracking-tight">Admin Dashboard</h1>
-                    <p class="text-slate-500 text-xs leading-tight">User management &amp; system overview</p>
+                    <p class="text-[#8888a0] text-xs leading-tight">User management &amp; system overview</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
-                <p id="lastUpdated" class="hidden text-xs text-slate-600">
-                    Updated <span id="lastUpdatedTime" class="text-slate-500 tabular-nums"></span>
+                <p id="lastUpdated" class="hidden text-xs text-[#8888a0]">
+                    Updated <span id="lastUpdatedTime" class="text-[#8888a0] tabular-nums"></span>
                 </p>
                 <button id="adminRefreshBtn"
-                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white hover:border-slate-600 transition-all text-sm font-medium">
+                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1a1a22] border border-[#2a2a36] text-[#8888a0] hover:bg-slate-700 hover:text-white hover:border-slate-600 transition-all text-sm font-medium">
                     <span class="material-symbols-outlined text-sm" id="refreshIcon">refresh</span>
                     <span>Refresh</span>
                 </button>
@@ -80,34 +80,34 @@
             <div id="adminError" class="hidden flex items-start gap-3 p-4 rounded-xl border border-red-500/20 bg-red-500/5 animate-fade-in">
                 <span class="material-symbols-outlined text-base text-red-400 shrink-0 mt-0.5 msf">error</span>
                 <p id="adminErrorText" class="text-sm text-red-300 leading-relaxed flex-1"></p>
-                <button onclick="document.getElementById('adminError').classList.add('hidden')" class="text-red-500 hover:text-red-300 transition-colors shrink-0">
+                <button onclick="document.getElementById('adminError').classList.add('hidden')" class="text-[#d63031] hover:text-red-300 transition-colors shrink-0">
                     <span class="material-symbols-outlined text-base">close</span>
                 </button>
             </div>
 
             <!-- ── Stats Row ── -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/5 transition-all">
+                <div class="group bg-[#131318] rounded-xl border border-[#2a2a36] p-5 flex items-center justify-between hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/5 transition-all">
                     <div>
-                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">Total Users</p>
+                        <p class="text-[#8888a0] text-xs font-medium uppercase tracking-widest mb-1.5">Total Users</p>
                         <p id="statTotalUsers" class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">—</p>
                     </div>
                     <div class="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center group-hover:bg-blue-500/15 transition-colors shrink-0">
                         <span class="material-symbols-outlined text-xl text-blue-400 msf">group</span>
                     </div>
                 </div>
-                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-violet-500/30 hover:shadow-lg hover:shadow-violet-500/5 transition-all">
+                <div class="group bg-[#131318] rounded-xl border border-[#2a2a36] p-5 flex items-center justify-between hover:border-violet-500/30 hover:shadow-lg hover:shadow-violet-500/5 transition-all">
                     <div>
-                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">Admins</p>
+                        <p class="text-[#8888a0] text-xs font-medium uppercase tracking-widest mb-1.5">Admins</p>
                         <p id="statAdmins" class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">—</p>
                     </div>
                     <div class="w-11 h-11 rounded-xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center group-hover:bg-violet-500/15 transition-colors shrink-0">
                         <span class="material-symbols-outlined text-xl text-violet-400 msf">shield_person</span>
                     </div>
                 </div>
-                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
+                <div class="group bg-[#131318] rounded-xl border border-[#2a2a36] p-5 flex items-center justify-between hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
                     <div>
-                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">Roles Available</p>
+                        <p class="text-[#8888a0] text-xs font-medium uppercase tracking-widest mb-1.5">Roles Available</p>
                         <p id="statRoles" class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">—</p>
                     </div>
                     <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500/15 transition-colors shrink-0">
@@ -118,36 +118,36 @@
 
             <!-- ── Subscription Stats Row ── -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-primary/30 transition-all">
+                <div class="group bg-[#131318] rounded-xl border border-[#2a2a36] p-5 flex items-center justify-between hover:border-primary/30 transition-all">
                     <div>
-                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">Active Pro</p>
+                        <p class="text-[#8888a0] text-xs font-medium uppercase tracking-widest mb-1.5">Active Pro</p>
                         <p class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">{{ active_pro_count }}</p>
                     </div>
                     <div class="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined text-xl text-primary msf">star</span>
                     </div>
                 </div>
-                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-yellow-500/30 transition-all">
+                <div class="group bg-[#131318] rounded-xl border border-[#2a2a36] p-5 flex items-center justify-between hover:border-yellow-500/30 transition-all">
                     <div>
-                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">Past Due</p>
+                        <p class="text-[#8888a0] text-xs font-medium uppercase tracking-widest mb-1.5">Past Due</p>
                         <p class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">{{ past_due_count }}</p>
                     </div>
                     <div class="w-11 h-11 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center shrink-0">
                         <span class="material-symbols-outlined text-xl text-yellow-400 msf">warning</span>
                     </div>
                 </div>
-                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-slate-500/30 transition-all">
+                <div class="group bg-[#131318] rounded-xl border border-[#2a2a36] p-5 flex items-center justify-between hover:border-slate-500/30 transition-all">
                     <div>
-                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">Free Users</p>
+                        <p class="text-[#8888a0] text-xs font-medium uppercase tracking-widest mb-1.5">Free Users</p>
                         <p class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">{{ free_user_count }}</p>
                     </div>
                     <div class="w-11 h-11 rounded-xl bg-slate-500/10 border border-slate-500/20 flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-xl text-slate-400 msf">person</span>
+                        <span class="material-symbols-outlined text-xl text-[#8888a0] msf">person</span>
                     </div>
                 </div>
-                <div class="group bg-slate-900 rounded-xl border border-slate-800 p-5 flex items-center justify-between hover:border-green-500/30 transition-all">
+                <div class="group bg-[#131318] rounded-xl border border-[#2a2a36] p-5 flex items-center justify-between hover:border-green-500/30 transition-all">
                     <div>
-                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest mb-1.5">With Tokens</p>
+                        <p class="text-[#8888a0] text-xs font-medium uppercase tracking-widest mb-1.5">With Tokens</p>
                         <p class="text-slate-100 text-3xl font-bold tracking-tight tabular-nums">{{ users_with_tokens }}</p>
                     </div>
                     <div class="w-11 h-11 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center shrink-0">
@@ -157,11 +157,11 @@
             </div>
 
             <!-- ── System Status ── -->
-            <div class="bg-slate-900 rounded-xl border border-slate-800 p-5">
+            <div class="bg-[#131318] rounded-xl border border-[#2a2a36] p-5">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-slate-300 text-sm font-semibold">System Status</h2>
+                    <h2 class="text-[#8888a0] text-sm font-semibold">System Status</h2>
                     <span id="overallStatusBadge"
-                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-500">
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-[#1a1a22] border border-[#2a2a36] text-[#8888a0]">
                         <span id="overallStatusDot" class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
                         <span id="overallStatusText">Checking…</span>
                     </span>
@@ -175,16 +175,16 @@
             </div>
 
             <!-- ── User Management ── -->
-            <div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-slate-800">
+            <div class="bg-[#131318] rounded-xl border border-[#2a2a36] overflow-hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-[#2a2a36]">
                     <div>
                         <h2 class="text-slate-200 text-sm font-semibold">User Management</h2>
-                        <p class="text-slate-500 text-xs mt-0.5">Manage accounts and assign permissions</p>
+                        <p class="text-[#8888a0] text-xs mt-0.5">Manage accounts and assign permissions</p>
                     </div>
                     <div class="relative flex items-center shrink-0">
-                        <span class="material-symbols-outlined absolute left-3 text-base text-slate-500 pointer-events-none select-none">search</span>
+                        <span class="material-symbols-outlined absolute left-3 text-base text-[#8888a0] pointer-events-none select-none">search</span>
                         <input id="adminUserSearch" type="search"
-                            class="pl-9 pr-4 py-2 w-64 bg-slate-800 border border-slate-700 rounded-lg text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all"
+                            class="pl-9 pr-4 py-2 w-64 bg-[#1a1a22] border border-[#2a2a36] rounded-lg text-sm text-slate-200 placeholder:text-[#8888a0] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/40 transition-all"
                             placeholder="Search by email or name…" autocomplete="off" />
                     </div>
                 </div>
@@ -198,34 +198,34 @@
     <div id="deleteUserModal"
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden"
         aria-modal="true" role="dialog">
-        <div class="bg-slate-900 rounded-2xl border border-slate-700 shadow-2xl w-full max-w-md animate-fade-in">
-            <div class="flex items-center gap-3 px-6 pt-6 pb-4 border-b border-slate-800">
+        <div class="bg-[#131318] rounded-2xl border border-[#2a2a36] shadow-2xl w-full max-w-md animate-fade-in">
+            <div class="flex items-center gap-3 px-6 pt-6 pb-4 border-b border-[#2a2a36]">
                 <div class="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
                     <span class="material-symbols-outlined text-base text-red-400 msf">delete_forever</span>
                 </div>
                 <div>
                     <h3 class="text-slate-100 font-semibold text-base leading-tight">Delete User</h3>
-                    <p class="text-slate-500 text-xs mt-0.5">This action is irreversible</p>
+                    <p class="text-[#8888a0] text-xs mt-0.5">This action is irreversible</p>
                 </div>
             </div>
             <div class="px-6 py-5 space-y-4">
-                <p class="text-slate-400 text-sm leading-relaxed">
+                <p class="text-[#8888a0] text-sm leading-relaxed">
                     You are about to permanently delete
                     <span id="deleteModalUserEmail" class="font-semibold text-slate-200 font-mono break-all"></span>.
                     <span class="text-red-400 font-medium">This cannot be undone.</span>
                 </p>
-                <div class="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50">
-                    <p class="text-xs text-slate-500 mb-2.5">
+                <div class="bg-[#1a1a22]/60 rounded-xl p-4 border border-[#2a2a36]/50">
+                    <p class="text-xs text-[#8888a0] mb-2.5">
                         Type <kbd class="px-1.5 py-0.5 rounded bg-slate-700 text-slate-200 font-mono text-xs border border-slate-600">DELETE</kbd> to confirm
                     </p>
                     <input type="text" id="deleteConfirmationInput"
-                        class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-slate-200 placeholder:text-slate-600 focus:ring-2 focus:ring-red-500/25 focus:border-red-500/40 outline-none transition-all font-mono tracking-widest"
+                        class="w-full px-3 py-2 bg-[#131318] border border-[#2a2a36] rounded-lg text-sm text-slate-200 placeholder:text-[#8888a0] focus:ring-2 focus:ring-red-500/25 focus:border-red-500/40 outline-none transition-all font-mono tracking-widest"
                         placeholder="DELETE" autocomplete="off" />
                 </div>
             </div>
             <div class="flex justify-end gap-2 px-6 pb-6">
                 <button id="cancelDeleteBtn"
-                    class="px-4 py-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors text-sm font-medium">
+                    class="px-4 py-2 rounded-lg text-[#8888a0] hover:text-slate-200 hover:bg-[#1a1a22] transition-colors text-sm font-medium">
                     Cancel
                 </button>
                 <button id="confirmDeleteBtn" disabled

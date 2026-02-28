@@ -21,7 +21,7 @@
             {{ form.email(class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-purple-500", placeholder="you@example.com") }}
         </div>
         {% if form.email.errors %}
-            <div class="mt-1 text-sm text-red-600">
+            <div class="mt-1 text-sm text-[#d63031]">
                 {% for error in form.email.errors %}
                     {{ error }}
                 {% endfor %}
@@ -36,7 +36,7 @@
                 </a>
             </div>
         {% else %}
-            <div class="mt-2 flex items-center text-green-600 text-sm">
+            <div class="mt-2 flex items-center text-[#00cec9] text-sm">
                 <span class="material-symbols-outlined mr-1 text-base">check_circle</span>
                 Email verified
             </div>
@@ -55,7 +55,7 @@
             {{ form.display_name(class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-purple-500", placeholder="Your Name") }}
         </div>
         {% if form.display_name.errors %}
-            <div class="mt-1 text-sm text-red-600">
+            <div class="mt-1 text-sm text-[#d63031]">
                 {% for error in form.display_name.errors %}
                     {{ error }}
                 {% endfor %}
@@ -79,7 +79,7 @@
                 {{ form.current_password(class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-purple-500", placeholder="••••••••") }}
             </div>
             {% if form.current_password.errors %}
-                <div class="mt-1 text-sm text-red-600">
+                <div class="mt-1 text-sm text-[#d63031]">
                     {% for error in form.current_password.errors %}
                         {{ error }}
                     {% endfor %}
@@ -102,7 +102,7 @@
                 Must be at least 8 characters with uppercase, lowercase, and numbers.
             </p>
             {% if form.new_password.errors %}
-                <div class="mt-1 text-sm text-red-600">
+                <div class="mt-1 text-sm text-[#d63031]">
                     {% for error in form.new_password.errors %}
                         {{ error }}
                     {% endfor %}
@@ -122,7 +122,7 @@
                 {{ form.confirm_new_password(class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-purple-500", placeholder="••••••••") }}
             </div>
             {% if form.confirm_new_password.errors %}
-                <div class="mt-1 text-sm text-red-600">
+                <div class="mt-1 text-sm text-[#d63031]">
                     {% for error in form.confirm_new_password.errors %}
                         {{ error }}
                     {% endfor %}
@@ -171,7 +171,7 @@
 
 <!-- Logout Button -->
 <div class="mt-8 pt-6 border-t border-gray-200">
-    <a href="{{ url_for('auth.logout') }}" class="w-full bg-red-50 text-red-700 font-semibold py-3 px-4 rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 inline-flex items-center justify-center">
+    <a href="{{ url_for('auth.logout') }}" class="w-full bg-[#d63031]/10 text-red-700 font-semibold py-3 px-4 rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-200 inline-flex items-center justify-center">
         <span class="material-symbols-outlined mr-2">logout</span>
         Logout
     </a>
