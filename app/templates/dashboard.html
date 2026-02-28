@@ -14,14 +14,14 @@
 <!-- Custom CSS -->
 <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
 </head>
-<body class="bg-background-light bg-background-dark text-[#e8e8ed] text-white font-display antialiased selection:bg-primary selection:text-white overflow-hidden">
+<body class="bg-background-dark text-[#e8e8ed] font-display antialiased selection:bg-primary selection:text-white overflow-hidden">
 <div class="flex h-screen w-full">
 {% include "partials/_sidebar.html" %}
 <!-- Main Content -->
-<main class="flex-1 flex flex-col min-w-0 bg-background-light bg-background-dark relative overflow-hidden">
+<main class="flex-1 flex flex-col min-w-0 bg-background-dark relative overflow-hidden">
 
   <!-- Header -->
-  <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+  <header class="flex items-center justify-between border-b border-border-dark px-6 py-3/50 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
     <div class="flex items-center gap-4 text-white md:hidden">
       <button id="mobileMenuBtn" class="text-[#8888a0] hover:text-white">
         <span class="material-symbols-outlined">menu</span>
@@ -29,7 +29,7 @@
       <h2 class="text-lg font-bold">Studio</h2>
     </div>
     <div class="hidden md:block">
-      <h2 class="text-[#e8e8ed] text-white text-lg font-bold tracking-tight">Studio Dashboard</h2>
+      <h2 class="text-[#e8e8ed] text-lg font-bold tracking-tight">Studio Dashboard</h2>
     </div>
     <div class="flex items-center gap-4">
       {% if current_user.is_authenticated %}
@@ -51,7 +51,7 @@
       <!-- ── Hero Welcome Row ── -->
       <section class="flex flex-col gap-4 animate-fade-in">
         <div>
-          <h1 class="text-3xl md:text-4xl font-bold text-white text-[#e8e8ed] tracking-tight">
+          <h1 class="text-3xl md:text-4xl font-bold text-[#e8e8ed] tracking-tight">
             {% if greeting_hour is defined %}
               {% if greeting_hour >= 5 and greeting_hour < 12 %}Good morning{% elif greeting_hour >= 12 and greeting_hour < 18 %}Good afternoon{% elif greeting_hour >= 18 and greeting_hour < 23 %}Good evening{% else %}Welcome back{% endif %}
             {% else %}Welcome back{% endif %}{% if current_user.is_authenticated and current_user.display_name %}, {{ current_user.display_name }}{% endif %} 👋
@@ -65,12 +65,12 @@
             Generate Music
           </a>
           <a href="{{ url_for('main.cover_generator') }}"
-             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border-dark text-white text-[#e8e8ed] hover:bg-surface-dark hover:text-white font-semibold text-sm transition-colors">
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border-dark text-[#e8e8ed] hover:bg-surface-dark hover:text-white font-semibold text-sm transition-colors">
             <span class="material-symbols-outlined text-base">image</span>
             Create Cover
           </a>
           <a href="{{ url_for('main.history') }}"
-             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border-dark text-white text-[#e8e8ed] hover:bg-surface-dark hover:text-white font-semibold text-sm transition-colors">
+             class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border-dark text-[#e8e8ed] hover:bg-surface-dark hover:text-white font-semibold text-sm transition-colors">
             <span class="material-symbols-outlined text-base">history</span>
             View History
           </a>
@@ -87,7 +87,7 @@
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="bg-[#131318] bg-surface-dark rounded-xl border-l-4 border-indigo-500 border-t border-r border-b border-[#2a2a36] border-border-dark p-4 shadow-sm">
               <p class="text-xs text-[#8888a0] mb-1">Total Activities</p>
-              <p id="statsTotal" class="text-2xl font-bold text-white text-[#e8e8ed]">0</p>
+              <p id="statsTotal" class="text-2xl font-bold text-[#e8e8ed]">0</p>
               <div class="flex items-center justify-between mt-2">
                 <span class="text-xs text-[#8888a0]">last 30 days</span>
                 <span class="material-symbols-outlined text-[#a29bfe] text-xl">bar_chart</span>
@@ -95,7 +95,7 @@
             </div>
             <div class="bg-[#131318] bg-surface-dark rounded-xl border-l-4 border-primary border-t border-r border-b border-[#2a2a36] border-border-dark p-4 shadow-sm">
               <p class="text-xs text-[#8888a0] mb-1">Today</p>
-              <p id="statsToday" class="text-2xl font-bold text-white text-[#e8e8ed]">0</p>
+              <p id="statsToday" class="text-2xl font-bold text-[#e8e8ed]">0</p>
               <div class="flex items-center justify-between mt-2">
                 <span class="text-xs text-[#8888a0]">since midnight</span>
                 <span class="material-symbols-outlined text-primary text-xl">today</span>
@@ -103,7 +103,7 @@
             </div>
             <div class="bg-[#131318] bg-surface-dark rounded-xl border-l-4 border-blue-500 border-t border-r border-b border-[#2a2a36] border-border-dark p-4 shadow-sm">
               <p class="text-xs text-[#8888a0] mb-1">Generated</p>
-              <p id="statsTemplates" class="text-2xl font-bold text-white text-[#e8e8ed]">0</p>
+              <p id="statsTemplates" class="text-2xl font-bold text-[#e8e8ed]">0</p>
               <div class="flex items-center justify-between mt-2">
                 <span class="text-xs text-[#8888a0]">music tracks</span>
                 <span class="material-symbols-outlined text-blue-400 text-xl">grid_view</span>
@@ -111,7 +111,7 @@
             </div>
             <div class="bg-[#131318] bg-surface-dark rounded-xl border-l-4 border-green-500 border-t border-r border-b border-[#2a2a36] border-border-dark p-4 shadow-sm">
               <p class="text-xs text-[#8888a0] mb-1">Successful</p>
-              <p id="statsSuccess" class="text-2xl font-bold text-white text-[#e8e8ed]">0</p>
+              <p id="statsSuccess" class="text-2xl font-bold text-[#e8e8ed]">0</p>
               <div class="flex items-center justify-between mt-2">
                 <span class="text-xs text-[#8888a0]">completions</span>
                 <span class="material-symbols-outlined text-green-400 text-xl">check_circle</span>
@@ -123,7 +123,7 @@
           <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-lg flex-1">
             <div class="flex items-center justify-between mb-5">
               <div>
-                <h3 class="text-lg font-bold text-white text-[#e8e8ed]">Recent Activity</h3>
+                <h3 class="text-lg font-bold text-[#e8e8ed]">Recent Activity</h3>
                 <p class="text-xs text-[#8888a0]">Your music generations and processing history</p>
               </div>
               <div class="flex items-center gap-3">
@@ -155,7 +155,7 @@
                   <span class="material-symbols-outlined text-primary text-3xl opacity-60">music_note</span>
                 </div>
                 <div>
-                  <h4 class="text-base font-semibold text-white text-[#e8e8ed]">No activity yet</h4>
+                  <h4 class="text-base font-semibold text-[#e8e8ed]">No activity yet</h4>
                   <p class="text-sm text-[#8888a0] mt-1">Your music generations and processing events will appear here.</p>
                 </div>
                 <a href="{{ url_for('main.music_generator') }}"
@@ -197,7 +197,7 @@
           {% if current_user.is_authenticated %}
           <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-5 shadow-lg">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-base font-bold text-white text-[#e8e8ed]">Your Plan</h3>
+              <h3 class="text-base font-bold text-[#e8e8ed]">Your Plan</h3>
               <a href="{{ url_for('pricing.index') }}" class="text-xs text-primary hover:text-primary-dark font-medium">View Plans</a>
             </div>
 
@@ -207,7 +207,7 @@
                   <span class="material-symbols-outlined text-primary-orange text-xl">star</span>
                 </div>
                 <div>
-                  <p class="text-sm font-semibold text-white text-[#e8e8ed]">Pro Creator</p>
+                  <p class="text-sm font-semibold text-[#e8e8ed]">Pro Creator</p>
                   <p class="text-xs text-[#8888a0]">
                     {% if current_user.subscription_status == 'active' %}Active
                     {% elif current_user.subscription_status == 'past_due' %}<span class="text-yellow-400">⚠ Payment past due</span>
@@ -224,7 +224,7 @@
               <form method="POST" action="{{ url_for('billing.customer_portal') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit"
-                        class="w-full py-2 px-4 rounded-lg border border-border-dark text-sm font-semibold text-white text-[#e8e8ed] hover:bg-surface-dark hover:text-white transition-colors flex items-center justify-center gap-2">
+                        class="w-full py-2 px-4 rounded-lg border border-border-dark text-sm font-semibold text-[#e8e8ed] hover:bg-surface-dark hover:text-white transition-colors flex items-center justify-center gap-2">
                   <span class="material-symbols-outlined text-base">manage_accounts</span>
                   Manage Subscription
                 </button>
@@ -235,7 +235,7 @@
                   <span class="material-symbols-outlined text-[#8888a0] text-xl">person</span>
                 </div>
                 <div>
-                  <p class="text-sm font-semibold text-white text-[#e8e8ed]">Free Plan</p>
+                  <p class="text-sm font-semibold text-[#e8e8ed]">Free Plan</p>
                   <p class="text-xs text-[#8888a0]">Limited generations</p>
                 </div>
               </div>
@@ -251,7 +251,7 @@
             {% if (current_user.token_balance or 0) > 0 %}
             <div class="mt-4 pt-4 border-t border-slate-100 border-border-dark flex items-center justify-between">
               <span class="text-xs text-[#8888a0]">Token credits</span>
-              <span class="text-xs font-bold text-white text-[#e8e8ed] flex items-center gap-1">
+              <span class="text-xs font-bold text-[#e8e8ed] flex items-center gap-1">
                 <span class="material-symbols-outlined text-primary text-sm">bolt</span>
                 {{ current_user.token_balance }} tokens
               </span>
@@ -263,7 +263,7 @@
           <!-- Recent Creations Widget -->
           <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-5 shadow-lg">
             <div class="flex items-center justify-between mb-4">
-              <h3 class="text-base font-bold text-white text-[#e8e8ed]">Recent Creations</h3>
+              <h3 class="text-base font-bold text-[#e8e8ed]">Recent Creations</h3>
               <a href="{{ url_for('main.history') }}" class="text-xs text-primary hover:text-primary-dark font-medium flex items-center gap-1">
                 View all <span class="material-symbols-outlined text-sm">arrow_forward</span>
               </a>
@@ -302,7 +302,7 @@
 
           <!-- Quick Links Widget -->
           <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-5 shadow-lg">
-            <h3 class="text-base font-bold text-white text-[#e8e8ed] mb-4">Quick Links</h3>
+            <h3 class="text-base font-bold text-[#e8e8ed] mb-4">Quick Links</h3>
             <nav class="flex flex-col gap-1">
               <a href="{{ url_for('main.music_generator') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-primary/10 group transition-colors">
                 <span class="material-symbols-outlined text-[#8888a0] group-hover:text-primary text-xl transition-colors">music_note</span>

@@ -49,14 +49,14 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="bg-background-light bg-background-dark text-[#e8e8ed] text-white font-display antialiased overflow-hidden">
+<body class="bg-background-dark text-[#e8e8ed] font-display antialiased overflow-hidden">
     <div class="flex h-screen w-full">
         {% include "partials/_sidebar.html" %}
         
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 bg-background-light bg-gradient-to-b from-[#181118] to-background-dark relative overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-gradient-to-b from-[#181118] to-background-dark relative overflow-hidden">
             <!-- Header -->
-            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 bg-[#0a0a0c]/50 backdrop-blur-md sticky top-0 z-10">
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3/50 bg-[#0a0a0c]/50 backdrop-blur-md sticky top-0 z-10">
                 <div class="flex items-center gap-4 text-white md:hidden">
                     <button class="text-[#8888a0] hover:text-white" id="mobileMenuBtn">
                         <span class="material-symbols-outlined">menu</span>
@@ -65,7 +65,7 @@
                 </div>
                 
                 <div class="hidden md:block">
-                    <h2 class="text-[#e8e8ed] text-white text-lg font-bold tracking-tight">Studio Dashboard</h2>
+                    <h2 class="text-[#e8e8ed] text-lg font-bold tracking-tight">Studio Dashboard</h2>
                 </div>
                 
                 <div class="flex items-center gap-4">
@@ -99,13 +99,13 @@
                     <!-- Generator Section -->
                     <section class="flex flex-col gap-6">
                         <div class="flex flex-col gap-2">
-                            <h2 class="text-3xl md:text-4xl font-bold text-white text-[#e8e8ed] tracking-tight">Extraordinary Song Quality</h2>
+                            <h2 class="text-3xl md:text-4xl font-bold text-[#e8e8ed] tracking-tight">Extraordinary Song Quality</h2>
                             <p class="text-[#8888a0] text-sm mt-2">Whether the melody is in your head, lyrics you've written, or just to hear your feeling —Vnuno makes high-quality music creation available to all</p>
                         </div>
                         
                         <!-- Audio Source Card -->
                         <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
-                            <h3 class="text-xl font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                            <h3 class="text-xl font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-primary">music_note</span>
                                 1. Audio Source
                             </h3>
@@ -141,7 +141,7 @@
                                     <p class="font-medium mt-2"><strong>Status:</strong> <span id="uploadStatus">Ready to upload</span></p>
                                     <div class="mt-4">
                                         <label for="lyricsLanguageSelect" class="block text-sm font-medium mb-2">Lyrics Language</label>
-                                        <select id="lyricsLanguageSelect" class="w-full px-4 py-2 bg-[#131318] bg-[#1a1a22] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                        <select id="lyricsLanguageSelect" class="w-full px-4 py-2 bg-[#1a1a22] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                                             <option value="">Auto Detect</option>
                                             <option value="en">English</option>
                                             <option value="es">Spanish</option>
@@ -240,7 +240,7 @@
                         
                         <!-- Generation Settings Card -->
                         <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
-                            <h3 class="text-xl font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                            <h3 class="text-xl font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-primary">tune</span>
                                 2. Generation Settings
                             </h3>
@@ -489,7 +489,7 @@
                         
                         <!-- Generate Button -->
                         <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
-                            <h3 class="text-xl font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                            <h3 class="text-xl font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-primary">play_circle</span>
                                 3. Generate Cover
                             </h3>
@@ -511,7 +511,7 @@
                         <div id="taskStatus" class="task-status hidden">
                             <div class="status-card">
                                 <div class="status-header">
-                                    <h4 class="text-lg font-bold text-white text-[#e8e8ed]">Generation Status</h4>
+                                    <h4 class="text-lg font-bold text-[#e8e8ed]">Generation Status</h4>
                                     <div class="flex items-center gap-3">
                                         <span id="statusBadge" class="status-badge">Processing</span>
                                         <button id="refreshStatusBtn" class="refresh-btn">
@@ -524,7 +524,7 @@
                                 <div class="space-y-4">
                                     <div>
                                         <label class="block text-sm font-medium mb-1">Task ID</label>
-                                        <code id="taskId" class="bg-[#131318] bg-[#1a1a22] px-2 py-1 rounded text-sm">-</code>
+                                        <code id="taskId" class="bg-[#1a1a22] px-2 py-1 rounded text-sm">-</code>
                                     </div>
                                     
                                     <div>
@@ -565,7 +565,7 @@
                         <!-- Results (Hidden by default) -->
                         <div id="results" class="results hidden">
                             <div class="result-card">
-                                <h4 class="text-xl font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                                <h4 class="text-xl font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-[#00cec9]">check_circle</span>
                                     Cover Generated Successfully!
                                 </h4>
@@ -582,7 +582,7 @@
                                     <div class="audio-player border border-[#2a2a36] rounded-lg p-4 bg-[#0a0a0c] bg-[#131318]/50">
                                         <div class="flex justify-between items-start mb-3">
                                             <div>
-                                                <h5 class="font-bold text-[#e8e8ed] text-white text-lg" data-title>Song Title</h5>
+                                                <h5 class="font-bold text-[#e8e8ed] text-lg" data-title>Song Title</h5>
                                                 <div class="flex items-center gap-3 mt-1">
                                                     <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full" data-model>Model</span>
                                                     <span class="text-xs text-[#8888a0]" data-duration>Duration</span>
@@ -613,7 +613,7 @@
                                                 <label class="block text-sm font-medium mb-1">Generated Image</label>
                                                 <div class="mt-2">
                                                     <!-- Thumbnail image display -->
-                                                    <div class="relative bg-[#131318] bg-[#1a1a22] rounded-lg overflow-hidden border border-[#2a2a36]">
+                                                    <div class="relative bg-[#1a1a22] rounded-lg overflow-hidden border border-[#2a2a36]">
                                                         <img src="" alt="Generated cover image" class="w-full h-32 object-contain bg-[#131318]" data-image-display style="display: none;">
                                                         <div class="image-placeholder h-32 flex items-center justify-center" data-image-placeholder>
                                                             <span class="material-symbols-outlined text-[#8888a0] text-4xl">image</span>
@@ -642,7 +642,7 @@
                                     <div class="video-player border border-blue-200 border-blue-800 rounded-lg p-4 bg-blue-50 bg-blue-900/20 mt-6">
                                         <div class="flex justify-between items-start mb-3">
                                             <div>
-                                                <h5 class="font-bold text-[#e8e8ed] text-white text-lg" data-video-title>Music Video</h5>
+                                                <h5 class="font-bold text-[#e8e8ed] text-lg" data-video-title>Music Video</h5>
                                                 <div class="flex items-center gap-3 mt-1">
                                                     <span class="text-xs px-2 py-1 bg-blue-500/10 text-blue-500 rounded-full">Video</span>
                                                     <span class="text-xs text-[#8888a0]" data-video-status>Processing</span>
@@ -672,7 +672,7 @@
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                             <div>
                                                 <label class="block text-sm font-medium mb-1">Video Task ID</label>
-                                                <code class="bg-[#131318] bg-[#1a1a22] px-2 py-1 rounded text-sm" data-video-task-id>-</code>
+                                                <code class="bg-[#1a1a22] px-2 py-1 rounded text-sm" data-video-task-id>-</code>
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium mb-1">Video URL</label>
@@ -728,7 +728,7 @@
             <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-[#131318] bg-surface-dark shadow-xl rounded-xl border border-[#2a2a36] border-border-dark sm:my-8 sm:align-middle">
                 <!-- Modal header -->
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-white text-[#e8e8ed] flex items-center gap-2">
+                    <h3 class="text-xl font-bold text-[#e8e8ed] flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">movie</span>
                         Create Music Video
                     </h3>
@@ -745,25 +745,25 @@
                     
                     <!-- Task ID field -->
                     <div>
-                        <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Task ID</label>
+                        <label class="block text-sm font-medium mb-2 text-[#e8e8ed]">Task ID</label>
                         <input type="text" id="modalTaskId" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" readonly>
                     </div>
                     
                     <!-- Audio ID field -->
                     <div>
-                        <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Audio ID</label>
+                        <label class="block text-sm font-medium mb-2 text-[#e8e8ed]">Audio ID</label>
                         <input type="text" id="modalAudioId" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" readonly>
                     </div>
                     
                     <!-- Song title display -->
                     <div id="modalSongTitleContainer" class="hidden">
-                        <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Song Title</label>
+                        <label class="block text-sm font-medium mb-2 text-[#e8e8ed]">Song Title</label>
                         <p id="modalSongTitle" class="text-[#e8e8ed] text-[#8888a0] font-medium"></p>
                     </div>
                     
                     <!-- Author field -->
                     <div>
-                        <label for="modalAuthor" class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Author (Artist/Creator)</label>
+                        <label for="modalAuthor" class="block text-sm font-medium mb-2 text-[#e8e8ed]">Author (Artist/Creator)</label>
                         <input type="text" id="modalAuthor" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                placeholder="e.g., DJ Electronic" maxlength="50">
                         <p class="text-xs text-[#8888a0] mt-1">Artist or creator name to display as a signature on the video cover. Maximum 50 characters.</p>
@@ -771,7 +771,7 @@
                     
                     <!-- Domain name field -->
                     <div>
-                        <label for="modalDomainName" class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Domain Name (Watermark)</label>
+                        <label for="modalDomainName" class="block text-sm font-medium mb-2 text-[#e8e8ed]">Domain Name (Watermark)</label>
                         <input type="text" id="modalDomainName" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                placeholder="e.g., music.example.com" maxlength="50">
                         <p class="text-xs text-[#8888a0] mt-1">Website or brand to display as a watermark at the bottom of the video. Maximum 50 characters.</p>
@@ -1140,7 +1140,7 @@
             <div class="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-[#131318] bg-surface-dark shadow-xl rounded-xl border border-[#2a2a36] border-border-dark sm:my-8 sm:align-middle">
                 <!-- Modal header -->
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-white text-[#e8e8ed] flex items-center gap-2" id="promptEditorModalTitle">
+                    <h3 class="text-xl font-bold text-[#e8e8ed] flex items-center gap-2" id="promptEditorModalTitle">
                         <span class="material-symbols-outlined text-primary">edit</span>
                         Prompt Editor
                     </h3>
@@ -1243,9 +1243,9 @@
                     </div>
                     <!-- Editor -->
                     <div>
-                        <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Prompt Text</label>
+                        <label class="block text-sm font-medium mb-2 text-[#e8e8ed]">Prompt Text</label>
                         <div class="relative border border-[#2a2a36] rounded-lg overflow-hidden bg-[#0a0a0c] bg-[#131318]">
-                            <textarea id="promptEditorText" class="w-full py-3 px-4 bg-transparent border-none focus:ring-0 text-[#e8e8ed] text-white resize-none min-h-[300px]" placeholder="Describe the style you want for your cover..." rows="15"></textarea>
+                            <textarea id="promptEditorText" class="w-full py-3 px-4 bg-transparent border-none focus:ring-0 text-[#e8e8ed] resize-none min-h-[300px]" placeholder="Describe the style you want for your cover..." rows="15"></textarea>
                         </div>
                         <div class="flex justify-between items-center mt-2">
                             <div class="text-xs text-[#8888a0]">
@@ -1277,7 +1277,7 @@
 
     <!-- Lyrics Search Results Modal (kept for backward compatibility, now hidden inline) -->
     <div id="lyricsSearchModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-        <div class="bg-[#131318] bg-[#1a1a22] rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] flex flex-col">
+        <div class="bg-[#1a1a22] rounded-lg shadow-xl max-w-3xl w-full max-h-[80vh] flex flex-col">
             <div class="flex justify-between items-center p-4 border-b border-[#2a2a36]">
                 <h3 class="text-lg font-semibold">Lyrics Search Results</h3>
                 <button id="closeLyricsModal" class="text-[#8888a0] hover:text-[#e8e8ed] hover:text-[#8888a0]">

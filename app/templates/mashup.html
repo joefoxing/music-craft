@@ -67,15 +67,15 @@
         .slot-upload-area.drag-over { @apply border-primary bg-primary/10; }
     </style>
 </head>
-<body class="bg-background-light bg-background-dark text-[#e8e8ed] text-white font-display antialiased overflow-hidden">
+<body class="bg-background-dark text-[#e8e8ed] font-display antialiased overflow-hidden">
     <div class="flex h-screen w-full">
         {% include "partials/_sidebar.html" %}
 
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 bg-background-light bg-gradient-to-b from-[#181118] to-background-dark relative overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-gradient-to-b from-[#181118] to-background-dark relative overflow-hidden">
 
             <!-- Header -->
-            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 bg-[#0a0a0c]/50 backdrop-blur-md sticky top-0 z-10">
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3/50 bg-[#0a0a0c]/50 backdrop-blur-md sticky top-0 z-10">
                 <div class="flex items-center gap-4 text-white md:hidden">
                     <button class="text-[#8888a0] hover:text-white" id="mobileMenuBtn">
                         <span class="material-symbols-outlined">menu</span>
@@ -84,7 +84,7 @@
                 </div>
 
                 <div class="hidden md:block">
-                    <h2 class="text-[#e8e8ed] text-white text-lg font-bold tracking-tight">Mashup Generator</h2>
+                    <h2 class="text-[#e8e8ed] text-lg font-bold tracking-tight">Mashup Generator</h2>
                 </div>
 
                 <div class="flex items-center gap-4">
@@ -113,7 +113,7 @@
                     <section class="flex flex-col gap-6">
                         <!-- Page headline -->
                         <div class="flex flex-col gap-2">
-                            <h2 class="text-3xl md:text-4xl font-bold text-white text-[#e8e8ed] tracking-tight">Blend Multiple Tracks</h2>
+                            <h2 class="text-3xl md:text-4xl font-bold text-[#e8e8ed] tracking-tight">Blend Multiple Tracks</h2>
                             <p class="text-[#8888a0] text-sm mt-2">
                                 Combine 2–5 audio sources into a single AI-generated mashup. Upload files or provide direct URLs.
                             </p>
@@ -122,7 +122,7 @@
                         <!-- ── STEP 1 · Audio Tracks ───────────────────── -->
                         <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
                             <div class="flex items-center justify-between mb-5">
-                                <h3 class="text-xl font-bold text-white text-[#e8e8ed] flex items-center gap-2">
+                                <h3 class="text-xl font-bold text-[#e8e8ed] flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">merge</span>
                                     1. Audio Tracks
                                 </h3>
@@ -143,7 +143,7 @@
                                 <div data-track-slot class="track-slot">
                                     <!-- Slot header -->
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="text-sm font-semibold text-[#e8e8ed] text-white flex items-center gap-2" data-track-label>Track 1</span>
+                                        <span class="text-sm font-semibold text-[#e8e8ed] flex items-center gap-2" data-track-label>Track 1</span>
                                         <div class="flex items-center gap-2">
                                             <!-- Ready badge -->
                                             <span data-ready-badge class="hidden inline-flex items-center gap-1 text-xs font-medium text-[#00cec9] text-green-400">
@@ -180,7 +180,7 @@
                                             <p class="text-xs text-[#8888a0]">MP3, WAV, OGG, M4A, FLAC · max 100 MB</p>
                                             <input data-file-input type="file" accept=".mp3,.wav,.ogg,.m4a,.flac" class="hidden">
                                             <button data-browse-btn type="button"
-                                                    class="mt-3 px-4 py-1.5 text-xs font-medium bg-[#131318] bg-[#1a1a22] hover:bg-slate-200 hover:bg-slate-700 rounded-lg transition-colors">
+                                                    class="mt-3 px-4 py-1.5 text-xs font-medium bg-[#1a1a22] hover:bg-[#23232e] rounded-lg transition-colors">
                                                 Browse Files
                                             </button>
                                         </div>
@@ -208,7 +208,7 @@
                                                placeholder="https://example.com/audio.mp3">
                                         <div class="flex gap-2">
                                             <button data-test-btn type="button"
-                                                    class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-[#131318] bg-[#1a1a22] hover:bg-slate-200 hover:bg-slate-700 rounded-lg transition-colors">
+                                                    class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium bg-[#1a1a22] hover:bg-[#23232e] rounded-lg transition-colors">
                                                 <span class="material-symbols-outlined text-sm">wifi_tethering</span> Test
                                             </button>
                                             <button data-use-url-btn type="button"
@@ -233,7 +233,7 @@
 
                         <!-- ── STEP 2 · Generation Settings ───────────── -->
                         <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
-                            <h3 class="text-xl font-bold text-white text-[#e8e8ed] mb-5 flex items-center gap-2">
+                            <h3 class="text-xl font-bold text-[#e8e8ed] mb-5 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-primary">tune</span>
                                 2. Generation Settings
                             </h3>
@@ -355,7 +355,7 @@
 
                         <!-- ── STEP 3 · Generate ───────────────────────── -->
                         <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
-                            <h3 class="text-xl font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                            <h3 class="text-xl font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                 <span class="material-symbols-outlined text-primary">play_circle</span>
                                 3. Generate Mashup
                             </h3>
@@ -379,7 +379,7 @@
                         <div id="mashupTaskStatus" class="task-status hidden">
                             <div class="status-card">
                                 <div class="status-header">
-                                    <h4 class="text-lg font-bold text-white text-[#e8e8ed]">Generation Status</h4>
+                                    <h4 class="text-lg font-bold text-[#e8e8ed]">Generation Status</h4>
                                     <div class="flex items-center gap-3">
                                         <span id="mashupStatusBadge" class="status-badge">Processing</span>
                                         <button id="mashupRefreshBtn" class="refresh-btn">
@@ -391,7 +391,7 @@
                                 <div class="space-y-4">
                                     <div>
                                         <label class="block text-sm font-medium mb-1">Task ID</label>
-                                        <code id="mashupTaskId" class="bg-[#131318] bg-[#1a1a22] px-2 py-1 rounded text-sm">-</code>
+                                        <code id="mashupTaskId" class="bg-[#1a1a22] px-2 py-1 rounded text-sm">-</code>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium mb-1">Progress</label>
@@ -417,7 +417,7 @@
                         <!-- ── Results (hidden until complete) ────────── -->
                         <div id="mashupResults" class="results hidden">
                             <div class="result-card">
-                                <h4 class="text-xl font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                                <h4 class="text-xl font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-[#00cec9]">check_circle</span>
                                     Mashup Generated Successfully!
                                 </h4>
@@ -429,7 +429,7 @@
                                     <div class="audio-player border border-[#2a2a36] rounded-lg p-4 bg-[#0a0a0c] bg-[#131318]/50">
                                         <div class="flex justify-between items-start mb-3">
                                             <div>
-                                                <h5 class="font-bold text-[#e8e8ed] text-white text-lg" data-title>Mashup</h5>
+                                                <h5 class="font-bold text-[#e8e8ed] text-lg" data-title>Mashup</h5>
                                                 <div class="flex items-center gap-3 mt-1">
                                                     <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full" data-model>Model</span>
                                                     <span class="text-xs text-[#8888a0]" data-duration>Duration</span>
@@ -449,7 +449,7 @@
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium mb-1">Generated Image</label>
-                                                <div class="relative bg-[#131318] bg-[#1a1a22] rounded-lg overflow-hidden border border-[#2a2a36]">
+                                                <div class="relative bg-[#1a1a22] rounded-lg overflow-hidden border border-[#2a2a36]">
                                                     <img src="" alt="Cover image" class="w-full h-32 object-contain bg-[#131318]" data-image-display style="display:none;">
                                                     <div class="image-placeholder h-32 flex items-center justify-center" data-image-placeholder>
                                                         <span class="material-symbols-outlined text-[#8888a0] text-4xl">image</span>

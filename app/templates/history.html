@@ -165,14 +165,14 @@
         }
     </style>
 </head>
-<body class="bg-background-light bg-background-dark text-[#e8e8ed] text-white font-display antialiased overflow-hidden">
+<body class="bg-background-dark text-[#e8e8ed] font-display antialiased overflow-hidden">
     <div class="flex h-screen w-full">
         {% include "partials/_sidebar.html" %}
         
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 bg-background-light bg-background-dark relative overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-background-dark relative overflow-hidden">
             <!-- Header -->
-            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3/50 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
                 <div class="flex items-center gap-4 text-white md:hidden">
                     <button class="text-[#8888a0] hover:text-white" id="mobileMenuBtn">
                         <span class="material-symbols-outlined">menu</span>
@@ -181,7 +181,7 @@
                 </div>
                 
                 <div class="hidden md:block">
-                    <h2 class="text-[#e8e8ed] text-white text-lg font-bold tracking-tight">Generation History</h2>
+                    <h2 class="text-[#e8e8ed] text-lg font-bold tracking-tight">Generation History</h2>
                 </div>
                 
                 <div class="flex items-center gap-4">
@@ -202,7 +202,7 @@
                     <!-- Page Header -->
                     <section class="flex flex-col gap-4">
                         <div class="flex flex-col gap-2">
-                            <h2 class="text-3xl md:text-4xl font-bold text-white text-[#e8e8ed] tracking-tight">Generation History</h2>
+                            <h2 class="text-3xl md:text-4xl font-bold text-[#e8e8ed] tracking-tight">Generation History</h2>
                             <p class="text-[#8888a0]">View all your generation information. History is retained for 14 days from creation date.</p>
                         </div>
                         
@@ -301,7 +301,7 @@
                             <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
                                 <div class="flex-1">
                                     <div class="flex items-center gap-3 mb-2">
-                                        <h3 class="text-lg font-bold text-[#e8e8ed] text-white" data-title>Task History</h3>
+                                        <h3 class="text-lg font-bold text-[#e8e8ed]" data-title>Task History</h3>
                                         <span class="callback-type-badge" data-callback-type>complete</span>
                                         <span class="status-badge" data-status>success</span>
                                     </div>
@@ -309,11 +309,11 @@
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
                                         <div>
                                             <p class="text-[#8888a0]">Task ID</p>
-                                            <p class="font-mono text-[#e8e8ed] text-white truncate" data-task-id>-</p>
+                                            <p class="font-mono text-[#e8e8ed] truncate" data-task-id>-</p>
                                         </div>
                                         <div>
                                             <p class="text-[#8888a0]">Timestamp</p>
-                                            <p class="text-[#e8e8ed] text-white" data-timestamp>-</p>
+                                            <p class="text-[#e8e8ed]" data-timestamp>-</p>
                                         </div>
                                         <div>
                                             <p class="text-[#8888a0]">Status Code</p>
@@ -323,7 +323,7 @@
                                     
                                     <div class="mt-3">
                                         <p class="text-[#8888a0]">Message</p>
-                                        <p class="text-[#e8e8ed] text-white" data-message>-</p>
+                                        <p class="text-[#e8e8ed]" data-message>-</p>
                                     </div>
                                 </div>
                                 
@@ -345,7 +345,7 @@
                             
                             <!-- Tracks Summary -->
                             <div class="mt-4 pt-4 border-t border-[#2a2a36]">
-                                <h4 class="font-medium text-[#e8e8ed] text-white mb-2 flex items-center gap-2">
+                                <h4 class="font-medium text-[#e8e8ed] mb-2 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">music_note</span>
                                     Generated Tracks
                                 </h4>
@@ -361,7 +361,7 @@
                         <div class="track-summary p-3 bg-[#0a0a0c] bg-[#131318] rounded-lg mb-2">
                             <div class="flex justify-between items-center">
                                 <div>
-                                    <p class="font-medium text-[#e8e8ed] text-white" data-track-title>-</p>
+                                    <p class="font-medium text-[#e8e8ed]" data-track-title>-</p>
                                     <p class="text-sm text-[#8888a0]" data-track-model>-</p>
                                 </div>
                                 <div class="flex gap-2">
@@ -385,26 +385,26 @@
                                 <div class="flex-1">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="material-symbols-outlined text-primary">music_note</span>
-                                        <h4 class="font-bold text-[#e8e8ed] text-white" data-track-title>Track Title</h4>
+                                        <h4 class="font-bold text-[#e8e8ed]" data-track-title>Track Title</h4>
                                         <span class="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full" data-track-number>Track 1</span>
                                     </div>
                                     
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm mb-3">
                                         <div>
                                             <p class="text-[#8888a0]">Model</p>
-                                            <p class="text-[#e8e8ed] text-white" data-track-model>chirp-crow</p>
+                                            <p class="text-[#e8e8ed]" data-track-model>chirp-crow</p>
                                         </div>
                                         <div>
                                             <p class="text-[#8888a0]">Duration</p>
-                                            <p class="text-[#e8e8ed] text-white" data-track-duration>0:00</p>
+                                            <p class="text-[#e8e8ed]" data-track-duration>0:00</p>
                                         </div>
                                         <div>
                                             <p class="text-[#8888a0]">Tags</p>
-                                            <p class="text-[#e8e8ed] text-white" data-track-tags>No tags</p>
+                                            <p class="text-[#e8e8ed]" data-track-tags>No tags</p>
                                         </div>
                                         <div>
                                             <p class="text-[#8888a0]">Created</p>
-                                            <p class="text-[#e8e8ed] text-white" data-track-created>N/A</p>
+                                            <p class="text-[#e8e8ed]" data-track-created>N/A</p>
                                         </div>
                                     </div>
                                     
@@ -431,7 +431,7 @@
                                     <!-- Image Display Area -->
                                     <div class="mt-2">
                                         <p class="text-[#8888a0] text-sm mb-2">Generated Image</p>
-                                        <div class="relative bg-[#131318] bg-[#1a1a22] rounded-lg overflow-hidden border border-[#2a2a36]">
+                                        <div class="relative bg-[#1a1a22] rounded-lg overflow-hidden border border-[#2a2a36]">
                                             <!-- Thumbnail image display -->
                                             <img src="" alt="Generated cover image" class="w-full h-32 object-contain bg-[#131318] hidden" data-image-display>
                                             
@@ -475,7 +475,7 @@
                         <div class="video-player border border-blue-200 border-blue-800 rounded-lg p-4 bg-blue-50 bg-blue-900/20 mt-6">
                             <div class="flex justify-between items-start mb-3">
                                 <div>
-                                    <h5 class="font-bold text-[#e8e8ed] text-white text-lg" data-video-title>Music Video</h5>
+                                    <h5 class="font-bold text-[#e8e8ed] text-lg" data-video-title>Music Video</h5>
                                     <div class="flex items-center gap-3 mt-1">
                                         <span class="text-xs px-2 py-1 bg-blue-500/10 text-blue-500 rounded-full">Video</span>
                                         <span class="text-xs text-[#8888a0]" data-video-status>Processing</span>
@@ -505,7 +505,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                 <div>
                                     <label class="block text-sm font-medium mb-1">Video Task ID</label>
-                                    <code class="bg-[#131318] bg-[#1a1a22] px-2 py-1 rounded text-sm" data-video-task-id>-</code>
+                                    <code class="bg-[#1a1a22] px-2 py-1 rounded text-sm" data-video-task-id>-</code>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium mb-1">Video URL</label>
@@ -519,7 +519,7 @@
                     <div id="historyModal" class="modal-overlay hidden">
                         <div class="modal-content bg-[#131318] bg-surface-dark rounded-xl p-6 w-full max-w-4xl">
                             <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-xl font-bold text-[#e8e8ed] text-white">Generation Details</h3>
+                                <h3 class="text-xl font-bold text-[#e8e8ed]">Generation Details</h3>
                                 <button id="modalCloseBtn" class="p-2 text-[#8888a0] hover:text-[#e8e8ed] hover:text-white">
                                     <span class="material-symbols-outlined">close</span>
                                 </button>
@@ -553,7 +553,7 @@
             <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-[#131318] bg-surface-dark shadow-xl rounded-xl border border-[#2a2a36] border-border-dark sm:my-8 sm:align-middle">
                 <!-- Modal header -->
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-white text-[#e8e8ed] flex items-center gap-2">
+                    <h3 class="text-xl font-bold text-[#e8e8ed] flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">movie</span>
                         Create Music Video
                     </h3>
@@ -570,25 +570,25 @@
                     
                     <!-- Task ID field -->
                     <div>
-                        <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Task ID</label>
+                        <label class="block text-sm font-medium mb-2 text-[#e8e8ed]">Task ID</label>
                         <input type="text" id="modalTaskId" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" readonly>
                     </div>
                     
                     <!-- Audio ID field -->
                     <div>
-                        <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Audio ID</label>
+                        <label class="block text-sm font-medium mb-2 text-[#e8e8ed]">Audio ID</label>
                         <input type="text" id="modalAudioId" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" readonly>
                     </div>
                     
                     <!-- Song title display -->
                     <div id="modalSongTitleContainer" class="hidden">
-                        <label class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Song Title</label>
+                        <label class="block text-sm font-medium mb-2 text-[#e8e8ed]">Song Title</label>
                         <p id="modalSongTitle" class="text-[#e8e8ed] text-[#8888a0] font-medium"></p>
                     </div>
                     
                     <!-- Author field -->
                     <div>
-                        <label for="modalAuthor" class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Author (Artist/Creator)</label>
+                        <label for="modalAuthor" class="block text-sm font-medium mb-2 text-[#e8e8ed]">Author (Artist/Creator)</label>
                         <input type="text" id="modalAuthor" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                placeholder="e.g., DJ Electronic" maxlength="50">
                         <p class="text-xs text-[#8888a0] mt-1">Artist or creator name to display as a signature on the video cover. Maximum 50 characters.</p>
@@ -596,7 +596,7 @@
                     
                     <!-- Domain name field -->
                     <div>
-                        <label for="modalDomainName" class="block text-sm font-medium mb-2 text-white text-[#e8e8ed]">Domain Name (Watermark)</label>
+                        <label for="modalDomainName" class="block text-sm font-medium mb-2 text-[#e8e8ed]">Domain Name (Watermark)</label>
                         <input type="text" id="modalDomainName" class="w-full px-4 py-2 bg-[#0a0a0c] bg-[#131318] border border-[#2a2a36] rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                placeholder="e.g., music.example.com" maxlength="50">
                         <p class="text-xs text-[#8888a0] mt-1">Website or brand to display as a watermark at the bottom of the video. Maximum 50 characters.</p>

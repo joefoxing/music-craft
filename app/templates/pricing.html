@@ -61,7 +61,7 @@
 <div class="flex items-center gap-4">
 <a href="/pricing" class="text-xs font-semibold px-3 py-1.5 bg-[#131318]/10 rounded-full transition-colors text-white">Pricing</a>
 <a href="{{ url_for('auth.login') }}" class="text-xs font-semibold px-3 py-1.5 hover:bg-[#131318]/10 rounded-full transition-colors text-white">Sign In</a>
-<a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-[#131318] text-black px-4 py-1.5 rounded-full hover:bg-gray-200 transition-colors">Sign Up</a>
+<a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-[#6c5ce7] text-white px-4 py-1.5 rounded-full hover:bg-[#5a4bd1] transition-colors">Sign Up</a>
 </div>
 </header>
 
@@ -76,7 +76,7 @@
     <div class="mt-8 inline-flex items-center gap-3 bg-[#131318]/5 border border-white/10 rounded-full px-2 py-1.5">
       <button id="toggleMonthly"
               onclick="setBilling('monthly')"
-              class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all bg-[#131318] text-black">
+              class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all bg-[#6c5ce7] text-white">
         Monthly
       </button>
       <button id="toggleAnnual"
@@ -214,17 +214,17 @@
     var noteEl     = document.getElementById('annualNote');
 
     if (cycle === 'annual') {
-      monthlyBtn.classList.remove('bg-[#131318]', 'text-black');
+      monthlyBtn.classList.remove('bg-[#6c5ce7]', 'text-white');
       monthlyBtn.classList.add('text-white/60', 'hover:text-white');
-      annualBtn.classList.add('bg-[#131318]', 'text-black');
+      annualBtn.classList.add('bg-[#6c5ce7]', 'text-white');
       annualBtn.classList.remove('text-white/60', 'hover:text-white');
       if (priceEl)  priceEl.textContent  = '$12';
       if (periodEl) periodEl.textContent = '/mo';
       if (noteEl)   noteEl.classList.remove('hidden');
     } else {
-      annualBtn.classList.remove('bg-[#131318]', 'text-black');
+      annualBtn.classList.remove('bg-[#6c5ce7]', 'text-white');
       annualBtn.classList.add('text-white/60', 'hover:text-white');
-      monthlyBtn.classList.add('bg-[#131318]', 'text-black');
+      monthlyBtn.classList.add('bg-[#6c5ce7]', 'text-white');
       monthlyBtn.classList.remove('text-white/60', 'hover:text-white');
       if (priceEl)  priceEl.textContent  = '$15';
       if (periodEl) periodEl.textContent = '/mo';

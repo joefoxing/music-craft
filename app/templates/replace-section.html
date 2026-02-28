@@ -104,15 +104,15 @@
         }
     </style>
 </head>
-<body class="bg-background-light bg-background-dark text-[#e8e8ed] text-white font-display antialiased overflow-hidden">
+<body class="bg-background-dark text-[#e8e8ed] font-display antialiased overflow-hidden">
     <div class="flex h-screen w-full">
         {% include "partials/_sidebar.html" %}
 
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 bg-background-light bg-background-dark relative overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-background-dark relative overflow-hidden">
 
             <!-- Header -->
-            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3/50 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
                 <div class="flex items-center gap-4 text-white md:hidden">
                     <button class="text-[#8888a0] hover:text-white" id="mobileMenuBtn">
                         <span class="material-symbols-outlined">menu</span>
@@ -121,7 +121,7 @@
                 </div>
 
                 <div class="hidden md:block">
-                    <h2 class="text-[#e8e8ed] text-white text-lg font-bold tracking-tight">Replace Music Section</h2>
+                    <h2 class="text-[#e8e8ed] text-lg font-bold tracking-tight">Replace Music Section</h2>
                 </div>
 
                 <div class="flex items-center gap-4">
@@ -155,7 +155,7 @@
 
                     <!-- Page Title -->
                     <section class="flex flex-col gap-2">
-                        <h2 class="text-3xl md:text-4xl font-bold text-white text-[#e8e8ed] tracking-tight">Replace Music Section</h2>
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#e8e8ed] tracking-tight">Replace Music Section</h2>
                         <p class="text-[#8888a0]">Replace a specific time range in an existing track with AI-generated audio that matches your prompt and style.</p>
                     </section>
 
@@ -180,7 +180,7 @@
 
                     <!-- Main Form Card -->
                     <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
-                        <h3 class="text-xl font-bold text-white text-[#e8e8ed] mb-6 flex items-center gap-2">
+                        <h3 class="text-xl font-bold text-[#e8e8ed] mb-6 flex items-center gap-2">
                             <span class="material-symbols-outlined text-primary">content_cut</span>
                             Section Replacement Configuration
                         </h3>
@@ -189,7 +189,7 @@
 
                             <!-- ─── Track Identification ─────────────────────── -->
                             <div class="bg-[#0a0a0c] bg-[#131318]/50 rounded-lg border border-[#2a2a36] p-5">
-                                <h4 class="text-base font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                                <h4 class="text-base font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">fingerprint</span>
                                     Track Identification <span class="text-[#d63031] ml-1">*</span>
                                 </h4>
@@ -238,7 +238,7 @@
 
                             <!-- ─── Section Time Range ──────────────────────── -->
                             <div class="bg-[#0a0a0c] bg-[#131318]/50 rounded-lg border border-[#2a2a36] p-5">
-                                <h4 class="text-base font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                                <h4 class="text-base font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">schedule</span>
                                     Section Time Range <span class="text-[#d63031] ml-1">*</span>
                                 </h4>
@@ -255,7 +255,7 @@
                                                 type="number"
                                                 id="trackDuration"
                                                 min="10" max="600" value="120" step="1"
-                                                class="w-20 px-2 py-1 text-xs bg-[#131318] bg-[#1a1a22] border border-[#2a2a36] border-slate-600 rounded-lg text-right"
+                                                class="w-20 px-2 py-1 text-xs bg-[#1a1a22] border border-[#2a2a36] rounded-lg text-right"
                                             >
                                             <span>sec</span>
                                         </div>
@@ -319,7 +319,7 @@
 
                             <!-- ─── Prompt & Style ──────────────────────────── -->
                             <div class="bg-[#0a0a0c] bg-[#131318]/50 rounded-lg border border-[#2a2a36] p-5">
-                                <h4 class="text-base font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                                <h4 class="text-base font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">edit_note</span>
                                     Prompt &amp; Style
                                 </h4>
@@ -390,7 +390,7 @@
                                         class="form-control resize-y font-mono text-sm"
                                         placeholder="[Verse 1]&#10;Original lyrics here&#10;&#10;[Chorus]&#10;Modified lyrics for this section&#10;&#10;[Verse 2]&#10;More original lyrics"
                                     ></textarea>
-                                    <p class="text-xs text-[#8888a0] mt-1">Include section markers like <code class="bg-[#131318] bg-[#1a1a22] px-1 rounded">[Verse 1]</code>, <code class="bg-[#131318] bg-[#1a1a22] px-1 rounded">[Chorus]</code>, etc. to guide the AI.</p>
+                                    <p class="text-xs text-[#8888a0] mt-1">Include section markers like <code class="bg-[#1a1a22] px-1 rounded">[Verse 1]</code>, <code class="bg-[#1a1a22] px-1 rounded">[Chorus]</code>, etc. to guide the AI.</p>
                                 </div>
                             </div>
 
@@ -410,7 +410,7 @@
                             <!-- ─── Submit ───────────────────────────────────── -->
                             <div class="border-t border-[#2a2a36] pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                 <div>
-                                    <h4 class="text-base font-bold text-white text-[#e8e8ed]">Ready to Replace</h4>
+                                    <h4 class="text-base font-bold text-[#e8e8ed]">Ready to Replace</h4>
                                     <p class="text-[#8888a0] text-sm mt-0.5">Submit to start the AI section replacement.</p>
                                 </div>
                                 <button type="submit" id="submitBtn" class="btn-primary flex items-center shrink-0">
@@ -426,7 +426,7 @@
                                 <div class="flex items-center gap-3">
                                     <span class="material-symbols-outlined text-primary animate-spin" id="statusIcon">sync</span>
                                     <div class="flex-1">
-                                        <h5 class="font-bold text-[#e8e8ed] text-white" id="statusTitle">Processing</h5>
+                                        <h5 class="font-bold text-[#e8e8ed]" id="statusTitle">Processing</h5>
                                         <p class="text-sm text-[#8888a0]" id="statusMessage">Sending replacement request to the AI…</p>
                                     </div>
                                     <span class="text-xs font-mono text-[#8888a0]" id="statusTaskId"></span>
@@ -447,7 +447,7 @@
                                 <div class="flex items-center gap-3">
                                     <span class="material-symbols-outlined text-[#00cec9] text-3xl">check_circle</span>
                                     <div class="flex-1">
-                                        <h5 class="font-bold text-[#e8e8ed] text-white">Replacement Job Submitted!</h5>
+                                        <h5 class="font-bold text-[#e8e8ed]">Replacement Job Submitted!</h5>
                                         <p class="text-sm text-[#8888a0]" id="successMessage">
                                             Your replacement request has been submitted. The AI is generating the new section.
                                         </p>
@@ -457,7 +457,7 @@
                                     <div>
                                         <label class="block text-xs font-medium text-[#8888a0] mb-1">New Task ID</label>
                                         <div class="flex items-center gap-2">
-                                            <code class="bg-[#131318] bg-[#1a1a22] px-2 py-1 rounded text-sm flex-1 break-all" id="successTaskId">-</code>
+                                            <code class="bg-[#1a1a22] px-2 py-1 rounded text-sm flex-1 break-all" id="successTaskId">-</code>
                                             <button type="button" onclick="copyTaskId()" class="p-1.5 text-[#8888a0] hover:text-primary" title="Copy">
                                                 <span class="material-symbols-outlined text-base">content_copy</span>
                                             </button>
@@ -496,7 +496,7 @@
                                 <div class="flex items-center gap-3">
                                     <span class="material-symbols-outlined text-[#d63031] text-3xl">error</span>
                                     <div class="flex-1">
-                                        <h5 class="font-bold text-[#e8e8ed] text-white">Replacement Failed</h5>
+                                        <h5 class="font-bold text-[#e8e8ed]">Replacement Failed</h5>
                                         <p class="text-sm text-[#8888a0]" id="errorMessage">An error occurred while processing your request.</p>
                                     </div>
                                 </div>

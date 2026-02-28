@@ -104,15 +104,15 @@
         }
     </style>
 </head>
-<body class="bg-background-light bg-background-dark text-[#e8e8ed] text-white font-display antialiased overflow-hidden">
+<body class="bg-background-dark text-[#e8e8ed] font-display antialiased overflow-hidden">
     <div class="flex h-screen w-full">
         {% include "partials/_sidebar.html" %}
 
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 bg-background-light bg-background-dark relative overflow-hidden">
+        <main class="flex-1 flex flex-col min-w-0 bg-background-dark relative overflow-hidden">
 
             <!-- Header -->
-            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-light/50 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+            <header class="flex items-center justify-between border-b border-border-dark px-6 py-3/50 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
                 <div class="flex items-center gap-4 text-white md:hidden">
                     <button class="text-[#8888a0] hover:text-white" id="mobileMenuBtn">
                         <span class="material-symbols-outlined">menu</span>
@@ -121,7 +121,7 @@
                 </div>
 
                 <div class="hidden md:block">
-                    <h2 class="text-[#e8e8ed] text-white text-lg font-bold tracking-tight">AI Singer Persona</h2>
+                    <h2 class="text-[#e8e8ed] text-lg font-bold tracking-tight">AI Singer Persona</h2>
                 </div>
 
                 <div class="flex items-center gap-4">
@@ -155,7 +155,7 @@
 
                     <!-- Page Title -->
                     <section class="flex flex-col gap-2">
-                        <h2 class="text-3xl md:text-4xl font-bold text-white text-[#e8e8ed] tracking-tight">AI Singer Persona</h2>
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#e8e8ed] tracking-tight">AI Singer Persona</h2>
                         <p class="text-[#8888a0]">Extract a reusable AI singer identity from a vocal sample in any of your tracks. The generated Persona ID can then be applied when creating new songs in custom mode.</p>
                     </section>
 
@@ -180,7 +180,7 @@
 
                     <!-- Main Form Card -->
                     <div class="bg-[#131318] bg-surface-dark rounded-xl border border-[#2a2a36] border-border-dark p-6 shadow-xl shadow-black/5">
-                        <h3 class="text-xl font-bold text-white text-[#e8e8ed] mb-6 flex items-center gap-2">
+                        <h3 class="text-xl font-bold text-[#e8e8ed] mb-6 flex items-center gap-2">
                             <span class="material-symbols-outlined text-primary">face</span>
                             Persona Configuration
                         </h3>
@@ -189,7 +189,7 @@
 
                             <!-- ─── Track Identification ─────────────────────── -->
                             <div class="bg-[#0a0a0c] bg-[#131318]/50 rounded-lg border border-[#2a2a36] p-5">
-                                <h4 class="text-base font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                                <h4 class="text-base font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">fingerprint</span>
                                     Source Track <span class="text-[#d63031] ml-1">*</span>
                                 </h4>
@@ -238,7 +238,7 @@
 
                             <!-- ─── Vocal Sample Range ──────────────────────── -->
                             <div class="bg-[#0a0a0c] bg-[#131318]/50 rounded-lg border border-[#2a2a36] p-5">
-                                <h4 class="text-base font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                                <h4 class="text-base font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">schedule</span>
                                     Vocal Sample Range <span class="text-[#d63031] ml-1">*</span>
                                 </h4>
@@ -259,7 +259,7 @@
                                                 type="number"
                                                 id="trackDuration"
                                                 min="10" max="600" value="120" step="1"
-                                                class="w-20 px-2 py-1 text-xs bg-[#131318] bg-[#1a1a22] border border-[#2a2a36] border-slate-600 rounded-lg text-right"
+                                                class="w-20 px-2 py-1 text-xs bg-[#1a1a22] border border-[#2a2a36] border-slate-600 rounded-lg text-right"
                                             >
                                             <span>sec</span>
                                         </div>
@@ -326,7 +326,7 @@
 
                             <!-- ─── Persona Identity ────────────────────────── -->
                             <div class="bg-[#0a0a0c] bg-[#131318]/50 rounded-lg border border-[#2a2a36] p-5">
-                                <h4 class="text-base font-bold text-white text-[#e8e8ed] mb-4 flex items-center gap-2">
+                                <h4 class="text-base font-bold text-[#e8e8ed] mb-4 flex items-center gap-2">
                                     <span class="material-symbols-outlined text-primary">badge</span>
                                     Persona Identity <span class="text-[#d63031] ml-1">*</span>
                                 </h4>
@@ -405,7 +405,7 @@
                             <!-- ─── Submit ───────────────────────────────────── -->
                             <div class="border-t border-[#2a2a36] pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                 <div>
-                                    <h4 class="text-base font-bold text-white text-[#e8e8ed]">Create Persona</h4>
+                                    <h4 class="text-base font-bold text-[#e8e8ed]">Create Persona</h4>
                                     <p class="text-[#8888a0] text-sm mt-0.5">Submit to extract the AI singer identity from your track.</p>
                                 </div>
                                 <button type="submit" id="submitBtn" class="btn-primary flex items-center shrink-0">
@@ -421,7 +421,7 @@
                                 <div class="flex items-center gap-3">
                                     <span class="material-symbols-outlined text-primary animate-spin">sync</span>
                                     <div class="flex-1">
-                                        <h5 class="font-bold text-[#e8e8ed] text-white">Generating Persona…</h5>
+                                        <h5 class="font-bold text-[#e8e8ed]">Generating Persona…</h5>
                                         <p class="text-sm text-[#8888a0]">Extracting vocal identity from your track. This may take a moment.</p>
                                     </div>
                                 </div>
@@ -434,7 +434,7 @@
                                 <div class="flex items-center gap-3 mb-4">
                                     <span class="material-symbols-outlined text-[#00cec9] text-3xl">check_circle</span>
                                     <div class="flex-1">
-                                        <h5 class="font-bold text-[#e8e8ed] text-white">Persona Job Submitted!</h5>
+                                        <h5 class="font-bold text-[#e8e8ed]">Persona Job Submitted!</h5>
                                         <p class="text-sm text-[#8888a0]">
                                             The AI is building your singer persona. The Persona ID will be available once processing completes.
                                         </p>
@@ -445,7 +445,7 @@
                                 <div class="mb-4">
                                     <label class="block text-xs font-medium text-[#8888a0] mb-1">Generation Task ID</label>
                                     <div class="flex items-center gap-2">
-                                        <code class="bg-[#131318] bg-[#1a1a22] px-3 py-2 rounded-lg text-sm flex-1 break-all font-mono" id="successTaskId">-</code>
+                                        <code class="bg-[#1a1a22] px-3 py-2 rounded-lg text-sm flex-1 break-all font-mono" id="successTaskId">-</code>
                                         <button type="button" onclick="copyText('successTaskId', 'Task ID')" class="p-2 text-[#8888a0] hover:text-primary transition-colors rounded-lg hover:bg-primary/10" title="Copy Task ID">
                                             <span class="material-symbols-outlined text-base">content_copy</span>
                                         </button>
@@ -488,7 +488,7 @@
                                 <div class="flex items-center gap-3">
                                     <span class="material-symbols-outlined text-[#d63031] text-3xl">error</span>
                                     <div class="flex-1">
-                                        <h5 class="font-bold text-[#e8e8ed] text-white">Persona Generation Failed</h5>
+                                        <h5 class="font-bold text-[#e8e8ed]">Persona Generation Failed</h5>
                                         <p class="text-sm text-[#8888a0]" id="errorMessage">
                                             An error occurred while processing your request.
                                         </p>
