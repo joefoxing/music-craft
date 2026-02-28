@@ -21,7 +21,7 @@
 <main class="flex-1 flex flex-col min-w-0 bg-background-dark relative overflow-hidden">
 
   <!-- Header -->
-  <header class="flex items-center justify-between border-b border-border-dark px-6 py-3/50 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
+  <header class="flex items-center justify-between border-b border-border-dark px-6 py-3 bg-background-dark/50 backdrop-blur-md sticky top-0 z-10">
     <div class="flex items-center gap-4 text-white md:hidden">
       <button id="mobileMenuBtn" class="text-[#8888a0] hover:text-white">
         <span class="material-symbols-outlined">menu</span>
@@ -180,7 +180,7 @@
             <div id="activityFeedContainer" class="space-y-4 max-h-[420px] overflow-y-auto custom-scrollbar hidden"></div>
 
             <!-- Footer Controls -->
-            <div class="mt-4 pt-4 border-t border-slate-100 border-border-dark flex items-center justify-between gap-4 flex-wrap">
+            <div class="mt-4 pt-4 border-t border-border-dark flex items-center justify-between gap-4 flex-wrap">
               <span class="text-xs text-[#8888a0]">
                 <span id="activityCount">0</span> activities loaded
               </span>
@@ -249,7 +249,7 @@
 
             <!-- Token balance -->
             {% if (current_user.token_balance or 0) > 0 %}
-            <div class="mt-4 pt-4 border-t border-slate-100 border-border-dark flex items-center justify-between">
+            <div class="mt-4 pt-4 border-t border-border-dark flex items-center justify-between">
               <span class="text-xs text-[#8888a0]">Token credits</span>
               <span class="text-xs font-bold text-[#e8e8ed] flex items-center gap-1">
                 <span class="material-symbols-outlined text-primary text-sm">bolt</span>
@@ -273,10 +273,10 @@
             <div id="recentCreationsLoading" class="space-y-3">
               {% for _ in range(3) %}
               <div class="flex items-center gap-3 animate-pulse">
-                <div class="w-12 h-12 rounded-md bg-slate-200 bg-slate-700 flex-shrink-0"></div>
+                <div class="w-12 h-12 rounded-md bg-[#1a1a22] flex-shrink-0"></div>
                 <div class="flex-1 space-y-2">
-                  <div class="h-3 bg-slate-200 bg-slate-700 rounded w-3/4"></div>
-                  <div class="h-2 bg-slate-200 bg-slate-700 rounded w-1/2"></div>
+                  <div class="h-3 bg-[#1a1a22] rounded w-3/4"></div>
+                  <div class="h-2 bg-[#1a1a22] rounded w-1/2"></div>
                 </div>
               </div>
               {% endfor %}
@@ -323,7 +323,7 @@
               {% if current_user.is_authenticated %}
               <a href="{{ url_for('auth.profile') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-primary/10 group transition-colors">
                 <span class="material-symbols-outlined text-[#8888a0] group-hover:text-primary text-xl transition-colors">manage_accounts</span>
-                <span class="text-sm font-medium text-[#8888a0] text-[#e8e8ed] group-hover:text-primary transition-colors">Account Settings</span>
+                <span class="text-sm font-medium text-[#8888a0] group-hover:text-primary transition-colors">Account Settings</span>
               </a>
               {% endif %}
             </nav>

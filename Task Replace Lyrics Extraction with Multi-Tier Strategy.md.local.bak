@@ -1,0 +1,667 @@
+
+# Task: Replace Lyrics Extraction with Multi-Tier Strategy
+
+## Objective
+
+Remove the current slow local Whisper-based lyrics extraction and replace it with a simple **multi-tier fallback chain**:
+
+```
+Tier 1: Embedded metadata lyrics (free, instant) — ALREADY EXISTS, KEEP AS-IS
+Tier 2: Musixmatch API lookup (database match by artist+title) — NEW
+Tier 3: AssemblyAI speech-to-text (fast cloud transcription) — NEW
+```
+
+The local `openai-whisper` library and all its retry/fallback/model-ranking logic should be **removed entirely**. The microservice mode (`_extract_via_microservice`) should also be **removed** — it is disabled and unused.
+
+---
+
+## Repository
+
+`joefoxing/music-craft` — Python Flask application.
+
+---
+
+## Current Architecture (What Exists Now)
+
+### File: `app/services/lyrics_extraction_service.py`
+
+Contains two classes:
+
+**`LyricsExtractionService`** — Router class with:
+- `extract_lyrics()` — checks `LYRICS_USE_MICROSERVICE` flag, routes to microservice or legacy
+- `_extract_via_microservice()` — submits job to external FastAPI service, polls for result (DISABLED, REMOVE)
+- `_extract_legacy()` — delegates to `LyricsExtractionServiceLegacy`
+
+**`LyricsExtractionServiceLegacy`** — The actual extraction logic with:
+- `extract_lyrics()` — orchestrates the full flow: metadata → whisper → retries → fallback models → demucs separation retries
+- `_extract_metadata_lyrics()` — extracts lyrics from file tags via mutagen (KEEP THIS)
+- `_transcribe_with_whisper()` — loads local `openai-whisper` model, runs `model.transcribe()` (REMOVE)
+- `_separate_vocals_with_demucs()` — runs Demucs CLI for vocal separation (KEEP THIS — it feeds isolated vocals to transcription)
+- `_is_transcription_usable()` — heuristic quality check (KEEP — still useful for validating API results)
+- `_looks_translated_output()` — detects English output when Vietnamese expected (KEEP)
+- `_postprocess_lyrics()` — de-duplicates and cleans text (KEEP)
+- `_apply_language_post_corrections()` — Vietnamese typo fixes (KEEP)
+- Various helper methods for repeat detection, n-gram dedup, model ranking, etc.
+
+### File: `app/services/lyrics_job_service.py`
+
+**`LyricsJobService`** — ThreadPoolExecutor-based async job queue. Calls `LyricsExtractionService().extract_lyrics()`. **DO NOT MODIFY THIS FILE.** The interface it expects is:
+
+```python
+# It calls:
+lyrics, source, error = extractor.extract_lyrics(
+    audio_url=audio_item.audio_url,
+    local_file_path=local_file_path,
+    whisper_language_override=language_override
+)
+
+# It expects back:
+# lyrics: Optional[str] — the lyrics text
+# source: Optional[str] — e.g. 'metadata', 'musixmatch', 'assemblyai'
+# error: Optional[str] — error message if failed
+```
+
+### File: `app/config.py`
+
+Current lyrics-related config variables in the `Config` class:
+
+```python
+# Currently used (many of these will be REMOVED):
+LYRICS_EXTRACTION_ENABLED = ...
+LYRICS_WHISPER_MODEL = ...           # REMOVE
+LYRICS_WHISPER_FALLBACK_MODEL = ...  # REMOVE
+LYRICS_WHISPER_LANGUAGE = ...        # KEEP (used for language hint)
+LYRICS_WHISPER_TEMPERATURE = ...     # REMOVE
+LYRICS_WHISPER_BEAM_SIZE = ...       # REMOVE
+LYRICS_WHISPER_BEST_OF = ...         # REMOVE
+LYRICS_WHISPER_PATIENCE = ...        # REMOVE
+LYRICS_WHISPER_CONDITION_ON_PREVIOUS_TEXT = ...  # REMOVE
+LYRICS_WHISPER_COMPRESSION_RATIO_THRESHOLD = ... # REMOVE
+LYRICS_WHISPER_LOGPROB_THRESHOLD = ...           # REMOVE
+LYRICS_WHISPER_NO_SPEECH_THRESHOLD = ...         # REMOVE
+LYRICS_ENFORCE_ORIGINAL_LANGUAGE = ...           # KEEP
+LYRICS_VI_CUSTOM_CORRECTIONS_JSON = ...          # KEEP
+LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK = ...     # REMOVE
+LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION = ...    # REMOVE
+LYRICS_MIN_UNIQUE_WORD_RATIO = ...               # KEEP
+LYRICS_MAX_REPEATED_NGRAM_RATIO = ...            # KEEP
+LYRICS_MAX_SAME_CHUNK_REPEATS = ...              # KEEP
+LYRICS_VOCAL_SEPARATION_ENABLED = ...            # KEEP
+LYRICS_MAX_DOWNLOAD_MB = ...                     # KEEP
+LYRICS_EXTRACTION_ASYNC_ENABLED = ...            # KEEP
+LYRICS_EXTRACTION_WORKERS = ...                  # KEEP
+
+# Microservice (all REMOVE):
+LYRICS_USE_MICROSERVICE = ...
+LYRICS_MICROSERVICE_URL = ...
+LYRICS_MICROSERVICE_TIMEOUT = ...
+LYRICS_MICROSERVICE_POLL_INTERVAL = ...
+```
+
+### File: `app/models.py`
+
+`AudioLibrary` model has these lyrics fields (NO CHANGES NEEDED):
+
+```python
+lyrics = db.Column(db.Text)
+lyrics_source = db.Column(db.String(50))  # metadata, whisper, whisper+demucs, user, microservice
+lyrics_extraction_status = db.Column(db.String(50), default='not_requested')
+lyrics_extraction_error = db.Column(db.Text)
+```
+
+The `lyrics_source` field will gain new values: `'musixmatch'` and `'assemblyai'`. No migration needed — it's a varchar.
+
+### Dependencies (`requirements.txt`)
+
+- `openai==1.12.0` — already installed (keep if used elsewhere, not needed for this feature anymore)
+- `openai-whisper` — REMOVE this dependency
+- `mutagen` — keep (used for metadata extraction)
+- `requests` — keep (already present)
+
+---
+
+## What to REMOVE
+
+### From `app/services/lyrics_extraction_service.py`:
+
+1. **Remove `_extract_via_microservice()` method** from `LyricsExtractionService` class entirely.
+
+2. **Remove the `LYRICS_USE_MICROSERVICE` routing logic** in `LyricsExtractionService.extract_lyrics()`. It should no longer check for microservice mode.
+
+3. **Remove `_transcribe_with_whisper()` method** from `LyricsExtractionServiceLegacy`. This is the slow local Whisper method that calls `whisper.load_model()` and `model.transcribe()`.
+
+4. **Remove all local Whisper model management methods** from `LyricsExtractionServiceLegacy`:
+   - `_should_try_fallback_model()`
+   - `_is_heavier_model()`
+   - `_get_model_rank()`
+   - `_is_whisper_model_cached()`
+   - `_WHISPER_MODEL_RANK` class variable
+   - `_extract_text_from_whisper_result()` — only used by local Whisper
+
+5. **Remove all retry/fallback logic** from `LyricsExtractionServiceLegacy.extract_lyrics()`:
+   - The fallback model retry logic
+   - The `_looks_translated_output` retry with `force_original_language=True`
+   - The `auto_retry_separation` logic that re-runs Demucs + Whisper
+   - The low-confidence candidate fallback at the end
+
+6. **Remove `_download_audio` method** from `LyricsExtractionService` class (the one used by microservice mode). Keep `_download_audio_file` in `LyricsExtractionServiceLegacy`.
+
+7. **Remove `_guess_extension` static method** from `LyricsExtractionService` class. Keep `_guess_extension_helper` in `LyricsExtractionServiceLegacy`.
+
+8. **Remove the `import importlib`** if no longer needed after removing local Whisper (check — mutagen may still use it).
+
+### From `app/config.py`:
+
+Remove these config variables from both the `Config` class properties AND the `configure_app()` method:
+
+```python
+# REMOVE all of these:
+LYRICS_WHISPER_MODEL
+LYRICS_WHISPER_FALLBACK_MODEL
+LYRICS_WHISPER_TEMPERATURE
+LYRICS_WHISPER_BEAM_SIZE
+LYRICS_WHISPER_BEST_OF
+LYRICS_WHISPER_PATIENCE
+LYRICS_WHISPER_CONDITION_ON_PREVIOUS_TEXT
+LYRICS_WHISPER_COMPRESSION_RATIO_THRESHOLD
+LYRICS_WHISPER_LOGPROB_THRESHOLD
+LYRICS_WHISPER_NO_SPEECH_THRESHOLD
+LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK
+LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION
+LYRICS_USE_MICROSERVICE
+LYRICS_MICROSERVICE_URL
+LYRICS_MICROSERVICE_TIMEOUT
+LYRICS_MICROSERVICE_POLL_INTERVAL
+```
+
+### From `requirements.txt`:
+
+Remove `openai-whisper` (and any of its unique sub-dependencies like `tiktoken`, `triton`, etc. if they're not used elsewhere).
+
+---
+
+## What to ADD
+
+### 1. New config variables in `app/config.py`
+
+Add these to the `Config` class AND to `configure_app()`:
+
+```python
+# AssemblyAI (Tier 3)
+ASSEMBLYAI_API_KEY = os.environ.get('ASSEMBLYAI_API_KEY', '')
+LYRICS_USE_ASSEMBLYAI = os.environ.get('LYRICS_USE_ASSEMBLYAI', 'true').lower() == 'true'
+
+# Musixmatch API (Tier 2)
+MUSIXMATCH_API_KEY = os.environ.get('MUSIXMATCH_API_KEY', '')
+LYRICS_USE_MUSIXMATCH = os.environ.get('LYRICS_USE_MUSIXMATCH', 'true').lower() == 'true'
+```
+
+### 2. New dependency in `requirements.txt`
+
+```
+assemblyai
+```
+
+### 3. New Musixmatch lookup method in `LyricsExtractionServiceLegacy`
+
+```python
+def _lookup_lyrics_musixmatch(
+    self,
+    artist: Optional[str],
+    title: Optional[str]
+) -> Optional[str]:
+    """
+    Tier 2: Look up lyrics from Musixmatch by artist and track title.
+    Returns None if not configured, missing metadata, or no match found.
+    """
+    if not current_app.config.get('LYRICS_USE_MUSIXMATCH', False):
+        return None
+
+    api_key = current_app.config.get('MUSIXMATCH_API_KEY', '')
+    if not api_key:
+        current_app.logger.debug('MUSIXMATCH_API_KEY not configured, skipping lookup')
+        return None
+
+    if not artist or not title:
+        current_app.logger.debug('Missing artist or title, skipping Musixmatch lookup')
+        return None
+
+    try:
+        resp = requests.get(
+            'https://api.musixmatch.com/ws/1.1/matcher.lyrics.get',
+            params={
+                'q_track': title,
+                'q_artist': artist,
+                'apikey': api_key,
+            },
+            timeout=10,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+
+        status_code = data.get('message', {}).get('header', {}).get('status_code')
+        if status_code != 200:
+            current_app.logger.debug(f'Musixmatch returned status {status_code}')
+            return None
+
+        lyrics_body = (
+            data.get('message', {})
+            .get('body', {})
+            .get('lyrics', {})
+            .get('lyrics_body', '')
+        )
+
+        if not lyrics_body or not lyrics_body.strip():
+            return None
+
+        # Musixmatch free tier appends a watermark — strip it
+        watermark = '******* This Lyrics is NOT for Commercial use *******'
+        lines = lyrics_body.strip().split('\n')
+        cleaned_lines = [
+            line for line in lines
+            if watermark not in line and line.strip() != '...'
+        ]
+        text = '\n'.join(cleaned_lines).strip()
+
+        if not text:
+            return None
+
+        current_app.logger.info(
+            f'Musixmatch lyrics found for "{artist} - {title}": {len(text)} chars'
+        )
+        return text
+
+    except Exception as exc:
+        current_app.logger.warning(f'Musixmatch API error: {exc}')
+        return None
+```
+
+### 4. New AssemblyAI transcription method in `LyricsExtractionServiceLegacy`
+
+```python
+def _transcribe_with_assemblyai(
+    self,
+    audio_path: str,
+    language_override: Optional[str] = None,
+) -> Optional[str]:
+    """
+    Tier 3: Transcribe audio using AssemblyAI's cloud API.
+    Uses the Universal-2 model. The SDK handles file upload and polling automatically.
+    Free tier: 185 hours of pre-recorded audio.
+    Paid: ~$0.0037/min (cheaper than OpenAI Whisper).
+    """
+    if not current_app.config.get('LYRICS_USE_ASSEMBLYAI', False):
+        return None
+
+    try:
+        import assemblyai as aai
+    except ImportError:
+        current_app.logger.error('assemblyai package not installed')
+        return None
+
+    api_key = current_app.config.get('ASSEMBLYAI_API_KEY', '')
+    if not api_key:
+        current_app.logger.error('ASSEMBLYAI_API_KEY not configured')
+        return None
+
+    aai.settings.api_key = api_key
+
+    try:
+        # Configure transcription
+        config_kwargs = {
+            'speech_models': ['universal-2'],
+        }
+
+        # Set language if specified, otherwise enable auto-detection
+        language = language_override or current_app.config.get('LYRICS_WHISPER_LANGUAGE')
+        if language:
+            config_kwargs['language_code'] = language
+        else:
+            config_kwargs['language_detection'] = True
+
+        config = aai.TranscriptionConfig(**config_kwargs)
+
+        # The SDK handles file upload and polling automatically
+        transcriber = aai.Transcriber()
+        transcript = transcriber.transcribe(audio_path, config=config)
+
+        if transcript.status == aai.TranscriptStatus.error:
+            current_app.logger.error(f'AssemblyAI transcription error: {transcript.error}')
+            return None
+
+        text = (transcript.text or '').strip()
+
+        if not text:
+            current_app.logger.warning('AssemblyAI returned empty transcript')
+            return None
+
+        current_app.logger.info(
+            f'AssemblyAI transcription complete: {len(text)} chars'
+        )
+        return text
+
+    except Exception as exc:
+        current_app.logger.error(f'AssemblyAI API error: {exc}')
+        return None
+```
+
+### 5. Rewrite `LyricsExtractionServiceLegacy.extract_lyrics()` — New multi-tier flow
+
+Replace the entire `extract_lyrics()` method in `LyricsExtractionServiceLegacy` with this simplified multi-tier flow:
+
+```python
+def extract_lyrics(
+    self,
+    audio_url: Optional[str] = None,
+    local_file_path: Optional[str] = None,
+    whisper_language_override: Optional[str] = None
+) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+    """
+    Extract lyrics using multi-tier fallback chain.
+
+    Tier 1: Embedded metadata (free, instant)
+    Tier 2: Musixmatch API lookup (by artist + title)
+    Tier 3: AssemblyAI cloud transcription (of isolated vocals)
+
+    Returns:
+        Tuple of (lyrics, source, error)
+    """
+    if not current_app.config.get('LYRICS_EXTRACTION_ENABLED', True):
+        return None, None, 'Lyrics extraction is disabled'
+
+    if not audio_url and not local_file_path:
+        return None, None, 'No audio source provided'
+
+    temp_dir = tempfile.mkdtemp(prefix='lyrics_extract_')
+    try:
+        # Resolve audio file path
+        target_path = local_file_path
+        if not target_path:
+            target_path = self._download_audio_file(audio_url, temp_dir)
+
+        # --- Tier 1: Embedded metadata ---
+        metadata_lyrics = self._extract_metadata_lyrics(target_path)
+        if metadata_lyrics:
+            current_app.logger.info('Lyrics resolved via Tier 1: embedded metadata')
+            return metadata_lyrics, 'metadata', None
+
+        # --- Tier 2: Musixmatch lookup ---
+        artist, title = self._extract_artist_title(target_path)
+        musixmatch_lyrics = self._lookup_lyrics_musixmatch(artist, title)
+        if musixmatch_lyrics:
+            current_app.logger.info('Lyrics resolved via Tier 2: Musixmatch')
+            return musixmatch_lyrics, 'musixmatch', None
+
+        # --- Tier 3: AssemblyAI transcription ---
+        # Optionally separate vocals first for better accuracy
+        transcription_target = target_path
+        if current_app.config.get('LYRICS_VOCAL_SEPARATION_ENABLED', False):
+            separated_path = self._separate_vocals_with_demucs(target_path, temp_dir)
+            if separated_path:
+                transcription_target = separated_path
+
+        raw_lyrics = self._transcribe_with_assemblyai(
+            transcription_target,
+            language_override=whisper_language_override,
+        )
+
+        if raw_lyrics:
+            # Apply post-processing (de-duplication, cleanup)
+            cleaned = self._postprocess_lyrics(raw_lyrics)
+            # Apply Vietnamese corrections if applicable
+            language = whisper_language_override or current_app.config.get('LYRICS_WHISPER_LANGUAGE')
+            final = self._apply_language_post_corrections(cleaned, language)
+
+            if final and self._is_transcription_usable(final, expected_language=language):
+                current_app.logger.info('Lyrics resolved via Tier 3: AssemblyAI')
+                return final, 'assemblyai', None
+
+        return None, None, 'No lyrics detected from metadata, database lookup, or transcription'
+
+    except Exception as exc:
+        current_app.logger.warning(f'Lyrics extraction failed: {exc}')
+        return None, None, str(exc)
+    finally:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+```
+
+### 6. New helper method: `_extract_artist_title()`
+
+Add this method to `LyricsExtractionServiceLegacy` for extracting artist/title from audio file tags (needed for Musixmatch lookup):
+
+```python
+def _extract_artist_title(self, audio_path: str) -> Tuple[Optional[str], Optional[str]]:
+    """Extract artist and title from audio file metadata tags."""
+    try:
+        mutagen_module = importlib.import_module('mutagen')
+        mutagen_file_loader = getattr(mutagen_module, 'File')
+    except Exception:
+        return None, None
+
+    try:
+        audio_file = mutagen_file_loader(audio_path)
+        if not audio_file or not getattr(audio_file, 'tags', None):
+            return None, None
+
+        tags = audio_file.tags
+        artist = None
+        title = None
+
+        # ID3 tags (MP3)
+        for key in ['TPE1', 'TPE2']:
+            if key in tags:
+                artist = self._normalize_tag_value(tags[key])
+                if artist:
+                    break
+        if 'TIT2' in tags:
+            title = self._normalize_tag_value(tags['TIT2'])
+
+        # Vorbis comments (FLAC, OGG)
+        if not artist:
+            for key in ['artist', 'ARTIST', 'albumartist', 'ALBUMARTIST']:
+                if key in tags:
+                    val = tags[key]
+                    artist = val[0] if isinstance(val, list) else str(val)
+                    artist = artist.strip() if artist else None
+                    if artist:
+                        break
+        if not title:
+            for key in ['title', 'TITLE']:
+                if key in tags:
+                    val = tags[key]
+                    title = val[0] if isinstance(val, list) else str(val)
+                    title = title.strip() if title else None
+                    if title:
+                        break
+
+        # MP4/M4A atoms
+        if not artist and '\xa9ART' in tags:
+            val = tags['\xa9ART']
+            artist = val[0] if isinstance(val, list) else str(val)
+            artist = artist.strip() if artist else None
+        if not title and '\xa9nam' in tags:
+            val = tags['\xa9nam']
+            title = val[0] if isinstance(val, list) else str(val)
+            title = title.strip() if title else None
+
+        return artist, title
+
+    except Exception as exc:
+        current_app.logger.debug(f'Error extracting artist/title: {exc}')
+        return None, None
+```
+
+### 7. Simplify `LyricsExtractionService` (the router class)
+
+Since the microservice mode is being removed, simplify the main `LyricsExtractionService` class:
+
+```python
+class LyricsExtractionService:
+    """
+    Service for extracting lyrics from audio.
+    Uses a multi-tier strategy: metadata -> Musixmatch -> AssemblyAI.
+    """
+
+    def extract_lyrics(
+        self,
+        audio_url: Optional[str] = None,
+        local_file_path: Optional[str] = None,
+        whisper_language_override: Optional[str] = None
+    ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+        """
+        Extract lyrics from audio source.
+        Returns: Tuple of (lyrics, source, error)
+        """
+        if not current_app.config.get('LYRICS_EXTRACTION_ENABLED', True):
+            return None, None, 'Lyrics extraction is disabled'
+
+        service = LyricsExtractionServiceLegacy()
+        return service.extract_lyrics(
+            audio_url=audio_url,
+            local_file_path=local_file_path,
+            whisper_language_override=whisper_language_override
+        )
+```
+
+Remove from `LyricsExtractionService`:
+- `_extract_via_microservice()` — entire method
+- `_extract_legacy()` — no longer needed as a separate method
+- `_download_audio()` — used only by microservice mode
+- `_guess_extension()` — used only by microservice mode
+
+---
+
+## What to KEEP (Do Not Modify)
+
+### In `LyricsExtractionServiceLegacy`:
+
+- `_extract_metadata_lyrics()` — Tier 1, works as-is
+- `_separate_vocals_with_demucs()` — still used before Tier 3 transcription
+- `_is_transcription_usable()` — validates API results
+- `_looks_translated_output()` — used by `_is_transcription_usable()`
+- `_postprocess_lyrics()` — cleans transcription output
+- `_apply_language_post_corrections()` — Vietnamese fixes
+- `_get_vietnamese_custom_corrections()` — helper for above
+- `_has_excessive_ngram_repetition()` — used by `_postprocess_lyrics()`
+- `_dedupe_rolling_ngrams()` — used by `_postprocess_lyrics()`
+- `_tokenize_words()` — used by quality checks
+- `_normalize_for_repeat_check()` — used by quality checks
+- `_download_audio_file()` — used for remote URLs
+- `_guess_extension_helper()` — used by `_download_audio_file()`
+- `_normalize_tag_value()` — used by metadata extraction
+- `METADATA_KEYS` class variable
+- `MIN_WORDS_FOR_ACCEPT` class variable
+- `_VIETNAMESE_COMMON_FIXES` class variable
+- `_ENGLISH_STOPWORDS` class variable
+
+### Files NOT to modify:
+
+- `app/services/lyrics_job_service.py` — No changes needed. It calls `LyricsExtractionService().extract_lyrics()` which keeps the same interface.
+- `app/models.py` — No changes needed. `lyrics_source` is a varchar, new values work without migration.
+- `app/routes/main.py` — No changes needed.
+- `app/services/audio_library_service.py` — No changes needed.
+
+---
+
+## Config Summary After Changes
+
+### KEEP in `app/config.py`:
+
+```python
+LYRICS_EXTRACTION_ENABLED
+LYRICS_WHISPER_LANGUAGE          # used as language hint for AssemblyAI
+LYRICS_ENFORCE_ORIGINAL_LANGUAGE
+LYRICS_VI_CUSTOM_CORRECTIONS_JSON
+LYRICS_MIN_UNIQUE_WORD_RATIO
+LYRICS_MAX_REPEATED_NGRAM_RATIO
+LYRICS_MAX_SAME_CHUNK_REPEATS
+LYRICS_VOCAL_SEPARATION_ENABLED
+LYRICS_MAX_DOWNLOAD_MB
+LYRICS_EXTRACTION_ASYNC_ENABLED
+LYRICS_EXTRACTION_WORKERS
+```
+
+### ADD to `app/config.py`:
+
+```python
+ASSEMBLYAI_API_KEY
+LYRICS_USE_ASSEMBLYAI
+MUSIXMATCH_API_KEY
+LYRICS_USE_MUSIXMATCH
+```
+
+### REMOVE from `app/config.py`:
+
+```python
+LYRICS_WHISPER_MODEL
+LYRICS_WHISPER_FALLBACK_MODEL
+LYRICS_WHISPER_TEMPERATURE
+LYRICS_WHISPER_BEAM_SIZE
+LYRICS_WHISPER_BEST_OF
+LYRICS_WHISPER_PATIENCE
+LYRICS_WHISPER_CONDITION_ON_PREVIOUS_TEXT
+LYRICS_WHISPER_COMPRESSION_RATIO_THRESHOLD
+LYRICS_WHISPER_LOGPROB_THRESHOLD
+LYRICS_WHISPER_NO_SPEECH_THRESHOLD
+LYRICS_ALLOW_UNCACHED_HEAVIER_FALLBACK
+LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION
+LYRICS_USE_MICROSERVICE
+LYRICS_MICROSERVICE_URL
+LYRICS_MICROSERVICE_TIMEOUT
+LYRICS_MICROSERVICE_POLL_INTERVAL
+```
+
+Remember to remove these from BOTH the class properties AND the `configure_app()` method.
+
+---
+
+## Environment Variables to Set
+
+```bash
+ASSEMBLYAI_API_KEY=your-assemblyai-key
+LYRICS_USE_ASSEMBLYAI=true
+MUSIXMATCH_API_KEY=your-musixmatch-key
+LYRICS_USE_MUSIXMATCH=true
+```
+
+---
+
+## AssemblyAI API Details
+
+| Aspect | Detail |
+|--------|--------|
+| SDK | `pip install assemblyai` |
+| Models | `universal-2` (recommended), `universal-3-pro` (newer, may cost more) |
+| File handling | SDK uploads local files and polls for results automatically |
+| Free tier | 185 hours of pre-recorded audio transcription |
+| Paid pricing | ~$0.0037/min (cheaper than OpenAI Whisper at $0.006/min) |
+| Language support | Auto-detection or explicit language code |
+| File size limit | No hard limit documented (much more flexible than OpenAI's 25 MB) |
+
+---
+
+## New `lyrics_source` Values
+
+| Value | Meaning |
+|-------|---------|
+| `metadata` | Found in file tags (existing) |
+| `musixmatch` | Matched from Musixmatch database (new) |
+| `assemblyai` | Transcribed by AssemblyAI cloud API (new) |
+| `user` | Manually entered by user (existing, unchanged) |
+
+Old values that will no longer be produced: `whisper`, `whisper+demucs`, `whisper-low-confidence`, `microservice`.
+
+---
+
+## Testing Checklist
+
+1. Upload a song with embedded lyrics in its tags. Verify `lyrics_source = 'metadata'`.
+2. Upload a well-known song with no embedded lyrics but valid artist/title tags. Verify Musixmatch lookup returns lyrics and `lyrics_source = 'musixmatch'`.
+3. Upload an original/unknown song with no embedded lyrics. Verify AssemblyAI transcribes it and `lyrics_source = 'assemblyai'`.
+4. Verify total processing time is under 60 seconds (vs 6-7 minutes previously).
+5. Verify `lyrics_extraction_status` transitions correctly: `queued` -> `processing` -> `completed`.
+6. Test with missing `ASSEMBLYAI_API_KEY` — should fail gracefully with error message.
+7. Test with missing `MUSIXMATCH_API_KEY` — should skip Tier 2 and proceed to Tier 3.
+8. Test with `LYRICS_VOCAL_SEPARATION_ENABLED=true` — Demucs should run before AssemblyAI.
+9. Verify no references to `openai-whisper` library remain in the codebase.
+10. Verify the app starts without `openai-whisper` installed.
