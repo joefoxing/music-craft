@@ -1,67 +1,47 @@
-<!DOCTYPE html>
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Pricing - Joefoxing</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap">
-<link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap">
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary-orange": "#FA6E4A",
-                        "suno-pink": "#f43f5e",
-                        "background-dark": "#0a0a0a",
-                    },
-                    fontFamily: {
-                        "sans": ["Inter", "sans-serif"]
-                    }
-                },
-            },
-        }
-    </script>
+{% extends "base.html" %}
+
+{% block title %}Pricing - Joefoxing{% endblock %}
+
+{% block head %}
 <style type="text/tailwindcss">
-        :root {
-            --grain: url("https://grainy-gradients.vercel.app/noise.svg");
-        }
-        body {
-            background-color: #0a0a0a;
-            color: white;
-            overflow-x: hidden;
-        }
-        .grainy-bg {
-            background: 
-                linear-gradient(135deg, #450a0a 0%, #7c2d12 25%, #4c1d95 75%, #1e1b4b 100%);
-            position: relative;
-        }
-        .grainy-bg::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.4;
-            pointer-events: none;
-            background-image: var(--grain);
-            filter: contrast(150%) brightness(100%);
-        }
-    </style>
-</head>
-<body class="min-h-screen">
+    :root {
+        --grain: url("https://grainy-gradients.vercel.app/noise.svg");
+    }
+    body {
+        @apply bg-background-dark;
+        color: white;
+        overflow-x: hidden;
+    }
+    .grainy-bg {
+        background: linear-gradient(135deg, #0a0a0c 0%, #131318 50%, #1a1a22 100%);
+        position: relative;
+    }
+    .grainy-bg::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.15;
+        pointer-events: none;
+        background-image: var(--grain);
+        filter: contrast(120%) brightness(100%);
+        mix-blend-mode: soft-light;
+        z-index: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
 <section class="grainy-bg min-h-screen flex flex-col items-center pt-8 px-6 relative overflow-hidden">
 <header class="w-full flex items-center justify-between z-20 mb-16 max-w-6xl mx-auto">
 <div class="flex items-center gap-1">
 <a href="/" class="font-black text-xl tracking-tighter uppercase italic text-white hover:opacity-80 transition-opacity">Joefoxing</a>
 </div>
 <div class="flex items-center gap-4">
-<a href="/pricing" class="text-xs font-semibold px-3 py-1.5 bg-[#131318]/10 rounded-full transition-colors text-white">Pricing</a>
-<a href="{{ url_for('auth.login') }}" class="text-xs font-semibold px-3 py-1.5 hover:bg-[#131318]/10 rounded-full transition-colors text-white">Sign In</a>
-<a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-[#6c5ce7] text-white px-4 py-1.5 rounded-full hover:bg-[#5a4bd1] transition-colors">Sign Up</a>
+<a href="/pricing" class="text-xs font-semibold px-3 py-1.5 bg-surface-dark/10 rounded-full transition-colors text-white">Pricing</a>
+<a href="{{ url_for('auth.login') }}" class="text-xs font-semibold px-3 py-1.5 hover:bg-surface-dark/10 rounded-full transition-colors text-white">Sign In</a>
+<a href="{{ url_for('auth.register') }}" class="text-xs font-semibold bg-primary text-white px-4 py-1.5 rounded-full hover:bg-indigo-600 transition-colors">Sign Up</a>
 </div>
 </header>
 
@@ -73,10 +53,10 @@
     </p>
 
     <!-- Billing cycle toggle -->
-    <div class="mt-8 inline-flex items-center gap-3 bg-[#131318]/5 border border-white/10 rounded-full px-2 py-1.5">
+    <div class="mt-8 inline-flex items-center gap-3 bg-surface-dark/5 border border-white/10 rounded-full px-2 py-1.5">
       <button id="toggleMonthly"
               onclick="setBilling('monthly')"
-              class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all bg-[#6c5ce7] text-white">
+              class="px-4 py-1.5 rounded-full text-sm font-semibold transition-all bg-primary text-white">
         Monthly
       </button>
       <button id="toggleAnnual"
@@ -115,7 +95,7 @@
       </div>
       <p class="text-white/60 text-sm mb-8">Perfect for hobbyists exploring AI music.</p>
       <a href="{{ url_for('auth.register') }}"
-         class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-[#131318]/5 transition-colors mb-8">
+         class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-surface-dark/5 transition-colors mb-8">
         Get Started
       </a>
       <ul class="space-y-4 text-sm flex-1 text-white/80">
@@ -148,18 +128,50 @@
           </button>
         </form>
       {% else %}
-        <button id="proCheckoutBtn"
-                onclick="startCheckout()"
-                class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-primary-orange to-suno-pink font-semibold text-center hover:opacity-90 transition-opacity mb-8 flex items-center justify-center gap-2">
-          <span id="proCheckoutLabel">Upgrade to Pro</span>
-          <svg id="proCheckoutSpinner" class="hidden w-4 h-4 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-          </svg>
-        </button>
+        <!-- Payment Method Toggle -->
+        <div class="mb-5 flex gap-2">
+          <button id="stripeTabBtn" onclick="switchPaymentMethod('stripe')" 
+                  class="flex-1 py-2 px-3 rounded-lg text-xs font-semibold bg-primary text-white transition-all">
+            <span class="material-symbols-outlined text-sm align-middle">credit_card</span> Card
+          </button>
+          <button id="paypalTabBtn" onclick="switchPaymentMethod('paypal')" 
+                  class="flex-1 py-2 px-3 rounded-lg text-xs font-semibold bg-white/10 text-white/60 hover:bg-white/15 transition-all">
+            <span class="material-symbols-outlined text-sm align-middle">payments</span> PayPal
+          </button>
+        </div>
+
+        <!-- Stripe Checkout -->
+        <div id="stripePaymentMethod" class="mb-8">
+          <button id="proCheckoutBtn"
+                  onclick="startCheckout()"
+                  class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-primary-orange to-suno-pink font-semibold text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+            <span id="proCheckoutLabel">Upgrade to Pro</span>
+            <svg id="proCheckoutSpinner" class="hidden w-4 h-4 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- PayPal Checkout -->
+        <div id="paypalPaymentMethod" class="mb-8 hidden">
+          <button id="paypalCheckoutBtn"
+                  onclick="startPayPalCheckout()"
+                  class="w-full py-3 px-4 rounded-xl bg-[#0070BA] hover:bg-[#005099] font-semibold text-center transition-colors text-white flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5H3zm11.5 7l-2 4h-2l2-4h2z" opacity="0.5"/>
+            </svg>
+            <span id="paypalCheckoutLabel">Pay with PayPal</span>
+            <svg id="paypalCheckoutSpinner" class="hidden w-4 h-4 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+          </button>
+        </div>
+
         <!-- Token top-up -->
         <button onclick="startCheckout('tokens')"
-                class="w-full mb-8 py-2 px-4 rounded-xl border border-white/10 text-xs font-semibold text-white/60 hover:bg-[#131318]/5 transition-colors">
+                class="w-full mb-8 py-2 px-4 rounded-xl border border-white/10 text-xs font-semibold text-white/60 hover:bg-surface-dark/5 transition-colors">
           Just need more credits? Buy 100 tokens for $5
         </button>
       {% endif %}
@@ -184,7 +196,7 @@
       </div>
       <p class="text-white/60 text-sm mb-8">For production houses and teams.</p>
       <a href="/contact"
-         class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-[#131318]/5 transition-colors mb-8">
+         class="w-full py-3 px-4 rounded-xl border border-white/10 font-semibold text-center hover:bg-surface-dark/5 transition-colors mb-8">
         Contact Sales
       </a>
       <ul class="space-y-4 text-sm flex-1 text-white/80">
@@ -204,6 +216,7 @@
 <script>
   // ── Billing cycle toggle ──────────────────────────────────────────────────
   var billingCycle = 'monthly';
+  var paymentMethod = 'stripe'; // 'stripe' or 'paypal'
 
   function setBilling(cycle) {
     billingCycle = cycle;
@@ -214,17 +227,17 @@
     var noteEl     = document.getElementById('annualNote');
 
     if (cycle === 'annual') {
-      monthlyBtn.classList.remove('bg-[#6c5ce7]', 'text-white');
+      monthlyBtn.classList.remove('bg-primary', 'text-white');
       monthlyBtn.classList.add('text-white/60', 'hover:text-white');
-      annualBtn.classList.add('bg-[#6c5ce7]', 'text-white');
+      annualBtn.classList.add('bg-primary', 'text-white');
       annualBtn.classList.remove('text-white/60', 'hover:text-white');
       if (priceEl)  priceEl.textContent  = '$12';
       if (periodEl) periodEl.textContent = '/mo';
       if (noteEl)   noteEl.classList.remove('hidden');
     } else {
-      annualBtn.classList.remove('bg-[#6c5ce7]', 'text-white');
+      annualBtn.classList.remove('bg-primary', 'text-white');
       annualBtn.classList.add('text-white/60', 'hover:text-white');
-      monthlyBtn.classList.add('bg-[#6c5ce7]', 'text-white');
+      monthlyBtn.classList.add('bg-primary', 'text-white');
       monthlyBtn.classList.remove('text-white/60', 'hover:text-white');
       if (priceEl)  priceEl.textContent  = '$15';
       if (periodEl) periodEl.textContent = '/mo';
@@ -232,7 +245,36 @@
     }
   }
 
-  // ── Checkout ──────────────────────────────────────────────────────────────
+  // ── Payment Method Switch ─────────────────────────────────────────────────
+  function switchPaymentMethod(method) {
+    paymentMethod = method;
+    var stripeTab = document.getElementById('stripeTabBtn');
+    var paypalTab = document.getElementById('paypalTabBtn');
+    var stripePayment = document.getElementById('stripePaymentMethod');
+    var paypalPayment = document.getElementById('paypalPaymentMethod');
+
+    if (method === 'paypal') {
+      // Switch to PayPal
+      paypalTab.classList.add('bg-primary', 'text-white');
+      paypalTab.classList.remove('bg-white/10', 'text-white/60', 'hover:bg-white/15');
+      stripeTab.classList.remove('bg-primary', 'text-white');
+      stripeTab.classList.add('bg-white/10', 'text-white/60', 'hover:bg-white/15');
+      
+      stripePayment.classList.add('hidden');
+      paypalPayment.classList.remove('hidden');
+    } else {
+      // Switch to Stripe
+      stripeTab.classList.add('bg-primary', 'text-white');
+      stripeTab.classList.remove('bg-white/10', 'text-white/60', 'hover:bg-white/15');
+      paypalTab.classList.remove('bg-primary', 'text-white');
+      paypalTab.classList.add('bg-white/10', 'text-white/60', 'hover:bg-white/15');
+      
+      stripePayment.classList.remove('hidden');
+      paypalPayment.classList.add('hidden');
+    }
+  }
+
+  // ── Stripe Checkout ──────────────────────────────────────────────────────
   function startCheckout(forceType) {
     var plan = forceType || (billingCycle === 'annual' ? 'pro_annual' : 'pro_monthly');
     var btn   = document.getElementById('proCheckoutBtn');
@@ -281,8 +323,65 @@
       }
     });
   }
+
+  // ── PayPal Checkout ──────────────────────────────────────────────────────
+  function startPayPalCheckout() {
+    var plan = billingCycle === 'annual' ? 'pro_annual' : 'pro_monthly';
+    var btn   = document.getElementById('paypalCheckoutBtn');
+    var label = document.getElementById('paypalCheckoutLabel');
+    var spinner = document.getElementById('paypalCheckoutSpinner');
+
+    if (btn) {
+      btn.disabled = true;
+      if (label)   label.textContent = 'Redirecting…';
+      if (spinner) spinner.classList.remove('hidden');
+    }
+
+    // For subscriptions, use PayPal subscribe endpoint
+    if (plan === 'pro_monthly' || plan === 'pro_annual') {
+      fetch('/billing/paypal/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: plan }),
+        credentials: 'same-origin',
+      })
+      .then(function(res) {
+        if (res.status === 401) {
+          window.location.href = '/auth/login?next=/pricing';
+          return null;
+        }
+        return res.json();
+      })
+      .then(function(data) {
+        if (!data) return;
+        if (data.subscription_url) {
+          // Redirect to PayPal approval URL
+          window.location.href = data.subscription_url;
+        } else if (data.status === 'created') {
+          // Subscription created, show success
+          alert('PayPal subscription initiated. Please complete approval on PayPal.');
+          window.location.href = '/dashboard';
+        } else {
+          alert(data.error || data.message || 'Something went wrong. Please try again.');
+          _resetPayPalButton(btn, label, spinner);
+        }
+      })
+      .catch(function(err) {
+        console.error(err);
+        alert('Network error. Please try again.');
+        _resetPayPalButton(btn, label, spinner);
+      });
+    }
+  }
+
+  function _resetPayPalButton(btn, label, spinner) {
+    if (btn) {
+      btn.disabled = false;
+      if (label)   label.textContent = 'Pay with PayPal';
+      if (spinner) spinner.classList.add('hidden');
+    }
+  }
 </script>
-</section>
 
 <nav class="fixed bottom-0 inset-x-0 h-20 bg-black/80 backdrop-blur-md border-t border-white/10 flex items-center justify-around px-6 z-50">
 <a href="{{ url_for('main.index') }}" class="flex flex-col items-center gap-1 text-white/40 hover:text-white transition-colors">
@@ -305,5 +404,5 @@
 <span class="text-[10px] font-bold uppercase tracking-wider">Profile</span>
 </a>
 </nav>
-</body>
-</html>
+</section>
+{% endblock %}

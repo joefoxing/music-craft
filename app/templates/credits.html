@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+
+{% block title %}Credits — Vnuno{% endblock %}
+
+{% block head %}
+<style type="text/tailwindcss">
+  body { @apply bg-background-dark; overflow-x: hidden; }
+
+  .glass {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+  }
+  .glass-hover {
+    @apply transition-all duration-200;
+  }
+  .glass-hover:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.14);
+  }
+
+  /* gradient balance card */
+  .balance-card {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+    border: 1px solid rgba(99,102,241,0.35);
+  }
+
+  /* pack highlight ring */
+  .pack-highlight {
+    border: 2px solid #6366f1 !important;
+    position: relative;
+  }
+  .pack-highlight::before {
+    content: "Most Popular";
+    position: absolute;
+    top: -12px; left: 50%; transform: translateX(-50%);
+    background: #6366f1;
+    color: white;
+    font-size: 11px; font-weight: 700;
+    padding: 2px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* tx type pill colours */
+  .pill-purchase  { @apply bg-emerald-900/60 text-emerald-300 border border-emerald-700/40; }
+  .pill-debit     { @apply bg-red-900/50 text-red-300 border border-red-700/40; }
+  .pill-refund    { @apply bg-sky-900/60 text-sky-300 border border-sky-700/40; }
+  .pill-admin_grant { @apply bg-amber-900/60 text-amber-300 border border-amber-700/40; }
+  .pill-promo     { @apply bg-purple-900/60 text-purple-300 border border-purple-700/40; }
+  .pill-default   { @apply bg-neutral-800 text-neutral-300 border border-neutral-700/40; }
+
+  /* category dot colours  */
+  .dot-generation { @apply bg-indigo-400; }
+  .dot-separation { @apply bg-violet-400; }
+  .dot-utility    { @apply bg-slate-400; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen text-white px-4 pb-20">
+
+  <!-- ─── Top nav ─────────────────────────────────────────────────── -->
+  <header class="max-w-6xl mx-auto flex items-center justify-between py-6">
+    <a href="/" class="font-black text-xl tracking-tighter uppercase italic text-white hover:opacity-80 transition-opacity">Vnuno</a>
+    <nav class="flex items-center gap-4 text-sm font-medium text-white/60">
+      <a href="/" class="hover:text-white transition-colors">Home</a>
+      <a href="/pricing" class="hover:text-white transition-colors">Pricing</a>
+      <span class="text-white font-semibold">Credits</span>
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('auth.logout') }}"
+           class="ml-2 px-3 py-1.5 rounded-full bg-white/8 hover:bg-white/14 transition-colors text-white/80 text-xs">
+          Sign Out
+        </a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="max-w-6xl mx-auto space-y-10">
+
+    <!-- ─── Balance card ──────────────────────────────────────────── -->
+    <section class="balance-card rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+      <div class="flex-1">
+        <p class="text-indigo-300 text-sm font-semibold uppercase tracking-widest mb-1">Your Credit Balance</p>
+        <p id="balance-display" class="text-5xl sm:text-6xl font-extrabold tracking-tight">
+          {{ "{:,.1f}".format(wallet.balance) }}
+        </p>
+        <p class="text-white/50 text-sm mt-1">
+          ≈ <span id="usd-display">${{ "%.4f"|format(wallet.balance * 0.005) }}</span> USD &nbsp;·&nbsp;
+          1 credit = $0.005
+        </p>
+        <div class="mt-4 flex gap-6 text-xs text-white/50">
+          <span>Lifetime earned: <strong class="text-white/80">{{ "{:,.1f}".format(wallet.lifetime_earned) }}</strong></span>
+          <span>Lifetime spent: <strong class="text-white/80">{{ "{:,.1f}".format(wallet.lifetime_spent) }}</strong></span>
+        </div>
+      </div>
+      <div class="flex gap-3 flex-wrap">
+        <button onclick="scrollTo('#packs')"
+                class="px-5 py-2.5 rounded-full bg-indigo-500 hover:bg-indigo-400 text-white font-semibold text-sm transition-colors">
+          Buy Credits
+        </button>
+        <a href="#history"
+           class="px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/17 text-white font-semibold text-sm transition-colors">
+          View History
+        </a>
+      </div>
+    </section>
+
+    <!-- ─── Credit packs ─────────────────────────────────────────── -->
+    <section id="packs">
+      <h2 class="text-2xl font-bold mb-6">Buy Credits</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {% for pack in credit_packs %}
+        <div class="glass rounded-2xl p-6 glass-hover flex flex-col gap-4 mt-3
+                    {% if pack.highlight %}pack-highlight{% endif %}">
+          <div>
+            <p class="text-white/60 text-xs font-semibold uppercase tracking-widest">{{ pack.label }}</p>
+            <p class="text-3xl font-extrabold mt-1 tracking-tight">${{ "%.2f"|format(pack.price_usd) }}</p>
+            {% if pack.discount_pct > 0 %}
+            <span class="inline-block mt-1 text-xs bg-emerald-900/60 text-emerald-300 border border-emerald-700/30 px-2 py-0.5 rounded-full font-semibold">
+              Save {{ pack.discount_pct }}%
+            </span>
+            {% endif %}
+          </div>
+          <div>
+            <p class="text-2xl font-bold text-indigo-300">{{ "{:,}".format(pack.credits) }} <span class="text-base font-normal text-white/50">credits</span></p>
+            <p class="text-white/40 text-xs mt-0.5">${{ "%.5f"|format(pack.price_usd / pack.credits) }} per credit</p>
+            <p class="text-white/60 text-sm mt-2">{{ pack.description }}</p>
+          </div>
+          <button
+            data-pack-id="{{ pack.id }}"
+            onclick="purchasePack(this)"
+            class="mt-auto w-full py-2.5 rounded-full text-sm font-semibold transition-colors
+                   {% if pack.highlight %}bg-indigo-500 hover:bg-indigo-400 text-white{% else %}bg-white/10 hover:bg-white/18 text-white{% endif %}">
+            Purchase
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+      <p class="mt-4 text-white/35 text-xs">
+        ⓘ Prototype mode — clicking Purchase instantly adds credits without a real payment.
+        In production, this would redirect to Stripe Checkout.
+      </p>
+    </section>
+
+    <!-- ─── Operation pricing table ─────────────────────────────── -->
+    <section>
+      <h2 class="text-2xl font-bold mb-1">Operation Pricing</h2>
+      <p class="text-white/45 text-sm mb-5">Suno API — all prices are per request.</p>
+
+      <!-- Category filter pills -->
+      <div class="flex flex-wrap gap-2 mb-5" id="category-filters">
+        <button onclick="filterCategory('all')" data-cat="all"
+                class="cat-btn active-cat px-3 py-1 rounded-full text-xs font-semibold border transition-colors
+                       bg-indigo-600 border-indigo-500 text-white">
+          All
+        </button>
+        <button onclick="filterCategory('generation')" data-cat="generation"
+                class="cat-btn px-3 py-1 rounded-full text-xs font-semibold border transition-colors
+                       bg-white/5 border-white/15 text-white/60 hover:text-white">
+          Generation
+        </button>
+        <button onclick="filterCategory('separation')" data-cat="separation"
+                class="cat-btn px-3 py-1 rounded-full text-xs font-semibold border transition-colors
+                       bg-white/5 border-white/15 text-white/60 hover:text-white">
+          Separation
+        </button>
+        <button onclick="filterCategory('utility')" data-cat="utility"
+                class="cat-btn px-3 py-1 rounded-full text-xs font-semibold border transition-colors
+                       bg-white/5 border-white/15 text-white/60 hover:text-white">
+          Utility
+        </button>
+      </div>
+
+      <div class="glass rounded-2xl overflow-hidden">
+        <table class="w-full text-sm" id="pricing-table">
+          <thead>
+            <tr class="border-b border-white/8 text-white/40 text-xs uppercase tracking-wider">
+              <th class="text-left px-5 py-3 font-semibold">Operation</th>
+              <th class="text-left px-4 py-3 font-semibold hidden sm:table-cell">Category</th>
+              <th class="text-right px-4 py-3 font-semibold">Credits / req</th>
+              <th class="text-right px-5 py-3 font-semibold">USD / req</th>
+              <th class="text-right px-5 py-3 font-semibold hidden md:table-cell">Affordability</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for op in pricing %}
+            <tr class="border-b border-white/5 hover:bg-white/3 transition-colors pricing-row"
+                data-category="{{ op.category }}">
+              <td class="px-5 py-3.5 font-medium text-white">{{ op.display_name }}</td>
+              <td class="px-4 py-3.5 hidden sm:table-cell">
+                <span class="inline-flex items-center gap-1.5 text-white/55 text-xs capitalize">
+                  <span class="w-1.5 h-1.5 rounded-full dot-{{ op.category }}"></span>
+                  {{ op.category }}
+                </span>
+              </td>
+              <td class="px-4 py-3.5 text-right font-mono font-bold text-indigo-300">
+                {{ "%.1f"|format(op.credits_per_request) }}
+              </td>
+              <td class="px-5 py-3.5 text-right font-mono text-white/60">
+                ${{ "%.4f"|format(op.usd_per_request) }}
+              </td>
+              <td class="px-5 py-3.5 text-right hidden md:table-cell">
+                {% set pct = (wallet.balance / op.credits_per_request)|int %}
+                <span class="text-xs text-white/40">
+                  {% if pct >= 1000 %}
+                    <span class="text-emerald-400 font-semibold">{{ "{:,}".format(pct) }}× uses</span>
+                  {% elif pct >= 1 %}
+                    {{ "{:,}".format(pct) }}× uses
+                  {% else %}
+                    <span class="text-red-400">Insufficient</span>
+                  {% endif %}
+                </span>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="5" class="px-5 py-8 text-center text-white/30 text-sm italic">
+                No operations loaded. Run <code>seed_operation_pricing()</code> once.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ─── Transaction history ──────────────────────────────────── -->
+    <section id="history">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-2xl font-bold">Transaction History</h2>
+        <a href="#" onclick="loadMoreTxs(event)"
+           class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-semibold">
+          Load more
+        </a>
+      </div>
+
+      {% if recent_txs %}
+      <div class="glass rounded-2xl overflow-hidden">
+        <table class="w-full text-sm" id="tx-table">
+          <thead>
+            <tr class="border-b border-white/8 text-white/40 text-xs uppercase tracking-wider">
+              <th class="text-left px-5 py-3 font-semibold">Date</th>
+              <th class="text-left px-4 py-3 font-semibold">Type</th>
+              <th class="text-left px-4 py-3 font-semibold hidden md:table-cell">Description</th>
+              <th class="text-right px-4 py-3 font-semibold">Amount</th>
+              <th class="text-right px-5 py-3 font-semibold">Balance After</th>
+            </tr>
+          </thead>
+          <tbody id="tx-body">
+            {% for tx in recent_txs %}
+            <tr class="border-b border-white/5 hover:bg-white/3 transition-colors">
+              <td class="px-5 py-3.5 text-white/50 text-xs whitespace-nowrap">
+                {{ tx.created_at[:16].replace('T', ' ') if tx.created_at else '—' }}
+              </td>
+              <td class="px-4 py-3.5">
+                <span class="text-xs font-semibold px-2 py-0.5 rounded-full
+                             pill-{{ tx.tx_type }} {% if tx.tx_type not in ['purchase','debit','refund','admin_grant','promo'] %}pill-default{% endif %}">
+                  {{ tx.tx_type | replace('_', ' ') | title }}
+                </span>
+              </td>
+              <td class="px-4 py-3.5 text-white/60 hidden md:table-cell max-w-xs truncate">
+                {{ tx.description or '—' }}
+              </td>
+              <td class="px-4 py-3.5 text-right font-mono font-bold
+                         {% if tx.amount >= 0 %}text-emerald-400{% else %}text-red-400{% endif %}">
+                {% if tx.amount >= 0 %}+{% endif %}{{ "%.3f"|format(tx.amount) }}
+              </td>
+              <td class="px-5 py-3.5 text-right font-mono text-white/60">
+                {{ "%.3f"|format(tx.balance_after) }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="glass rounded-2xl py-14 flex flex-col items-center gap-3 text-white/35">
+        <span class="material-icons-outlined text-4xl">receipt_long</span>
+        <p class="text-sm">No transactions yet. Purchase a credit pack to get started.</p>
+      </div>
+      {% endif %}
+    </section>
+
+  </main>
+</div>
+
+<!-- ─── Toast ─────────────────────────────────────────────────────────── -->
+<div id="toast"
+     class="fixed bottom-6 right-6 z-50 max-w-sm px-5 py-3.5 rounded-xl text-sm font-semibold
+            shadow-2xl transition-all duration-300 opacity-0 translate-y-4 pointer-events-none">
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+  const CSRF_TOKEN = "{{ csrf_token() }}";
+  let currentPage = 1;
+
+  // ── scroll helper ──────────────────────────────────────────────────
+  function scrollTo(selector) {
+    document.querySelector(selector)?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── toast ──────────────────────────────────────────────────────────
+  function toast(msg, type = 'success') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = [
+      'fixed bottom-6 right-6 z-50 max-w-sm px-5 py-3.5 rounded-xl text-sm font-semibold',
+      'shadow-2xl transition-all duration-300',
+      type === 'success'
+        ? 'bg-emerald-600 text-white'
+        : 'bg-red-700 text-white',
+    ].join(' ');
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+    setTimeout(() => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(1rem)';
+    }, 3500);
+  }
+
+  // ── purchase pack ──────────────────────────────────────────────────
+  async function purchasePack(btn) {
+    const packId = btn.dataset.packId;
+    btn.disabled = true;
+    btn.textContent = 'Processing…';
+    try {
+      const res = await fetch('/api/credits/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': CSRF_TOKEN,
+        },
+        body: JSON.stringify({ pack_id: packId }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        toast(`✓ ${data.message}`);
+        updateBalanceDisplay(data.balance);
+        reloadHistory();
+      } else {
+        toast(data.error || 'Purchase failed', 'error');
+      }
+    } catch (e) {
+      toast('Network error', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Purchase';
+    }
+  }
+
+  // ── update balance card in-place ───────────────────────────────────
+  function updateBalanceDisplay(newBalance) {
+    document.getElementById('balance-display').textContent =
+      new Intl.NumberFormat('en-US', { minimumFractionDigits: 1 }).format(newBalance);
+    document.getElementById('usd-display').textContent =
+      '$' + (newBalance * 0.005).toFixed(4);
+  }
+
+  // ── reload history (page 1) ────────────────────────────────────────
+  async function reloadHistory() {
+    currentPage = 1;
+    const data = await fetchTxs(1);
+    renderTxRows(data.items, false);
+  }
+
+  async function loadMoreTxs(e) {
+    e.preventDefault();
+    currentPage++;
+    const data = await fetchTxs(currentPage);
+    if (data.items.length === 0) {
+      toast('No more transactions', 'info');
+      currentPage--;
+      return;
+    }
+    renderTxRows(data.items, true);
+  }
+
+  async function fetchTxs(page) {
+    const res = await fetch(`/api/credits/transactions?page=${page}&per_page=20`);
+    return res.json();
+  }
+
+  function renderTxRows(items, append) {
+    const tbody = document.getElementById('tx-body');
+    if (!tbody) return;
+    const rows = items.map(tx => {
+      const sign = tx.amount >= 0 ? '+' : '';
+      const amtColor = tx.amount >= 0 ? 'text-emerald-400' : 'text-red-400';
+      const pillClass = {
+        purchase: 'pill-purchase', debit: 'pill-debit',
+        refund: 'pill-refund', admin_grant: 'pill-admin_grant', promo: 'pill-promo',
+      }[tx.tx_type] || 'pill-default';
+      return `<tr class="border-b border-white/5 hover:bg-white/3 transition-colors">
+        <td class="px-5 py-3.5 text-white/50 text-xs whitespace-nowrap">${(tx.created_at || '—').slice(0,16).replace('T',' ')}</td>
+        <td class="px-4 py-3.5"><span class="text-xs font-semibold px-2 py-0.5 rounded-full ${pillClass}">${tx.tx_type.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</span></td>
+        <td class="px-4 py-3.5 text-white/60 hidden md:table-cell max-w-xs truncate">${tx.description || '—'}</td>
+        <td class="px-4 py-3.5 text-right font-mono font-bold ${amtColor}">${sign}${tx.amount.toFixed(3)}</td>
+        <td class="px-5 py-3.5 text-right font-mono text-white/60">${tx.balance_after.toFixed(3)}</td>
+      </tr>`;
+    }).join('');
+    if (append) {
+      tbody.insertAdjacentHTML('beforeend', rows);
+    } else {
+      tbody.innerHTML = rows;
+    }
+  }
+
+  // ── category filter ────────────────────────────────────────────────
+  function filterCategory(cat) {
+    document.querySelectorAll('.cat-btn').forEach(b => {
+      const isActive = b.dataset.cat === cat;
+      b.classList.toggle('bg-indigo-600', isActive);
+      b.classList.toggle('border-indigo-500', isActive);
+      b.classList.toggle('text-white', isActive);
+      b.classList.toggle('bg-white/5', !isActive);
+      b.classList.toggle('border-white/15', !isActive);
+      b.classList.toggle('text-white/60', !isActive);
+    });
+    document.querySelectorAll('.pricing-row').forEach(row => {
+      row.style.display = (cat === 'all' || row.dataset.category === cat) ? '' : 'none';
+    });
+  }
+</script>
+{% endblock %}

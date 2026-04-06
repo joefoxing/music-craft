@@ -128,14 +128,16 @@ def create_app(test_config=None):
         from app.models import AdminSetting, UsageEvent
         from app.models import Project, AudioLibrary, Playlist, PlaylistAudioLibrary
         from app.models import WebhookEvent
+        from app.models import CreditWallet, CreditTransaction, OperationPricing
         
         if app.config.get('AUTO_CREATE_DB', False):
             db.create_all()
             
             # Create default roles if they don't exist
-            from app.models import get_default_role, ensure_admin_basics
+            from app.models import get_default_role, ensure_admin_basics, seed_operation_pricing
             get_default_role()
             ensure_admin_basics()
+            seed_operation_pricing()
     
     # Register blueprints
     from app.routes.main import main_bp
@@ -149,6 +151,7 @@ def create_app(test_config=None):
     from app.routes.vc_api import vc_bp
     from app.routes.pricing import pricing_bp
     from app.routes.billing import billing_bp
+    from app.routes.credits import credits_bp
     
     # Force reload lyrics_search_api module to pick up latest endpoints
     import sys
@@ -172,6 +175,7 @@ def create_app(test_config=None):
     csrf.exempt(vc_bp)
     csrf.exempt(lyrics_search_bp)
     csrf.exempt(billing_bp)  # webhook endpoint needs raw body without CSRF token
+    csrf.exempt(credits_bp)
 
     app.register_blueprint(main_bp)
     app.register_blueprint(api_bp)
@@ -182,6 +186,7 @@ def create_app(test_config=None):
     app.register_blueprint(vc_bp)
     app.register_blueprint(pricing_bp)
     app.register_blueprint(billing_bp)
+    app.register_blueprint(credits_bp)
     app.register_blueprint(api_auth_bp, url_prefix='/api/auth')
     app.register_blueprint(api_admin_bp, url_prefix='/api/admin')
     app.register_blueprint(lyrics_search_bp)

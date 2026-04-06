@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lyrics-extraction"
+version = "1.0.0"
+description = "AI-powered lyrics extraction from audio using vocal separation and speech-to-text"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Music Cover AI Team"}
+]
+keywords = ["lyrics", "extraction", "ai", "audio", "transcription", "whisper", "demucs"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "faster-whisper>=1.1.0",
+    "demucs>=4.0.1",
+]
+
+[project.optional-dependencies]
+gpu = [
+    "torch>=2.0.0",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "pylint>=2.17",
+    "mypy>=1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/lyric-cover-staging/lyrics-extraction-lib"
+Documentation = "https://github.com/lyric-cover-staging/lyrics-extraction-lib/blob/main/README.md"
+Repository = "https://github.com/lyric-cover-staging/lyrics-extraction-lib"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["lyrics_extraction*"]

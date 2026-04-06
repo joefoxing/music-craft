@@ -10,28 +10,8 @@
     <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap">
     <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
 
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#f20df2",
-                        "primary-dark": "#c20ac2",
-                        "background-light": "#f8f5f8",
-                        "background-dark": "#181118",
-                        "surface-dark": "#271b27",
-                        "border-dark": "#392839",
-                    },
-                    fontFamily: {
-                        "display": ["Space Grotesk", "sans-serif"],
-                        "body": ["Space Grotesk", "sans-serif"],
-                    },
-                },
-            },
-        }
-    </script>
+    <script src="{{ url_for('static', filename='css/tailwind.cdn.js') }}"></script>
+    {% include 'partials/_tailwind_config.html' %}
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>

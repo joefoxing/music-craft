@@ -789,3 +789,185 @@ def ensure_admin_basics():
             staff_role.permissions.append(perm)
 
     db.session.commit()
+
+
+# ---------------------------------------------------------------------------
+# Credit System Models
+# ---------------------------------------------------------------------------
+
+class CreditWallet(db.Model):
+    """One wallet per user; stores the current credit balance."""
+
+    __tablename__ = 'credit_wallets'
+
+    id = db.Column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = db.Column(GUID(), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False, unique=True, index=True)
+    # Credits stored with 3 decimal places (smallest unit is 0.4 credits)
+    balance = db.Column(db.Numeric(precision=14, scale=3), nullable=False, default=0.000)
+    lifetime_earned = db.Column(db.Numeric(precision=14, scale=3), nullable=False, default=0.000)
+    lifetime_spent = db.Column(db.Numeric(precision=14, scale=3), nullable=False, default=0.000)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('credit_wallet', uselist=False, lazy='joined'))
+
+    def __init__(self, user_id):
+        self.id = str(uuid.uuid4())
+        self.user_id = user_id
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'balance': float(self.balance),
+            'lifetime_earned': float(self.lifetime_earned),
+            'lifetime_spent': float(self.lifetime_spent),
+            'balance_usd': round(float(self.balance) * 0.005, 4),
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+
+class CreditTransaction(db.Model):
+    """Immutable ledger of every credit movement for a user."""
+
+    __tablename__ = 'credit_transactions'
+
+    # tx_type values
+    TYPE_PURCHASE = 'purchase'       # Credits bought via a credit pack
+    TYPE_DEBIT = 'debit'             # Credits spent on an AI operation
+    TYPE_REFUND = 'refund'           # Credits returned after a failed operation
+    TYPE_ADMIN_GRANT = 'admin_grant' # Manual grant by admin
+    TYPE_PROMO = 'promo'             # Promotional / welcome bonus
+    TYPE_TRANSFER_IN = 'transfer_in'
+    TYPE_TRANSFER_OUT = 'transfer_out'
+
+    id = db.Column(GUID(), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = db.Column(GUID(), db.ForeignKey('users.id', ondelete='SET NULL'), nullable=True, index=True)
+    tx_type = db.Column(db.String(30), nullable=False, index=True)
+    # Positive = credits added; negative = credits spent
+    amount = db.Column(db.Numeric(precision=14, scale=3), nullable=False)
+    balance_after = db.Column(db.Numeric(precision=14, scale=3), nullable=False)
+    # For debits: which operation consumed these credits
+    operation_key = db.Column(db.String(100), nullable=True, index=True)
+    description = db.Column(db.String(500))
+    # External reference (pack id, Stripe session id, etc.)
+    reference_id = db.Column(db.String(200), nullable=True)
+    extra = db.Column(db.JSON)  # arbitrary metadata
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    def __init__(self, user_id, tx_type, amount, balance_after,
+                 operation_key=None, description=None, reference_id=None, extra=None):
+        self.id = str(uuid.uuid4())
+        self.user_id = user_id
+        self.tx_type = tx_type
+        self.amount = amount
+        self.balance_after = balance_after
+        self.operation_key = operation_key
+        self.description = description
+        self.reference_id = reference_id
+        self.extra = extra
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'tx_type': self.tx_type,
+            'amount': float(self.amount),
+            'balance_after': float(self.balance_after),
+            'operation_key': self.operation_key,
+            'description': self.description,
+            'reference_id': self.reference_id,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+class OperationPricing(db.Model):
+    """Configurable cost table for each AI operation, seeded from Suno pricing."""
+
+    __tablename__ = 'operation_pricing'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    operation_key = db.Column(db.String(100), unique=True, nullable=False, index=True)
+    display_name = db.Column(db.String(200), nullable=False)
+    provider = db.Column(db.String(50), nullable=False, default='suno')
+    # Cost in credits per request
+    credits_per_request = db.Column(db.Numeric(precision=10, scale=3), nullable=False)
+    # Informational USD cost (credits × $0.005)
+    usd_per_request = db.Column(db.Numeric(precision=10, scale=6), nullable=False)
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+    category = db.Column(db.String(50))  # e.g. 'generation', 'separation', 'utility'
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'operation_key': self.operation_key,
+            'display_name': self.display_name,
+            'provider': self.provider,
+            'credits_per_request': float(self.credits_per_request),
+            'usd_per_request': float(self.usd_per_request),
+            'is_active': self.is_active,
+            'category': self.category,
+        }
+
+
+# Seed data — keys must match the operation_key strings used in record_usage() calls in api.py
+SUNO_OPERATION_PRICING_SEED = [
+    # key                      display_name                  provider  credits  usd     category
+    ('generate_music',         'Generate Music',             'suno', 12.0, 0.06,   'generation'),
+    ('generate_music_direct',  'Generate Music (Direct)',    'suno', 12.0, 0.06,   'generation'),
+    ('generate_music_v1',      'Generate Music v1',          'suno', 12.0, 0.06,   'generation'),
+    ('generate_lyrics',        'Generate Lyrics',            'suno',  0.4, 0.002,  'utility'),
+    ('generate_cover',         'Generate Cover Audio',       'suno', 12.0, 0.06,   'generation'),
+    ('generate_extend',        'Extend Audio',               'suno', 12.0, 0.06,   'generation'),
+    ('generate_music_video',   'Create Music Video',         'suno',  2.0, 0.01,   'generation'),
+    ('generate_persona',       'Generate Persona Music',     'suno', 12.0, 0.06,   'generation'),
+    ('add_instrumental',       'Add Instrumental',           'suno', 12.0, 0.06,   'generation'),
+    ('add_vocals',             'Add Vocals',                 'suno', 12.0, 0.06,   'generation'),
+    ('vocal_removal',          'Vocal Removal',              'suno', 10.0, 0.05,   'separation'),
+    ('style_boost',            'Boost Music Style',          'suno',  0.4, 0.002,  'utility'),
+    ('mashup',                 'Mashup',                     'suno', 12.0, 0.06,   'generation'),
+    ('replace_section',        'Replace Music Section',      'suno',  5.0, 0.025,  'generation'),
+    ('multi_stem_separation',  'Multi-Stem Separation',      'suno', 50.0, 0.25,   'separation'),
+    ('convert_to_wav',         'Convert to WAV Format',      'suno',  0.4, 0.002,  'utility'),
+]
+
+# Old keys that were renamed — kept here so the seed can deactivate them on upgrade
+_RENAMED_KEYS = {
+    'boost_music_style':      'style_boost',
+    'replace_music_section':  'replace_section',
+    'vocal_separation':       'vocal_removal',
+    'upload_and_cover_audio': 'generate_cover',
+    'create_music_video':     'generate_music_video',
+    'upload_and_extend_audio':'generate_extend',
+    'extend_music':           'generate_extend',
+}
+
+
+def seed_operation_pricing():
+    """Idempotently upsert the operation pricing table and deactivate renamed keys."""
+    # Deactivate old keys that have been renamed so they no longer gate operations
+    for old_key in _RENAMED_KEYS:
+        old_row = OperationPricing.query.filter_by(operation_key=old_key).first()
+        if old_row and old_row.is_active:
+            old_row.is_active = False
+
+    for (key, name, provider, credits, usd, category) in SUNO_OPERATION_PRICING_SEED:
+        existing = OperationPricing.query.filter_by(operation_key=key).first()
+        if existing:
+            existing.display_name = name
+            existing.credits_per_request = credits
+            existing.usd_per_request = usd
+            existing.category = category
+            existing.is_active = True
+        else:
+            db.session.add(OperationPricing(
+                operation_key=key,
+                display_name=name,
+                provider=provider,
+                credits_per_request=credits,
+                usd_per_request=usd,
+                category=category,
+            ))
+    db.session.commit()

@@ -15,50 +15,8 @@
     <link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap">
     
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    
-    <!-- Tailwind Config -->
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#f20df2",
-                        "primary-dark": "#c20ac2",
-                        "background-light": "#f8f5f8",
-                        "background-dark": "#181118",
-                        "surface-dark": "#271b27",
-                        "border-dark": "#392839",
-                    },
-                    fontFamily: {
-                        "display": ["Space Grotesk", "sans-serif"],
-                        "body": ["Space Grotesk", "sans-serif"],
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.5rem",
-                        "lg": "0.75rem",
-                        "xl": "1rem",
-                        "full": "9999px"
-                    },
-                    animation: {
-                        "slide-in": "slideIn 0.3s ease-out",
-                        "fade-in": "fadeIn 0.5s ease-out",
-                    },
-                    keyframes: {
-                        slideIn: {
-                            from: { opacity: 0, transform: "translateY(-10px)" },
-                            to: { opacity: 1, transform: "translateY(0)" }
-                        },
-                        fadeIn: {
-                            from: { opacity: 0 },
-                            to: { opacity: 1 }
-                        }
-                    }
-                },
-            },
-        }
-    </script>
+    <script src="{{ url_for('static', filename='css/tailwind.cdn.js') }}"></script>
+    {% include 'partials/_tailwind_config.html' %}
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -836,6 +794,8 @@
     <script src="{{ url_for('static', filename='js/components/specializedCards.js') }}?v=2"></script>
     <script src="{{ url_for('static', filename='js/components/addButton.js') }}?v=2"></script>
     <script src="{{ url_for('static', filename='js/components/audioLibrary.js') }}?v=20260223a"></script>
+    <script src="{{ url_for('static', filename='js/utils/wavConversionService.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/utils/downloadContextMenu.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Initializing template gallery on library page...');

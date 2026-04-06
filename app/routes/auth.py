@@ -106,6 +106,7 @@ def get_or_create_user_from_oauth(provider, provider_user_id, email, name, profi
     # Check if user with this email already exists
     user = User.query.filter_by(email=email).first() if email else None
     
+    is_new_user = False
     if not user:
         # Create new user
         user = User(
@@ -115,6 +116,7 @@ def get_or_create_user_from_oauth(provider, provider_user_id, email, name, profi
         user.email_verified = True  # OAuth emails are typically verified
         db.session.add(user)
         db.session.commit()
+        is_new_user = True
         
         # Assign default role
         default_role = get_default_role()
@@ -131,7 +133,16 @@ def get_or_create_user_from_oauth(provider, provider_user_id, email, name, profi
     )
     db.session.add(oauth_conn)
     db.session.commit()
-    
+
+    if is_new_user:
+        try:
+            from app.services import credit_service as _cs
+            _cs.add_credits(str(user.id), 200, 'promo', 'Welcome gift \u2014 200 free credits')
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            current_app.logger.warning('Failed to grant welcome credits for OAuth user %s', user.id)
+
     return user
 
 
@@ -314,6 +325,15 @@ def register():
         db.session.add(user)
         db.session.add(user_role)
         db.session.commit()
+
+        # Grant welcome credits for the new user
+        try:
+            from app.services import credit_service as _cs
+            _cs.add_credits(str(user.id), 200, 'promo', 'Welcome gift \u2014 200 free credits')
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+            current_app.logger.warning('Failed to grant welcome credits for new user %s', user.id)
         
         # Log registration event
         log_auth_event(

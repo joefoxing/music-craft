@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import os
 import uuid
-import shutil
 import datetime
 import wave
 import hmac
 import hashlib
 import json
+from io import BytesIO
 from sqlalchemy.exc import IntegrityError
 
 from flask import Blueprint, request, jsonify, current_app, url_for, send_file, abort
@@ -19,6 +19,11 @@ from app.models import GUID
 
 
 vc_bp = Blueprint('vc', __name__, url_prefix='/api/vc')
+
+
+def _use_r2() -> bool:
+    """Return True if R2 is configured and should be used."""
+    return bool(os.environ.get('R2_ENDPOINT_URL') and os.environ.get('R2_ACCESS_KEY_ID'))
 
 
 def _now() -> datetime.datetime:
@@ -40,10 +45,16 @@ def _vc_storage_root() -> str:
 
 
 def _key_to_path(r2_key: str) -> str:
-    safe_rel = r2_key.lstrip('/').replace('..', '')
-    path = os.path.join(_vc_storage_root(), safe_rel)
+    root = os.path.realpath(_vc_storage_root())
+    path = os.path.realpath(os.path.join(root, r2_key.lstrip('/')))
+    if not path.startswith(root + os.sep):
+        abort(400)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     return path
+
+
+def _max_upload_bytes() -> int:
+    return int(os.environ.get('VC_MAX_UPLOAD_BYTES', str(100 * 1024 * 1024)))  # 100 MB default
 
 
 def _wav_duration_seconds(path: str) -> float | None:
@@ -314,10 +325,22 @@ def put_object(upload_id: str):
     if not profile or profile.user_id != current_user.id:
         return jsonify({'error': 'forbidden'}), 403
 
-    path = _key_to_path(dsf.r2_key)
-    body = request.get_data() or b''
-    with open(path, 'wb') as f:
-        f.write(body)
+    content_length = request.content_length
+    if content_length is not None and content_length > _max_upload_bytes():
+        abort(413)
+
+    body = request.get_data(cache=False) or b''
+    if len(body) > _max_upload_bytes():
+        abort(413)
+
+    if _use_r2():
+        from app.services import r2
+        mime = dsf.mime or 'application/octet-stream'
+        r2.upload_bytes(dsf.r2_key, body, content_type=mime)
+    else:
+        path = _key_to_path(dsf.r2_key)
+        with open(path, 'wb') as f:
+            f.write(body)
 
     return jsonify({'ok': True})
 
@@ -326,6 +349,7 @@ def put_object(upload_id: str):
 @login_required
 def dataset_commit(profile_id: str):
     from app.models import VoiceProfile, VoiceDatasetFile
+    from app.services import r2
 
     profile = VoiceProfile.query.filter_by(id=profile_id, user_id=current_user.id).first()
     if not profile:
@@ -341,13 +365,28 @@ def dataset_commit(profile_id: str):
     if not dsf:
         return jsonify({'error': 'dataset file not found'}), 404
 
-    path = _key_to_path(dsf.r2_key)
-    if not os.path.exists(path):
-        return jsonify({'error': 'object not uploaded'}), 400
-
-    duration = _wav_duration_seconds(path)
-    if duration is not None:
-        dsf.duration_sec = duration
+    if _use_r2():
+        if not r2.object_exists(dsf.r2_key):
+            return jsonify({'error': 'object not uploaded'}), 400
+        # Write to temp file for wave parsing
+        import tempfile
+        file_data = r2.download_bytes(dsf.r2_key)
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as tmp:
+            tmp.write(file_data)
+            tmp_path = tmp.name
+        try:
+            duration = _wav_duration_seconds(tmp_path)
+            if duration is not None:
+                dsf.duration_sec = duration
+        finally:
+            os.remove(tmp_path)
+    else:
+        path = _key_to_path(dsf.r2_key)
+        if not os.path.exists(path):
+            return jsonify({'error': 'object not uploaded'}), 400
+        duration = _wav_duration_seconds(path)
+        if duration is not None:
+            dsf.duration_sec = duration
 
     if 'size_bytes' in data:
         try:
@@ -363,17 +402,24 @@ def dataset_commit(profile_id: str):
 @login_required
 def delete_dataset_file(file_id: str):
     from app.models import VoiceDatasetFile
+    from app.services import r2
 
     dsf = VoiceDatasetFile.query.get(file_id)
     if not dsf or not dsf.voice_profile or dsf.voice_profile.user_id != current_user.id:
         return jsonify({'error': 'not found'}), 404
 
-    path = _key_to_path(dsf.r2_key)
-    try:
-        if os.path.exists(path):
-            os.remove(path)
-    except Exception:
-        pass
+    if _use_r2():
+        try:
+            r2.delete_object(dsf.r2_key)
+        except Exception:
+            pass
+    else:
+        path = _key_to_path(dsf.r2_key)
+        try:
+            if os.path.exists(path):
+                os.remove(path)
+        except Exception:
+            pass
 
     db.session.delete(dsf)
     db.session.commit()
@@ -383,11 +429,16 @@ def delete_dataset_file(file_id: str):
 @vc_bp.route('/profiles/<profile_id>/train', methods=['POST'])
 @login_required
 def start_training(profile_id: str):
-    from app.models import VoiceProfile, VoiceTrainingJob, VoiceModelVersion
+    from app.models import VoiceProfile, VoiceDatasetFile, VoiceTrainingJob
+    from app.services.vc_dispatch import dispatch_training, DispatchError
 
     profile = VoiceProfile.query.filter_by(id=profile_id, user_id=current_user.id).first()
     if not profile:
         return jsonify({'error': 'profile not found'}), 404
+
+    dataset_files = VoiceDatasetFile.query.filter_by(voice_profile_id=profile.id).all()
+    if not dataset_files:
+        return jsonify({'error': 'no dataset files uploaded for this profile'}), 400
 
     quotas = _remaining_quotas(current_user.id)
     now = _now()
@@ -419,34 +470,26 @@ def start_training(profile_id: str):
         params_json=params_json,
         error=None,
         created_at=now,
-        started_at=now,
+        started_at=None,
         finished_at=None,
     )
 
     db.session.add(job)
     db.session.flush()
 
-    job.status = 'succeeded'
-    job.finished_at = _now()
-
-    model_version_id = str(uuid.uuid4())
-    mv = VoiceModelVersion(
-        id=model_version_id,
-        voice_profile_id=profile.id,
-        training_job_id=job.id,
-        status='ready',
-        r2_model_key=f"vc/users/{current_user.id}/profiles/{profile.id}/models/{model_version_id}/model.pth",
-        r2_config_key=f"vc/users/{current_user.id}/profiles/{profile.id}/models/{model_version_id}/config.json",
-        metrics_json={},
-    )
-
-    db.session.add(mv)
-    profile.active_model_version_id = mv.id
-    profile.status = 'ready'
+    try:
+        call_id = dispatch_training(job, dataset_files)
+        if call_id:
+            job.modal_call_id = call_id
+    except DispatchError as exc:
+        job.status = 'failed'
+        job.error = str(exc)
+        job.finished_at = _now()
+        db.session.commit()
+        return jsonify({'id': job.id, 'status': job.status, 'error': job.error}), 503
 
     db.session.commit()
-
-    return jsonify({'id': job.id, 'status': job.status})
+    return jsonify({'id': job.id, 'status': job.status}), 202
 
 
 @vc_bp.route('/training-jobs/<job_id>', methods=['GET'])
@@ -491,11 +534,29 @@ def conversion_upload_url(profile_id: str):
 @csrf.exempt
 @login_required
 def put_conversion_input(upload_id: str):
-    data = request.get_data() or b''
-    path = os.path.join(_vc_storage_root(), 'conversion_inputs', current_user.id, f"{upload_id}.bin")
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, 'wb') as f:
-        f.write(data)
+    from app.models import VoiceConversionJob
+
+    # Validate upload_id matches a pending conversion job
+    job = VoiceConversionJob.query.filter_by(id=upload_id).first()
+    if not job or job.user_id != current_user.id:
+        return jsonify({'error': 'upload not found'}), 404
+
+    content_length = request.content_length
+    if content_length is not None and content_length > _max_upload_bytes():
+        abort(413)
+
+    data = request.get_data(cache=False) or b''
+    if len(data) > _max_upload_bytes():
+        abort(413)
+
+    if _use_r2():
+        from app.services import r2
+        r2.upload_bytes(job.input_r2_key, data, content_type='audio/wav')
+    else:
+        path = os.path.join(_vc_storage_root(), 'conversion_inputs', current_user.id, f"{upload_id}.bin")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, 'wb') as f:
+            f.write(data)
     return jsonify({'ok': True})
 
 
@@ -503,6 +564,7 @@ def put_conversion_input(upload_id: str):
 @login_required
 def start_conversion(profile_id: str):
     from app.models import VoiceProfile, VoiceConversionJob, VoiceModelVersion
+    from app.services.vc_dispatch import dispatch_conversion, DispatchError
 
     profile = VoiceProfile.query.filter_by(id=profile_id, user_id=current_user.id).first()
     if not profile:
@@ -557,41 +619,19 @@ def start_conversion(profile_id: str):
     db.session.add(job)
     db.session.flush()
 
-    input_path = os.path.join(_vc_storage_root(), 'conversion_inputs', current_user.id)
-    in_file = None
     try:
-        for fn in os.listdir(input_path):
-            if fn.startswith('') and fn.endswith('.bin'):
-                pass
-    except Exception:
-        pass
-
-    try:
-        blob_id = input_r2_key.split('/conversions/', 1)[1].split('/', 1)[0]
-        in_file = os.path.join(input_path, f"{blob_id}.bin")
-    except Exception:
-        in_file = None
-
-    if not in_file or not os.path.exists(in_file):
+        call_id = dispatch_conversion(job, mv)
+        if call_id:
+            job.modal_call_id = call_id
+    except DispatchError as exc:
         job.status = 'failed'
-        job.error = 'input not uploaded'
+        job.error = str(exc)
         job.finished_at = _now()
         db.session.commit()
-        return jsonify({'id': job.id, 'status': job.status, 'error': job.error}), 400
-
-    out_path = _key_to_path(output_r2_key)
-
-    try:
-        shutil.copyfile(in_file, out_path)
-        job.status = 'succeeded'
-        job.finished_at = _now()
-    except Exception as e:
-        job.status = 'failed'
-        job.error = str(e)
-        job.finished_at = _now()
+        return jsonify({'id': job.id, 'status': job.status, 'error': job.error}), 503
 
     db.session.commit()
-    return jsonify({'id': job.id, 'status': job.status})
+    return jsonify({'id': job.id, 'status': job.status}), 202
 
 
 @vc_bp.route('/conversion-jobs/<job_id>', methods=['GET'])
@@ -617,6 +657,7 @@ def get_conversion_job(job_id: str):
 @login_required
 def download_conversion(job_id: str):
     from app.models import VoiceConversionJob
+    from app.services import r2
 
     job = VoiceConversionJob.query.filter_by(id=job_id, user_id=current_user.id).first()
     if not job:
@@ -625,11 +666,22 @@ def download_conversion(job_id: str):
     if job.status != 'succeeded' or not job.output_r2_key:
         return jsonify({'error': 'output not ready'}), 400
 
-    path = _key_to_path(job.output_r2_key)
-    if not os.path.exists(path):
-        return jsonify({'error': 'file missing'}), 404
-
-    return send_file(path, mimetype='audio/wav', as_attachment=True, download_name='output.wav')
+    if _use_r2():
+        if not r2.object_exists(job.output_r2_key):
+            return jsonify({'error': 'file missing'}), 404
+        # Stream directly from R2
+        stream = r2.download_stream(job.output_r2_key)
+        return send_file(
+            stream,
+            mimetype='audio/wav',
+            as_attachment=True,
+            download_name='output.wav',
+        )
+    else:
+        path = _key_to_path(job.output_r2_key)
+        if not os.path.exists(path):
+            return jsonify({'error': 'file missing'}), 404
+        return send_file(path, mimetype='audio/wav', as_attachment=True, download_name='output.wav')
 
 
 @vc_bp.route('/webhooks/modal', methods=['POST'])

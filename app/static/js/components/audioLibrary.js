@@ -482,6 +482,28 @@ class SongLibrary {
         const downloadBtn = card.querySelector('.song-download-btn');
         if (downloadBtn) {
             downloadBtn.setAttribute('aria-label', `Download ${song.title || 'song'}`);
+            
+            // Add data attributes for WAV conversion
+            if (song.id) {
+                downloadBtn.dataset.audioId = song.id;
+            }
+            if (song.task_id) {
+                downloadBtn.dataset.taskId = song.task_id;
+            }
+            
+            // Set up context menu
+            if (typeof DownloadContextMenu !== 'undefined' && downloadBtn.dataset.audioId && downloadBtn.dataset.taskId) {
+                const options = {
+                    taskId: downloadBtn.dataset.taskId,
+                    audioId: downloadBtn.dataset.audioId,
+                    filename: song.title ? song.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'song',
+                    onMP3Click: () => {
+                        this.downloadSong(song);
+                    }
+                };
+                DownloadContextMenu.attachToButton(downloadBtn, options);
+            }
+            
             downloadBtn.addEventListener('click', () => this.downloadSong(song));
         }
         

@@ -1,0 +1,15 @@
+# Core dependencies
+faster-whisper>=1.1.0
+demucs>=4.0.1
+torchcodec>=0.10.0
+
+# Optional: GPU support (install separately if needed)
+# torch>=2.0.0  # For GPU acceleration
+
+# Development dependencies (for testing and development)
+# Install with: pip install lyrics-extraction[dev]
+pytest>=7.0
+pytest-cov>=4.0
+black>=23.0
+pylint>=2.17
+mypy>=1.0

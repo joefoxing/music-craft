@@ -32,6 +32,24 @@ PLAN_NAMES = {
     'tokens': 'Token Pack - 100 Tokens',
 }
 
+# Pre-defined product IDs for fallback when Products API is not available
+# These should be created manually in PayPal dashboard or via direct API call
+# Format: plan_key -> product_id
+PAYPAL_PRODUCT_IDS = {
+    'pro_monthly': 'PROD-pro_monthly',
+    'pro_annual': 'PROD-pro_annual',
+    'tokens': 'PROD-tokens',
+}
+
+# Pre-created PayPal billing plan IDs (created manually in PayPal dashboard)
+# These are used directly without creating new plans each time
+# Format: plan_key -> plan_id
+PAYPAL_PLAN_IDS = {
+    'pro_monthly': 'P-7DF74401P1230474LNGRTMNA',
+    'pro_annual': 'P-3LJ55192XV5352943NGRTL6A',
+    'tokens': 'P-95K10921F1962163HNGRTLBY',
+}
+
 
 class PayPalClient:
     """Client for communicating with PayPal API."""
@@ -186,13 +204,116 @@ class PayPalClient:
             logger.error(f"Failed to get PayPal order details: {e}")
             raise
     
+    def create_product(self, plan: str) -> Optional[str]:
+        """
+        Create a PayPal product for billing plans.
+        Returns the product ID if successful or already exists.
+        
+        Products are required before creating billing plans.
+        This method will check for existing products first to avoid duplicates.
+        
+        If the Products API is not available (e.g., certain sandbox accounts),
+        falls back to using pre-defined product IDs.
+        """
+        if plan not in PLAN_NAMES:
+            logger.error(f"Unknown plan: {plan}")
+            return None
+        
+        description = PLAN_NAMES.get(plan, f"Product - {plan}")
+        product_id = PAYPAL_PRODUCT_IDS.get(plan, f"PROD-{plan}")
+        
+        # Try to use existing product first
+        try:
+            existing = self._get_product_by_id(product_id)
+            if existing:
+                logger.info(f"Using existing PayPal product: {product_id}")
+                return product_id
+        except Exception as e:
+            logger.debug(f"Could not retrieve product {product_id}: {e}")
+            pass
+        
+        # Try to create new product if retrieval failed
+        payload = {
+            "id": product_id,
+            "name": description,
+            "description": description,
+            "type": "SERVICE",
+            "category": "SOFTWARE"
+        }
+        
+        try:
+            result = self._request('POST', '/v1/billing/products', json=payload)
+            created_id = result.get('id')
+            logger.info(f"PayPal product created: {created_id}")
+            return created_id
+        except Exception as e:
+            logger.warning(f"Could not create PayPal product via API: {e}")
+            # If product creation fails (e.g., Products API not available),
+            # fall back to using the pre-defined product ID
+            if "404" in str(e) or "not available" in str(e).lower():
+                logger.info(f"Falling back to pre-defined product ID: {product_id}")
+                return product_id
+            # If product already exists (409 conflict), try to use it anyway
+            elif "409" in str(e) or "DUPLICATE_PRODUCT" in str(e):
+                try:
+                    existing = self._get_product_by_id(product_id)
+                    if existing:
+                        return existing
+                except:
+                    pass
+                # If retrieval fails, still return the ID (might work in plan creation)
+                logger.info(f"Product already exists, using ID: {product_id}")
+                return product_id
+            # For other errors, retry or raise
+            raise
+    
+    def _get_product_by_id(self, product_id: str) -> Optional[str]:
+        """
+        Check if a product exists by ID.
+        Returns the product ID if found, None otherwise.
+        """
+        try:
+            result = self._request('GET', f'/v1/billing/products/{product_id}')
+            if result.get('id'):
+                return result.get('id')
+            return None
+        except Exception as e:
+            logger.debug(f"Product {product_id} not found: {e}")
+            return None
+
     def create_billing_plan(self, plan: str) -> Optional[str]:
         """
         Create a PayPal billing plan for subscriptions.
         Returns the plan ID if successful.
+        
+        First checks for pre-created plan IDs to avoid unnecessary API calls.
+        Then attempts to create or retrieve the required product.
+        If the Products API is not available, uses pre-defined product IDs.
         """
         if plan not in PLAN_AMOUNTS:
             logger.error(f"Unknown plan: {plan}")
+            return None
+        
+        # Check if we have a pre-created plan ID (preferred method)
+        if plan in PAYPAL_PLAN_IDS:
+            plan_id = PAYPAL_PLAN_IDS[plan]
+            logger.info(f"Using pre-created PayPal plan ID: {plan_id}")
+            return plan_id
+        
+        # Otherwise, create a new plan (fallback)
+        logger.info(f"No pre-created plan ID found for {plan}, creating new plan...")
+        
+        # Get or create the product (or use fallback product ID)
+        product_id = None
+        try:
+            product_id = self.create_product(plan)
+        except Exception as e:
+            logger.warning(f"Could not create product, trying fallback: {e}")
+            # Use pre-defined product ID as fallback
+            product_id = PAYPAL_PRODUCT_IDS.get(plan)
+        
+        if not product_id:
+            logger.error(f"Failed to get product ID for plan: {plan}")
             return None
         
         amount = PLAN_AMOUNTS[plan]
@@ -212,7 +333,7 @@ class PayPalClient:
             return None
         
         payload = {
-            "product_id": f"PROD-{plan}",
+            "product_id": product_id,
             "name": description,
             "description": description,
             "type": "REGULAR",
@@ -244,6 +365,7 @@ class PayPalClient:
         }
         
         try:
+            logger.info(f"Creating billing plan with product {product_id}: {payload}")
             result = self._request('POST', '/v1/billing/plans', json=payload)
             plan_id = result.get('id')
             logger.info(f"PayPal billing plan created: {plan_id}")
@@ -252,11 +374,15 @@ class PayPalClient:
             logger.error(f"Failed to create PayPal billing plan: {e}")
             raise
     
-    def create_subscription(self, plan_id: str, user_id: str, email: str) -> Optional[str]:
+    def create_subscription(self, plan_id: str, user_id: str, email: str) -> Optional[Dict[str, Any]]:
         """
         Create a PayPal subscription for a user.
-        Returns the subscription ID if successful.
+        Returns a dict with subscription_id and approval_url if successful.
         """
+        # Get base URL from config, with fallback
+        base_url = current_app.config.get('BASE_URL', 'http://localhost:3001')
+        logger.info(f"Using base URL: {base_url}")
+        
         payload = {
             "plan_id": plan_id,
             "subscriber": {
@@ -265,19 +391,53 @@ class PayPalClient:
             "application_context": {
                 "brand_name": "Joefoxing",
                 "user_action": "SUBSCRIBE_NOW",
-                "return_url": f"{current_app.config['BASE_URL']}/billing/return",
-                "cancel_url": f"{current_app.config['BASE_URL']}/billing/cancel",
+                "return_url": f"{base_url}/billing/return",
+                "cancel_url": f"{base_url}/billing/cancel",
             },
             "custom_id": user_id,
         }
         
+        logger.info(f"Creating subscription with payload: {payload}")
+        
         try:
             result = self._request('POST', '/v1/billing/subscriptions', json=payload)
             subscription_id = result.get('id')
+            
+            logger.info(f"PayPal API response: {result}")
+            
+            if not subscription_id:
+                logger.error(f"No subscription ID in response: {result}")
+                return None
+            
             logger.info(f"PayPal subscription created: {subscription_id}")
-            return subscription_id
+            
+            # Try to get approval link from response
+            approval_url = None
+            links = result.get('links', [])
+            logger.info(f"Links in response: {links}")
+            
+            for link in links:
+                if link.get('rel') == 'approve':
+                    approval_url = link.get('href')
+                    logger.info(f"Found approve link: {approval_url}")
+                    break
+            
+            # If no approval link in response, construct it manually
+            if not approval_url:
+                if self.mode == 'sandbox':
+                    approval_url = f"https://www.sandbox.paypal.com/checkoutnow?token={subscription_id}"
+                else:
+                    approval_url = f"https://www.paypal.com/checkoutnow?token={subscription_id}"
+                logger.info(f"Using constructed approval URL for subscription {subscription_id}: {approval_url}")
+            
+            result_dict = {
+                'subscription_id': subscription_id,
+                'approval_url': approval_url
+            }
+            logger.info(f"Returning result: {result_dict}")
+            return result_dict
         except Exception as e:
-            logger.error(f"Failed to create PayPal subscription: {e}")
+            logger.error(f"Failed to create PayPal subscription: {e}", exc_info=True)
             raise
     
     def get_subscription(self, subscription_id: str) -> Optional[Dict[str, Any]]:

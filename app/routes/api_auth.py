@@ -114,6 +114,15 @@ def register():
     db.session.add(UserRole(user_id=user.id, role_id=default_role.id))
     db.session.commit()
 
+    # Grant welcome credits for the new user
+    try:
+        from app.services import credit_service as _cs
+        _cs.add_credits(str(user.id), 200, 'promo', 'Welcome gift \u2014 200 free credits')
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        current_app.logger.warning('Failed to grant welcome credits for new user %s', user.id)
+
     _log_auth_event(user_id=user.id, event_type="register", success=True, event_data={"email": email})
 
     verification_url = url_for("api_auth.verify_email_get", token=verification_token, _external=True)

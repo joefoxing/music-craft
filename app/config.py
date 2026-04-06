@@ -29,6 +29,7 @@ class Config:
     # Flask configuration
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key')
     PREFERRED_URL_SCHEME = os.environ.get('PREFERRED_URL_SCHEME', 'https' if os.environ.get('APP_ENV', 'development') != 'development' else 'http')
+    BASE_URL = os.environ.get('BASE_URL', 'http://localhost:5000')
     TEMPLATES_AUTO_RELOAD = True
     
     # Database configuration
@@ -115,6 +116,11 @@ class Config:
     STRIPE_PRO_MONTHLY_PRICE_ID = os.environ.get('STRIPE_PRO_MONTHLY_PRICE_ID', '')
     STRIPE_PRO_ANNUAL_PRICE_ID = os.environ.get('STRIPE_PRO_ANNUAL_PRICE_ID', '')
     STRIPE_TOKEN_PACK_PRICE_ID = os.environ.get('STRIPE_TOKEN_PACK_PRICE_ID', '')
+    # Credit pack one-time purchase price IDs (one per pack tier)
+    STRIPE_CREDITS_STARTER_PRICE_ID   = os.environ.get('STRIPE_CREDITS_STARTER_PRICE_ID', '')
+    STRIPE_CREDITS_PRO_PRICE_ID       = os.environ.get('STRIPE_CREDITS_PRO_PRICE_ID', '')
+    STRIPE_CREDITS_STUDIO_PRICE_ID    = os.environ.get('STRIPE_CREDITS_STUDIO_PRICE_ID', '')
+    STRIPE_CREDITS_ENTERPRISE_PRICE_ID= os.environ.get('STRIPE_CREDITS_ENTERPRISE_PRICE_ID', '')
     
     # PayPal / Billing configuration
     PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID', '')
@@ -230,6 +236,10 @@ class Config:
         app.config['STRIPE_PRO_MONTHLY_PRICE_ID'] = cls.STRIPE_PRO_MONTHLY_PRICE_ID
         app.config['STRIPE_PRO_ANNUAL_PRICE_ID'] = cls.STRIPE_PRO_ANNUAL_PRICE_ID
         app.config['STRIPE_TOKEN_PACK_PRICE_ID'] = cls.STRIPE_TOKEN_PACK_PRICE_ID
+        app.config['STRIPE_CREDITS_STARTER_PRICE_ID']    = cls.STRIPE_CREDITS_STARTER_PRICE_ID
+        app.config['STRIPE_CREDITS_PRO_PRICE_ID']        = cls.STRIPE_CREDITS_PRO_PRICE_ID
+        app.config['STRIPE_CREDITS_STUDIO_PRICE_ID']     = cls.STRIPE_CREDITS_STUDIO_PRICE_ID
+        app.config['STRIPE_CREDITS_ENTERPRISE_PRICE_ID'] = cls.STRIPE_CREDITS_ENTERPRISE_PRICE_ID
         
         # PayPal / Billing configuration
         app.config['PAYPAL_CLIENT_ID'] = cls.PAYPAL_CLIENT_ID

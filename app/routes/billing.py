@@ -40,6 +40,7 @@ from flask_login import current_user, login_required
 from app import db
 from app.models import User, WebhookEvent
 from app.paypal import get_paypal_client
+from app.services import credit_service
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +50,15 @@ billing_bp = Blueprint('billing', __name__, url_prefix='/billing')
 # Helpers
 # ---------------------------------------------------------------------------
 
-TOKEN_PACK_AMOUNT = 100  # tokens granted per pack purchase
+TOKEN_PACK_AMOUNT = 100  # tokens granted per legacy token pack purchase
+
+# Maps credit-pack plan IDs to (credits, config_key_for_price_id)
+_CREDIT_PACK_PLANS = {
+    'credits_starter':    (1_000,   'STRIPE_CREDITS_STARTER_PRICE_ID'),
+    'credits_pro':        (5_000,   'STRIPE_CREDITS_PRO_PRICE_ID'),
+    'credits_studio':     (20_000,  'STRIPE_CREDITS_STUDIO_PRICE_ID'),
+    'credits_enterprise': (100_000, 'STRIPE_CREDITS_ENTERPRISE_PRICE_ID'),
+}
 
 
 def _stripe():
@@ -82,6 +91,10 @@ def _price_id_for_plan(plan: str) -> tuple[str, str]:
         'pro_annual':  (cfg['STRIPE_PRO_ANNUAL_PRICE_ID'],  'subscription'),
         'tokens':      (cfg['STRIPE_TOKEN_PACK_PRICE_ID'],  'payment'),
     }
+    # Credit packs are all one-time payments
+    for pack_plan, (_, cfg_key) in _CREDIT_PACK_PLANS.items():
+        mapping[pack_plan] = (cfg.get(cfg_key, ''), 'payment')
+
     if plan not in mapping:
         return None, None  # handled by caller
     price_id, mode = mapping[plan]
@@ -96,13 +109,13 @@ def _price_id_for_plan(plan: str) -> tuple[str, str]:
 @login_required
 def create_checkout_session():
     """
-    Body (JSON): { "plan": "pro_monthly" | "pro_annual" | "tokens" }
+    Body (JSON): { "plan": "pro_monthly" | "pro_annual" | "tokens" | "credits_starter" | ... }
     Returns: { "url": "<stripe_checkout_url>" }
     """
     data = request.get_json(silent=True) or {}
     plan = data.get('plan', '').strip()
 
-    valid_plans = {'pro_monthly', 'pro_annual', 'tokens'}
+    valid_plans = {'pro_monthly', 'pro_annual', 'tokens'} | set(_CREDIT_PACK_PLANS)
     if plan not in valid_plans:
         return jsonify({'error': f"Unknown plan '{plan}'"}), 400
 
@@ -122,13 +135,19 @@ def create_checkout_session():
     success_url = f"{base}{url_for('billing.success')}?session_id={{CHECKOUT_SESSION_ID}}"
     cancel_url  = f"{base}{url_for('billing.cancel')}"
 
+    # Embed pack_id for credit packs so the webhook can identify the purchase
+    meta = {'user_id': str(current_user.id), 'plan': plan}
+    if plan in _CREDIT_PACK_PLANS:
+        pack_id = plan.removeprefix('credits_')  # e.g. 'credits_starter' → 'starter'
+        meta['pack_id'] = pack_id
+
     session_kwargs = dict(
         customer=customer_id,
         mode=mode,
         line_items=[{'price': price_id, 'quantity': 1}],
         success_url=success_url,
         cancel_url=cancel_url,
-        metadata={'user_id': str(current_user.id), 'plan': plan},
+        metadata=meta,
         allow_promotion_codes=True,
     )
 
@@ -282,9 +301,29 @@ def _on_checkout_completed(session: dict) -> None:
             _apply_subscription(user, sub)
 
     elif mode == 'payment':
-        # Token pack one-time purchase
-        user.token_balance = (user.token_balance or 0) + TOKEN_PACK_AMOUNT
-        logger.info("User %s purchased token pack (+%d tokens)", user.id, TOKEN_PACK_AMOUNT)
+        meta    = session.get('metadata') or {}
+        pack_id = meta.get('pack_id')  # set for credit_pack purchases
+
+        if pack_id:
+            # Credit pack purchase — add credits to the user's wallet
+            pack_credits_map = {p['id']: p['credits'] for p in credit_service.CREDIT_PACKS}
+            credits = pack_credits_map.get(pack_id)
+            if credits:
+                credit_service.add_credits(
+                    user_id=str(user.id),
+                    credits=credits,
+                    tx_type='purchase',
+                    description=f"Credit pack purchase: {pack_id} ({credits:,} credits)",
+                    reference_id=session.get('id'),
+                    extra={'pack_id': pack_id, 'source': 'stripe'},
+                )
+                logger.info("User %s purchased credit pack '%s' (+%s credits)", user.id, pack_id, credits)
+            else:
+                logger.warning("Unknown pack_id '%s' in Stripe checkout session", pack_id)
+        else:
+            # Legacy token pack one-time purchase
+            user.token_balance = (user.token_balance or 0) + TOKEN_PACK_AMOUNT
+            logger.info("User %s purchased token pack (+%d tokens)", user.id, TOKEN_PACK_AMOUNT)
 
     db.session.flush()
 
@@ -384,13 +423,13 @@ def _apply_subscription(user: User, sub: dict) -> None:
 def paypal_checkout():
     """
     Create a PayPal order for subscription or one-time purchase.
-    Body (JSON): { "plan": "pro_monthly" | "pro_annual" | "tokens" }
+    Body (JSON): { "plan": "pro_monthly" | "pro_annual" | "tokens" | "credits_starter" | ... }
     Returns: { "order_id": "<paypal_order_id>" }
     """
     data = request.get_json(silent=True) or {}
     plan = data.get('plan', '').strip()
 
-    valid_plans = {'pro_monthly', 'pro_annual', 'tokens'}
+    valid_plans = {'pro_monthly', 'pro_annual', 'tokens'} | set(_CREDIT_PACK_PLANS)
     if plan not in valid_plans:
         return jsonify({'error': f"Unknown plan '{plan}'"}), 400
 
@@ -443,10 +482,32 @@ def paypal_capture():
         if purchase_units:
             custom_id = purchase_units[0].get('custom_id', '')
             
-            # For token purchases, add tokens to user
             if custom_id == str(current_user.id):
                 plan_param = request.args.get('plan', 'tokens')
-                if plan_param in ['tokens', 'pro_monthly', 'pro_annual']:
+
+                if plan_param in _CREDIT_PACK_PLANS:
+                    # Credit pack purchase via PayPal
+                    pack_id = plan_param.removeprefix('credits_')
+                    pack_credits_map = {p['id']: p['credits'] for p in credit_service.CREDIT_PACKS}
+                    credits = pack_credits_map.get(pack_id)
+                    if credits:
+                        credit_service.add_credits(
+                            user_id=str(current_user.id),
+                            credits=credits,
+                            tx_type='purchase',
+                            description=f"Credit pack purchase: {pack_id} ({credits:,} credits)",
+                            reference_id=order_id,
+                            extra={'pack_id': pack_id, 'source': 'paypal'},
+                        )
+                        db.session.commit()
+                        logger.info(
+                            "User %s purchased credit pack '%s' via PayPal (+%s credits)",
+                            current_user.id, pack_id, credits,
+                        )
+                    else:
+                        logger.warning("Unknown pack_id '%s' in PayPal capture", pack_id)
+                elif plan_param in ['tokens', 'pro_monthly', 'pro_annual']:
+                    # Legacy token pack
                     current_user.token_balance = (current_user.token_balance or 0) + TOKEN_PACK_AMOUNT
                     db.session.commit()
                     logger.info(f"User {current_user.id} purchased token pack via PayPal (+{TOKEN_PACK_AMOUNT} tokens)")
@@ -477,18 +538,29 @@ def paypal_subscribe():
         
         # Create billing plan if needed (in production, these could be cached/pre-created)
         plan_id = paypal.create_billing_plan(plan)
+        logger.info(f"Billing plan ID for {plan}: {plan_id}")
         if not plan_id:
+            logger.error(f"Failed to get billing plan ID for {plan}")
             return jsonify({'error': 'Failed to create subscription plan'}), 500
         
         # Create subscription
-        subscription_id = paypal.create_subscription(
+        logger.info(f"Creating subscription for user {current_user.id} with plan {plan_id}")
+        sub_result = paypal.create_subscription(
             plan_id, 
             str(current_user.id),
             current_user.email
         )
         
-        if not subscription_id:
+        logger.info(f"Subscription result: {sub_result}")
+        
+        if not sub_result or not sub_result.get('subscription_id'):
+            logger.error(f"Subscription result is invalid: {sub_result}")
             return jsonify({'error': 'Failed to create subscription'}), 500
+        
+        subscription_id = sub_result.get('subscription_id')
+        approval_url = sub_result.get('approval_url')
+        
+        logger.info(f"Got subscription_id={subscription_id}, approval_url={approval_url}")
         
         # Store subscription ID
         current_user.paypal_subscription_id = subscription_id
@@ -497,19 +569,14 @@ def paypal_subscribe():
         
         logger.info(f"PayPal subscription created for user {current_user.id}: {subscription_id}")
         
-        # Get subscription approval link
-        try:
-            sub_details = paypal.get_subscription(subscription_id)
-            approval_url = sub_details.get('links', [])
-            for link in approval_url:
-                if link.get('rel') == 'approve':
-                    return jsonify({'subscription_url': link.get('href')})
-        except:
-            pass
-        
-        return jsonify({'status': 'created', 'subscription_id': subscription_id})
+        if approval_url:
+            logger.info(f"Returning subscription_url: {approval_url}")
+            return jsonify({'subscription_url': approval_url})
+        else:
+            logger.error(f"No approval URL found for subscription {subscription_id}")
+            return jsonify({'error': 'Failed to get subscription approval URL'}), 500
     except Exception as e:
-        logger.error(f"PayPal subscription creation error: {e}")
+        logger.error(f"PayPal subscription creation error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 

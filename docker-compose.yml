@@ -26,8 +26,6 @@ services:
       - LYRICS_AUTO_RETRY_WITH_VOCAL_SEPARATION=false
     env_file:
       - .env
-    volumes:
-      - .:/app
     depends_on:
       db:
         condition: service_healthy
@@ -45,7 +43,6 @@ services:
   db:
     image: postgres:15-alpine
     container_name: music-craft-db
-    entrypoint: ["/docker/entrypoint.sh"]
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=a6fbee7ff9e8255dbc0d93771b7edd21c03cc79f
@@ -54,7 +51,6 @@ services:
     # Postgres should only be reachable inside the Docker network.
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./docker/postgres/entrypoint.sh:/docker/entrypoint.sh:ro
     networks:
       - app-network
     healthcheck:

@@ -18,7 +18,7 @@ until psql -U "${POSTGRES_USER:-postgres}" -c 'SELECT 1' > /dev/null 2>&1; do
     fi
 done
 
-# Always sync the password from the env var — fixes "password auth failed"
+# Always sync the password from the env var â€” fixes "password auth failed"
 # after volume reuse (POSTGRES_PASSWORD is only applied on first init otherwise)
 psql -U "${POSTGRES_USER:-postgres}" -c \
   "ALTER USER ${POSTGRES_USER:-postgres} WITH PASSWORD '${POSTGRES_PASSWORD:-postgres}';" \

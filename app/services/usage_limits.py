@@ -73,6 +73,13 @@ def check_allowed(units: int = 1) -> Tuple[bool, Dict[str, Any], int]:
     if is_auth and _is_paid_active(current_user):
         return True, {'remaining': None, 'plan': 'pro'}, 200
 
+    # --- Credit-based access: authenticated users with a positive balance skip rate limits.
+    # The actual debit happens in record_usage() after the operation succeeds. ---
+    if is_auth:
+        from app.services import credit_service as _cs
+        if _cs.get_balance(str(user_id)) > 0:
+            return True, {'remaining': None, 'plan': 'credits'}, 200
+
     daily_limit, monthly_limit = _limits_for_actor(is_auth)
 
     daily_used = _usage_sum(user_id=user_id, ip_address=None if is_auth else ip_address, since=_window_start_daily(now))
@@ -112,6 +119,17 @@ def record_usage(event_type: str, units: int = 1) -> None:
     is_auth = bool(getattr(current_user, 'is_authenticated', False))
     user_id = current_user.id if is_auth else None
     ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
+
+    # Debit credits for authenticated users; if the operation key is unknown or
+    # the balance is now zero, the next request will fall through to rate limits.
+    if is_auth:
+        from app.services import credit_service as _cs
+        try:
+            _cs.debit(str(user_id), event_type)
+        except Exception:
+            logger.warning(
+                "Credit debit failed for user %s op %s", user_id, event_type, exc_info=True
+            )
 
     db.session.add(
         UsageEvent(

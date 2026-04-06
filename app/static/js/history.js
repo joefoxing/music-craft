@@ -1030,6 +1030,27 @@ function createAudioPlayer(track, trackNumber) {
     
     if (downloadBtn) {
         if (generatedAudioUrl) {
+            // Add data attributes for WAV conversion
+            if (track.id) {
+                downloadBtn.dataset.audioId = track.id;
+            }
+            if (track.task_id) {
+                downloadBtn.dataset.taskId = track.task_id;
+            }
+
+            // Set up context menu
+            if (typeof DownloadContextMenu !== 'undefined' && downloadBtn.dataset.audioId && downloadBtn.dataset.taskId) {
+                const options = {
+                    taskId: downloadBtn.dataset.taskId,
+                    audioId: downloadBtn.dataset.audioId,
+                    filename: title ? title.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'audio',
+                    onMP3Click: () => {
+                        handleDownloadAudio(generatedAudioUrl, title, new Event('click'));
+                    }
+                };
+                DownloadContextMenu.attachToButton(downloadBtn, options);
+            }
+
             console.log(`Attaching download event listener for track ${trackNumber}, URL:`, generatedAudioUrl);
             downloadBtn.addEventListener('click', (e) => {
                 console.log(`Download button clicked for track ${trackNumber}`);

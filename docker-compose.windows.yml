@@ -1,0 +1,6 @@
+services:
+  db:
+    # UNC paths on Windows can break bind mounts; use default Postgres entrypoint.
+    entrypoint: ["docker-entrypoint.sh", "postgres"]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data

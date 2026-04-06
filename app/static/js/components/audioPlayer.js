@@ -99,7 +99,7 @@ class AudioPlayerComponent {
         this._setupLyricsDisplay(clone, song);
 
         // Set up download button
-        this._setupDownloadButton(clone, audioUrl, title);
+        this._setupDownloadButton(clone, audioUrl, title, song, currentTaskId);
 
         // Set up video button
         this._setupVideoButton(clone, song, currentTaskId, onVideoCreate);
@@ -204,12 +204,34 @@ class AudioPlayerComponent {
     }
 
     /**
-     * Set up download button for a song.
+     * Set up download button for a song with context menu support.
      * @private
      */
-    _setupDownloadButton(clone, audioUrl, title) {
+    _setupDownloadButton(clone, audioUrl, title, song = null, currentTaskId = null) {
         const downloadBtn = clone.querySelector('[data-download-btn]');
         if (audioUrl) {
+            // Add data attributes for WAV conversion
+            if (song && song.id) {
+                downloadBtn.dataset.audioId = song.id;
+            }
+            if (currentTaskId) {
+                downloadBtn.dataset.taskId = currentTaskId;
+            }
+
+            // Set up context menu
+            if (typeof DownloadContextMenu !== 'undefined' && downloadBtn.dataset.audioId && downloadBtn.dataset.taskId) {
+                const options = {
+                    taskId: downloadBtn.dataset.taskId,
+                    audioId: downloadBtn.dataset.audioId,
+                    filename: title ? title.replace(/[^a-z0-9]/gi, '_').toLowerCase() : 'audio',
+                    onMP3Click: () => {
+                        this.handleDownloadAudio(audioUrl, title);
+                    }
+                };
+                DownloadContextMenu.attachToButton(downloadBtn, options);
+            }
+
+            // Regular click handler for MP3 download
             downloadBtn.addEventListener('click', () => {
                 this.handleDownloadAudio(audioUrl, title);
             });

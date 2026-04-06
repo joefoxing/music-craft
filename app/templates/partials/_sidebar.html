@@ -107,9 +107,9 @@
         <!-- Add/Remove Link with Dropdown Menu -->
         <div class="relative">
             <div class="flex items-center justify-between">
-                <button id="addremove-main-btn" class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 flex-1 text-left {% if active_nav == 'add-instrumental' or active_nav == 'add-vocal' or active_nav == 'vocal-removal' %}bg-primary/5 dark:bg-primary/10 text-primary border-l-4 border-primary shadow-sm{% else %}text-[#8888a0] hover:bg-[#1a1a22] hover:text-[#e8e8ed] hover:translate-x-1 hover:shadow-md{% endif %}">
-                    <span class="material-symbols-outlined text-xl {% if active_nav == 'add-instrumental' or active_nav == 'add-vocal' or active_nav == 'vocal-removal' %}text-primary{% else %}text-[#8888a0]{% endif %}" {% if active_nav == 'add-instrumental' or active_nav == 'add-vocal' or active_nav == 'vocal-removal' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>edit</span>
-                    <span class="text-sm font-semibold {% if active_nav == 'add-instrumental' or active_nav == 'add-vocal' or active_nav == 'vocal-removal' %}font-bold{% endif %}">Add/Remove</span>
+                <button id="addremove-main-btn" class="flex items-center gap-4 px-5 py-3.5 rounded-xl transition-all duration-300 flex-1 text-left {% if active_nav == 'add-instrumental' or active_nav == 'add-vocal' or active_nav == 'vocal-removal' or active_nav == 'voice-conversion' %}bg-primary/5 dark:bg-primary/10 text-primary border-l-4 border-primary shadow-sm{% else %}text-[#8888a0] hover:bg-[#1a1a22] hover:text-[#e8e8ed] hover:translate-x-1 hover:shadow-md{% endif %}">
+                    <span class="material-symbols-outlined text-xl {% if active_nav == 'add-instrumental' or active_nav == 'add-vocal' or active_nav == 'vocal-removal' or active_nav == 'voice-conversion' %}text-primary{% else %}text-[#8888a0]{% endif %}" {% if active_nav == 'add-instrumental' or active_nav == 'add-vocal' or active_nav == 'vocal-removal' or active_nav == 'voice-conversion' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>edit</span>
+                    <span class="text-sm font-semibold {% if active_nav == 'add-instrumental' or active_nav == 'add-vocal' or active_nav == 'vocal-removal' or active_nav == 'voice-conversion' %}font-bold{% endif %}">Add/Remove</span>
                 </button>
                 <button id="addremove-menu-btn" class="p-2 rounded-lg hover:bg-[#1a1a22] transition-colors ml-2" aria-label="Add/Remove menu">
                     <span class="material-symbols-outlined text-lg text-[#8888a0]">more_vert</span>
@@ -135,6 +135,12 @@
                     <a class="flex items-center gap-4 px-4 py-3 text-sm text-[#8888a0] hover:bg-[#23232e] hover:text-[#e8e8ed] transition-colors" href="/vocal-removal">
                         <span class="material-symbols-outlined text-lg {% if active_nav == 'vocal-removal' %}text-primary{% else %}text-[#8888a0]{% endif %}" {% if active_nav == 'vocal-removal' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>cut</span>
                         <span class="font-medium {% if active_nav == 'vocal-removal' %}font-bold text-primary{% endif %}">Remove Vocal</span>
+                    </a>
+
+                    <!-- Voice Clone / Conversion Link -->
+                    <a class="flex items-center gap-4 px-4 py-3 text-sm text-[#8888a0] hover:bg-[#23232e] hover:text-[#e8e8ed] transition-colors" href="/voice">
+                        <span class="material-symbols-outlined text-lg {% if active_nav == 'voice-conversion' %}text-primary{% else %}text-[#8888a0]{% endif %}" {% if active_nav == 'voice-conversion' %}style="font-variation-settings: 'FILL' 1;"{% endif %}>voice_selection</span>
+                        <span class="font-medium {% if active_nav == 'voice-conversion' %}font-bold text-primary{% endif %}">Voice Clone</span>
                     </a>
 
                 </div>
@@ -212,6 +218,29 @@
     
     <!-- Bottom Section -->
     <div class="p-6 border-t border-[#2a2a36] bg-[#131318]">
+        <!-- Credit Balance (authenticated users only) -->
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('credits.dashboard') }}" class="flex items-center justify-between rounded-xl py-2.5 px-4 mb-4 bg-[#1a1a22] hover:bg-[#23232e] border border-[#2a2a36] hover:border-[#6c5ce7]/50 transition-all duration-200 group" style="text-decoration:none">
+            <div class="flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-base text-[#6c5ce7]" style="font-variation-settings: 'FILL' 1;">toll</span>
+                <span class="text-xs font-semibold text-[#8888a0] group-hover:text-[#e8e8ed]">Credits</span>
+            </div>
+            <span id="sidebar-credit-balance" class="text-sm font-bold text-[#a29bfe]">—</span>
+        </a>
+        <script>
+            (function () {
+                fetch('/api/credits/balance')
+                    .then(function(r){ return r.ok ? r.json() : null; })
+                    .then(function(d){
+                        if (d && d.wallet) {
+                            var el = document.getElementById('sidebar-credit-balance');
+                            if (el) el.textContent = parseFloat(d.wallet.balance).toLocaleString(undefined, {maximumFractionDigits: 1});
+                        }
+                    })
+                    .catch(function(){});
+            })();
+        </script>
+        {% endif %}
         <!-- Upgrade Button -->
         <a href="{{ url_for('pricing.index') }}" class="flex w-full items-center justify-center gap-3 rounded-xl py-3.5 px-5 bg-gradient-to-r from-[#6c5ce7] to-[#5a4bd1] hover:from-[#5a4bd1] hover:to-[#4839b5] transition-all duration-300 shadow-lg shadow-[#6c5ce7]/30 hover:shadow-[#6c5ce7]/50 mb-6 group" style="text-decoration:none">
             <span class="material-symbols-outlined text-white text-lg group-hover:scale-110 transition-transform">diamond</span>

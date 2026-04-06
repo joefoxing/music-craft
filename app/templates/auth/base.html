@@ -6,7 +6,8 @@
     <title>{% block title %}Music Cover Generator{% endblock %}</title>
     
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ url_for('static', filename='css/tailwind.cdn.js') }}"></script>
+    {% include 'partials/_tailwind_config.html' %}
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
