@@ -60,8 +60,8 @@ IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" 
 
 # Run database migrations before starting the new API
 log_info "Running database migrations..."
-IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" \
-    run --rm --no-deps --profile migrate migrate || {
+IMAGE_TAG="$IMAGE_TAG" docker compose --profile migrate -f "$COMPOSE_FILE" --env-file "$ENV_FILE" \
+    run --rm --no-deps migrate || {
     log_error "Migration failed — aborting deployment"
     exit 1
 }
