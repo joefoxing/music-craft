@@ -58,6 +58,14 @@ fi
 log_info "Pulling..."
 IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" pull api
 
+# Run database migrations before starting the new API
+log_info "Running database migrations..."
+IMAGE_TAG="$IMAGE_TAG" docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE" \
+    run --rm --no-deps --profile migrate migrate || {
+    log_error "Migration failed — aborting deployment"
+    exit 1
+}
+
 # Deploy
 log_info "Updating staging api..."
 # Only 'api' exists in staging compose now

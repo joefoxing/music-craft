@@ -12,7 +12,7 @@ from app.models import GUID
 
 
 revision = 'f1a2b3c4d5e6'
-down_revision = ('e9f1a2b3c4d5', 'e3d7f5c9a2b1')
+down_revision = 'e9f1a2b3c4d5'
 branch_labels = None
 depends_on = None
 

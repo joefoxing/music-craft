@@ -84,6 +84,10 @@ jobs:
             git pull origin main
             echo "Updating IMAGE_TAG in .env.staging..."
             sed -i "s/^IMAGE_TAG=.*/IMAGE_TAG=sha-${DEPLOY_SHA}/" .env.staging || echo "IMAGE_TAG=sha-${DEPLOY_SHA}" >> .env.staging
+            # Ensure REPO_NAME and REGISTRY match what CI pushed
+            sed -i "s/^REPO_NAME=.*/REPO_NAME=music-craft/" .env.staging || echo "REPO_NAME=music-craft" >> .env.staging
+            sed -i "s/^REGISTRY=.*/REGISTRY=ghcr.io/" .env.staging || echo "REGISTRY=ghcr.io" >> .env.staging
+            sed -i "s/^REPO_OWNER=.*/REPO_OWNER=joefoxing/" .env.staging || echo "REPO_OWNER=joefoxing" >> .env.staging
             echo "Starting deployment..."
             bash scripts/deploy-staging.sh ${DEPLOY_SHA}
           EOF
