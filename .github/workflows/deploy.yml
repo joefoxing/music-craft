@@ -54,8 +54,8 @@ jobs:
           target: production
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/api:sha-${{ steps.meta.outputs.short_sha }}
-            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/api:latest
+            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}-api:sha-${{ steps.meta.outputs.short_sha }}
+            ${{ env.REGISTRY }}/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}-api:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

@@ -3,7 +3,7 @@ name: app_staging
 services:
   # STAGING API BACKEND
   api:
-    image: ${REGISTRY:-ghcr.io}/${REPO_OWNER:-owner}/${REPO_NAME:-app}/api:${IMAGE_TAG:?IMAGE_TAG is required}
+    image: ${REGISTRY:-ghcr.io}/${REPO_OWNER:-owner}/${REPO_NAME:-app}-api:${IMAGE_TAG:?IMAGE_TAG is required}
     restart: unless-stopped
     ports:
       - "8001:8000"
@@ -45,7 +45,7 @@ services:
 
   # DATABASE MIGRATIONS (Staging)
   migrate:
-    image: ${REGISTRY:-ghcr.io}/${REPO_OWNER:-owner}/${REPO_NAME:-app}/api:${IMAGE_TAG:?IMAGE_TAG is required}
+    image: ${REGISTRY:-ghcr.io}/${REPO_OWNER:-owner}/${REPO_NAME:-app}-api:${IMAGE_TAG:?IMAGE_TAG is required}
     command: ["alembic", "upgrade", "head"]
     env_file:
       - .env.staging
