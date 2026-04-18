@@ -569,3 +569,146 @@ List available AI generation templates.
 
 #### 4.2 Get Template Details
 **GET** `/
+
+### 7. Voice Conversion Endpoints
+
+These endpoints describe the VC/SVC workflow implemented in this repository.
+
+#### 7.1 List Voice Profiles
+**GET** `/api/vc/profiles`
+
+Returns all voice profiles owned by the authenticated user.
+
+#### 7.2 Create Voice Profile
+**POST** `/api/vc/profiles`
+
+**Request Body:**
+```json
+{
+  "name": "My Singing Voice"
+}
+```
+
+#### 7.3 Get Voice Profile Summary
+**GET** `/api/vc/profiles/{profile_id}`
+
+Returns dataset totals, active model version, and remaining quota counters.
+
+#### 7.4 Request Dataset Upload Target
+**POST** `/api/vc/profiles/{profile_id}/dataset/upload-url`
+
+Creates a `VoiceDatasetFile` record and returns an upload target.
+
+**Request Body:**
+```json
+{
+  "filename": "dataset.wav",
+  "size_bytes": 10485760,
+  "mime": "audio/wav"
+}
+```
+
+**Response:**
+```json
+{
+  "upload_url": "https://...",
+  "r2_key": "vc/users/.../dataset/.../dataset.wav",
+  "file_id": "uuid"
+}
+```
+
+When R2 is configured, `upload_url` is a presigned `PUT` URL. Otherwise it is an internal Flask endpoint.
+
+#### 7.5 Upload Dataset Bytes
+**PUT** `/api/vc/uploads/{file_id}`
+
+Fallback upload endpoint used when R2 is not configured.
+
+#### 7.6 Commit Dataset File
+**POST** `/api/vc/profiles/{profile_id}/dataset/commit`
+
+Marks the uploaded dataset object as committed and computes metadata when possible.
+
+#### 7.7 Start Training
+**POST** `/api/vc/profiles/{profile_id}/train`
+
+**Request Body:**
+```json
+{
+  "epochs": 50,
+  "f0_method": "rmvpe"
+}
+```
+
+Returns `202 Accepted` with the queued training job ID.
+
+#### 7.8 Get Training Job Status
+**GET** `/api/vc/training-jobs/{job_id}`
+
+Returns queued, running, succeeded, failed, or canceled state plus timestamps and last error.
+
+#### 7.9 Request Conversion Upload Target
+**POST** `/api/vc/profiles/{profile_id}/convert/upload-url`
+
+Creates a staged `VoiceConversionJob` in `uploading` state and returns its upload target.
+
+**Request Body:**
+```json
+{
+  "filename": "input.wav",
+  "size_bytes": 7340032,
+  "mime": "audio/wav"
+}
+```
+
+**Response:**
+```json
+{
+  "upload_url": "https://...",
+  "job_id": "uuid",
+  "upload_id": "uuid",
+  "input_r2_key": "vc/users/.../conversions/.../input.wav",
+  "r2_key": "vc/users/.../conversions/.../input.wav"
+}
+```
+
+#### 7.10 Upload Conversion Input Bytes
+**PUT** `/api/vc/uploads/conversion-input/{upload_id}`
+
+Fallback upload endpoint used when R2 is not configured.
+
+#### 7.11 Start Conversion
+**POST** `/api/vc/profiles/{profile_id}/convert`
+
+Starts a staged conversion job after verifying the uploaded input exists.
+
+**Request Body:**
+```json
+{
+  "job_id": "uuid",
+  "input_r2_key": "vc/users/.../conversions/.../input.wav"
+}
+```
+
+Legacy callers may still supply `input_r2_key` without `job_id`, but the staged-job flow is the intended path.
+
+#### 7.12 Get Conversion Job Status
+**GET** `/api/vc/conversion-jobs/{job_id}`
+
+Returns queued, running, succeeded, failed, or canceled state plus the output key and last error.
+
+#### 7.13 Download Converted Output
+**GET** `/api/vc/conversion-jobs/{job_id}/download`
+
+Streams the generated WAV output from R2 or local storage.
+
+#### 7.14 Modal Webhook
+**POST** `/api/vc/webhooks/modal`
+
+Accepts signed status callbacks from the Modal worker.
+
+**Headers:**
+- `X-VC-Timestamp`
+- `X-VC-Signature`
+
+The request is rejected unless the signature matches `HMAC-SHA256(secret, "{timestamp}.{body}")` and the timestamp is within five minutes of the server clock.

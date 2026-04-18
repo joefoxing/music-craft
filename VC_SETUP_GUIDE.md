@@ -2,6 +2,11 @@
 
 This guide walks you through wiring up Cloudflare R2 (file storage) and Modal.com (GPU training/conversion) so the Voice Clone feature in this app works end-to-end.
 
+For a concrete So-VITS-SVC runner integration, see `VC_SOVITS_RUNNER_GUIDE.md`.
+For a ready-to-paste Modal secret template, see `VC_SOVITS_4X_MODAL_SECRET.example`.
+For a worker-image example that clones and installs So-VITS, see `VC_MODAL_IMAGE_RECIPE.md`.
+For a single end-to-end execution order for this repo, see `VC_DEPLOYMENT_CHECKLIST.md`.
+
 ---
 
 ## Overview
@@ -66,9 +71,15 @@ Then rebuild the Docker image:
 docker compose up --build -d app
 ```
 
-### 1.6 Integrate R2 into the upload/download routes
+### 1.6 Upload behavior in the current code
 
-The current upload routes (`PUT /api/vc/uploads/<id>` and `PUT /api/vc/uploads/conversion-input/<id>`) write files to local disk inside the container. Replace the write/read with boto3 S3 calls against your R2 bucket.
+The current code already supports R2-backed VC storage.
+
+- Dataset uploads return a presigned R2 `PUT` URL when R2 is configured.
+- Conversion uploads also return a presigned R2 `PUT` URL and create a staged conversion job up front.
+- Without R2, both paths fall back to the Flask upload endpoints.
+
+You do not need to rewrite the upload routes first unless you want a different storage contract.
 
 **Upload helper (add to `vc_api.py` or a new `r2.py` service):**
 
@@ -130,9 +141,29 @@ modal setup          # opens browser for authentication
 modal token new      # creates ~/.modal.toml with your token
 ```
 
-### 2.2 Create `modal_vc_app.py` in the project root
+### 2.2 Create and configure `modal_vc_app.py`
 
-This is the GPU worker Modal will run. The skeleton below shows the required interface — swap `# TODO` sections for your actual So-VITS-SVC or RVC training/inference code.
+The worker in this repo is now designed around operator-provided runner commands rather than fake placeholder success.
+
+The important contract is:
+
+- `VC_TRAIN_RUNNER_COMMAND` must write `artifacts/model.pth` and `artifacts/config.json`
+- `VC_CONVERT_RUNNER_COMMAND` must write `artifacts/output.wav`
+- optional `artifacts/metrics.json` can be produced by training
+
+The worker passes the job context to your engine through environment variables such as:
+
+- `VC_JOB_DIR`
+- `VC_JOB_PAYLOAD_PATH`
+- `VC_DATASET_DIR`
+- `VC_ARTIFACTS_DIR`
+- `VC_MODEL_PATH`
+- `VC_CONFIG_PATH`
+- `VC_INPUT_PATH`
+- `VC_OUTPUT_PATH`
+- `VC_PARAMS_JSON`
+
+This lets you wire So-VITS-SVC, RVC, or another internal training/conversion wrapper without changing Flask-side orchestration.
 
 ```python
 import hashlib
@@ -353,7 +384,11 @@ def convert(payload: dict):
 
 ### 2.3 Create the Modal secret
 
-In the [Modal dashboard](https://modal.com/secrets) → **New Secret** → name it `audiocraft-vc-secrets` — add all of these keys:
+In the [Modal dashboard](https://modal.com/secrets) → **New Secret** → name it `audiocraft-vc-secrets`.
+
+For this repo, start from `VC_SOVITS_4X_MODAL_SECRET.example` and paste the values into the secret.
+
+Use these values exactly unless you intentionally changed the worker image or runner contract:
 
 | Key | Value |
 |---|---|
@@ -362,11 +397,44 @@ In the [Modal dashboard](https://modal.com/secrets) → **New Secret** → name 
 | `R2_SECRET_ACCESS_KEY` | your R2 secret key |
 | `R2_BUCKET_NAME` | `audiocraft-vc` |
 | `VC_WEBHOOK_SECRET` | generate with `python -c "import secrets; print(secrets.token_hex(32))"` — **must match** `VC_WEBHOOK_SECRET` in your `.env` |
+| `VC_MODAL_AUTH_TOKEN` | generate a random token and use the same value in Modal and your Flask `.env` |
+| `VC_TRAIN_RUNNER_COMMAND` | `python -m scripts.vc.run_training` |
+| `VC_CONVERT_RUNNER_COMMAND` | `python -m scripts.vc.run_inference` |
+| `VC_TRAIN_RUNNER_TIMEOUT_SEC` | `3300` |
+| `VC_CONVERT_RUNNER_TIMEOUT_SEC` | `540` |
+| `SOVITS_REPO_DIR` | `/root/so-vits-svc` if your Modal image clones So-VITS there |
+| `SOVITS_WORKSPACE_DIR` | leave blank unless you want to override the default working directory |
+| `SOVITS_LOGS_DIR` | leave blank unless your fork writes logs elsewhere |
+| `SOVITS_FILELISTS_DIR` | leave blank unless your fork requires a fixed path |
+| `SOVITS_RAW_DATA_DIR` | leave blank unless your fork requires a fixed path |
+| `SOVITS_PROCESSED_DATA_DIR` | leave blank unless you want to override the default `dataset/44k` path |
+| `SOVITS_CONFIG_OUTPUT_PATH` | leave blank unless your fork requires a fixed config path |
+| `SOVITS_CONFIG_TYPE` | `so-vits-svc-4.0v1` |
+| `SOVITS_SPEAKER_NAME` | `target` |
+| `SOVITS_SAMPLE_RATE` | `44100` |
+| `SOVITS_RESAMPLE_CMD_TEMPLATE` | `python -m so_vits_svc_fork pre-resample -i "{param_dataset_raw_dir}" -o "{param_processed_data_dir}" -s {param_sample_rate}` |
+| `SOVITS_CONFIG_CMD_TEMPLATE` | `python -m so_vits_svc_fork pre-config -i "{param_processed_data_dir}" -f "{param_filelists_dir}" -c "{param_config_output_path}" -t "{param_config_type}"` |
+| `SOVITS_HUBERT_CMD_TEMPLATE` | `python -m so_vits_svc_fork pre-hubert -i "{param_processed_data_dir}" -c "{param_config_output_path}" -fm "{param_f0_method}"` |
+| `SOVITS_TRAIN_CMD_TEMPLATE` | `python -m so_vits_svc_fork train -c "{param_config_output_path}" -m "{param_model_dir}" -nt` |
+| `SOVITS_MODEL_SOURCE` | `{param_model_dir}/G_*.pth` |
+| `SOVITS_CONFIG_SOURCE` | `{param_config_output_path}` |
+| `SOVITS_METRICS_SOURCE` | leave blank unless you want to collect extra metrics artifacts |
+| `SOVITS_INFER_SPEAKER` | leave blank to auto-select the first speaker from `config.json` |
+| `SOVITS_INFER_TRANSPOSE` | `0` |
+| `SOVITS_INFER_F0_METHOD` | `dio` |
+| `SOVITS_INFER_CMD_TEMPLATE` | `python -m so_vits_svc_fork infer "{input_path}" -o "{output_path}" -s "{param_speaker_name}" -m "{model_path}" -c "{config_path}" -t {param_transpose} -fm "{param_f0_method}" -na` |
+| `SOVITS_RESAMPLE_TIMEOUT_SEC` | `1800` |
+| `SOVITS_CONFIG_TIMEOUT_SEC` | `1800` |
+| `SOVITS_HUBERT_TIMEOUT_SEC` | `3600` |
+| `SOVITS_TRAIN_TIMEOUT_SEC` | `10800` |
+| `SOVITS_INFER_TIMEOUT_SEC` | `1800` |
+
+These defaults target `voicepaw/so-vits-svc-fork` and its package-based `python -m so_vits_svc_fork ...` CLI.
 
 ### 2.4 Deploy
 
 ```bash
-cd e:\Developer\lyric_cover_staging
+cd y:\lyric_cover_staging\music-craft
 modal deploy modal_vc_app.py
 ```
 
@@ -397,6 +465,19 @@ async def train(request: Request):
 
 Add `VC_MODAL_AUTH_TOKEN` to the Modal secret and to your `.env`.
 
+### 2.6 Runner example
+
+Example only:
+
+```dotenv
+VC_TRAIN_RUNNER_COMMAND=python -m scripts.vc.run_training
+VC_CONVERT_RUNNER_COMMAND=python -m scripts.vc.run_inference
+```
+
+Your training script should read from `VC_DATASET_DIR` and write artifacts into `VC_ARTIFACTS_DIR`.
+
+Your inference script should read from `VC_MODEL_PATH`, `VC_CONFIG_PATH`, and `VC_INPUT_PATH`, then write `VC_OUTPUT_PATH`.
+
 ---
 
 ## Part 3 — Wire it all together in `.env`
@@ -414,6 +495,8 @@ R2_ENDPOINT_URL=https://abc123.r2.cloudflarestorage.com
 # Voice Clone — Modal endpoints
 VC_MODAL_TRAINING_URL=https://your-workspace--audiocraft-vc-train.modal.run
 VC_MODAL_CONVERSION_URL=https://your-workspace--audiocraft-vc-convert.modal.run
+VC_TRAIN_RUNNER_COMMAND=python -m scripts.vc.run_training
+VC_CONVERT_RUNNER_COMMAND=python -m scripts.vc.run_inference
 VC_MODAL_AUTH_TOKEN=your-chosen-token
 VC_WEBHOOK_SECRET=same-secret-as-in-modal-dashboard
 
@@ -441,6 +524,7 @@ Test the flow end-to-end:
 3. Upload a `.wav` dataset file
 4. Click Train — the job should move to `queued`, then `running`, then `succeeded` once Modal calls the webhook
 5. Upload a conversion input and click Convert
+6. Confirm your runner produced a real output file, not a pass-through artifact
 
 ---
 

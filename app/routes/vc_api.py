@@ -26,6 +26,13 @@ def _use_r2() -> bool:
     return bool(os.environ.get('R2_ENDPOINT_URL') and os.environ.get('R2_ACCESS_KEY_ID'))
 
 
+def _r2_or_local_upload_url(r2_key: str, endpoint: str, content_type: str) -> str:
+    if _use_r2():
+        from app.services import r2
+        return r2.presigned_put_url(r2_key, content_type=content_type)
+    return endpoint
+
+
 def _now() -> datetime.datetime:
     return datetime.datetime.utcnow()
 
@@ -73,6 +80,14 @@ def _get_limits() -> tuple[int, int]:
     trainings_per_month = int(os.environ.get('VC_TRAININGS_PER_MONTH', '3'))
     conversions_per_day = int(os.environ.get('VC_CONVERSIONS_PER_DAY', '3'))
     return trainings_per_month, conversions_per_day
+
+
+def _object_exists(r2_key: str) -> bool:
+    if _use_r2():
+        from app.services import r2
+        return r2.object_exists(r2_key)
+    path = _key_to_path(r2_key)
+    return os.path.exists(path)
 
 
 def _webhook_secret() -> str:
@@ -307,7 +322,11 @@ def dataset_upload_url(profile_id: str):
     db.session.add(dsf)
     db.session.commit()
 
-    upload_url = url_for('vc.put_object', upload_id=file_id, _external=False)
+    upload_url = _r2_or_local_upload_url(
+        r2_key,
+        url_for('vc.put_object', upload_id=file_id, _external=False),
+        mime or 'application/octet-stream',
+    )
     return jsonify({'upload_url': upload_url, 'r2_key': r2_key, 'file_id': file_id})
 
 
@@ -349,7 +368,6 @@ def put_object(upload_id: str):
 @login_required
 def dataset_commit(profile_id: str):
     from app.models import VoiceProfile, VoiceDatasetFile
-    from app.services import r2
 
     profile = VoiceProfile.query.filter_by(id=profile_id, user_id=current_user.id).first()
     if not profile:
@@ -366,6 +384,7 @@ def dataset_commit(profile_id: str):
         return jsonify({'error': 'dataset file not found'}), 404
 
     if _use_r2():
+        from app.services import r2
         if not r2.object_exists(dsf.r2_key):
             return jsonify({'error': 'object not uploaded'}), 400
         # Write to temp file for wave parsing
@@ -514,20 +533,69 @@ def get_training_job(job_id: str):
 @vc_bp.route('/profiles/<profile_id>/convert/upload-url', methods=['POST'])
 @login_required
 def conversion_upload_url(profile_id: str):
-    from app.models import VoiceProfile
+    from app.models import VoiceProfile, VoiceConversionJob, VoiceModelVersion
 
     profile = VoiceProfile.query.filter_by(id=profile_id, user_id=current_user.id).first()
     if not profile:
         return jsonify({'error': 'profile not found'}), 404
 
+    if not profile.active_model_version_id:
+        return jsonify({'error': 'no active model for this profile'}), 400
+
+    mv = VoiceModelVersion.query.filter_by(id=profile.active_model_version_id, voice_profile_id=profile.id).first()
+    if not mv or mv.status != 'ready':
+        return jsonify({'error': 'active model not ready'}), 400
+
     data = request.get_json(silent=True) or {}
     filename = secure_filename((data.get('filename') or 'input.wav').strip())
+    mime = (data.get('mime') or '').strip() or 'audio/wav'
 
-    upload_id = str(uuid.uuid4())
-    r2_key = f"vc/users/{current_user.id}/profiles/{profile.id}/conversions/{upload_id}/input/{filename}"
+    quotas = _remaining_quotas(current_user.id)
+    if quotas['conversions_remaining'] <= 0:
+        payload = {'error': 'conversion quota exceeded'}
+        payload.update(quotas)
+        return jsonify(payload), 429
 
-    upload_url = url_for('vc.put_conversion_input', upload_id=upload_id, _external=False)
-    return jsonify({'upload_url': upload_url, 'r2_key': r2_key})
+    running = VoiceConversionJob.query.filter(
+        VoiceConversionJob.user_id == current_user.id,
+        VoiceConversionJob.status.in_(['queued', 'running']),
+    ).first()
+    if running:
+        return jsonify({'error': 'a conversion job is already running'}), 409
+
+    job_id = str(uuid.uuid4())
+    input_r2_key = f"vc/users/{current_user.id}/profiles/{profile.id}/conversions/{job_id}/input/{filename}"
+    output_r2_key = f"vc/users/{current_user.id}/profiles/{profile.id}/conversions/{job_id}/output.wav"
+
+    job = VoiceConversionJob(
+        id=job_id,
+        user_id=current_user.id,
+        voice_profile_id=profile.id,
+        model_version_id=mv.id,
+        status='uploading',
+        modal_call_id=None,
+        input_r2_key=input_r2_key,
+        output_r2_key=output_r2_key,
+        input_duration_sec=None,
+        error=None,
+        created_at=_now(),
+        finished_at=None,
+    )
+    db.session.add(job)
+    db.session.commit()
+
+    upload_url = _r2_or_local_upload_url(
+        input_r2_key,
+        url_for('vc.put_conversion_input', upload_id=job_id, _external=False),
+        mime,
+    )
+    return jsonify({
+        'upload_url': upload_url,
+        'job_id': job.id,
+        'upload_id': job.id,
+        'input_r2_key': input_r2_key,
+        'r2_key': input_r2_key,
+    })
 
 
 @vc_bp.route('/uploads/conversion-input/<upload_id>', methods=['PUT'])
@@ -540,6 +608,9 @@ def put_conversion_input(upload_id: str):
     job = VoiceConversionJob.query.filter_by(id=upload_id).first()
     if not job or job.user_id != current_user.id:
         return jsonify({'error': 'upload not found'}), 404
+
+    if job.status in ['succeeded', 'failed', 'canceled']:
+        return jsonify({'error': 'upload no longer accepted for this job'}), 409
 
     content_length = request.content_length
     if content_length is not None and content_length > _max_upload_bytes():
@@ -578,7 +649,6 @@ def start_conversion(profile_id: str):
         return jsonify({'error': 'active model not ready'}), 400
 
     quotas = _remaining_quotas(current_user.id)
-    now = _now()
 
     if quotas['conversions_remaining'] <= 0:
         payload = {'error': 'conversion quota exceeded'}
@@ -594,29 +664,52 @@ def start_conversion(profile_id: str):
         return jsonify({'error': 'a conversion job is already running'}), 409
 
     data = request.get_json(silent=True) or {}
+    job_id = (data.get('job_id') or '').strip()
     input_r2_key = (data.get('input_r2_key') or '').strip()
+
+    job = None
+    if job_id:
+        job = VoiceConversionJob.query.filter_by(
+            id=job_id,
+            user_id=current_user.id,
+            voice_profile_id=profile.id,
+        ).first()
+        if not job:
+            return jsonify({'error': 'conversion job not found'}), 404
+        if job.status not in ['uploading', 'failed']:
+            return jsonify({'error': 'conversion job is not ready to start'}), 409
+        if job.input_r2_key and input_r2_key and job.input_r2_key != input_r2_key:
+            return jsonify({'error': 'input_r2_key does not match the staged conversion job'}), 400
+        job.model_version_id = mv.id
+        input_r2_key = job.input_r2_key or input_r2_key
+        job.error = None
+    else:
+        if not input_r2_key:
+            return jsonify({'error': 'job_id or input_r2_key is required'}), 400
+
+        job = VoiceConversionJob(
+            id=str(uuid.uuid4()),
+            user_id=current_user.id,
+            voice_profile_id=profile.id,
+            model_version_id=mv.id,
+            status='uploading',
+            modal_call_id=None,
+            input_r2_key=input_r2_key,
+            output_r2_key=f"vc/users/{current_user.id}/profiles/{profile.id}/conversions/{uuid.uuid4()}/output.wav",
+            input_duration_sec=None,
+            error=None,
+            created_at=_now(),
+            finished_at=None,
+        )
+        db.session.add(job)
+        db.session.flush()
+
     if not input_r2_key:
         return jsonify({'error': 'input_r2_key is required'}), 400
+    if not _object_exists(input_r2_key):
+        return jsonify({'error': 'conversion input was not uploaded'}), 400
 
-    job_id = str(uuid.uuid4())
-    output_r2_key = f"vc/users/{current_user.id}/profiles/{profile.id}/conversions/{job_id}/output.wav"
-
-    job = VoiceConversionJob(
-        id=job_id,
-        user_id=current_user.id,
-        voice_profile_id=profile.id,
-        model_version_id=mv.id,
-        status='queued',
-        modal_call_id=None,
-        input_r2_key=input_r2_key,
-        output_r2_key=output_r2_key,
-        input_duration_sec=None,
-        error=None,
-        created_at=now,
-        finished_at=None,
-    )
-
-    db.session.add(job)
+    job.status = 'queued'
     db.session.flush()
 
     try:

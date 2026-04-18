@@ -148,7 +148,7 @@
                                 <div class="md:col-span-2">
                                     <label for="datasetFiles" class="block text-sm font-medium mb-2">Dataset files</label>
                                     <input id="datasetFiles" type="file" class="form-control" accept="audio/*" multiple>
-                                    <p class="text-xs text-[#8888a0] mt-2">These files are uploaded to Cloudflare R2 via presigned URLs.</p>
+                                    <p class="text-xs text-[#8888a0] mt-2">These files upload directly to R2 when configured, otherwise they fall back to the app upload endpoint.</p>
                                 </div>
                                 <div class="flex items-end">
                                     <button id="uploadDatasetBtn" class="btn-primary flex items-center w-full justify-center">
@@ -186,9 +186,11 @@
                                 <div>
                                     <label for="trainF0Method" class="block text-sm font-medium mb-2">F0 method</label>
                                     <select id="trainF0Method" class="form-control">
-                                        <option value="rmvpe" selected>rmvpe</option>
+                                        <option value="dio" selected>dio</option>
                                         <option value="crepe">crepe</option>
-                                        <option value="dio">dio</option>
+                                        <option value="crepe-tiny">crepe-tiny</option>
+                                        <option value="parselmouth">parselmouth</option>
+                                        <option value="harvest">harvest</option>
                                     </select>
                                 </div>
                                 <div class="flex items-end">
@@ -706,9 +708,10 @@
                     }
 
                     const uploadUrl = urlData.upload_url;
-                    const inputKey = urlData.r2_key || urlData.input_r2_key;
+                        const inputKey = urlData.r2_key || urlData.input_r2_key;
+                        const stagedJobId = urlData.job_id || urlData.upload_id;
 
-                    if (!uploadUrl || !inputKey) {
+                        if (!uploadUrl || !inputKey || !stagedJobId) {
                         throw new Error('Conversion upload URL response missing fields');
                     }
 
@@ -727,7 +730,7 @@
                     const convResp = await apiFetch(`/api/vc/profiles/${profileId}/convert`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ input_r2_key: inputKey })
+                        body: JSON.stringify({ job_id: stagedJobId, input_r2_key: inputKey })
                     });
 
                     const convData = await convResp.json().catch(() => ({}));

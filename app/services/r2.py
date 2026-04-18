@@ -20,6 +20,7 @@ from typing import BinaryIO
 
 import boto3
 from botocore.config import Config
+from botocore.exceptions import ClientError
 
 log = logging.getLogger(__name__)
 
@@ -143,7 +144,12 @@ def object_exists(r2_key: str) -> bool:
     try:
         client.head_object(Bucket=_bucket(), Key=r2_key)
         return True
-    except client.exceptions.NoSuchKey:
+    except ClientError as exc:
+        error_code = str(exc.response.get('Error', {}).get('Code', ''))
+        if error_code in {'404', 'NoSuchKey', 'NotFound'}:
+            return False
+        raise
+    except Exception:
         return False
 
 
